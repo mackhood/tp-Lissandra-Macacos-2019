@@ -14,6 +14,6 @@
 
 int main(void) {
 	puts("!!!Hello World!!!"); /* prints !!!Hello World!!! */
-	hola();
+	iniciar_logger("/home/utnso/workspace/tp-2019-1c-Macacos/Kernel");
 	return EXIT_SUCCESS;
 }

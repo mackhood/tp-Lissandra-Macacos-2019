@@ -3,6 +3,7 @@
 	<name>LissandraFilesystem</name>
 	<comment></comment>
 	<projects>
+		<project>LibreriaCompartida</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
