@@ -35,9 +35,9 @@ typedef struct{
 }t_prot_mensaje;
 
 //Para t_clientes
-typedef enum{
-	//aca iria el tipo de cliente dependiendo de si necesitamos distinguir que socket cliente llega
-}t_cliente;
+//typedef enum{
+//	//aca iria el tipo de cliente dependiendo de si necesitamos distinguir que socket cliente llega
+//}t_cliente;
 
 /**
 * @NAME: prot_recibir_mensaje
