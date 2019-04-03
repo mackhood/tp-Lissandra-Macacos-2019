@@ -9,12 +9,12 @@
 #include <loggers.h>
 #include <string.h>
 
-/* VARIABLES GLOBALES */
-t_log* loggerLFL;
+
 
 int retardo;
 int puerto_de_escucha;
 int tiempo_dump;
+int punto_de_montaje;
 
 void setearValores(t_config * archivoConfig);
 
