@@ -23,6 +23,6 @@ void leerArchivoDeConfiguracion(char * configPath,t_log* logger) {
  		log_error(logger,"Archivo de configurarchcion no encontrado");
  	}
 
- //	setearValores(archivoConfig);
+ 	setearValores(archivoConfig);
  	config_destroy(archivoConfig);
  }
