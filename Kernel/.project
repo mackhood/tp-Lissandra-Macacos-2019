@@ -3,7 +3,6 @@
 	<name>Kernel</name>
 	<comment></comment>
 	<projects>
-		<project>LibreriaCompartida</project>
 		<project>SharedLibrary</project>
 	</projects>
 	<buildSpec>

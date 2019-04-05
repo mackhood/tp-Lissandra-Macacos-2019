@@ -1,17 +1,20 @@
-/*
- ============================================================================
- Name        : Memoria.c
- Author      : 
- Version     :
- Copyright   : Your copyright notice
- Description : Hello World in C, Ansi-style
- ============================================================================
- */
-
-#include <stdio.h>
-#include <stdlib.h>
+#include "Memoria.h"
 
 int main(void) {
-	puts("!!!Hello World!!!"); /* prints !!!Hello World!!! */
+	puts("!!!Hello World!!!\n"); /* prints !!!Hello World!!! */
+
+	levantar_config();
+
+	printf("%d\n", info_memoria.puerto);
+	printf("%d\n", info_memoria.retardo_mp);
+	printf("%d\n", info_memoria.retardo_fs);
+	printf("%d\n", info_memoria.tamanio_mem);
+	printf("%d\n", info_memoria.tiempo_jour);
+	printf("%d\n", info_memoria.tiempo_goss);
+	printf("%d\n", info_memoria.numero_memoria);
+	printf("%s\n", info_memoria.ip_fs);
+
+
+	while(1);
 	return EXIT_SUCCESS;
 }
