@@ -8,13 +8,22 @@
 #include <pthread.h>
 #include <loggers.h>
 #include <string.h>
+#include <netdb.h> // Para getaddrinfo
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <sys/wait.h>
+#include <commons/collections/list.h>
+#include <conexiones.h>
 
 
-
+/*VARIABLES GLOBALES*/
 int retardo;
-int puerto_de_escucha;
-int tiempo_dump;
-int punto_de_montaje;
+char* server_ip;
+int server_puerto;
+int socket_memoria;
+int socketFD;
+
+/* FUNIONES */
 
 void setearValores(t_config * archivoConfig);
 
