@@ -31,7 +31,7 @@ t_list* hilos;
 /* FUNCIONES */
 int main(void);
 void iniciarConsola();
-
+void iniciarLissandra();
 
 
 

@@ -15,6 +15,11 @@
 #include <commons/collections/list.h>
 #include <conexiones.h>
 
+/* ESTRUCTURAS */
+
+t_list hilos;
+t_list compactadores;
+t_list memorias;
 
 /*VARIABLES GLOBALES*/
 int retardo;
@@ -23,10 +28,10 @@ int server_puerto;
 int socket_memoria;
 int socketFD;
 
-/* FUNIONES */
+/* FUNCIONES */
 
 void setearValores(t_config * archivoConfig);
-
+void iniciarServidor();
 
 
 

@@ -14,7 +14,8 @@ void leerConfig(char * configPath,t_log* logger) {
 }
 
 void leerArchivoDeConfiguracion(char * configPath,t_log* logger) {
- 	t_config * archivoConfig = config_create(configPath);
+ 	t_config * archivoConfig;
+ 	archivoConfig = config_create(configPath);
 
  	if (archivoConfig == NULL){
  		perror("[ERROR] Archivo de configuracion no encontrado");

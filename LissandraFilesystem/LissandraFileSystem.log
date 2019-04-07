@@ -1,3 +1,15 @@
 [ERROR] 08:50:08:544 LissandraFileSystem/(5654:5654): Archivo de configuracion no encontrado
 [ERROR] 10:34:37:368 LissandraFileSystem/(5759:5759): Archivo de configuracion no encontrado
 [ERROR] 10:37:23:750 LissandraFileSystem/(5936:5936): Archivo de configuracion no encontrado
+[INFO] 13:50:42:158 LissandraFileSystem/(19742:19742): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 13:52:29:771 LissandraFileSystem/(19840:19840): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 14:09:07:954 LissandraFileSystem/(20775:20775): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 14:21:16:311 LissandraFileSystem/(21070:21070): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 14:23:52:742 LissandraFileSystem/(21201:21201): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 14:24:46:227 LissandraFileSystem/(21294:21294): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 15:27:33:41 LissandraFileSystem/(22740:22740): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 15:27:50:689 LissandraFileSystem/(22740:22740): Archivo de configuracion leido correctamente
+[INFO] 15:27:55:504 LissandraFileSystem/(22740:22740): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 15:33:49:774 LissandraFileSystem/(22926:22926): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 15:33:49:779 LissandraFileSystem/(22926:22926): Archivo de configuracion leido correctamente
+[INFO] 15:33:49:779 LissandraFileSystem/(22926:22926): MAIN: Se inicio un hilo para manejar la consola.
