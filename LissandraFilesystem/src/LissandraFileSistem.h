@@ -23,8 +23,8 @@
 
 
 /* VARIABLES GLOBALES */
-t_log* loggerLFL;
-t_list* hilos;
+t_log * loggerLFL;
+t_list * hilos;
 
 /* SEMAFOROS */
 
