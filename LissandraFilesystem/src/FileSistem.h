@@ -4,4 +4,8 @@
 
 
 
+/* FUNCIONES */
+
+void mainFileSistem();
+
 #endif /* FILESISTEM_H_ */

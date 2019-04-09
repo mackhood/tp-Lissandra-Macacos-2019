@@ -30,6 +30,7 @@ int socketFD;
 
 /* FUNCIONES */
 
+void mainLissandra();
 void setearValores(t_config * archivoConfig);
 void iniciarServidor();
 

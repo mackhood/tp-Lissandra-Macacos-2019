@@ -30,8 +30,10 @@ t_list * hilos;
 
 /* FUNCIONES */
 int main(void);
+void iniciar();
 void iniciarConsola();
 void iniciarLissandra();
+void iniciarFileSistem();
 
 
 

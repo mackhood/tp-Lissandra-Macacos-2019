@@ -3,5 +3,10 @@
 
 
 
+/* FUNCIONES */
+
+void mainCompactador();
+
+
 
 #endif /* COMPACTADOR_H_ */

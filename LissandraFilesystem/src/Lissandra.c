@@ -1,5 +1,9 @@
 #include "Lissandra.h"
 
+void mainLissandra ()
+{
+	inicializar();
+}
 
 void setearValores(t_config * archivoConfig)
 {
@@ -12,9 +16,10 @@ void setearValores(t_config * archivoConfig)
 void inicializar()
 {
 	hilos = list_create();
+	iniciarServidor();
 }
 
 void iniciarServidor()
 {
-
+	socketFD = levantar_servidor(server_puerto);
 }
