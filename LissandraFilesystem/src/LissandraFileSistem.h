@@ -1,10 +1,6 @@
 #ifndef LISSANDRAFILESISTEM_H_
 #define LISSANDRAFILESISTEM_H_
 
-#include "Lissandra.h"
-#include "Compactador.h"
-#include "FileSistem.h"
-#include "Consola.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <commons/config.h>
@@ -20,6 +16,10 @@
 #include <conexiones.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include "Lissandra.h"
+#include "Compactador.h"
+#include "FileSistem.h"
+#include "Consola.h"
 
 
 /* VARIABLES GLOBALES */

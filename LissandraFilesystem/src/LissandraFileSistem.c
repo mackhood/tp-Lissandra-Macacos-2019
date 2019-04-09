@@ -9,7 +9,7 @@ int main(void)
 	hilos = list_create();
 	iniciar();
 
-
+	while(1);
 	return EXIT_SUCCESS;
 }
 

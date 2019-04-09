@@ -20,6 +20,19 @@
 t_list * hilos;
 t_list compactadores;
 t_list memorias;
+t_list * memtable;
+
+
+/*struct {
+	int tempstamp;
+	int key;
+	char*clave;
+}t_keysetter;
+
+struct {
+	t_list * keysetters;
+}t_tabla;
+*/
 
 /*VARIABLES GLOBALES*/
 int retardo;
