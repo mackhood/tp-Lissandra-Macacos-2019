@@ -7,4 +7,16 @@
 #include "config_memoria.h"
 
 
+
+
+
+
+
+
+
+
 #endif /* MEMORIA_H_ */
+
+
+
+
