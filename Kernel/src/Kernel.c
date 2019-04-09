@@ -10,6 +10,15 @@
 
 #include "Kernel.h"
 
+
+
+void setearValores(t_config * archivoConfig) {
+
+
+}
+
+
+
 void initConfiguracion(){
 
 
@@ -24,7 +33,7 @@ void initConfiguracion(){
 	/**--------------- cargo todos los datos de kernel.configs -------------------------**/
 	kernel_config* kernelConfig= malloc(sizeof(kernel_config));
 
-	kernelConfig->puerto_memoria =config_get_int_value(config,"PUERTO");
+	kernelConfig->puerto_memoria =config_get_int_value(config,"PUERTO_MEMORIA");
 	kernelConfig->quantum = config_get_int_value(config,"QUANTUM");
 	kernelConfig->metadata_refresh = config_get_int_value(config,"METADATA_REFRESH");
 	kernelConfig->sleep_ejecucion = config_get_int_value(config,"SLEEP_EJECUCION");
@@ -46,7 +55,7 @@ void initConfiguracion(){
 	//logueo todos los datos de configuracion
 	initMutexlog(KERNEL_LOG_PATH,PROGRAM_NAME,ACTIVE_CONSOLE,LOG_LEVEL_TRACE);
 
-	logInfo("PUERTO :%d -QUANTUM: %d -GRADO_MULTIPROGRAMCION: %d -RETARDO_PLANFICION: %d -ALGORITMO_PLANFICACION: %s\n",
+	logInfo("IP de memoria :%s -Metadata refresh: %d -Multiprocesamiento: %d -Puerto Memoria: %d -Quantum: %d  -Sleep ejecucion: %d\n",
 				kernelConfig->ip_memoria,
 				kernelConfig->metadata_refresh,
 				kernelConfig->multiprocesamiento,

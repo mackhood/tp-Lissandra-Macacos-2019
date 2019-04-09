@@ -26,7 +26,7 @@ const char* path_configs ="/home/utnso/workspace/tp-2019-1c-Macacos/Kernel/kerne
 
 void initConfiguracion();
 void initThreadAPI ();
-
+void setearValores(t_config * archivoConfig);
 
 
 
