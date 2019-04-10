@@ -3,8 +3,8 @@
 int main(void) {
 	puts("!!!Hello World!!!\n"); /* prints !!!Hello World!!! */
 
-	initConfiguracion();
-
+	levantar_config();
+	printf("%s\n", string_from_format("asd"));
 //	printf("%d\n", info_memoria->puerto);
 //	printf("%d\n", info_memoria->retardo_mp);
 //	printf("%d\n", info_memoria->retardo_fs);
