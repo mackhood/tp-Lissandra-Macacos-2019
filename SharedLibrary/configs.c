@@ -8,7 +8,7 @@
 
 #include "configs.h"
 
-void leerConfig(char * configPath,t_log* logger) {
+/*void leerConfig(char * configPath,t_log* logger) {
 	leerArchivoDeConfiguracion(configPath,logger);
 	log_info(logger, "Archivo de configuracion leido correctamente");
 }
@@ -25,3 +25,4 @@ void leerArchivoDeConfiguracion(char * configPath,t_log* logger) {
  	setearValores(archivoConfig);
  	config_destroy(archivoConfig);
  }
+*/
