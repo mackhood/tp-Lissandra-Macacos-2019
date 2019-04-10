@@ -50,3 +50,12 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+
+
+#agregados por Gerjugo
+
+*.xml
+*.cproject
+.project
+*.log
