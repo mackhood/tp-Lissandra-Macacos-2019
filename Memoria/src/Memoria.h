@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "config_memoria.h"
+#include <commons/string.h>
 
 
 
