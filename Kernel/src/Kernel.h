@@ -14,7 +14,7 @@
 #include <commons/config.h>
 #include <commons/log.h>
 #include "kernelConfig.h"
-
+#include "Consola.h"
 const char* path_configs ="/home/utnso/workspace/tp-2019-1c-Macacos/Kernel/kernel.properties";
 #define KERNEL_LOG_PATH "./kernel.log"
 
@@ -29,6 +29,9 @@ void initThreadAPI ();
 void setearValores(t_config * archivoConfig);
 
 
+pthread_t threadConexionMemoria;
+pthread_t threadConsola;
+pthread_t threadPlanificador;
 
 
 

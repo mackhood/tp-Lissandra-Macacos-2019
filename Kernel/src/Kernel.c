@@ -12,6 +12,10 @@
 
 
 
+
+
+
+
 void setearValores(t_config * archivoConfig) {
 
 
@@ -70,3 +74,25 @@ void initConfiguracion(){
 
 
 }
+
+
+
+void initThread(){
+
+	logInfo("Creando thread para atender las conexiones de memoria");
+	//pthread_create(&threadConexionMemoria, NULL, (void*) handler_conexion_dam_cpu, tSafa);
+	pthread_create(&threadConsola, NULL, (void*)handleConsola, tKernel);
+	//pthread_create(&threadPlanificador, NULL, (void*)handlePlanificadorLP, tKernel);
+
+
+	pthread_join(threadConsola ,NULL);
+	pthread_join(threadPlanificador ,NULL);
+	pthread_join(threadConexionMemoria, NULL);
+
+}
+
+
+
+
+
+

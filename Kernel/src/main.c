@@ -16,7 +16,7 @@ int main(void) {
 	puts("!!!Hello World!!!"); /* prints !!!Hello World!!! */
 
 	initConfiguracion();
-
+	initThread();
 
 
 	return EXIT_SUCCESS;
