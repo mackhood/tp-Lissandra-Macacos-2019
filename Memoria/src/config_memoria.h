@@ -37,33 +37,4 @@ t_info info_memoria;
 
 void levantar_config();
 
-
-
-typedef struct{
-		int puerto;
-		char* ip_fs;
-		int puerto_fs;
-		char** ip_seeds;
-		// puerto seeds;
-		int retardo_mp;
-		int retardo_fs;
-		int tamanio_mem;
-		int tiempo_jour;
-		int tiempo_goss;
-		int numero_memoria;
-}memoria_config;
-
-typedef struct {
-
-	memoria_config* config;
-
-
-}t_memoria;
-
-
-
-t_memoria* tMemoria;
-
-void initConfiguracion();
-
 #endif /* CONFIG_MEMORIA_H_ */

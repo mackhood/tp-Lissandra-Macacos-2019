@@ -26,7 +26,7 @@ int levantar_servidor(int puerto){
 	direccion_servidor.sin_port = htons(puerto);
 	//Fin de la burocracia
 
-		//Bind: <CREO> que le pide un puerto al SO, lo reserva para él y le asocia un puerto
+	//Bind: <CREO> que le pide un puerto al SO, lo reserva para él y le asocia un puerto
 	if( bind(socket_escucha, (void*) &direccion_servidor, sizeof(direccion_servidor)) <0){
 		close(socket_escucha);
 		print_error(ERROR_RESEVAR_PUERTO);
@@ -35,7 +35,7 @@ int levantar_servidor(int puerto){
 
 	//ESCUCHO PUERTO
 
-	//Habilita a que los clientes es conecten
+	//Habilita a que los clientes se conecten
 	if(listen(socket_escucha, MAX_CLIENTES_ENCOLADOS) <0){
 		close(socket_escucha);
 		print_error(ERROR_ESCUCHAR_PUERTO);
@@ -62,7 +62,7 @@ void crear_socket(int *socket_destino){
 }
 
 
-int conectar_a_servidor(char* ip, int puerto){
+int conectar_a_servidor(char* ip, int puerto, char* nombreCliente){
 	int socket_cliente;
 	crear_socket(&socket_cliente);
 
@@ -83,11 +83,10 @@ int conectar_a_servidor(char* ip, int puerto){
 	}
 
 	//enviamos un mensaje de que se conecto
-	/*int numero_a_mandar = 1;
 
-	printf("mando el %d (me conecto)\n", numero_a_mandar);
+	printf("soy %s y me estoy conectando a mi servidor\n", nombreCliente);
 
-	prot_enviar_mensaje(socket_cliente, 0, sizeof(int), &numero_a_mandar);
-	return socket_cliente;*/
+	prot_enviar_mensaje(socket_cliente, 0, strlen(nombreCliente), nombreCliente);
+	return socket_cliente;
 }
 

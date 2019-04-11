@@ -25,7 +25,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <pthread.h>
-//#include "protocolo.h"
+#include "protocolo.h"
 
 //Mensajes de error
 #define ERROR_CREAR_SOCKET "Crear socket con socket()"
@@ -44,8 +44,7 @@
 /*Prototipos*/
 int levantar_servidor(int puerto);
 void crear_socket(int *socket);
-int conectar_a_servidor(char* ip, int puerto);
-int aceptar_DAM(int socket_escucha);
+int conectar_a_servidor(char* ip, int puerto, char* nombreCliente);
 void print_error(char *mensaje);
 
 
