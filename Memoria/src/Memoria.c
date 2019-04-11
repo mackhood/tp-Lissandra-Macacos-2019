@@ -1,10 +1,9 @@
 #include "Memoria.h"
 
-int main(void) {
-	puts("!!!Hello World!!!\n"); /* prints !!!Hello World!!! */
+int main() {
 
 	levantar_config();
-	printf("%s\n", string_from_format("asd"));
+	//levantar_config();
 //	printf("%d\n", info_memoria->puerto);
 //	printf("%d\n", info_memoria->retardo_mp);
 //	printf("%d\n", info_memoria->retardo_fs);
