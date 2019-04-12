@@ -4,6 +4,11 @@ int main() {
 
 	levantar_config();
 
+	printf("%d\n", info_memoria.puerto);
+	printf("%s\n", info_memoria.ip_fs);
+	printf("%d\n", info_memoria.puerto_fs);
+
+
 	//NO BORRAR DEBIDO A QUE LO USAMOS EN BREVE
 	/*socket_kernel = levantar_servidor(info_memoria.puerto);
 	t_prot_mensaje* handshake_kernel = prot_recibir_mensaje(socket_kernel);
