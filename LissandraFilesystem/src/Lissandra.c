@@ -22,4 +22,5 @@ void setearValores(t_config * archivoConfig)
 void iniciarServidor()
 {
 	socket_memoria = levantar_servidor(server_puerto);
+	
 }

@@ -18,8 +18,8 @@
 /* ESTRUCTURAS */
 
 t_list * hilos;
-t_list compactadores;
-t_list memorias;
+t_list * compactadores;
+t_list * memorias;
 t_list * memtable;
 
 

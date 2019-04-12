@@ -37,7 +37,9 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SharedLibrary/Debug}&quot;"/>
 								</option>
 								<option id="gnu.c.link.option.libs.1267569935" name="Libraries (-l)" superClass="gnu.c.link.option.libs" useByScannerDiscovery="false" valueType="libs">
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="SharedLibrary"/>
+									<listOptionValue builtIn="false" value="SharedLibrary"/>
+									<listOptionValue builtIn="false" value="pthread"/>
+									<listOptionValue builtIn="false" value="readline"/>
 									<listOptionValue builtIn="false" value="commons"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.301772917" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
