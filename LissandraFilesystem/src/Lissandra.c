@@ -5,6 +5,7 @@ void inicializar()
 	hilos = list_create();
 	memorias = list_create();
 	compactadores = list_create();
+
 	iniciarServidor();
 }
 
@@ -22,5 +23,9 @@ void setearValores(t_config * archivoConfig)
 void iniciarServidor()
 {
 	socket_memoria = levantar_servidor(server_puerto);
-	
+}
+
+void insertKeysetter(t_keysetter * clave, t_tabla * tabla)
+{
+	//list_add();
 }
