@@ -7,6 +7,7 @@
 #include <commons/log.h>
 #include <pthread.h>
 #include <loggers.h>
+#include <dirent.h>
 #include <string.h>
 #include <netdb.h> // Para getaddrinfo
 #include <unistd.h>
@@ -31,7 +32,7 @@ typedef struct {
 
 typedef struct {
 	t_list * keysetters;
-}t_tabla;
+}t_memtable;
 
 
 /*VARIABLES GLOBALES*/
@@ -46,7 +47,7 @@ int socketFD;
 void mainLissandra();
 void setearValores(t_config * archivoConfig);
 void iniciarServidor();
-void inserKeysetter(t_keysetter * clave, t_tabla * tabla);
+void inserKeysetter(t_keysetter * clave, t_memtable * tabla);
 
 
 
