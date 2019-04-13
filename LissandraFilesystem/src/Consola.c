@@ -14,10 +14,11 @@ void consola()
 	puts("-_____________________________________________________");
 	puts("CONSOLA");
 	puts("------ Escriba un comando ------");
-	puts("1. - Ejecutar  <ruta-al-escritorio>");
-	puts("2. - Status    <id_dtb>");
-	puts("3. - Finalizar <id_dtb>");
-	puts("4. - Metricas  <id_dtb>");
+	puts("1. - select");
+	puts("2. - insert");
+	puts("3. - create");
+	puts("4. - DESCRIBE");
+	puts("5. - drop");
 	char* linea;
 //ejecutar prueba.txt
 	while (1) {

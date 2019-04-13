@@ -23,16 +23,16 @@ t_list * memorias;
 t_list * memtable;
 
 
-/*struct {
+typedef struct {
 	int tempstamp;
 	int key;
-	char*clave;
+	char* clave;
 }t_keysetter;
 
-struct {
+typedef struct {
 	t_list * keysetters;
 }t_tabla;
-*/
+
 
 /*VARIABLES GLOBALES*/
 int retardo;
@@ -46,7 +46,7 @@ int socketFD;
 void mainLissandra();
 void setearValores(t_config * archivoConfig);
 void iniciarServidor();
-
+void inserKeysetter(t_keysetter * clave, t_tabla * tabla);
 
 
 
