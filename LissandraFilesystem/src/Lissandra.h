@@ -36,17 +36,18 @@ typedef struct {
 
 
 /*VARIABLES GLOBALES*/
+
+int socket_memoria;
+int socketFD;
 int retardo;
 char* server_ip;
 int server_puerto;
-int socket_memoria;
-int socketFD;
 
 /* FUNCIONES */
 
 void mainLissandra();
-void setearValores(t_config * archivoConfig);
 void iniciarServidor();
+void setearValoresLissandra(t_config * archivoConfig);
 void inserKeysetter(t_keysetter * clave, t_memtable * tabla);
 
 

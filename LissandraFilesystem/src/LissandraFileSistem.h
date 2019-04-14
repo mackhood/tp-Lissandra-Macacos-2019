@@ -21,16 +21,22 @@
 #include "FileSistem.h"
 #include "Consola.h"
 
+/* ESTRUCTURAS */
+
+t_list * hilos;
 
 /* VARIABLES GLOBALES */
 t_log * loggerLFL;
-t_list * hilos;
+
+
+
 
 /* SEMAFOROS */
 
 /* FUNCIONES */
 int main(void);
 void iniciar();
+void setearValores(t_config * archivoConfig);
 void iniciarConsola();
 void iniciarLissandra();
 void iniciarFileSistem();
