@@ -15,7 +15,6 @@
 #include <commons/string.h>
 #include <readline/history.h>
 #include <stdio.h>
-#include "config_memoria.h"
 
 typedef void Funcion ();
 
