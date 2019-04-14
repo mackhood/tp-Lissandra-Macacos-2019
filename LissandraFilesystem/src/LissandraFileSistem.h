@@ -34,7 +34,7 @@ void iniciar();
 void iniciarConsola();
 void iniciarLissandra();
 void iniciarFileSistem();
-
+void iniciarCompactador();
 
 
 #endif /* LISSANDRAFILESISTEM_H_ */

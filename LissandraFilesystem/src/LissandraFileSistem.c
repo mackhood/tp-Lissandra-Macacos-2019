@@ -8,8 +8,6 @@ int main(void)
 	leerConfig(lissandraFL_config_ruta,loggerLFL);
 	hilos = list_create();
 	iniciar();
-
-	while(1);
 	return EXIT_SUCCESS;
 }
 
@@ -24,7 +22,7 @@ void iniciarConsola(){
 	pthread_t hiloConsola;
 	log_info(loggerLFL,"MAIN: Se inicio un hilo para manejar la consola.");
 	pthread_create(&hiloConsola, NULL, (void *) consola, NULL);
-	pthread_detach(hiloConsola);
+	pthread_join(hiloConsola, NULL);
 }
 
 void iniciarLissandra()

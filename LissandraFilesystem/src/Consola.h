@@ -10,7 +10,7 @@
 #include <string.h>
 
 /* ESTRUCTURAS */
-typedef int Funcion ();
+typedef void Funcion ();
 
 typedef struct {
 	char* nombre;
