@@ -8,6 +8,7 @@
 #include <readline/history.h>
 #include <stdio.h>
 #include <string.h>
+#include "LFLExternals.h"
 
 /* ESTRUCTURAS */
 typedef void Funcion ();
