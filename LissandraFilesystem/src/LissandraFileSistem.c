@@ -11,6 +11,12 @@ int main(void)
 	return EXIT_SUCCESS;
 }
 
+void setearValores(t_config * archivoConfig)
+{
+	setearValoresLissandra(archivoConfig);
+	setearValoresFileSistem(archivoConfig);
+}
+
 void iniciar()
 {
 	iniciarConsola();
@@ -28,7 +34,7 @@ void iniciarConsola(){
 void iniciarLissandra()
 {
 	pthread_t hiloLissandra;
-	log_info(loggerLFL,"MAIN: Se inicio un hilo para manejar la consola.");
+	log_info(loggerLFL,"MAIN: Se inicio un hilo para manejar a Lissandra.");
 	pthread_create(&hiloLissandra, NULL, (void *) mainLissandra, NULL);
 	pthread_detach(hiloLissandra);
 }
@@ -36,7 +42,7 @@ void iniciarLissandra()
 void iniciarCompactador()
 {
 	pthread_t hiloCompactador;
-	log_info(loggerLFL,"MAIN: Se inicio un hilo para manejar la consola.");
+	log_info(loggerLFL,"MAIN: Se inicio un hilo para manejar el Compactador.");
 	pthread_create(&hiloCompactador, NULL, (void *) mainCompactador, NULL);
 	pthread_detach(hiloCompactador);
 }
@@ -44,7 +50,7 @@ void iniciarCompactador()
 void iniciarFileSistem()
 {
 	pthread_t hiloFileSistem;
-	log_info(loggerLFL,"MAIN: Se inicio un hilo para manejar la consola.");
+	log_info(loggerLFL,"MAIN: Se inicio un hilo para manejar el FileSistem.");
 	pthread_create(&hiloFileSistem, NULL, (void *) mainFileSistem, NULL);
 	pthread_detach(hiloFileSistem);
 }

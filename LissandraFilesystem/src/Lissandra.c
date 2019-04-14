@@ -8,17 +8,16 @@ void inicializar()
 
 	iniciarServidor();
 }
-
+void setearValoresLissandra(t_config * archivoConfig)
+{
+	retardo = config_get_int_value(archivoConfig, "RETARDO");
+	server_puerto = config_get_int_value(archivoConfig, "PUERTO_ESCUCHA");
+}
 void mainLissandra ()
 {
 	inicializar();
 }
 
-void setearValores(t_config * archivoConfig)
-{
-	retardo = config_get_int_value(archivoConfig, "RETARDO");
-	server_puerto = config_get_int_value(archivoConfig, "PUERTO_ESCUCHA");
-}
 
 void iniciarServidor()
 {
