@@ -6,7 +6,6 @@ void levantar_config(){
 
 	info_memoria.puerto = config_get_int_value(conf_mapeada, "PUERTO");
 	info_memoria.ip_fs = (char*)malloc(IP_SIZE);
-	printf("hice el malloc\n");
 	strcpy(info_memoria.ip_fs, config_get_string_value(conf_mapeada, "IP_FS"));
 	info_memoria.puerto_fs = config_get_int_value(conf_mapeada, "PUERTO_FS");
 	//IP_SEED
