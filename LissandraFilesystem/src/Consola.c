@@ -6,7 +6,7 @@ COMANDO comandos[] = {
 		{"create",create},
 		{"DESCRIBE",describe},
 		{"drop",drop},
-		{(char *) NULL, (Function *) NULL}
+		{(char *) NULL, (Funcion *) NULL}
 };
 
 void consola()

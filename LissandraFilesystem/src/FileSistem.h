@@ -13,6 +13,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <commons/collections/list.h>
+#include "LFLExternals.h"
 
 /* VARIABLES GLOBALES */
 

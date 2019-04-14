@@ -15,6 +15,7 @@
 #include <sys/wait.h>
 #include <commons/collections/list.h>
 #include <conexiones.h>
+#include "LFLExternals.h"
 
 /* ESTRUCTURAS */
 
