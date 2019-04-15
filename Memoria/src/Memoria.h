@@ -9,7 +9,7 @@
 #include <time.h>
 
 typedef struct{
-	size_t key;
+	uint16_t key;
 	time_t timestamp;
 	char* value;
 } t_pagina;
