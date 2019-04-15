@@ -5,7 +5,16 @@ int main() {
 	time_t ahora = time(NULL);
 	printf("%ld\n", ahora);
 
+	//nos lo pasa el file system el tamanio del value, pero por ahora es 4 por el ejemplo
+	//la key es un uint16_t, tiene 16 bits por ende 2 bytes y no abarca numeros negativos (un int 4 bytes por ende 32 bits y si abarca negativos)
+	int tamanio_value = 4;
+	//el time_t es en segundos
+
+	int tamanio_pag = sizeof(uint16_t) + tamanio_value + sizeof(time_t);
+
 	levantar_config();
+	int cant_marcos = info_memoria.tamanio_mem / tamanio_pag;
+	printf("el sizeof int es de %d, el sizeof uint es de %d, el tamanio del time_t es %d, tamanio pag %d, cantidad de marcos %d\n",sizeof(int),sizeof(uint16_t),sizeof(time_t),tamanio_pag, cant_marcos);
 	initThread();
 
 	//NO BORRAR DEBIDO A QUE LO USAMOS EN BREVE
@@ -33,20 +42,4 @@ void initThread(){
 	pthread_join(threadConsola ,NULL);
 }
 
-void inicializarMemoria(){
-	//nos lo pasa el file system el tamanio del value, pero por ahora es 4 por el ejemplo
-	uint16_t tamanio_value = 4;
-	//el time_t es en segundos
 
-
-
-	int tamanio_pag = sizeof(uint16_t) + tamanio_value + sizeof(time_t);
-	int cant_marcos = info_memoria.tamanio_mem / tamanio_pag;
-
-	t_pagina* memoria = malloc(info_memoria.tamanio_mem);
-	bool* marco_libre = (bool*)calloc(cant_marcos, sizeof(bool));
-
-	for(int i = 0; i<cant_marcos; i++){
-		marco_libre[i] = 1;
-	}
-}
