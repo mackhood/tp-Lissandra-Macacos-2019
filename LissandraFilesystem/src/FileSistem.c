@@ -12,7 +12,7 @@ void setearValoresFileSistem(t_config * archivoConfig)
 
 void crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion)
 {
-	/*DIR* newdir;
+	DIR* newdir;
 	char buff[128];
 	memset(buff,0,sizeof(buff));
 	strcpy(buff, punto_montaje);
@@ -63,13 +63,12 @@ void crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCom
 				closedir(newdir);
 		}
 	}
-	free(buff);
-	free(newdir);*/
+	free(newdir);
 }
 
 int crearMetadata (char* direccion, char* consistencia, int particiones, int tiempoCompactacion)
 {
-	/*char* direccionDelMetadata;
+	char* direccionDelMetadata;
 	FILE* metadata;
 	direccionDelMetadata = strcat(direccion, "Metadata.bin");
 	metadata = fopen(direccionDelMetadata, "wb+");
@@ -80,11 +79,23 @@ int crearMetadata (char* direccion, char* consistencia, int particiones, int tie
 	}
 	else
 	{
-		char* Linea = malloc(15);
-		Linea = strcat("Consistencia=",consistencia"\n");
+		char* Linea = malloc(17);
+		Linea = strcat("CONSISTENCIA=",consistencia);
+		strcat(Linea, "\n");
 		fwrite(Linea, strlen(Linea), 1, metadata);
 		free(Linea);
-	}*/
+		/*char* Linea2 = malloc(17);
+		char * cant_particion;
+		Linea2 = strcat("PARTICIONES=",particiones);
+		strcat(Linea2, "\n");
+		fwrite(Linea2, strlen(Linea2), 1, metadata);
+		free(Linea2);
+		char* Linea3 = malloc(17);
+		Linea3 = strcat("Consistencia=",consistencia);
+		strcat(Linea3, "\n");
+		fwrite(Linea3, strlen(Linea3), 1, metadata);
+		free(Linea3);*/
+	}
 }
 
 int crearParticiones(char* direccionFinal, int particiones)
