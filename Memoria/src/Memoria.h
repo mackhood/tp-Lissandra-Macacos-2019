@@ -43,6 +43,7 @@ int socket_fs;
 void setearValores();
 void initThread();
 void levantarEstrMemorias();
+void levantarConexion();
 
 //funciones dentro de hilos
 void escucharKernel();

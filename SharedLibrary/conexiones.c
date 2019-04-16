@@ -86,7 +86,7 @@ int conectar_a_servidor(char* ip, int puerto, char* nombreCliente){
 
 	printf("soy %s y me estoy conectando a mi servidor\n", nombreCliente);
 
-	prot_enviar_mensaje(socket_cliente, 0, strlen(nombreCliente), nombreCliente);
+	prot_enviar_mensaje(socket_cliente, CONEXION, strlen(nombreCliente), nombreCliente);
 	return socket_cliente;
 }
 

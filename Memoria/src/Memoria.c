@@ -3,15 +3,11 @@
 int main() {
 
 	levantar_config();
+	levantarConexion();
 	levantarEstrMemorias();
 	initThread();
 
-	//NO BORRAR DEBIDO A QUE LO USAMOS EN BREVE
-	/*socket_kernel = levantar_servidor(info_memoria.puerto);
-	t_prot_mensaje* handshake_kernel = prot_recibir_mensaje(socket_kernel);
-	printf("el mensaje es %s\n", (char*)handshake_kernel->payload);
-
-	socket_fs = conectar_a_servidor(info_memoria.ip_fs, info_memoria.puerto_fs, "Memoria");*/
+	//socket_fs = conectar_a_servidor(info_memoria.ip_fs, info_memoria.puerto_fs, "Memoria");*/
 
 	while(1);
 	return EXIT_SUCCESS;
@@ -32,6 +28,13 @@ void initThread(){
 	pthread_join(threadConsola ,NULL);
 }
 
+void levantarConexion(){
+	socket_kernel = levantar_servidor(info_memoria.puerto);
+	t_prot_mensaje* handshake_kernel = prot_recibir_mensaje(socket_kernel);
+	char* nombre_cliente = leer_string_de_mensaje(handshake_kernel);
+	printf("el cliente es %s\n", nombre_cliente);
+}
+
 void levantarEstrMemorias(){
 
 	//funciona asi el time_t
@@ -46,7 +49,7 @@ void levantarEstrMemorias(){
 	cant_lugares = info_memoria.tamanio_mem / tamanio_pag;
 	printf("el sizeof int es de %d, el sizeof uint es de %d, el tamanio del time_t es %d, tamanio pag %d, cantidad de marcos %d\n",sizeof(int),sizeof(uint16_t),sizeof(time_t),tamanio_pag, cant_lugares);
 
-	//_____________________PRUEBA_______________________
+	//_____________________PRUEBA________________________________________//
 
 	//creo lista de segmentos
 	lista_segmentos = list_create();
@@ -80,6 +83,7 @@ void levantarEstrMemorias(){
 	printf("el value de la pagina es %s\n", est_pagina_def->pagina->value);
 	printf("el timestamp de la pagina es %ld\n", est_pagina_def->pagina->timestamp);
 
+	//__________________________FIN DE PRUEBA_________________________________________________//
 }
 
 
