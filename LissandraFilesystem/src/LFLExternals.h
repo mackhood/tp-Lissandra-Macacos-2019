@@ -18,7 +18,6 @@
 #include <readline/history.h>
 
 
-
 /* VARIABLES GLOBALES */
 t_log * loggerLFL;
 

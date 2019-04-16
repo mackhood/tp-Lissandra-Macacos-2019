@@ -8,16 +8,17 @@ void mainFileSistem()
 void setearValoresFileSistem(t_config * archivoConfig)
 {
 	punto_montaje = config_get_string_value(archivoConfig, "PUNTO_MONTAJE");
+	crearTabla("TablaA", "SC","5", "6000");
 }
 
-void crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion)
+void crearTabla(char* nombre, char* consistencia, char* particiones, char* tiempoCompactacion)
 {
 	DIR* newdir;
 	char buff[128];
 	memset(buff,0,sizeof(buff));
 	strcpy(buff, punto_montaje);
 
-	if(NULL == (newdir = opendir(punto_montaje)))// reviso si el punot de montaje es accesible
+	if(NULL == (newdir = opendir(punto_montaje)))// reviso si el punto de montaje es accesible
 	{
 		log_info(loggerLFL,"FileSistem: El directorio que usted desea crear no es accesible");
 		exit(1);
@@ -52,21 +53,21 @@ void crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCom
 		}
 		else
 		{
-			int resultsb = crearParticiones(direccionFinal, particiones); //Crea archivos .bin
-			if(resultsb == 1)
-			{
-				log_info(loggerLFL, "FileSistem: Error al crear tabla, abortando");
-				closedir(newdir);
-				exit(1);
-			}
-			else
+			//int resultsb = crearParticiones(direccionFinal, particiones); //Crea archivos .bin
+			//if(resultsb == 1)
+			//{
+			//	log_info(loggerLFL, "FileSistem: Error al crear tabla, abortando");
+			//	closedir(newdir);
+			//	exit(1);
+			//}
+			//else
 				closedir(newdir);
 		}
 	}
 	free(newdir);
 }
 
-int crearMetadata (char* direccion, char* consistencia, int particiones, int tiempoCompactacion)
+int crearMetadata (char* direccion, char* consistencia, char* particiones, char* tiempoCompactacion)
 {
 	char* direccionDelMetadata;
 	FILE* metadata;
@@ -84,6 +85,7 @@ int crearMetadata (char* direccion, char* consistencia, int particiones, int tie
 		strcat(Linea, "\n");
 		fwrite(Linea, strlen(Linea), 1, metadata);
 		free(Linea);
+		return 0;
 		/*char* Linea2 = malloc(17);
 		char * cant_particion;
 		Linea2 = strcat("PARTICIONES=",particiones);
@@ -98,8 +100,8 @@ int crearMetadata (char* direccion, char* consistencia, int particiones, int tie
 	}
 }
 
-int crearParticiones(char* direccionFinal, int particiones)
+/*int crearParticiones(char* direccionFinal, char* particiones)
 {
 
-}
+}*/
 

@@ -46,3 +46,9 @@
 [INFO] 09:34:48:463 LissandraFileSystem/(7626:7626): MAIN: Se inicio un hilo para manejar la consola.
 [INFO] 09:34:48:463 LissandraFileSystem/(7626:7626): MAIN: Se inicio un hilo para manejar la consola.
 [INFO] 09:34:48:463 LissandraFileSystem/(7626:7626): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 22:15:57:438 LissandraFileSystem/(3542:3542): Archivo de configuracion leido correctamente
+[INFO] 22:16:06:626 LissandraFileSystem/(3542:3542): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 22:17:21:972 LissandraFileSystem/(3542:3542): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 22:17:23:407 LissandraFileSystem/(3542:3542): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 22:17:32:130 LissandraFileSystem/(3542:3542): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 22:21:00:678 LissandraFileSystem/(3782:3782): FileSistem: El directorio que usted desea crear no es accesible
