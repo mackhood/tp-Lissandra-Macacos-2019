@@ -16,26 +16,40 @@ typedef struct{
 
 typedef struct{
 	int nro_pag;
-	//es una lista de t_paginas
-	t_list* pagina;
+	t_pagina* pagina;
 	int flag;
+}t_est_pag;
+
+typedef struct{
+	//es una lista de t_est_pag
+	t_list* paginas;
 }t_tabla_pag;
 
 typedef struct{
 	char* nombre_tabla;
-	t_tabla_pag* tabla_paginas;
+	t_tabla_pag tabla_paginas;
 }t_segmento;
 
 t_list* lista_segmentos;
+size_t tamanio_pag;
+size_t tamanio_value; //nos lo pasa el fs
+size_t cant_lugares;
 
+//sockets
 int socket_kernel;
 int socket_fs;
 
+//funciones
 void setearValores();
 void initThread();
+void levantarEstrMemorias();
+
+//funciones dentro de hilos
+void escucharKernel();
 
 
 pthread_t threadConsola;
+pthread_t threadReqKernel;
 
 
 #endif /* MEMORIA_H_ */
