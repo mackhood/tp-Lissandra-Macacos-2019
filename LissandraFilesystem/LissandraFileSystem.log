@@ -46,3 +46,50 @@
 [INFO] 09:34:48:463 LissandraFileSystem/(7626:7626): MAIN: Se inicio un hilo para manejar la consola.
 [INFO] 09:34:48:463 LissandraFileSystem/(7626:7626): MAIN: Se inicio un hilo para manejar la consola.
 [INFO] 09:34:48:463 LissandraFileSystem/(7626:7626): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 22:15:57:438 LissandraFileSystem/(3542:3542): Archivo de configuracion leido correctamente
+[INFO] 22:16:06:626 LissandraFileSystem/(3542:3542): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 22:17:21:972 LissandraFileSystem/(3542:3542): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 22:17:23:407 LissandraFileSystem/(3542:3542): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 22:17:32:130 LissandraFileSystem/(3542:3542): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 22:21:00:678 LissandraFileSystem/(3782:3782): FileSistem: El directorio que usted desea crear no es accesible
+[INFO] 21:38:12:217 LissandraFileSystem/(8354:8354): FileSistem: Se procede a la creacion del directorio
+[INFO] 21:38:18:283 LissandraFileSystem/(8354:8354): FileSistem: No se pudo crear el archivo Metadata
+[INFO] 21:38:23:273 LissandraFileSystem/(8354:8354): FileSistem: Error al crear tabla, abortando
+[INFO] 21:55:06:789 LissandraFileSystem/(9884:9884): FileSistem: Se procede a la creacion del directorio
+[INFO] 21:55:06:789 LissandraFileSystem/(9884:9884): FileSistem: No se pudo crear el archivo Metadata
+[INFO] 21:55:06:789 LissandraFileSystem/(9884:9884): FileSistem: Error al crear tabla, abortando
+[INFO] 22:04:12:397 LissandraFileSystem/(10210:10210): FileSistem: Se procede a la creacion del directorio
+[INFO] 22:04:14:443 LissandraFileSystem/(10210:10210): FileSistem: No se pudo crear el archivo Metadata
+[INFO] 22:05:59:248 LissandraFileSystem/(10385:10385): FileSistem: Se procede a la creacion del directorio
+[INFO] 22:06:26:729 LissandraFileSystem/(10385:10385): FileSistem: No se pudo crear el archivo Metadata
+[INFO] 22:06:37:180 LissandraFileSystem/(10385:10385): FileSistem: Error al crear tabla, abortando
+[INFO] 22:09:26:276 LissandraFileSystem/(10589:10589): FileSistem: Se procede a la creacion del directorio
+[INFO] 22:10:41:443 LissandraFileSystem/(10589:10589): FileSistem: No se pudo crear el archivo Metadata
+[INFO] 22:14:40:814 LissandraFileSystem/(11041:11041): FileSistem: Se procede a la creacion del directorio
+[INFO] 22:20:26:804 LissandraFileSystem/(11336:11336): FileSistem: Se procede a la creacion del directorio
+[INFO] 22:21:09:786 LissandraFileSystem/(11394:11394): FileSistem: Se procede a la creacion del directorio
+[INFO] 22:21:39:452 LissandraFileSystem/(11484:11484): FileSistem: Se procede a la creacion del directorio
+[INFO] 22:23:07:449 LissandraFileSystem/(11585:11585): FileSistem: Se procede a la creacion del directorio
+[INFO] 22:28:22:190 LissandraFileSystem/(11857:11857): FileSistem: Se procede a la creacion del directorio
+[INFO] 22:28:54:826 LissandraFileSystem/(11922:11922): FileSistem: Se procede a la creacion del directorio
+[INFO] 22:32:18:529 LissandraFileSystem/(12148:12148): FileSistem: Se procede a la creacion del directorio
+[INFO] 22:34:18:422 LissandraFileSystem/(12314:12314): FileSistem: Se procede a la creacion del directorio
+[INFO] 22:35:22:926 LissandraFileSystem/(12451:12451): FileSistem: Se procede a la creacion del directorio
+[INFO] 22:35:40:125 LissandraFileSystem/(12484:12484): FileSistem: Se procede a la creacion del directorio
+[INFO] 22:36:35:748 LissandraFileSystem/(12525:12525): FileSistem: Se procede a la creacion del directorio
+[INFO] 22:37:27:590 LissandraFileSystem/(12634:12634): FileSistem: Se procede a la creacion del directorio
+[INFO] 23:03:26:951 LissandraFileSystem/(13637:13637): FileSistem: Se procede a la creacion del directorio
+[INFO] 23:04:09:143 LissandraFileSystem/(13714:13714): FileSistem: Se procede a la creacion del directorio
+[INFO] 23:04:45:244 LissandraFileSystem/(13811:13811): FileSistem: Se procede a la creacion del directorio
+[INFO] 23:05:20:523 LissandraFileSystem/(13888:13888): FileSistem: Se procede a la creacion del directorio
+[INFO] 23:06:50:188 LissandraFileSystem/(13980:13980): FileSistem: Se procede a la creacion del directorio
+[INFO] 10:52:38:33 LissandraFileSystem/(7306:7306): FileSistem: Se procede a la creacion del directorio
+[INFO] 11:38:27:544 LissandraFileSystem/(9246:9246): FileSistem: Se procede a la creacion del directorio
+[INFO] 11:39:41:770 LissandraFileSystem/(9403:9403): FileSistem: Se procede a la creacion del directorio
+[INFO] 11:42:23:462 LissandraFileSystem/(9564:9564): FileSistem: Se procede a la creacion del directorio
+[INFO] 11:45:02:940 LissandraFileSystem/(9912:9912): FileSistem: Se procede a la creacion del directorio
+[INFO] 11:47:19:368 LissandraFileSystem/(10117:10117): FileSistem: Se procede a la creacion del directorio
+[INFO] 11:48:48:828 LissandraFileSystem/(10231:10231): FileSistem: Se procede a la creacion del directorio
+[INFO] 11:49:36:216 LissandraFileSystem/(10358:10358): FileSistem: Se procede a la creacion del directorio
+[INFO] 11:51:06:329 LissandraFileSystem/(10511:10511): FileSistem: Se procede a la creacion del directorio
+[INFO] 11:56:44:707 LissandraFileSystem/(10760:10760): FileSistem: Se procede a la creacion del directorio

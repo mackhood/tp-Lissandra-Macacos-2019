@@ -16,7 +16,7 @@
 #include <conexiones.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-
+#include <commons/string.h>
 
 
 /* VARIABLES GLOBALES */
