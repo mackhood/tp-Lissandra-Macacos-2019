@@ -8,19 +8,23 @@ void mainFileSistem()
 void setearValoresFileSistem(t_config * archivoConfig)
 {
 	punto_montaje = config_get_string_value(archivoConfig, "PUNTO_MONTAJE");
-	crearTabla("TablaA", "SC","5", "6000");
+	crearTabla("TablaA", "SC", 5, 6000);
 }
 
-void crearTabla(char* nombre, char* consistencia, char* particiones, char* tiempoCompactacion)
+void crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion)
 {
 	DIR* newdir;
 	char buff[128];
 	char* tablename = string_new();
+	char* puntodemontaje = string_new();
+	strcpy(puntodemontaje, punto_montaje);
 	strcpy(tablename, nombre);
 	memset(buff,0,sizeof(buff));
-	strcpy(buff, punto_montaje);
+	strcat(puntodemontaje, "Tables/");
+	strcpy(buff, puntodemontaje);
 
-	if(NULL == (newdir = opendir(punto_montaje)))// reviso si el punto de montaje es accesible
+
+	if(NULL == (newdir = opendir(puntodemontaje)))// reviso si el punto de montaje es accesible
 	{
 		log_info(loggerLFL,"FileSistem: El directorio que usted desea crear no es accesible");
 		exit(1);
@@ -29,8 +33,9 @@ void crearTabla(char* nombre, char* consistencia, char* particiones, char* tiemp
 	{
 		char* direccionFinal = string_new();
 		strcat(tablename,"/");
-		strncpy(buff + strlen(buff),tablename,strlen(tablename));
-		strncpy(direccionFinal, tablename, strlen(tablename));
+		strncpy(buff + strlen(buff), tablename, strlen(tablename));
+		strcat(puntodemontaje, tablename);
+		strncpy(direccionFinal, puntodemontaje, strlen(puntodemontaje));
 
 		log_info(loggerLFL, "FileSistem: Se procede a la creacion del directorio");
 		mkdir(buff, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); //creo el directorio de la tabla con sus respectivos permisos
@@ -55,15 +60,15 @@ void crearTabla(char* nombre, char* consistencia, char* particiones, char* tiemp
 		}
 		free(direccionFinal);
 	}
-	free(newdir);
+
 }
 
-int crearMetadata (char* direccion, char* consistencia, char* particiones, char* tiempoCompactacion)
+int crearMetadata (char* direccion, char* consistencia, int particiones, int tiempoCompactacion)
 {
-	char* direccionDelMetadata;
+	char* direccionDelMetadata = string_new();
 	FILE* metadata;
-	direccionDelMetadata = strcat(direccion, "Metadata.bin");
-	metadata = fopen(direccionDelMetadata, "wb+");
+	direccionDelMetadata = strcat(direccion, "Metadata.cfg");
+	metadata = fopen(direccionDelMetadata, "w+");
 	if(metadata == NULL)
 	{
 		log_info(loggerLFL,"FileSistem: No se pudo crear el archivo Metadata");
@@ -71,23 +76,31 @@ int crearMetadata (char* direccion, char* consistencia, char* particiones, char*
 	}
 	else
 	{
-		char* Linea = malloc(17);
-		Linea = strcat("CONSISTENCIA=",consistencia);
-		strcat(Linea, "\n");
+		char* Linea = string_new();
+		Linea = malloc(17);
+		strcpy(Linea, "CONSISTENCIA=");
+		strcat(Linea, consistencia);
+		strcat(Linea,"\n");
 		fwrite(Linea, strlen(Linea), 1, metadata);
 		free(Linea);
-		return 0;
-		/*char* Linea2 = malloc(17);
-		char * cant_particion;
-		Linea2 = strcat("PARTICIONES=",particiones);
+		char* Linea2 = string_new();
+		char* cantparticiones = string_new();
+		Linea2 = malloc(sizeof(particiones) + 14);
+		strcpy(Linea2, "PARTICIONES=");
+		cantparticiones = string_itoa(particiones);
+		strcat(Linea2, cantparticiones);
 		strcat(Linea2, "\n");
 		fwrite(Linea2, strlen(Linea2), 1, metadata);
 		free(Linea2);
-		char* Linea3 = malloc(17);
-		Linea3 = strcat("Consistencia=",consistencia);
+		char* Linea3 = string_new();
+		char* tiempoEntreCompactaciones = string_new();
+		Linea3 = malloc(sizeof(tiempoCompactacion) + 28);
+		strcpy(Linea3, "TIEMPOENTRECOMPACTACIONES=");
+		tiempoEntreCompactaciones = string_itoa(tiempoCompactacion);
+		strcat(Linea3, tiempoEntreCompactaciones);
 		strcat(Linea3, "\n");
 		fwrite(Linea3, strlen(Linea3), 1, metadata);
-		free(Linea3);*/
+		return 0;
 	}
 }
 
