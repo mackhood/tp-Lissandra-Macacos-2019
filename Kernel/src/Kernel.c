@@ -71,7 +71,7 @@ void initConfiguracion(){
 	tKernel = malloc(sizeof(t_kernel));
 	tKernel->config = kernelConfig;
 
-
+	socket_memoria = conectar_a_servidor(tKernel->config->ip_memoria, tKernel->config->puerto_memoria, "Kernel");
 
 }
 

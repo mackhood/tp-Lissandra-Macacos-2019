@@ -29,7 +29,13 @@ void initThread(){
 }
 
 void levantarConexion(){
-	socket_kernel = levantar_servidor(info_memoria.puerto);
+
+	socket_escucha = levantar_servidor(info_memoria.puerto);
+
+	struct sockaddr_in direccion_cliente;
+	unsigned int tamanio_direccion = sizeof(direccion_cliente);
+
+	socket_kernel = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion);
 	t_prot_mensaje* handshake_kernel = prot_recibir_mensaje(socket_kernel);
 	char* nombre_cliente = leer_string_de_mensaje(handshake_kernel);
 	printf("el cliente es %s\n", nombre_cliente);

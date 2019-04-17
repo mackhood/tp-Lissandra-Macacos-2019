@@ -28,7 +28,7 @@ void initConfiguracion();
 void initThreadAPI ();
 void setearValores(t_config * archivoConfig);
 
-
+int socket_memoria;
 pthread_t threadConexionMemoria;
 pthread_t threadConsola;
 pthread_t threadPlanificador;

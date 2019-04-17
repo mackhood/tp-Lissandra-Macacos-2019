@@ -3,10 +3,10 @@
 
 #include "../../SharedLibrary/protocolo.h"
 #include "../../SharedLibrary/conexiones.h"
-#include <stdint.h>
 #include "config_memoria.h"
 #include "Consola.h"
 #include <time.h>
+#include <stdint.h>
 
 typedef struct{
 	uint16_t key;
@@ -36,10 +36,11 @@ size_t tamanio_value; //nos lo pasa el fs
 size_t cant_lugares;
 
 //sockets
+int socket_escucha;
 int socket_kernel;
 int socket_fs;
 
-//funciones
+//funciones iniciales
 void setearValores();
 void initThread();
 void levantarEstrMemorias();
