@@ -25,6 +25,6 @@ void mainFileSistem();
 void setearValoresFileSistem(t_config * archivoConfig);
 void crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion);
 int crearMetadata(char* direccionFinal, char* consistencia, int particiones, int tiempoCompactacion);
-int crearParticiones(char* direccionFinal);
+int crearParticiones(char* direccionFinal, int particiones);
 
 #endif /* FILESISTEM_H_ */
