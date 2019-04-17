@@ -15,6 +15,8 @@ void crearTabla(char* nombre, char* consistencia, char* particiones, char* tiemp
 {
 	DIR* newdir;
 	char buff[128];
+	char* tablename = string_new();
+	strcpy(tablename, nombre);
 	memset(buff,0,sizeof(buff));
 	strcpy(buff, punto_montaje);
 
@@ -28,19 +30,17 @@ void crearTabla(char* nombre, char* consistencia, char* particiones, char* tiemp
 		char* direccionFinal;
 		if(buff[strlen(buff-1)]=='/') //reviso si me pusieron una barra al final de la dirección
 		{
-			char* nombreconbarra = malloc(strlen(nombreconbarra));
-			nombreconbarra = strcat(nombre,"/");
-			strncpy(buff + strlen(buff),nombreconbarra,7);
-			strcpy(direccionFinal, nombreconbarra);
+
+			strcat(tablename,"/");
+			strncpy(buff + strlen(buff),tablename,7);
+			strcpy(direccionFinal, tablename);
 		}
 		else
 		{
-			char* nombreconbarra = malloc(strlen(nombreconbarra));
-			nombreconbarra = strcat(nombre,"/");
-			char* nombrecondosbarras = malloc(strlen(nombrecondosbarras));
-			nombrecondosbarras = strcat("/",nombreconbarra);
-			strncpy(buff + strlen(buff),nombrecondosbarras,8);
-			strcpy(direccionFinal, nombrecondosbarras);
+			strcat(tablename,"/");
+			tablename = strcat("/",tablename);
+			strncpy(buff + strlen(buff),tablename,8);
+			strcpy(direccionFinal, tablename);
 		}
 		log_info(loggerLFL, "FileSistem: Se procede a la creacion del directorio");
 		mkdir(buff, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); //creo el directorio de la tabla con sus respectivos permisos
@@ -63,6 +63,7 @@ void crearTabla(char* nombre, char* consistencia, char* particiones, char* tiemp
 			//else
 				closedir(newdir);
 		}
+		free(direccionFinal);
 	}
 	free(newdir);
 }
