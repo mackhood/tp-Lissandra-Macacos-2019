@@ -32,7 +32,8 @@ typedef struct {
 }t_keysetter;
 
 typedef struct {
-	t_list * keysetters;
+	t_keysetter keysetter;
+	char* tabla;
 }t_memtable;
 
 
