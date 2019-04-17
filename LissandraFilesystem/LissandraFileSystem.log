@@ -52,3 +52,6 @@
 [INFO] 22:17:23:407 LissandraFileSystem/(3542:3542): MAIN: Se inicio un hilo para manejar el Compactador.
 [INFO] 22:17:32:130 LissandraFileSystem/(3542:3542): MAIN: Se inicio un hilo para manejar el FileSistem.
 [INFO] 22:21:00:678 LissandraFileSystem/(3782:3782): FileSistem: El directorio que usted desea crear no es accesible
+[INFO] 21:38:12:217 LissandraFileSystem/(8354:8354): FileSistem: Se procede a la creacion del directorio
+[INFO] 21:38:18:283 LissandraFileSystem/(8354:8354): FileSistem: No se pudo crear el archivo Metadata
+[INFO] 21:38:23:273 LissandraFileSystem/(8354:8354): FileSistem: Error al crear tabla, abortando

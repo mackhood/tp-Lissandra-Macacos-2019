@@ -27,21 +27,11 @@ void crearTabla(char* nombre, char* consistencia, char* particiones, char* tiemp
 	}
 	else
 	{
-		char* direccionFinal;
-		if(buff[strlen(buff-1)]=='/') //reviso si me pusieron una barra al final de la dirección
-		{
+		char* direccionFinal = string_new();
+		strcat(tablename,"/");
+		strncpy(buff + strlen(buff),tablename,strlen(tablename));
+		strncpy(direccionFinal, tablename, strlen(tablename));
 
-			strcat(tablename,"/");
-			strncpy(buff + strlen(buff),tablename,7);
-			strcpy(direccionFinal, tablename);
-		}
-		else
-		{
-			strcat(tablename,"/");
-			tablename = strcat("/",tablename);
-			strncpy(buff + strlen(buff),tablename,8);
-			strcpy(direccionFinal, tablename);
-		}
 		log_info(loggerLFL, "FileSistem: Se procede a la creacion del directorio");
 		mkdir(buff, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); //creo el directorio de la tabla con sus respectivos permisos
 		int results = crearMetadata(direccionFinal, consistencia, particiones, tiempoCompactacion); //Crea el archivio metadata
