@@ -8,7 +8,7 @@ void mainFileSistem()
 void setearValoresFileSistem(t_config * archivoConfig)
 {
 	punto_montaje = config_get_string_value(archivoConfig, "PUNTO_MONTAJE");
-	crearTabla("TablaA", "SC", 5, 6000);
+//	crearTabla("TablaA", "SC", 5, 6000);
 }
 
 void crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion)
@@ -116,7 +116,7 @@ int crearParticiones(char* direccionFinal, int particiones)
 		char* particionado = string_new();
 		char* aux = string_new();
 		particionado = malloc(strlen(direccionFinal)+sizeof(i)+4);
-		strcpy(aux, string_itoa(particiones));
+		strcpy(aux, string_itoa(i));
 		strcpy(particionado, direccionFinal);
 		strcat(particionado, aux);
 		strcat(particionado, ".bin");
