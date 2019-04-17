@@ -26,6 +26,8 @@ typedef enum{
 	DESCONEXION, //Indica que un cliente se ha desconectado (usado para instancias)
 	FALLO_AL_ENVIAR,//Todavia no aplicado. Analogo al de arriba
 
+
+
 }t_header;
 
 typedef struct{

@@ -57,5 +57,5 @@ dkms.conf
 
 *.xml
 *.cproject
-.project
+*.project
 *.log
