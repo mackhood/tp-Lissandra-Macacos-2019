@@ -36,7 +36,8 @@ void crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCom
 	{
 		if(NULL == (newdir = opendir(puntodemontaje)))// reviso si el punto de montaje es accesible
 		{
-			log_info(loggerLFL,"FileSistem: El directorio que usted desea crear no es accesible");
+			perror("[ERROR] Punto de montaje no accesible");
+			log_error(loggerLFL,"FileSistem: El punto de montaje al que usted desea entrar no es accesible");
 			exit(1);
 		}
 		else
@@ -52,7 +53,8 @@ void crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCom
 			int results = crearMetadata(direccionFinal, consistencia, particiones, tiempoCompactacion); //Crea el archivio metadata
 			if (results == 1)
 			{
-				log_info(loggerLFL, "FileSistem: Error al crear tabla, abortando");
+				perror("[ERROR] Error al crear Metadata, abortando");
+				log_error(loggerLFL, "FileSistem: Error al crear Metadata, abortando");
 				closedir(newdir);
 				exit(1);
 			}
@@ -61,7 +63,8 @@ void crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCom
 				int resultsb = crearParticiones(direccionFinal, particiones); //Crea archivos .bin
 				if(resultsb == 1)
 				{
-					log_info(loggerLFL, "FileSistem: Error al crear tabla, abortando");
+					perror("[ERROR] Error al crear particiones, abortando");
+					log_error(loggerLFL, "FileSistem: Error al crear particiones, abortando");
 					closedir(newdir);
 					exit(1);
 				}
@@ -69,6 +72,7 @@ void crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCom
 					closedir(newdir);
 			}
 			free(direccionFinal);
+			log_info(loggerLFL, "FileSystem: Tabla creada satisfactoriamente");
 		}
 	}
 }
@@ -83,7 +87,6 @@ int crearMetadata (char* direccion, char* consistencia, int particiones, int tie
 	metadata = fopen(direccionDelMetadata, "w+");
 	if(metadata == NULL)
 	{
-		log_info(loggerLFL,"FileSistem: No se pudo crear el archivo Metadata");
 		return 1;
 	}
 	else

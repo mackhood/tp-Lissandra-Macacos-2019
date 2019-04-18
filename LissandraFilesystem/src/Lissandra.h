@@ -26,8 +26,8 @@ t_list * memtable;
 
 
 typedef struct {
-	int tempstamp;
-	int key;
+	time_t timestamp;
+	uint key;
 	char* clave;
 }t_keysetter;
 

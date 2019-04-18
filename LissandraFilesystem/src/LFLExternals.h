@@ -17,6 +17,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <commons/string.h>
+#include <time.h>
 
 
 /* VARIABLES GLOBALES */
