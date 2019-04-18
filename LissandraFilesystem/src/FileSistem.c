@@ -7,60 +7,70 @@ void mainFileSistem()
 
 void setearValoresFileSistem(t_config * archivoConfig)
 {
-	punto_montaje = config_get_string_value(archivoConfig, "PUNTO_MONTAJE");
-	crearTabla("TablaA", "SC", 5, 6000);
+	punto_montaje = strdup(config_get_string_value(archivoConfig, "PUNTO_MONTAJE"));
+//	crearTabla("TABLAA", "SC", 5, 6000);
 }
 
 void crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion)
 {
+	DIR* checkdir;
+	char* checkaux = string_new();
 	DIR* newdir;
 	char buff[128];
 	char* tablename = string_new();
 	char* puntodemontaje = string_new();
 	strcpy(puntodemontaje, punto_montaje);
 	strcpy(tablename, nombre);
-	memset(buff,0,sizeof(buff));
+	memset(buff, 0, sizeof(buff));
 	strcat(puntodemontaje, "Tables/");
 	strcpy(buff, puntodemontaje);
-
-
-	if(NULL == (newdir = opendir(puntodemontaje)))// reviso si el punto de montaje es accesible
+	strcpy(checkaux, puntodemontaje);
+	strcat(checkaux, nombre);
+	if(NULL == (checkdir = opendir(checkaux)))
 	{
-		log_info(loggerLFL,"FileSistem: El directorio que usted desea crear no es accesible");
+		log_info(loggerLFL, "FileSystem: La tabla que usted quiere crear ya existe");
+		//agregar que mande aviso a Lissandra y de Lissandra a Consola
 		exit(1);
 	}
 	else
 	{
-		char* direccionFinal = string_new();
-		strcat(tablename,"/");
-		strncpy(buff + strlen(buff), tablename, strlen(tablename));
-		strcat(puntodemontaje, tablename);
-		strncpy(direccionFinal, puntodemontaje, strlen(puntodemontaje));
-
-		log_info(loggerLFL, "FileSistem: Se procede a la creacion del directorio");
-		mkdir(buff, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); //creo el directorio de la tabla con sus respectivos permisos
-		int results = crearMetadata(direccionFinal, consistencia, particiones, tiempoCompactacion); //Crea el archivio metadata
-		if (results == 1)
+		if(NULL == (newdir = opendir(puntodemontaje)))// reviso si el punto de montaje es accesible
 		{
-			log_info(loggerLFL, "FileSistem: Error al crear tabla, abortando");
-			closedir(newdir);
+			log_info(loggerLFL,"FileSistem: El directorio que usted desea crear no es accesible");
 			exit(1);
 		}
 		else
 		{
-			int resultsb = crearParticiones(direccionFinal, particiones); //Crea archivos .bin
-			if(resultsb == 1)
+			char* direccionFinal = string_new();
+			strcat(tablename,"/");
+			strncpy(buff + strlen(buff), tablename, strlen(tablename));
+			strcat(puntodemontaje, tablename);
+			strncpy(direccionFinal, puntodemontaje, strlen(puntodemontaje));
+
+			log_info(loggerLFL, "FileSistem: Se procede a la creacion del directorio");
+			mkdir(buff, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); //creo el directorio de la tabla con sus respectivos permisos
+			int results = crearMetadata(direccionFinal, consistencia, particiones, tiempoCompactacion); //Crea el archivio metadata
+			if (results == 1)
 			{
 				log_info(loggerLFL, "FileSistem: Error al crear tabla, abortando");
 				closedir(newdir);
 				exit(1);
 			}
 			else
-				closedir(newdir);
+			{
+				int resultsb = crearParticiones(direccionFinal, particiones); //Crea archivos .bin
+				if(resultsb == 1)
+				{
+					log_info(loggerLFL, "FileSistem: Error al crear tabla, abortando");
+					closedir(newdir);
+					exit(1);
+				}
+				else
+					closedir(newdir);
+			}
+			free(direccionFinal);
 		}
-		free(direccionFinal);
 	}
-
 }
 
 int crearMetadata (char* direccion, char* consistencia, int particiones, int tiempoCompactacion)
@@ -116,7 +126,7 @@ int crearParticiones(char* direccionFinal, int particiones)
 		char* particionado = string_new();
 		char* aux = string_new();
 		particionado = malloc(strlen(direccionFinal)+sizeof(i)+4);
-		strcpy(aux, string_itoa(particiones));
+		strcpy(aux, string_itoa(i));
 		strcpy(particionado, direccionFinal);
 		strcat(particionado, aux);
 		strcat(particionado, ".bin");

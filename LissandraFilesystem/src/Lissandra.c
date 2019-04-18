@@ -24,7 +24,9 @@ void iniciarServidor()
 	socket_memoria = levantar_servidor(server_puerto);
 }
 
-void insertKeysetter(t_keysetter * clave, t_memtable * tabla)
+void insertKeysetter(t_keysetter * clave, char* tabla)
 {
-	//list_add();
+/*	struct t_memtablekey* key = malloc(sizeof(t_memtablekey));
+	key->keysetter = clave;
+	strcpy(key->tabla, tabla);*/
 }
