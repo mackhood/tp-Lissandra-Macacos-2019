@@ -19,6 +19,12 @@
 #include <commons/string.h>
 #include <time.h>
 
+/* ESTRUCTURAS */
+typedef struct {
+	time_t timestamp;
+	uint key;
+	char* clave;
+}t_keysetter;
 
 /* VARIABLES GLOBALES */
 t_log * loggerLFL;

@@ -1,11 +1,11 @@
 #include "Consola.h"
 
 COMANDO comandos[] = {
-		{"select",selectt},
-		{"insert",insert},
-		{"create",create},
+		{"SELECT",selectt},
+		{"INSERT",insert},
+		{"CREATE",create},
 		{"DESCRIBE",describe},
-		{"drop",drop},
+		{"DROP",drop},
 		{(char *) NULL, (Funcion *) NULL}
 };
 
@@ -22,7 +22,7 @@ void consola()
 	char* linea;
 //ejecutar prueba.txt
 	while (1) {
-		linea = readline("\nSharks: ");
+		linea = readline("\nIngrese su comando deseado y los parámetros que necesite: ");
 
 		if (strcmp(linea, "exit")==0){
 			free(linea);
@@ -93,6 +93,15 @@ int ejecutar_linea (char * linea){
 
 void selectt (char** args)
 {
+	char* tabla = string_new();
+	strcpy(tabla, args[1]);
+	char* claveaux = string_new();
+	strcpy(claveaux, args[2]);
+	uint key = atoi(claveaux);
+	//Agregar Una Llamada a un semaforo global que le envie a Lissandra el aviso del select
+	free(tabla);
+	free(claveaux);
+
 
 }
 

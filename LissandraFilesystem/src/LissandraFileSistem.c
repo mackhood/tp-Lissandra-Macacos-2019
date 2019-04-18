@@ -8,6 +8,7 @@ int main(void)
 	leerConfig(lissandraFL_config_ruta,loggerLFL);
 	hilosLFL = list_create();
 	iniciar();
+	for(;;);
 	return EXIT_SUCCESS;
 }
 
