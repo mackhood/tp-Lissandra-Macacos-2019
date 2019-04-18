@@ -34,7 +34,7 @@ typedef struct {
 typedef struct {
 	t_keysetter keysetter;
 	char* tabla;
-}t_memtable;
+}t_memtablekey;
 
 
 /*VARIABLES GLOBALES*/
@@ -50,7 +50,7 @@ int server_puerto;
 void mainLissandra();
 void iniciarServidor();
 void setearValoresLissandra(t_config * archivoConfig);
-void inserKeysetter(t_keysetter * clave, t_memtable * tabla);
+void insertKeysetter(t_keysetter * clave, char* tabla);
 
 
 
