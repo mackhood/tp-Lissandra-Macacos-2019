@@ -1,18 +1,7 @@
-/*
- * config_memoria.h
- *
- *  Created on: 4 abr. 2019
- *      Author: utnso
- */
-
 #ifndef CONFIG_MEMORIA_H_
 #define CONFIG_MEMORIA_H_
 
-#include <commons/config.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
+#include "estructurasMemoria.h"
 
 //Tamaño de la ip
 #define IP_SIZE (sizeof(char) * (strlen("123.000.000.001") + 1))

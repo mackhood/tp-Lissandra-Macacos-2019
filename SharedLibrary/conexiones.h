@@ -8,7 +8,6 @@
 #ifndef CONEXIONES_H_
 #define CONEXIONES_H_
 
-#include <commons/config.h>
 #include <readline/readline.h>
 #include <commons/log.h>
 #include <commons/collections/list.h>
