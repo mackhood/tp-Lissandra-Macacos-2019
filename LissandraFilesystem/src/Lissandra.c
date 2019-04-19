@@ -32,7 +32,7 @@ void insertKeysetter(t_keysetter * clave, char* tabla)
 	strcpy(key->tabla, tabla);*/
 }
 
-void selectKey(char* tabla, uint receivedKey)
+void selectKey(char* tabla, uint16_t receivedKey)
 {
 
 }

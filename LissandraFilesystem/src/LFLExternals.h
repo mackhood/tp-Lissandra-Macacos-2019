@@ -22,7 +22,7 @@
 /* ESTRUCTURAS */
 typedef struct {
 	time_t timestamp;
-	uint key;
+	uint16_t key;
 	char* clave;
 }t_keysetter;
 

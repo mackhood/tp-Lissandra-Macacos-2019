@@ -97,7 +97,7 @@ void selectt (char** args)
 	strcpy(tabla, args[1]);
 	char* claveaux = string_new();
 	strcpy(claveaux, args[2]);
-	uint key = atoi(claveaux);
+	uint16_t key = atoi(claveaux);
 	//Agregar Una Llamada a un semaforo global que le envie a Lissandra el aviso del select
 	free(tabla);
 	free(claveaux);
