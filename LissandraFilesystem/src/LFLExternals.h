@@ -17,7 +17,14 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <commons/string.h>
+#include <time.h>
 
+/* ESTRUCTURAS */
+typedef struct {
+	time_t timestamp;
+	uint16_t key;
+	char* clave;
+}t_keysetter;
 
 /* VARIABLES GLOBALES */
 t_log * loggerLFL;

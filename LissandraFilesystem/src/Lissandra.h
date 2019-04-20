@@ -25,11 +25,7 @@ t_list * memorias;
 t_list * memtable;
 
 
-typedef struct {
-	int tempstamp;
-	int key;
-	char* clave;
-}t_keysetter;
+
 
 typedef struct {
 	t_keysetter keysetter;
@@ -51,7 +47,7 @@ void mainLissandra();
 void iniciarServidor();
 void setearValoresLissandra(t_config * archivoConfig);
 void insertKeysetter(t_keysetter * clave, char* tabla);
-
+void selectKey(char* tabla, uint16_t receivedKey);
 
 
 #endif /* LISSANDRA_H_ */

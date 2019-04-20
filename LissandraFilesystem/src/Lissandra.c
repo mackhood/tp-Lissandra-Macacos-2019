@@ -12,6 +12,7 @@ void setearValoresLissandra(t_config * archivoConfig)
 {
 	retardo = config_get_int_value(archivoConfig, "RETARDO");
 	server_puerto = config_get_int_value(archivoConfig, "PUERTO_ESCUCHA");
+	server_ip = strdup(config_get_string_value(archivoConfig,"IP_FILE_SYSTEM"));
 }
 void mainLissandra ()
 {
@@ -29,4 +30,9 @@ void insertKeysetter(t_keysetter * clave, char* tabla)
 /*	struct t_memtablekey* key = malloc(sizeof(t_memtablekey));
 	key->keysetter = clave;
 	strcpy(key->tabla, tabla);*/
+}
+
+void selectKey(char* tabla, uint16_t receivedKey)
+{
+
 }
