@@ -97,3 +97,111 @@
 [INFO] 18:15:59:872 LissandraFileSystem/(4078:4078): FileSistem: Se procede a la creacion del directorio
 [INFO] 18:19:06:481 LissandraFileSystem/(4317:4317): FileSistem: Se procede a la creacion del directorio
 [INFO] 18:24:10:798 LissandraFileSystem/(4708:4708): FileSistem: Se procede a la creacion del directorio
+[INFO] 18:28:03:392 LissandraFileSystem/(4967:4967): Archivo de configuracion leido correctamente
+[INFO] 18:28:03:392 LissandraFileSystem/(4967:4967): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 12:08:05:589 LissandraFileSystem/(4129:4129): FileSistem: Se procede a la creacion del directorio
+[ERROR] 12:08:05:695 LissandraFileSystem/(4129:4129): FileSistem: Error al crear Metadata, abortando
+[INFO] 12:14:15:800 LissandraFileSystem/(4765:4765): FileSistem: Se procede a la creacion del directorio
+[INFO] 12:14:15:883 LissandraFileSystem/(4765:4765): FileSystem: Tabla creada satisfactoriamente
+[INFO] 12:14:15:889 LissandraFileSystem/(4765:4765): Archivo de configuracion leido correctamente
+[INFO] 12:14:15:890 LissandraFileSystem/(4765:4765): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 12:14:15:963 LissandraFileSystem/(4765:4765): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 12:14:16:29 LissandraFileSystem/(4765:4765): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 12:14:16:83 LissandraFileSystem/(4765:4765): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 12:23:37:39 LissandraFileSystem/(5285:5285): FileSistem: Se procede a la creacion del directorio
+[INFO] 12:23:38:123 LissandraFileSystem/(5285:5285): FileSystem: Tabla creada satisfactoriamente
+[INFO] 12:23:38:131 LissandraFileSystem/(5285:5285): Archivo de configuracion leido correctamente
+[INFO] 12:23:38:132 LissandraFileSystem/(5285:5285): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 12:23:38:208 LissandraFileSystem/(5285:5285): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 12:23:38:280 LissandraFileSystem/(5285:5285): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 12:23:38:329 LissandraFileSystem/(5285:5285): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 12:25:03:79 LissandraFileSystem/(5443:5443): FileSistem: Se procede a la creacion del directorio
+[INFO] 12:25:03:171 LissandraFileSystem/(5443:5443): FileSystem: Tabla creada satisfactoriamente
+[INFO] 12:25:03:178 LissandraFileSystem/(5443:5443): Archivo de configuracion leido correctamente
+[INFO] 12:25:03:187 LissandraFileSystem/(5443:5443): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 12:25:03:261 LissandraFileSystem/(5443:5443): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 12:25:03:333 LissandraFileSystem/(5443:5443): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 12:25:03:338 LissandraFileSystem/(5443:5443): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 12:30:07:89 LissandraFileSystem/(5846:5846): FileSistem: Se procede a la creacion del directorio
+[INFO] 12:30:07:175 LissandraFileSystem/(5846:5846): FileSystem: Tabla creada satisfactoriamente
+[INFO] 12:30:07:182 LissandraFileSystem/(5846:5846): Archivo de configuracion leido correctamente
+[INFO] 12:30:07:183 LissandraFileSystem/(5846:5846): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 12:30:07:256 LissandraFileSystem/(5846:5846): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 12:30:07:315 LissandraFileSystem/(5846:5846): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 12:30:07:371 LissandraFileSystem/(5846:5846): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 12:31:14:614 LissandraFileSystem/(5996:5996): FileSistem: Se procede a la creacion del directorio
+[INFO] 12:31:14:704 LissandraFileSystem/(5996:5996): FileSystem: Tabla creada satisfactoriamente
+[INFO] 12:31:14:710 LissandraFileSystem/(5996:5996): Archivo de configuracion leido correctamente
+[INFO] 12:31:14:712 LissandraFileSystem/(5996:5996): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 12:31:14:791 LissandraFileSystem/(5996:5996): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 12:31:14:866 LissandraFileSystem/(5996:5996): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 12:31:14:871 LissandraFileSystem/(5996:5996): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 12:36:11:299 LissandraFileSystem/(6206:6206): FileSistem: Se procede a la creacion del directorio
+[INFO] 12:36:11:364 LissandraFileSystem/(6206:6206): FileSystem: Tabla creada satisfactoriamente
+[INFO] 12:36:11:369 LissandraFileSystem/(6206:6206): Archivo de configuracion leido correctamente
+[INFO] 12:36:11:371 LissandraFileSystem/(6206:6206): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 12:36:11:444 LissandraFileSystem/(6206:6206): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 12:36:11:502 LissandraFileSystem/(6206:6206): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 12:36:11:559 LissandraFileSystem/(6206:6206): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 12:38:03:637 LissandraFileSystem/(6380:6380): FileSistem: Se procede a la creacion del directorio
+[INFO] 12:38:03:699 LissandraFileSystem/(6380:6380): FileSystem: Tabla creada satisfactoriamente
+[INFO] 12:38:03:708 LissandraFileSystem/(6380:6380): Archivo de configuracion leido correctamente
+[INFO] 12:38:03:714 LissandraFileSystem/(6380:6380): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 12:38:03:777 LissandraFileSystem/(6380:6380): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 12:38:03:843 LissandraFileSystem/(6380:6380): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 12:38:03:848 LissandraFileSystem/(6380:6380): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 12:39:35:523 LissandraFileSystem/(6528:6528): FileSistem: Se procede a la creacion del directorio
+[INFO] 12:39:35:582 LissandraFileSystem/(6528:6528): FileSystem: Tabla creada satisfactoriamente
+[INFO] 12:39:35:587 LissandraFileSystem/(6528:6528): Archivo de configuracion leido correctamente
+[INFO] 12:39:35:589 LissandraFileSystem/(6528:6528): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 12:39:35:650 LissandraFileSystem/(6528:6528): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 12:39:35:707 LissandraFileSystem/(6528:6528): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 12:39:35:763 LissandraFileSystem/(6528:6528): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 12:41:26:158 LissandraFileSystem/(6701:6701): FileSistem: Se procede a la creacion del directorio
+[INFO] 12:41:26:223 LissandraFileSystem/(6701:6701): FileSystem: Tabla creada satisfactoriamente
+[INFO] 12:41:26:229 LissandraFileSystem/(6701:6701): Archivo de configuracion leido correctamente
+[INFO] 12:41:26:231 LissandraFileSystem/(6701:6701): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 12:41:26:295 LissandraFileSystem/(6701:6701): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 12:41:26:369 LissandraFileSystem/(6701:6701): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 12:41:26:374 LissandraFileSystem/(6701:6701): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 12:43:03:566 LissandraFileSystem/(6882:6882): FileSistem: Se procede a la creacion del directorio
+[INFO] 12:43:03:635 LissandraFileSystem/(6882:6882): FileSystem: Tabla creada satisfactoriamente
+[INFO] 12:43:03:640 LissandraFileSystem/(6882:6882): Archivo de configuracion leido correctamente
+[INFO] 12:43:03:642 LissandraFileSystem/(6882:6882): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 12:43:03:703 LissandraFileSystem/(6882:6882): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 12:43:03:758 LissandraFileSystem/(6882:6882): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 12:43:03:816 LissandraFileSystem/(6882:6882): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 12:47:54:561 LissandraFileSystem/(7456:7456): FileSistem: Se procede a la creacion del directorio
+[INFO] 12:47:54:619 LissandraFileSystem/(7456:7456): FileSystem: Tabla creada satisfactoriamente
+[INFO] 12:47:54:625 LissandraFileSystem/(7456:7456): Archivo de configuracion leido correctamente
+[INFO] 12:47:54:626 LissandraFileSystem/(7456:7456): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 12:47:54:686 LissandraFileSystem/(7456:7456): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 12:47:54:742 LissandraFileSystem/(7456:7456): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 12:47:54:802 LissandraFileSystem/(7456:7456): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 12:49:55:719 LissandraFileSystem/(7610:7610): FileSystem: La tabla que usted quiere crear ya existe
+[INFO] 12:50:47:950 LissandraFileSystem/(7640:7640): FileSystem: La tabla que usted quiere crear ya existe
+[INFO] 12:52:20:673 LissandraFileSystem/(7759:7759): FileSystem: La tabla que usted quiere crear ya existe
+[INFO] 12:53:31:256 LissandraFileSystem/(7793:7793): FileSystem: La tabla que usted quiere crear ya existe
+[INFO] 12:54:58:29 LissandraFileSystem/(7836:7836): FileSystem: La tabla que usted quiere crear ya existe
+[INFO] 13:01:14:483 LissandraFileSystem/(8006:8006): FileSystem: La tabla que usted quiere crear ya existe
+[INFO] 13:02:12:690 LissandraFileSystem/(8037:8037): FileSystem: La tabla que usted quiere crear ya existe
+[INFO] 13:03:41:645 LissandraFileSystem/(8152:8152): FileSystem: La tabla que usted quiere crear ya existe
+[INFO] 13:03:49:538 LissandraFileSystem/(8159:8159): FileSystem: La tabla que usted quiere crear ya existe
+[INFO] 13:04:47:2 LissandraFileSystem/(8325:8325): FileSystem: La tabla que usted quiere crear ya existe
+[INFO] 13:05:45:113 LissandraFileSystem/(8511:8511): Archivo de configuracion leido correctamente
+[INFO] 13:05:45:114 LissandraFileSystem/(8511:8511): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 13:05:45:114 LissandraFileSystem/(8511:8511): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 13:05:45:114 LissandraFileSystem/(8511:8511): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 13:05:45:114 LissandraFileSystem/(8511:8511): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 13:11:32:436 LissandraFileSystem/(8783:8783): Archivo de configuracion leido correctamente
+[INFO] 13:11:32:436 LissandraFileSystem/(8783:8783): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 13:11:32:449 LissandraFileSystem/(8783:8783): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 13:11:32:454 LissandraFileSystem/(8783:8783): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 13:11:32:465 LissandraFileSystem/(8783:8783): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 13:13:44:869 LissandraFileSystem/(8964:8964): FileSistem: Se procede a la creacion del directorio
+[INFO] 13:13:52:502 LissandraFileSystem/(8964:8964): FileSystem: Tabla creada satisfactoriamente
+[INFO] 13:14:08:49 LissandraFileSystem/(8964:8964): Archivo de configuracion leido correctamente
+[INFO] 13:14:12:712 LissandraFileSystem/(8964:8964): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 13:14:13:967 LissandraFileSystem/(8964:8964): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 13:14:15:447 LissandraFileSystem/(8964:8964): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 13:14:19:439 LissandraFileSystem/(8964:8964): MAIN: Se inicio un hilo para manejar la consola.

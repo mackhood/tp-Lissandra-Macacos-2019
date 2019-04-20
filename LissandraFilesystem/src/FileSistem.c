@@ -8,17 +8,21 @@ void mainFileSistem()
 void setearValoresFileSistem(t_config * archivoConfig)
 {
 	punto_montaje = strdup(config_get_string_value(archivoConfig, "PUNTO_MONTAJE"));
-//	crearTabla("TABLAA", "SC", 5, 6000);
+	strcat(punto_montaje, "\0");
+	crearTabla("TABLAA", "SC", 5, 6000);
 }
 
 void crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion)
 {
 	DIR* checkdir;
 	char* checkaux = string_new();
+	checkaux = malloc(strlen(nombre) + strlen(punto_montaje) + 8);
 	DIR* newdir;
 	char buff[128];
 	char* tablename = string_new();
+	tablename = malloc(strlen(nombre)+1);
 	char* puntodemontaje = string_new();
+	puntodemontaje = malloc(strlen(nombre) + strlen(punto_montaje) + 8);
 	strcpy(puntodemontaje, punto_montaje);
 	strcpy(tablename, nombre);
 	memset(buff, 0, sizeof(buff));
@@ -26,18 +30,19 @@ void crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCom
 	strcpy(buff, puntodemontaje);
 	strcpy(checkaux, puntodemontaje);
 	strcat(checkaux, nombre);
-	if(NULL == (checkdir = opendir(checkaux)))
+	if(NULL == (newdir = opendir(punto_montaje)))// reviso si el punto de montaje es accesible
 	{
-		log_info(loggerLFL, "FileSystem: La tabla que usted quiere crear ya existe");
-		//agregar que mande aviso a Lissandra y de Lissandra a Consola
+		perror("[ERROR] Punto de montaje no accesible");
+		log_error(loggerLFL,"FileSistem: El punto de montaje al que usted desea entrar no es accesible");
 		exit(1);
 	}
+
 	else
 	{
-		if(NULL == (newdir = opendir(puntodemontaje)))// reviso si el punto de montaje es accesible
+		if(NULL != (checkdir = opendir(checkaux)))
 		{
-			perror("[ERROR] Punto de montaje no accesible");
-			log_error(loggerLFL,"FileSistem: El punto de montaje al que usted desea entrar no es accesible");
+			log_info(loggerLFL, "FileSystem: La tabla que usted quiere crear ya existe");
+			//agregar que mande aviso a Lissandra y de Lissandra a Consola
 			exit(1);
 		}
 		else
@@ -46,7 +51,8 @@ void crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCom
 			strcat(tablename,"/");
 			strncpy(buff + strlen(buff), tablename, strlen(tablename));
 			strcat(puntodemontaje, tablename);
-			strncpy(direccionFinal, puntodemontaje, strlen(puntodemontaje));
+			direccionFinal = malloc(strlen(puntodemontaje) + 1);
+			strcpy(direccionFinal, puntodemontaje);
 
 			log_info(loggerLFL, "FileSistem: Se procede a la creacion del directorio");
 			mkdir(buff, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); //creo el directorio de la tabla con sus respectivos permisos
@@ -80,10 +86,12 @@ void crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCom
 int crearMetadata (char* direccion, char* consistencia, int particiones, int tiempoCompactacion)
 {
 	char* direccionaux = string_new();
+	direccionaux = malloc(strlen(direccion)+13);
 	strcpy(direccionaux, direccion);
-	char* direccionDelMetadata = string_new();
+	char* direccionDelMetadata = malloc(strlen(direccionaux)+13);
 	FILE* metadata;
-	direccionDelMetadata = strcat(direccionaux, "Metadata.cfg");
+	strcat(direccionaux, "Metadata.cfg");
+	strcpy(direccionDelMetadata, direccionaux);
 	metadata = fopen(direccionDelMetadata, "w+");
 	if(metadata == NULL)
 	{
@@ -128,6 +136,7 @@ int crearParticiones(char* direccionFinal, int particiones)
 	{
 		char* particionado = string_new();
 		char* aux = string_new();
+		aux = malloc(sizeof(i)+1);
 		particionado = malloc(strlen(direccionFinal)+sizeof(i)+4);
 		strcpy(aux, string_itoa(i));
 		strcpy(particionado, direccionFinal);
