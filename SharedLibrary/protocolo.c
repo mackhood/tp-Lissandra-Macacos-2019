@@ -151,3 +151,8 @@ char* leer_string_de_mensaje(t_prot_mensaje* mensaje){
 	string[largo_string] = '\0';
 	return string;
 }
+
+
+
+
+

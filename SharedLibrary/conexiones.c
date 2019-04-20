@@ -62,7 +62,7 @@ void crear_socket(int *socket_destino){
 }
 
 
-int conectar_a_servidor(char* ip, int puerto, char* nombreCliente){
+int conectar_a_servidor(char* ip, int puerto, char* nombre_cliente){
 	int socket_cliente;
 	crear_socket(&socket_cliente);
 
@@ -84,9 +84,25 @@ int conectar_a_servidor(char* ip, int puerto, char* nombreCliente){
 
 	//enviamos un mensaje de que se conecto
 
-	printf("soy %s y me estoy conectando a mi servidor\n", nombreCliente);
+	printf("soy %s y me estoy conectando a mi servidor\n", nombre_cliente);
 
-	prot_enviar_mensaje(socket_cliente, CONEXION, strlen(nombreCliente), nombreCliente);
+	uint16_t key = 16;
+	time_t timestamp = time(NULL);
+	int largo_value = strlen(nombre_cliente);
+
+	int tamanio_buffer = sizeof(uint16_t)+ sizeof(time_t)+ sizeof(int) + largo_value;
+	void* buffer = malloc(tamanio_buffer);
+
+	memcpy(buffer, &key, sizeof(uint16_t));
+	memcpy(buffer+sizeof(uint16_t), &timestamp, sizeof(time_t));
+	memcpy(buffer+sizeof(uint16_t)+sizeof(time_t), &largo_value, sizeof(int));
+	memcpy(buffer+sizeof(uint16_t)+sizeof(time_t)+sizeof(int), nombre_cliente, largo_value);
+
+	prot_enviar_mensaje(socket_cliente, CONEXION, tamanio_buffer, buffer);
+
+	//free(nombre_cliente); ni idea porque no me permite hacer el free
+	free(buffer);
+
 	return socket_cliente;
 }
 

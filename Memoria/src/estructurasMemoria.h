@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <unistd.h>
 #include <string.h>
 #include <readline/readline.h>
@@ -54,6 +55,10 @@ int socket_escucha;
 int socket_kernel;
 int socket_fs;
 
+//hilos
+pthread_t threadConsola;
+pthread_t threadReqKernel;
+
 //funciones iniciales
 void setearValores();
 void initThread();
@@ -63,9 +68,14 @@ void levantarConexion();
 //funciones dentro de hilos
 void escucharKernel();
 
+//funciones para la administracion de memoria
+t_pagina* estaTablaYkeyEnMemoria(char* tabla_a_buscar, uint16_t key);
+t_segmento* buscarSegmento(char* tabla_a_buscar);
+t_est_pag* buscarEstPagBuscada(uint16_t key, t_segmento* segmento_buscado);
+void aplicar_LRU();
+t_est_pag* crearPagina(time_t tiempo_de_pag, uint16_t key, int tamanio_value, char* value);
+void chequearLugaresEinsertar(t_segmento* segmento, t_est_pag* est_pag_a_ins);
 
-pthread_t threadConsola;
-pthread_t threadReqKernel;
 
 
 #endif /* ESTRUCTURASMEMORIA_H_ */

@@ -26,7 +26,9 @@ typedef enum{
 	DESCONEXION, //Indica que un cliente se ha desconectado (usado para instancias)
 	FALLO_AL_ENVIAR,//Todavia no aplicado. Analogo al de arriba
 
-
+	//Kernel-Memoria
+	KEY_SOLICITADA_SELECT,
+	SOLICITUD_TABLA,
 
 }t_header;
 
