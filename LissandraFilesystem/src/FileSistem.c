@@ -9,10 +9,10 @@ void setearValoresFileSistem(t_config * archivoConfig)
 {
 	punto_montaje = strdup(config_get_string_value(archivoConfig, "PUNTO_MONTAJE"));
 	strcat(punto_montaje, "\0");
-	crearTabla("TABLAA", "SC", 5, 6000);
+	//crearTabla("TABLAA", "SC", 5, 6000);
 }
 
-void crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion)
+int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion)
 {
 	DIR* checkdir;
 	char* checkaux = string_new();
@@ -34,7 +34,7 @@ void crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCom
 	{
 		perror("[ERROR] Punto de montaje no accesible");
 		log_error(loggerLFL,"FileSistem: El punto de montaje al que usted desea entrar no es accesible");
-		exit(1);
+		return(1);
 	}
 
 	else
@@ -42,8 +42,7 @@ void crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCom
 		if(NULL != (checkdir = opendir(checkaux)))
 		{
 			log_info(loggerLFL, "FileSystem: La tabla que usted quiere crear ya existe");
-			//agregar que mande aviso a Lissandra y de Lissandra a Consola
-			exit(1);
+			return(2);
 		}
 		else
 		{
@@ -62,7 +61,7 @@ void crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCom
 				perror("[ERROR] Error al crear Metadata, abortando");
 				log_error(loggerLFL, "FileSistem: Error al crear Metadata, abortando");
 				closedir(newdir);
-				exit(1);
+				return(1);
 			}
 			else
 			{
@@ -72,13 +71,14 @@ void crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCom
 					perror("[ERROR] Error al crear particiones, abortando");
 					log_error(loggerLFL, "FileSistem: Error al crear particiones, abortando");
 					closedir(newdir);
-					exit(1);
+					return(1);
 				}
 				else
 					closedir(newdir);
 			}
 			free(direccionFinal);
 			log_info(loggerLFL, "FileSystem: Tabla creada satisfactoriamente");
+			return(0);
 		}
 	}
 }
