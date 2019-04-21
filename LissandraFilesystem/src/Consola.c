@@ -97,7 +97,7 @@ void selectt (char** args)
 	if(chequearParametros(args, 3) == 1)
 	{
 		printf("Por favor, especifique la cantidad de parámetros solicitada");
-		log_error(loggerLFL, "Consola: solicitud errónea de parámetros");
+		log_error(loggerLFL, "Consola: solicitud posee cantidad errónea de parámetros");
 	}
 	else
 	{
@@ -125,7 +125,7 @@ void insert (char** args)
 	if(chequeo == 1)
 	{
 		printf("Por favor, especifique la cantidad de parámetros solicitada");
-		log_error(loggerLFL, "Consola: solicitud errónea de parámetros");
+		log_error(loggerLFL, "Consola: solicitud posee cantidad errónea de parámetros");
 	}
 	else
 	{
@@ -146,7 +146,7 @@ void insert (char** args)
 		}
 		else
 		{
-			char* timestampaux = string_new;
+			char* timestampaux = string_new();
 			timestampaux = malloc(strlen(args[4]));
 			strcpy(timestampaux, args[4]);
 //			time_t timestamp = strftime();
@@ -164,7 +164,7 @@ void create (char** args)
 	if(chequearParametros(args, 5) == 1)
 	{
 		printf("Por favor, especifique la cantidad de parámetros solicitada");
-		log_error(loggerLFL, "Consola: solicitud errónea de parámetros");
+		log_error(loggerLFL, "Consola: solicitud posee cantidad errónea de parámetros");
 	}
 	else
 	{
@@ -185,21 +185,29 @@ void create (char** args)
 		{
 			case 0:
 			{
+				printf("Operación exitosa\n");
 				log_info(loggerLFL, "Consola: Tabla creada satisfactoriamente");
 				break;
 			}
 			case 2:
 			{
+				printf("La tabla solicitada ya existe\n");
 				log_info(loggerLFL, "Consola: Tabla ya existía");
 				break;
 			}
 			default:
 			{
+				printf("Error al crear la tabla");
 				log_error(loggerLFL, "Consola: La tabla o alguna de sus partes no pudo ser creada");
 				break;
 			}
 		}
+		free(tabla);
+		free(consistencia);
+		free(particionesaux);
+		free(intervaloCompactacionaux);
 	}
+
 }
 
 void describe (char** args)
@@ -209,7 +217,39 @@ void describe (char** args)
 
 void drop (char** args)
 {
-
+	log_info(loggerLFL, "Consola: Se ha solicitado realizar un DROP");
+	if(chequearParametros(args, 1) == 1)
+	{
+		printf("Por favor, especifique la cantidad de parámetros solicitada");
+		log_error(loggerLFL, "Consola: solicitud posee cantidad errónea de parámetros");
+	}
+	else
+	{
+		char* tablaAEliminar = string_new();
+		tablaAEliminar = malloc(strlen(args[1]));
+		strcpy(tablaAEliminar, args[1]);
+		int results = llamarEliminarTabla(tablaAEliminar);
+		switch(results)
+		{
+		case 1:
+		{
+			printf("La tabla que usted deseaba eliminar no existe");
+			log_error(loggerLFL, "Consola: Tabla inexistente");
+			break;
+		}
+		case 0:
+		{
+			printf("La tabla ha sido eliminada exitosamente");
+			log_info(loggerLFL, "Consola: Tabla eliminada correctamente");
+			break;
+		}
+		default:
+		{
+			printf("Ocurrio un error al intentar eliminar la tabla deseada");
+			log_error(loggerLFL, "Consola: operacion no terminada");
+		}
+		}
+	}
 }
 
 int chequearParametros(char** args, int cantParametros)

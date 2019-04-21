@@ -63,3 +63,10 @@ int llamadoACrearTabla(char* nombre, char* consistencia, int particiones, int ti
 		break;
 	}
 }
+
+int llamarEliminarTabla(char* tablaPorEliminar)
+{
+	return dropTable(tablaPorEliminar);
+}
+
+

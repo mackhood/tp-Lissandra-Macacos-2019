@@ -9,7 +9,6 @@ void setearValoresFileSistem(t_config * archivoConfig)
 {
 	punto_montaje = strdup(config_get_string_value(archivoConfig, "PUNTO_MONTAJE"));
 	strcat(punto_montaje, "\0");
-	//crearTabla("TABLAA", "SC", 5, 6000);
 }
 
 int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion)
@@ -163,5 +162,103 @@ int crearParticiones(char* direccionFinal, int particiones)
 		i++;
 	}
 	return 0;
+}
+
+int dropTable(char* tablaPorEliminar)
+{
+	DIR* checkdir;
+	DIR* newdir;
+	char* checkaux = string_new();
+	char* tablename = string_new();
+	char* puntodemontaje = string_new();
+	tablename = malloc(strlen(tablaPorEliminar)+1);
+	checkaux = malloc(strlen(tablaPorEliminar) + strlen(punto_montaje) + 8);
+	puntodemontaje = malloc(strlen(tablaPorEliminar) + strlen(punto_montaje) + 8);
+	strcpy(puntodemontaje, punto_montaje);
+	strcat(puntodemontaje, "Tables/");
+	strcpy(tablename, tablaPorEliminar);
+	strcpy(checkaux, puntodemontaje);
+	strcat(checkaux, tablaPorEliminar);
+	if(NULL == (newdir = opendir(punto_montaje)))// reviso si el punto de montaje es accesible
+	{
+		perror("[ERROR] Punto de montaje no accesible");
+		log_error(loggerLFL,"FileSistem: El punto de montaje al que usted desea entrar no es accesible");
+		closedir(newdir);
+		return(1);
+	}
+	else
+	{
+		if(NULL == (checkdir = opendir(checkaux)))
+		{
+			log_info(loggerLFL, "FileSystem: La tabla que usted quiere borrar no existe");
+			return(2);
+		}
+		else
+		{
+			closedir(checkdir);
+			if (limpiadorDeArchivos(checkaux) == 1)
+			{
+				rmdir(checkaux);
+				log_info(loggerLFL, "FileSystem: el directorio ha sido eliminado correctamente");
+				return 0;
+			}
+			else
+			{
+				log_error(loggerLFL, "FileSystem: error al eliminar el directorio");
+				return(3);
+			}
+		}
+	}
+	free(tablename);
+	free(checkaux);
+	free(puntodemontaje);
+}
+
+int limpiadorDeArchivos(char* direccion)
+{
+	char* direccionMetadata = string_new();
+	direccionMetadata = malloc(strlen(direccion) + 14);
+	strcpy(direccionMetadata, direccion);
+	strcat(direccionMetadata, "/Metadata.cfg");
+	t_config * temporalArchivoConfig;
+	temporalArchivoConfig = config_create(direccionMetadata);
+	int particiones = 0;
+	particiones = config_get_int_value(temporalArchivoConfig, "PARTICIONES");
+	int i;
+	for(i = 0; i < particiones; i++)
+	{
+		char* direccionBin = string_new();
+		direccionBin = malloc(strlen(direccion) + sizeof(i) + 2);
+		strcpy(direccionBin, direccion);
+		char* archivo = string_new();
+		archivo = malloc(sizeof(i) + 1);
+		strcpy(archivo, string_itoa(i));
+		strcat(archivo, ".bin");
+		strcat(direccionBin, "/");
+		strcat(direccionBin, archivo);
+		int status = remove(direccionBin);
+		if(status == 0)
+			continue;
+		else
+		{
+			log_error(loggerLFL, "FileSystem: Error al eliminar particiones");
+			return 0;
+		}
+		free(direccionBin);
+		free(archivo);
+	}
+	int statusMeta = remove(direccionMetadata);
+	if(statusMeta == 0)
+	{
+		free(direccionMetadata);
+		config_destroy(temporalArchivoConfig);
+		return 1;
+	}
+	else
+	{
+		free(direccionMetadata);
+		config_destroy(temporalArchivoConfig);
+		return 0;
+	}
 }
 
