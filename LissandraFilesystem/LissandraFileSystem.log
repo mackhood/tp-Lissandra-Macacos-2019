@@ -205,3 +205,85 @@
 [INFO] 13:14:13:967 LissandraFileSystem/(8964:8964): MAIN: Se inicio un hilo para manejar el Compactador.
 [INFO] 13:14:15:447 LissandraFileSystem/(8964:8964): MAIN: Se inicio un hilo para manejar el FileSistem.
 [INFO] 13:14:19:439 LissandraFileSystem/(8964:8964): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 19:14:59:499 LissandraFileSystem/(13947:13947): Archivo de configuracion leido correctamente
+[INFO] 19:14:59:499 LissandraFileSystem/(13947:13947): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 19:14:59:499 LissandraFileSystem/(13947:13947): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 19:14:59:499 LissandraFileSystem/(13947:13947): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 19:14:59:499 LissandraFileSystem/(13947:13947): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 19:15:10:674 LissandraFileSystem/(13947:13951): Consola: Se ha recibido un pedido de create.
+[ERROR] 19:15:10:674 LissandraFileSystem/(13947:13951): Consola: solicitud errónea de parámetros
+[INFO] 19:15:28:635 LissandraFileSystem/(13947:13951): Consola: Se ha recibido un pedido de create.
+[ERROR] 19:15:28:635 LissandraFileSystem/(13947:13951): Consola: solicitud errónea de parámetros
+[INFO] 21:25:14:481 LissandraFileSystem/(18500:18500): Archivo de configuracion leido correctamente
+[INFO] 21:25:14:481 LissandraFileSystem/(18500:18500): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 21:25:14:481 LissandraFileSystem/(18500:18500): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 21:25:14:481 LissandraFileSystem/(18500:18500): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 21:25:14:481 LissandraFileSystem/(18500:18500): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 21:25:21:74 LissandraFileSystem/(18500:18505): Consola: Se ha solicitado realizar un DROP
+[ERROR] 21:25:21:74 LissandraFileSystem/(18500:18505): FileSystem: La tabla que usted quiere borrar no existe
+[INFO] 21:25:21:74 LissandraFileSystem/(18500:18505): Consola: Tabla eliminada correctamente
+[INFO] 22:40:56:571 LissandraFileSystem/(21284:21284): Archivo de configuracion leido correctamente
+[INFO] 22:40:56:571 LissandraFileSystem/(21284:21284): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 22:40:56:571 LissandraFileSystem/(21284:21284): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 22:40:56:571 LissandraFileSystem/(21284:21284): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 22:40:56:571 LissandraFileSystem/(21284:21284): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 22:41:04:242 LissandraFileSystem/(21284:21288): Consola: Se ha solicitado realizar un DROP
+[INFO] 22:42:32:43 LissandraFileSystem/(21343:21343): Archivo de configuracion leido correctamente
+[INFO] 22:42:32:43 LissandraFileSystem/(21343:21343): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 22:42:32:43 LissandraFileSystem/(21343:21343): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 22:42:32:43 LissandraFileSystem/(21343:21343): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 22:42:32:43 LissandraFileSystem/(21343:21343): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 22:42:36:167 LissandraFileSystem/(21343:21347): Consola: Se ha solicitado realizar un DROP
+[INFO] 22:56:14:751 LissandraFileSystem/(21883:21883): Archivo de configuracion leido correctamente
+[INFO] 22:56:18:886 LissandraFileSystem/(21883:21883): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 22:56:19:754 LissandraFileSystem/(21883:21883): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 22:56:21:36 LissandraFileSystem/(21883:21883): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 22:56:26:114 LissandraFileSystem/(21883:21883): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 22:58:20:90 LissandraFileSystem/(21883:21928): Consola: Se ha solicitado realizar un DROP
+[INFO] 23:03:32:843 LissandraFileSystem/(22289:22289): Archivo de configuracion leido correctamente
+[INFO] 23:03:32:843 LissandraFileSystem/(22289:22289): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 23:03:32:843 LissandraFileSystem/(22289:22289): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 23:03:32:843 LissandraFileSystem/(22289:22289): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 23:03:32:843 LissandraFileSystem/(22289:22289): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 23:03:37:99 LissandraFileSystem/(22289:22293): Consola: Se ha solicitado realizar un DROP
+[INFO] 23:04:55:467 LissandraFileSystem/(22382:22382): Archivo de configuracion leido correctamente
+[INFO] 23:04:55:467 LissandraFileSystem/(22382:22382): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 23:04:55:475 LissandraFileSystem/(22382:22382): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 23:04:55:486 LissandraFileSystem/(22382:22382): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 23:04:55:491 LissandraFileSystem/(22382:22382): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 23:05:47:545 LissandraFileSystem/(22382:22394): Consola: Se ha solicitado realizar un DROP
+[INFO] 23:07:56:446 LissandraFileSystem/(22605:22605): Archivo de configuracion leido correctamente
+[INFO] 23:07:56:446 LissandraFileSystem/(22605:22605): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 23:07:56:449 LissandraFileSystem/(22605:22605): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 23:07:56:456 LissandraFileSystem/(22605:22605): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 23:07:56:458 LissandraFileSystem/(22605:22605): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 23:08:16:927 LissandraFileSystem/(22605:22626): Consola: Se ha solicitado realizar un DROP
+[INFO] 23:10:29:515 LissandraFileSystem/(22785:22785): Archivo de configuracion leido correctamente
+[INFO] 23:10:29:515 LissandraFileSystem/(22785:22785): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 23:10:29:523 LissandraFileSystem/(22785:22785): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 23:10:29:526 LissandraFileSystem/(22785:22785): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 23:10:29:530 LissandraFileSystem/(22785:22785): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 23:10:46:833 LissandraFileSystem/(22785:22800): Consola: Se ha solicitado realizar un DROP
+[INFO] 23:12:23:487 LissandraFileSystem/(22976:22976): Archivo de configuracion leido correctamente
+[INFO] 23:12:23:487 LissandraFileSystem/(22976:22976): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 23:12:23:487 LissandraFileSystem/(22976:22976): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 23:12:23:487 LissandraFileSystem/(22976:22976): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 23:12:23:487 LissandraFileSystem/(22976:22976): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 23:12:26:695 LissandraFileSystem/(22976:22980): Consola: Se ha solicitado realizar un DROP
+[ERROR] 23:12:26:695 LissandraFileSystem/(22976:22980): FileSystem: Error al eliminar particiones
+[ERROR] 23:12:26:695 LissandraFileSystem/(22976:22980): FileSystem: error al eliminar el directorio
+[ERROR] 23:12:26:696 LissandraFileSystem/(22976:22980): Consola: operacion no terminada
+[INFO] 23:38:34:425 LissandraFileSystem/(3215:3215): Archivo de configuracion leido correctamente
+[INFO] 23:38:34:433 LissandraFileSystem/(3215:3215): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 23:38:34:438 LissandraFileSystem/(3215:3215): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 23:38:34:440 LissandraFileSystem/(3215:3215): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 23:38:34:450 LissandraFileSystem/(3215:3215): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 23:39:04:205 LissandraFileSystem/(3215:3311): Consola: Se ha solicitado realizar un DROP
+[INFO] 23:51:01:110 LissandraFileSystem/(4407:4407): Archivo de configuracion leido correctamente
+[INFO] 23:51:01:110 LissandraFileSystem/(4407:4407): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 23:51:01:110 LissandraFileSystem/(4407:4407): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 23:51:01:111 LissandraFileSystem/(4407:4407): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 23:51:01:111 LissandraFileSystem/(4407:4407): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 23:51:05:805 LissandraFileSystem/(4407:4411): Consola: Se ha solicitado realizar un DROP
+[INFO] 23:51:05:806 LissandraFileSystem/(4407:4411): FileSystem: el directorio ha sido eliminado correctamente
+[INFO] 23:51:05:806 LissandraFileSystem/(4407:4411): Consola: Tabla eliminada correctamente

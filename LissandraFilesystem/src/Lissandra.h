@@ -1,21 +1,8 @@
 #ifndef LISSANDRA_H_
 #define LISSANDRA_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <commons/config.h>
-#include <commons/log.h>
-#include <pthread.h>
-#include <loggers.h>
-#include <dirent.h>
-#include <string.h>
-#include <netdb.h> // Para getaddrinfo
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <sys/wait.h>
-#include <commons/collections/list.h>
-#include <conexiones.h>
 #include "LFLExternals.h"
+#include "FileSistem.h"
 
 /* ESTRUCTURAS */
 
@@ -46,8 +33,9 @@ int server_puerto;
 void mainLissandra();
 void iniciarServidor();
 void setearValoresLissandra(t_config * archivoConfig);
-void insertKeysetter(t_keysetter * clave, char* tabla);
-void selectKey(char* tabla, uint16_t receivedKey);
-
+void insertKeysetter(char* tabla, uint16_t key, char* value, time_t timestamp);
+t_keysetter selectKey(char* tabla, uint16_t receivedKey);
+int llamadoACrearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion);
+int llamarEliminarTabla(char* tablaPorEliminar);
 
 #endif /* LISSANDRA_H_ */

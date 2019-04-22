@@ -3,11 +3,7 @@
 
 #include "stddef.h"
 #include "stdlib.h"
-#include <readline/readline.h>
-#include <commons/string.h>
-#include <readline/history.h>
-#include <stdio.h>
-#include <string.h>
+#include "Lissandra.h"
 #include "LFLExternals.h"
 
 /* ESTRUCTURAS */
@@ -27,5 +23,6 @@ void insert (char** args);
 void create (char** args);
 void describe (char** args);
 void drop (char** args);
+int chequearParametros(char** args, int cantParametros);
 
 #endif /* CONSOLA_H_ */

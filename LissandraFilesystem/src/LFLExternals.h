@@ -18,6 +18,8 @@
 #include <readline/history.h>
 #include <commons/string.h>
 #include <time.h>
+#include <ftw.h>
+#include <fts.h>
 
 /* ESTRUCTURAS */
 typedef struct {

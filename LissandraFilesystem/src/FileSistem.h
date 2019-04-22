@@ -23,8 +23,10 @@ char* punto_montaje;
 
 void mainFileSistem();
 void setearValoresFileSistem(t_config * archivoConfig);
-void crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion);
+int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion);
 int crearMetadata(char* direccionFinal, char* consistencia, int particiones, int tiempoCompactacion);
 int crearParticiones(char* direccionFinal, int particiones);
+int dropTable(char* tablaPorEliminar);
+int limpiadorDeArchivos(char* direccion);
 
 #endif /* FILESISTEM_H_ */
