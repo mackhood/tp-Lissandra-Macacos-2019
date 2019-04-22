@@ -44,7 +44,7 @@ t_est_pag* crearPagina(time_t tiempo_de_pag, uint16_t key, int tamanio_value, ch
 	est_pag_nuevo->pagina->timestamp = tiempo_de_pag;
 	est_pag_nuevo->pagina->value = malloc(tamanio_value+1); //+1 por el barra 0
 	memcpy(est_pag_nuevo->pagina->value, value, tamanio_value);
-	value[tamanio_value] = '\0';
+	est_pag_nuevo->pagina->value[tamanio_value] = '\0';
 
 	return est_pag_nuevo;
 }

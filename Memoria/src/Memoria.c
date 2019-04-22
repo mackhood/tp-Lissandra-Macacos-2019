@@ -6,7 +6,7 @@ int main() {
 
 	levantarConexion();
 	levantarEstrMemorias();
-	//initThread();
+	initThread();
 
 	while(1);
 	return EXIT_SUCCESS;

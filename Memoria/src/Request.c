@@ -19,6 +19,7 @@ void selectt (char** args) {
 		//no se encuentra la pagina
 		else{
 			free(pagina_buscada);
+
 			//se lo pido al fs porque no esta
 			prot_enviar_mensaje(socket_fs, SOLICITUD_TABLA, sizeof(uint16_t), &key);
 			t_prot_mensaje* mensaje_con_tabla = prot_recibir_mensaje(socket_fs);
@@ -37,11 +38,19 @@ void selectt (char** args) {
 
 			t_est_pag* nueva_est_pag = crearPagina(tiempo_de_pag, key, tamanio_value, value);
 			chequearLugaresEinsertar(segmento_buscado, nueva_est_pag);
+
+			printf("el nombre del segmento es: %s\n", segmento_buscado->nombre_tabla);
+
+			t_est_pag* pagina_buscada = buscarEstPagBuscada(key, segmento_buscado);
+			printf("la key de la pagina es %d\n", pagina_buscada->pagina->key);
+			printf("el value de la pagina es %s\n", pagina_buscada->pagina->value);
+
 		}
 	}
 	//no se encuentra el segmento
 	else{
 		free(segmento_buscado);
+		printf("llegue hasta aca\n");
 		//creo segmento
 		t_segmento* segmento_nuevo = malloc(sizeof(t_segmento));
 		segmento_nuevo->nombre_tabla = strdup(nombre_tabla);
@@ -66,11 +75,16 @@ void selectt (char** args) {
 		t_est_pag* nueva_est_pag = crearPagina(tiempo_de_pag, key, tamanio_value, value);
 		//chequeo lugar e inserto
 		chequearLugaresEinsertar(segmento_nuevo, nueva_est_pag);
+
+		printf("el nombre del segmento es: %s\n", segmento_nuevo->nombre_tabla);
+
+		t_est_pag* pagina_buscada = buscarEstPagBuscada(key, segmento_nuevo);
+		printf("la key de la pagina es %d\n", pagina_buscada->pagina->key);
+		printf("el value de la pagina es %s\n", pagina_buscada->pagina->value);
 	}
 }
 
 void insert (char** args) {
-
 
 
 
