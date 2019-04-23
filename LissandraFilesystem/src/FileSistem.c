@@ -2,7 +2,7 @@
 
 void mainFileSistem()
 {
-	testerFileSystem();
+//	testerFileSystem();
 }
 
 void testerFileSystem()
@@ -22,7 +22,7 @@ void setearValoresFileSistem(t_config * archivoConfig)
 {
 	punto_montaje = strdup(config_get_string_value(archivoConfig, "PUNTO_MONTAJE"));
 	char* direccionMetadataFileSystem = string_new();
-	direccionMetadataFileSystem = malloc(strlen(punto_montaje) + 15);
+	direccionMetadataFileSystem = malloc(strlen(punto_montaje) + 23);
 	strcpy(direccionMetadataFileSystem, punto_montaje);
 	strcat(direccionMetadataFileSystem, "Metadata/Metadata.cfg");
 	t_config * temporalArchivoConfig;
@@ -30,20 +30,19 @@ void setearValoresFileSistem(t_config * archivoConfig)
 	blocks = config_get_int_value(temporalArchivoConfig, "BLOCKS");
 	tamanio_bloques = config_get_int_value(temporalArchivoConfig, "BLOCK_SIZE");
 
-	strcat(punto_montaje, "\0");
 }
 
 int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion)
 {
 	DIR* checkdir;
 	char* checkaux = string_new();
-	checkaux = malloc(strlen(nombre) + strlen(punto_montaje) + 8);
+	checkaux = malloc(strlen(nombre) + strlen(punto_montaje) + 9);
 	DIR* newdir;
 	char buff[128];
 	char* tablename = string_new();
-	tablename = malloc(strlen(nombre)+1);
+	tablename = malloc(strlen(nombre) + 3);
 	char* puntodemontaje = string_new();
-	puntodemontaje = malloc(strlen(nombre) + strlen(punto_montaje) + 8);
+	puntodemontaje = malloc(strlen(nombre) + strlen(punto_montaje) + 9);
 	strcpy(puntodemontaje, punto_montaje);
 	strcpy(tablename, nombre);
 	memset(buff, 0, sizeof(buff));
@@ -69,7 +68,7 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 		{
 			char* direccionFinal = string_new();
 			strcat(tablename,"/");
-			strncpy(buff + strlen(buff), tablename, strlen(tablename));
+			strncpy(buff + strlen(buff), tablename, strlen(tablename) + 1);
 			strcat(puntodemontaje, tablename);
 			direccionFinal = malloc(strlen(puntodemontaje) + 1);
 			strcpy(direccionFinal, puntodemontaje);
@@ -193,9 +192,9 @@ int dropTable(char* tablaPorEliminar)
 	char* checkaux = string_new();
 	char* tablename = string_new();
 	char* puntodemontaje = string_new();
-	tablename = malloc(strlen(tablaPorEliminar)+1);
-	checkaux = malloc(strlen(tablaPorEliminar) + strlen(punto_montaje) + 8);
-	puntodemontaje = malloc(strlen(tablaPorEliminar) + strlen(punto_montaje) + 8);
+	tablename = malloc(strlen(tablaPorEliminar) + 2);
+	checkaux = malloc(strlen(tablaPorEliminar) + strlen(punto_montaje) + 9);
+	puntodemontaje = malloc(strlen(tablaPorEliminar) + strlen(punto_montaje) + 9);
 	strcpy(puntodemontaje, punto_montaje);
 	strcat(puntodemontaje, "Tables/");
 	strcpy(tablename, tablaPorEliminar);
@@ -250,10 +249,10 @@ int limpiadorDeArchivos(char* direccion)
 	for(i = 0; i < particiones; i++)
 	{
 		char* direccionBin = string_new();
-		direccionBin = malloc(strlen(direccion) + sizeof(i) + 2);
+		direccionBin = malloc(strlen(direccion) + sizeof(i) + 3);
 		strcpy(direccionBin, direccion);
 		char* archivo = string_new();
-		archivo = malloc(sizeof(i) + 1);
+		archivo = malloc(sizeof(i) + 2);
 		strcpy(archivo, string_itoa(i));
 		strcat(archivo, ".bin");
 		strcat(direccionBin, "/");
