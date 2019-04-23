@@ -2,20 +2,26 @@
 
 void mainFileSistem()
 {
-//	testerFileSystem();
+	testerFileSystem();
 }
 
 void testerFileSystem()
 {
+	creatingFL = 1;
 	char* direccionFileSystem = string_new();
 	direccionFileSystem = malloc(strlen(punto_montaje) + 8);
 	strcpy(direccionFileSystem, punto_montaje);
 	strcat(direccionFileSystem, "Blocks/");
-	DIR* checkdir;
-	checkdir = opendir(direccionFileSystem);
-	if(NULL == readdir(checkdir))
+	char* aux = string_new();
+	aux = malloc(strlen(direccionFileSystem) + 8);
+	strcpy(aux, direccionFileSystem);
+	strcat(aux, "0.bin");
+	FILE* doomsdaypointer;
+	if(NULL == (doomsdaypointer = fopen(aux, "r")))
 		crearParticiones(direccionFileSystem, blocks);
-
+	free(direccionFileSystem);
+	free(aux);
+	fclose(doomsdaypointer);
 }
 
 void setearValoresFileSistem(t_config * archivoConfig)
@@ -29,11 +35,13 @@ void setearValoresFileSistem(t_config * archivoConfig)
 	temporalArchivoConfig = config_create(direccionMetadataFileSystem);
 	blocks = config_get_int_value(temporalArchivoConfig, "BLOCKS");
 	tamanio_bloques = config_get_int_value(temporalArchivoConfig, "BLOCK_SIZE");
-
+	free(direccionMetadataFileSystem);
+	config_destroy(temporalArchivoConfig);
 }
 
 int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion)
 {
+	creatingFL = 0;
 	DIR* checkdir;
 	char* checkaux = string_new();
 	checkaux = malloc(strlen(nombre) + strlen(punto_montaje) + 9);
@@ -157,7 +165,7 @@ int crearParticiones(char* direccionFinal, int particiones)
 		char* particionado = string_new();
 		char* aux = string_new();
 		aux = malloc(sizeof(i)+1);
-		particionado = malloc(strlen(direccionFinal)+sizeof(i)+4);
+		particionado = malloc(strlen(direccionFinal)+sizeof(i)+5);
 		strcpy(aux, string_itoa(i));
 		strcpy(particionado, direccionFinal);
 		strcat(particionado, aux);
@@ -167,18 +175,26 @@ int crearParticiones(char* direccionFinal, int particiones)
 			return 1;
 		else
 		{
-			char* size = string_new();
-			size = malloc(7);
-			strcpy(size, "SIZE=");
-			strcat(size, "\n");
-			fwrite(size, strlen(size), 1, particion);
-			char* blocks = string_new();
-			blocks = malloc (9);
-			strcpy(blocks, "BLOCKS=");
-			strcat(blocks, "\n");
-			fwrite(blocks, strlen(blocks), 1, particion);
-			free(particionado);
-			fclose(particion);
+			if(creatingFL == 0)
+			{
+				char* size = string_new();
+				size = malloc(7);
+				strcpy(size, "SIZE=");
+				strcat(size, "\n");
+				fwrite(size, strlen(size), 1, particion);
+				char* blocks = string_new();
+				blocks = malloc (9);
+				strcpy(blocks, "BLOCKS=");
+				strcat(blocks, "\n");
+				fwrite(blocks, strlen(blocks), 1, particion);
+				free(particionado);
+				fclose(particion);
+			}
+			else
+			{
+				free(particionado);
+				fclose(particion);
+			}
 		}
 		i++;
 	}

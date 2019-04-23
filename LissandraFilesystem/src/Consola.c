@@ -140,17 +140,19 @@ void insert (char** args)
 		value = malloc(strlen(args[3]));
 		if(args[4] == NULL)
 		{
-			time_t timestampact = time(NULL);
+			time_t timestampact = time(NULL)*1000;
+			printf("%ld", timestampact);
 			insertKeysetter(tabla, key, value, timestampact);
 			log_info(loggerLFL, "Consola: Insert realizado.");
 		}
 		else
 		{
 			char* timestampaux = string_new();
-			timestampaux = malloc(strlen(args[4]));
+			timestampaux = malloc(strlen(args[4]) + 1);
 			strcpy(timestampaux, args[4]);
-//			time_t timestamp = strftime();
-//			insertKeysetter(tabla, key, value, timestamp);
+			time_t timestamp = atoi(timestampaux);
+			printf("%ld", timestamp);
+			insertKeysetter(tabla, key, value, timestamp);
 		}
 		free(tabla);
 		free(claveaux);
