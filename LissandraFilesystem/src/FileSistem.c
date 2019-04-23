@@ -2,12 +2,34 @@
 
 void mainFileSistem()
 {
+	testerFileSystem();
+}
+
+void testerFileSystem()
+{
+	char* direccionFileSystem = string_new();
+	direccionFileSystem = malloc(strlen(punto_montaje) + 8);
+	strcpy(direccionFileSystem, punto_montaje);
+	strcat(direccionFileSystem, "Blocks/");
+	DIR* checkdir;
+	checkdir = opendir(direccionFileSystem);
+	if(NULL == readdir(checkdir))
+		crearParticiones(direccionFileSystem, blocks);
 
 }
 
 void setearValoresFileSistem(t_config * archivoConfig)
 {
 	punto_montaje = strdup(config_get_string_value(archivoConfig, "PUNTO_MONTAJE"));
+	char* direccionMetadataFileSystem = string_new();
+	direccionMetadataFileSystem = malloc(strlen(punto_montaje) + 15);
+	strcpy(direccionMetadataFileSystem, punto_montaje);
+	strcat(direccionMetadataFileSystem, "Metadata/Metadata.cfg");
+	t_config * temporalArchivoConfig;
+	temporalArchivoConfig = config_create(direccionMetadataFileSystem);
+	blocks = config_get_int_value(temporalArchivoConfig, "BLOCKS");
+	tamanio_bloques = config_get_int_value(temporalArchivoConfig, "BLOCK_SIZE");
+
 	strcat(punto_montaje, "\0");
 }
 
