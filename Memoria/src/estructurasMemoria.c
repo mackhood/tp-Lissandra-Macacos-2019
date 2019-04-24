@@ -1,5 +1,6 @@
 #include "estructurasMemoria.h"
 
+//ya no uso mas esta funcion
 t_pagina* estaTablaYkeyEnMemoria(char* tabla_a_buscar, uint16_t key){
 
 	t_segmento* segmento_buscado = buscarSegmento(tabla_a_buscar);

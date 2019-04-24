@@ -27,6 +27,7 @@ void iniciar()
 	iniciarLissandra();
 	iniciarCompactador();
 	iniciarFileSistem();
+	sleep(8);
 	iniciarConsola();
 }
 void iniciarConsola(){

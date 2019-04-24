@@ -29,6 +29,7 @@ typedef enum{
 	//Kernel-Memoria
 	KEY_SOLICITADA_SELECT,
 	SOLICITUD_TABLA,
+	VALUE_SOLICITADO_OK
 
 }t_header;
 

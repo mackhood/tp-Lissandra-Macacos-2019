@@ -30,7 +30,7 @@ void initThread(){
 void levantarConexion(){
 
 	//me conecto al fs primero
-	//socket_fs = conectar_a_servidor(info_memoria.ip_fs, info_memoria.puerto_fs, "Memoria");
+	socket_fs = conectar_a_servidor(info_memoria.ip_fs, info_memoria.puerto_fs, "Memoria");
 
 	//levanto servidor para Kernel
 	socket_escucha = levantar_servidor(info_memoria.puerto);

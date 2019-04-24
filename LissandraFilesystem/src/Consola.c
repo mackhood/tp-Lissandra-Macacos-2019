@@ -22,7 +22,7 @@ void consola()
 	char* linea;
 //ejecutar prueba.txt
 	while (1) {
-		linea = readline("\nIngrese su comando deseado y los parámetros que necesite: ");
+		linea = readline("\nIngrese su comando deseado y los parámetros que necesite:\n ");
 
 		if (strcmp(linea, "exit")==0){
 			free(linea);

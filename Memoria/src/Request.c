@@ -4,7 +4,7 @@
 void selectt (char** args) {
 	char* nombre_tabla = string_duplicate(args[1]);
 	uint16_t key = atoi(args[2]);
-	//t_pagina* pagina_a_buscar = estaTablaYkeyEnMemoria(nombre_tabla, key);
+	//t_pagina* pagina_a_buscar = estaTablaYkeyEnMemoria(nombre_tabla, key); esta funcion la usaba antes pero ya no va
 
 	t_segmento* segmento_buscado = buscarSegmento(nombre_tabla);
 
@@ -85,7 +85,11 @@ void selectt (char** args) {
 }
 
 void insert (char** args) {
+	char* nombre_tabla = string_duplicate(args[1]);
+	uint16_t key = atoi(args[2]);
+	char* value = string_duplicate(args[2]);
 
+	t_segmento* segmento_buscado = buscarSegmento(nombre_tabla);
 
 
 

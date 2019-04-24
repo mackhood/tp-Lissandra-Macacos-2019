@@ -22,7 +22,7 @@ typedef struct {
 
 /*VARIABLES GLOBALES*/
 
-int socket_memoria;
+int socket_escucha;
 int socketFD;
 int retardo;
 char* server_ip;
@@ -32,6 +32,7 @@ int server_puerto;
 
 void mainLissandra();
 void iniciarServidor();
+void escucharMemoria();
 void setearValoresLissandra(t_config * archivoConfig);
 void insertKeysetter(char* tabla, uint16_t key, char* value, time_t timestamp);
 t_keysetter selectKey(char* tabla, uint16_t receivedKey);
