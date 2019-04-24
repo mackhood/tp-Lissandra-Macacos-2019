@@ -49,7 +49,7 @@ void levantarBitmap(char* direccion)
 		FILE* blockpointer = fopen(direccionpuenteada, "r");
 		if(blockpointer == NULL)
 		{
-			log_error(loggerLFL, "FileSystem: No se encuentran los bloques dle File System");
+			log_error(loggerLFL, "FileSystem: No se encuentran los bloques del File System");
 			fclose(blockpointer);
 			free(direccionpuenteada);
 			free(aux);
@@ -62,14 +62,15 @@ void levantarBitmap(char* direccion)
 			fread(a, sizeof(a), 1, blockpointer);
 			if(a == NULL)
 			{
-				int aux = 0;
-				fwrite(&aux, 1, 1, bitmap);
+				int auxb = 0;
+				fwrite(&auxb, sizeof(auxb), 1, bitmap);
 			}
 			else
 			{
-				int aux = 1;
-				fwrite(&aux, 1, 1, bitmap);
+				int auxb = 1;
+				fwrite(&auxb, sizeof(auxb), 1, bitmap);
 			}
+			free(a);
 		}
 		free(aux);
 		free(direccionpuenteada);
@@ -77,6 +78,7 @@ void levantarBitmap(char* direccion)
 	}
 	fclose(bitmap);
 	free(direccionBitmap);
+	log_info(loggerLFL, "FileSystem: El bitmap fue creado satisfactoriamente");
 }
 
 void setearValoresFileSistem(t_config * archivoConfig)
