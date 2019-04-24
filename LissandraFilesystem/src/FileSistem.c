@@ -18,10 +18,65 @@ void testerFileSystem()
 	strcat(aux, "0.bin");
 	FILE* doomsdaypointer;
 	if(NULL == (doomsdaypointer = fopen(aux, "r")))
+	{
+		log_info(loggerLFL, "FileSystem: Se procede a crear los bloques de memoria");
 		crearParticiones(direccionFileSystem, blocks);
+	}
+	levantarBitmap(direccionFileSystem);
 	free(direccionFileSystem);
 	free(aux);
-	fclose(doomsdaypointer);
+}
+
+void levantarBitmap(char* direccion)
+{
+	int i;
+	log_info(loggerLFL, "FileSystem: Se procede a crear el bitmap");
+	char* direccionBitmap= string_new();
+	direccionBitmap= malloc(strlen(punto_montaje) + 21);
+	strcpy(direccionBitmap, punto_montaje);
+	strcat(direccionBitmap, "Metadata/Bitmap.bin");
+	FILE* bitmap = fopen(direccionBitmap, "wb+");
+	for(i = 0; i < blocks; i++)
+	{
+		char* direccionpuenteada = string_new();
+		direccionpuenteada = malloc(strlen(direccion) + 10);
+		strcpy(direccionpuenteada, direccion);
+		char* aux = string_new();
+		aux = malloc(sizeof(i) + 1);
+		strcpy(aux, string_itoa(i));
+		strcat(direccionpuenteada, aux);
+		strcat(direccionpuenteada, ".bin");
+		FILE* blockpointer = fopen(direccionpuenteada, "r");
+		if(blockpointer == NULL)
+		{
+			log_error(loggerLFL, "FileSystem: No se encuentran los bloques dle File System");
+			fclose(blockpointer);
+			free(direccionpuenteada);
+			free(aux);
+			break;
+		}
+		else
+		{
+			char* a = string_new();
+			a = malloc(64);
+			fread(a, sizeof(a), 1, blockpointer);
+			if(a == NULL)
+			{
+				int aux = 0;
+				fwrite(&aux, 1, 1, bitmap);
+			}
+			else
+			{
+				int aux = 1;
+				fwrite(&aux, 1, 1, bitmap);
+			}
+		}
+		free(aux);
+		free(direccionpuenteada);
+		fclose(blockpointer);
+	}
+	fclose(bitmap);
+	free(direccionBitmap);
 }
 
 void setearValoresFileSistem(t_config * archivoConfig)
