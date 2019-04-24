@@ -5,7 +5,7 @@ void inicializar()
 	hilos = list_create();
 	memorias = list_create();
 	compactadores = list_create();
-
+	memtable = list_create();
 	iniciarServidor();
 }
 
@@ -40,11 +40,11 @@ void iniciarServidor()
 		int tamanio_value;
 
 		memcpy(&key_recibida, mensaje->payload, sizeof(uint16_t));
-		memcpy(&hora_actual, mensaje->payload+sizeof(uint16_t), sizeof(time_t));
-		memcpy(&tamanio_value, mensaje->payload+sizeof(uint16_t)+sizeof(time_t), sizeof(int));
+		memcpy(&hora_actual, mensaje->payload + sizeof(uint16_t), sizeof(time_t));
+		memcpy(&tamanio_value, mensaje->payload + sizeof(uint16_t) + sizeof(time_t), sizeof(int));
 
 		char* value = malloc(tamanio_value+1);
-		memcpy(value, mensaje->payload+sizeof(uint16_t)+sizeof(time_t)+sizeof(int), tamanio_value);
+		memcpy(value, mensaje->payload + sizeof(uint16_t) + sizeof(time_t) + sizeof(int), tamanio_value);
 		value[tamanio_value] = '\0';
 
 		printf("el CLIENTE es %s y nos manda de prueba la key %d y la hora %ld\n\n", value, key_recibida, hora_actual);
@@ -61,28 +61,36 @@ void iniciarServidor()
 		}
 }
 
-void escucharMemoria(int* socket_memoria){
+void escucharMemoria(int* socket_memoria)
+{
 	int socket = *socket_memoria;
 
-	while(1){
+	while(1)
+	{
 		t_prot_mensaje* mensaje_memoria = prot_recibir_mensaje(socket);
 
-		switch(mensaje_memoria->head){
-		case SOLICITUD_TABLA:{
-			time_t tiempo_pag = time(NULL);
-			char* value = "value de prueba";
-			int tamanio_value = strlen(value);
+		switch(mensaje_memoria->head)
+		{
+			case SOLICITUD_TABLA:
+			{
+				uint16_t auxkey;
+				memcpy(&auxkey, mensaje_memoria->payload, sizeof(uint16_t));
+				//t_keysetter helpinghand = selectKey(auxkey);
+				time_t tiempo_pag = time(NULL);
+				char* value = "value de prueba";
+				int tamanio_value = strlen(value);
 
-			size_t tamanio_buffer = (sizeof(time_t)+tamanio_value+sizeof(int));
-			void* buffer = malloc(tamanio_buffer);
+				size_t tamanio_buffer = (sizeof(time_t)+tamanio_value+sizeof(int));
+				void* buffer = malloc(tamanio_buffer);
 
-			memcpy(buffer, &tiempo_pag, sizeof(time_t));
-			memcpy(buffer+sizeof(time_t), &tamanio_value, sizeof(int));
-			memcpy(buffer+sizeof(time_t)+sizeof(int), value, tamanio_value);
+				memcpy(buffer, &tiempo_pag, sizeof(time_t));
+				memcpy(buffer+sizeof(time_t), &tamanio_value, sizeof(int));
+				memcpy(buffer+sizeof(time_t)+sizeof(int), value, tamanio_value);
 
-			prot_enviar_mensaje(socket, VALUE_SOLICITADO_OK, tamanio_buffer, buffer);
-			break;
-		}
+				prot_enviar_mensaje(socket, VALUE_SOLICITADO_OK, tamanio_buffer, buffer);
+				break;
+			}
+
 		}
 	}
 }
@@ -90,16 +98,50 @@ void escucharMemoria(int* socket_memoria){
 
 
 
-void insertKeysetter(char* tabla, uint16_t key, char* value, time_t timestamp)
+void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibido, time_t timestampRecibido)
 {
-/*	struct t_memtablekey* key = malloc(sizeof(t_memtablekey));
-	key->keysetter = clave;
-	strcpy(key->tabla, tabla);*/
+	tamanio_memtable = list_size(memtable);
+	t_Memtablekeys* auxiliar = malloc(sizeof(t_Memtablekeys));
+	t_keysetter* auxiliarprima = malloc(sizeof(t_keysetter));
+	auxiliarprima->key = keyRecibida;
+	auxiliarprima->clave = valueRecibido;
+	auxiliarprima->timestamp = timestampRecibido;
+	auxiliar->tabla = tablaRecibida;
+	auxiliar->data = auxiliarprima;
+
+
+	printf("%i, %s,", auxiliar->data->key, auxiliar->tabla);
+	printf(" %s, %ld\n", auxiliar->data->clave, auxiliar->data->timestamp);
+
+	if(1 == existeTabla(tablaRecibida))
+	{
+		log_error(loggerLFL, "Lissandra: La tabla no existe, por lo que no puede insertarse una clave.");
+		printf("Tabla no existente.\n");
+	}
+	else
+	{
+		log_info(loggerLFL, "Lissandra: Se procede a insertar la clave recibida en la Memtable.");
+		list_add(memtable, auxiliar);
+		if(tamanio_memtable == list_size(memtable))
+		{
+			log_error(loggerLFL, "Lissandra: La clave fracasó en su intento de insertarse correctamente.");
+			printf("Fallo al agregar a memtable.\n");
+		}
+		else
+		{
+			log_info(loggerLFL, "Lissandra: La clave fue insertada correctamente.");
+			printf("Agregado correctamente.\n");
+		}
+	}
+	free(tamanio_memtable);
+	free(auxiliar);
+	free(auxiliarprima);
+
 }
 
-t_keysetter selectKey(char* tabla, uint16_t receivedKey)
+t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 {
-	t_keysetter key;
+	t_keysetter* key = malloc(sizeof(t_keysetter));
 	return key;
 }
 

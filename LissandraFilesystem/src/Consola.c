@@ -102,13 +102,15 @@ void selectt (char** args)
 	else
 	{
 		char* tabla = string_new();
-		tabla = malloc(strlen(args[1]));
+		tabla = malloc(strlen(args[1]) + 1);
 		strcpy(tabla, args[1]);
 		char* claveaux = string_new();
-		claveaux = malloc(strlen(args[2]));
+		claveaux = malloc(strlen(args[2]) + 1);
 		strcpy(claveaux, args[2]);
 		uint16_t key = atoi(claveaux);
-//		t_keysetter keysetterObtenido = selectKey(tabla, key);
+		t_keysetter* keysetterObtenido = selectKey(tabla, key);
+		printf("La clave obtenida mas actualizada es %i,%ld,%s"
+				, keysetterObtenido->key, keysetterObtenido->timestamp, keysetterObtenido->clave);
 		free(tabla);
 		free(claveaux);
 	}
@@ -130,14 +132,15 @@ void insert (char** args)
 	else
 	{
 		char* tabla = string_new();
-		tabla = malloc(strlen(args[1]));
+		tabla = malloc(strlen(args[1]) + 1);
 		strcpy(tabla, args[1]);
 		char* claveaux = string_new();
-		claveaux = malloc(strlen(args[2]));
+		claveaux = malloc(strlen(args[2]) + 1);
 		strcpy(claveaux, args[2]);
 		uint16_t key = atoi(claveaux);
 		char* value = string_new();
-		value = malloc(strlen(args[3]));
+		value = malloc(strlen(args[3]) + 1);
+		strcpy(value, args[3]);
 		if(args[4] == NULL)
 		{
 			time_t timestampact = time(NULL)*1000;
@@ -151,7 +154,6 @@ void insert (char** args)
 			timestampaux = malloc(strlen(args[4]) + 1);
 			strcpy(timestampaux, args[4]);
 			time_t timestamp = atoi(timestampaux);
-			printf("%ld", timestamp);
 			insertKeysetter(tabla, key, value, timestamp);
 		}
 		free(tabla);

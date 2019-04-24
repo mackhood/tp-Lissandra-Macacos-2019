@@ -11,9 +11,6 @@ t_list * compactadores;
 t_list * memorias;
 t_list * memtable;
 
-
-
-
 typedef struct {
 	t_keysetter keysetter;
 	char* tabla;
@@ -22,6 +19,7 @@ typedef struct {
 
 /*VARIABLES GLOBALES*/
 
+int tamanio_memtable;
 int socket_escucha;
 int socketFD;
 int retardo;
@@ -34,8 +32,8 @@ void mainLissandra();
 void iniciarServidor();
 void escucharMemoria();
 void setearValoresLissandra(t_config * archivoConfig);
-void insertKeysetter(char* tabla, uint16_t key, char* value, time_t timestamp);
-t_keysetter selectKey(char* tabla, uint16_t receivedKey);
+void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibido, time_t timestampRecibido);
+t_keysetter* selectKey(char* tabla, uint16_t receivedKey);
 int llamadoACrearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion);
 int llamarEliminarTabla(char* tablaPorEliminar);
 
