@@ -29,7 +29,7 @@ void testerFileSystem()
 
 void levantarBitmap(char* direccion)
 {
-	int i;
+/*	int i;
 	log_info(loggerLFL, "FileSystem: Se procede a crear el bitmap");
 	char* direccionBitmap= string_new();
 	direccionBitmap= malloc(strlen(punto_montaje) + 21);
@@ -59,16 +59,18 @@ void levantarBitmap(char* direccion)
 		{
 			char* a = string_new();
 			a = malloc(64);
-			fread(a, sizeof(a), 1, blockpointer);
-			if(a == NULL)
+			fread(a, 64, 1, blockpointer);
+			int auxcomp = 0;
+			auxcomp = strcmp(a, "");
+			if(0 == auxcomp)
 			{
 				int auxb = 0;
-				fwrite(&auxb, sizeof(auxb), 1, bitmap);
+				fwrite(&auxb, 4, 1, bitmap);
 			}
 			else
 			{
 				int auxb = 1;
-				fwrite(&auxb, sizeof(auxb), 1, bitmap);
+				fwrite(&auxb, 4, 1, bitmap);
 			}
 			free(a);
 		}
@@ -78,7 +80,7 @@ void levantarBitmap(char* direccion)
 	}
 	fclose(bitmap);
 	free(direccionBitmap);
-	log_info(loggerLFL, "FileSystem: El bitmap fue creado satisfactoriamente");
+	log_info(loggerLFL, "FileSystem: El bitmap fue creado satisfactoriamente");*/
 }
 
 void setearValoresFileSistem(t_config * archivoConfig)
