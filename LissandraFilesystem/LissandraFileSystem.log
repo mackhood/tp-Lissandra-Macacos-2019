@@ -287,3 +287,51 @@
 [INFO] 23:51:05:805 LissandraFileSystem/(4407:4411): Consola: Se ha solicitado realizar un DROP
 [INFO] 23:51:05:806 LissandraFileSystem/(4407:4411): FileSystem: el directorio ha sido eliminado correctamente
 [INFO] 23:51:05:806 LissandraFileSystem/(4407:4411): Consola: Tabla eliminada correctamente
+[INFO] 11:42:23:260 LissandraFileSystem/(5043:5043): Archivo de configuracion leido correctamente
+[INFO] 11:42:23:298 LissandraFileSystem/(5043:5043): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 11:42:23:362 LissandraFileSystem/(5043:5043): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 11:42:23:422 LissandraFileSystem/(5043:5043): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 11:42:23:478 LissandraFileSystem/(5043:5043): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 11:42:23:532 LissandraFileSystem/(5043:5047): FileSystem: Se procede a crear el bitmap
+[INFO] 11:42:26:302 LissandraFileSystem/(5043:5047): FileSystem: El bitmap fue creado satisfactoriamente
+[INFO] 11:46:06:850 LissandraFileSystem/(5043:5048): Consola: Se ha recibido un pedido de create.
+[INFO] 11:46:06:892 LissandraFileSystem/(5043:5048): FileSystem: La tabla que usted quiere crear ya existe
+[INFO] 11:46:06:893 LissandraFileSystem/(5043:5048): Consola: Tabla ya existía
+[INFO] 11:46:24:120 LissandraFileSystem/(5043:5048): Consola: Se ha recibido un pedido de insert.
+[ERROR] 11:46:24:134 LissandraFileSystem/(5043:5048): Lissandra: La tabla no existe, por lo que no puede insertarse una clave.
+[INFO] 11:48:57:741 LissandraFileSystem/(5389:5389): Archivo de configuracion leido correctamente
+[INFO] 11:48:57:777 LissandraFileSystem/(5389:5389): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 11:48:57:845 LissandraFileSystem/(5389:5389): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 11:48:57:905 LissandraFileSystem/(5389:5389): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 11:48:57:957 LissandraFileSystem/(5389:5389): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 11:48:58:7 LissandraFileSystem/(5389:5393): FileSystem: Se procede a crear el bitmap
+[INFO] 11:49:00:318 LissandraFileSystem/(5389:5393): FileSystem: El bitmap fue creado satisfactoriamente
+[INFO] 11:49:10:255 LissandraFileSystem/(5389:5394): Consola: Se ha recibido un pedido de insert.
+[INFO] 11:49:10:277 LissandraFileSystem/(5389:5394): Lissandra: Se procede a insertar la clave recibida en la Memtable.
+[INFO] 11:49:10:287 LissandraFileSystem/(5389:5394): Lissandra: La clave fue insertada correctamente.
+[INFO] 11:51:39:41 LissandraFileSystem/(5561:5561): Archivo de configuracion leido correctamente
+[INFO] 11:51:40:84 LissandraFileSystem/(5561:5561): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 11:51:40:149 LissandraFileSystem/(5561:5561): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 11:51:40:218 LissandraFileSystem/(5561:5561): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 11:51:40:270 LissandraFileSystem/(5561:5561): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 11:51:40:281 LissandraFileSystem/(5561:5564): FileSystem: Se procede a crear el bitmap
+[INFO] 11:51:43:148 LissandraFileSystem/(5561:5564): FileSystem: El bitmap fue creado satisfactoriamente
+[INFO] 11:52:16:412 LissandraFileSystem/(5561:5565): Consola: Se ha recibido un pedido de insert.
+[ERROR] 11:52:16:461 LissandraFileSystem/(5561:5565): Lissandra: La tabla no existe, por lo que no puede insertarse una clave.
+[INFO] 11:52:16:469 LissandraFileSystem/(5561:5565): Consola: Insert realizado.
+[INFO] 11:52:33:600 LissandraFileSystem/(5561:5565): Consola: Se ha recibido un pedido de insert.
+[ERROR] 11:52:33:602 LissandraFileSystem/(5561:5565): Lissandra: La tabla no existe, por lo que no puede insertarse una clave.
+[INFO] 11:52:48:506 LissandraFileSystem/(5561:5565): Consola: Se ha recibido un pedido de create.
+[INFO] 11:52:48:523 LissandraFileSystem/(5561:5565): FileSistem: Se procede a la creacion del directorio
+[INFO] 11:52:48:557 LissandraFileSystem/(5561:5565): FileSystem: Tabla creada satisfactoriamente
+[INFO] 11:52:48:566 LissandraFileSystem/(5561:5565): Consola: Tabla creada satisfactoriamente
+[INFO] 11:53:09:290 LissandraFileSystem/(5561:5565): Consola: Se ha recibido un pedido de insert.
+[INFO] 11:53:09:293 LissandraFileSystem/(5561:5565): Lissandra: Se procede a insertar la clave recibida en la Memtable.
+[INFO] 11:53:09:295 LissandraFileSystem/(5561:5565): Lissandra: La clave fue insertada correctamente.
+[INFO] 11:53:25:461 LissandraFileSystem/(5561:5565): Consola: Se ha recibido un pedido de insert.
+[INFO] 11:53:25:462 LissandraFileSystem/(5561:5565): Lissandra: Se procede a insertar la clave recibida en la Memtable.
+[INFO] 11:53:25:463 LissandraFileSystem/(5561:5565): Lissandra: La clave fue insertada correctamente.
+[INFO] 11:53:52:70 LissandraFileSystem/(5561:5565): Consola: Se ha recibido un pedido de insert.
+[INFO] 11:53:52:70 LissandraFileSystem/(5561:5565): Lissandra: Se procede a insertar la clave recibida en la Memtable.
+[INFO] 11:53:52:71 LissandraFileSystem/(5561:5565): Lissandra: La clave fue insertada correctamente.
+[INFO] 11:53:59:667 LissandraFileSystem/(5561:5565): Consola: Se ha recibido un pedido de select.

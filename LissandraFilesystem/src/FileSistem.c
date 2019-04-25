@@ -367,7 +367,7 @@ int existeTabla(char* tabla)
 	strcat(puntodemontaje, "Tables/");
 	strcpy(checkaux, puntodemontaje);
 	strcat(checkaux, tabla);
-	if(NULL == (checkdir = opendir(checkaux)))
+	if(NULL != (checkdir = opendir(checkaux)))
 		return 1;
 	else
 		return 0;

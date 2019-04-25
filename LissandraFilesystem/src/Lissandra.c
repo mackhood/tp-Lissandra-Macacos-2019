@@ -74,10 +74,11 @@ void escucharMemoria(int* socket_memoria)
 			case SOLICITUD_TABLA:
 			{
 				uint16_t auxkey;
+				char* tabla;
 				memcpy(&auxkey, mensaje_memoria->payload, sizeof(uint16_t));
-				//t_keysetter helpinghand = selectKey(auxkey);
-				time_t tiempo_pag = time(NULL);
-				char* value = "value de prueba";
+				t_keysetter* helpinghand = selectKey(tabla, auxkey);
+				time_t tiempo_pag = helpinghand->timestamp;
+				char* value = helpinghand->clave;
 				int tamanio_value = strlen(value);
 
 				size_t tamanio_buffer = (sizeof(time_t)+tamanio_value+sizeof(int));
@@ -95,12 +96,9 @@ void escucharMemoria(int* socket_memoria)
 	}
 }
 
-
-
-
 void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibido, time_t timestampRecibido)
 {
-	tamanio_memtable = list_size(memtable);
+	tamanio_memtable = memtable->elements_count;
 	t_Memtablekeys* auxiliar = malloc(sizeof(t_Memtablekeys));
 	t_keysetter* auxiliarprima = malloc(sizeof(t_keysetter));
 	auxiliarprima->key = keyRecibida;
@@ -113,7 +111,7 @@ void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecib
 	printf("%i, %s,", auxiliar->data->key, auxiliar->tabla);
 	printf(" %s, %ld\n", auxiliar->data->clave, auxiliar->data->timestamp);
 
-	if(1 == existeTabla(tablaRecibida))
+	if(0 == existeTabla(tablaRecibida))
 	{
 		log_error(loggerLFL, "Lissandra: La tabla no existe, por lo que no puede insertarse una clave.");
 		printf("Tabla no existente.\n");
@@ -122,7 +120,7 @@ void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecib
 	{
 		log_info(loggerLFL, "Lissandra: Se procede a insertar la clave recibida en la Memtable.");
 		list_add(memtable, auxiliar);
-		if(tamanio_memtable == list_size(memtable))
+		if(tamanio_memtable == memtable->elements_count)
 		{
 			log_error(loggerLFL, "Lissandra: La clave fracasó en su intento de insertarse correctamente.");
 			printf("Fallo al agregar a memtable.\n");
@@ -133,16 +131,26 @@ void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecib
 			printf("Agregado correctamente.\n");
 		}
 	}
-	free(tamanio_memtable);
+	tamanio_memtable = 0;
 	free(auxiliar);
 	free(auxiliarprima);
-
 }
 
 t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 {
-	t_keysetter* key = malloc(sizeof(t_keysetter));
-	return key;
+		t_list* keysDeTablaPedida = list_create();
+		t_Memtablekeys* auxA;
+		tablaAnalizada = malloc(strlen(tabla) + 1);
+		keysDeTablaPedida = list_filter(memtable, (void*)perteneceATabla);
+		list_sort(keysDeTablaPedida, (void*)chequearTimestamps);
+		auxA = list_get(keysDeTablaPedida, 0);
+		t_keysetter* key = malloc(sizeof(t_keysetter*));//comparadorDeKeys();
+		key = auxA->data;
+		free(auxA);
+		list_destroy(keysDeTablaPedida);
+		free(tablaAnalizada);
+		log_info(loggerLFL, "Lissandra: se ha obtenido la clave más actualizada en el proceso.");
+		return key;
 }
 
 int llamadoACrearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion)
@@ -175,4 +183,13 @@ int llamarEliminarTabla(char* tablaPorEliminar)
 	return dropTable(tablaPorEliminar);
 }
 
+int perteneceATabla(t_Memtablekeys* key)
+{
+	return tablaAnalizada == key->tabla;
+}
+
+int chequearTimestamps(t_Memtablekeys* key1, t_Memtablekeys* key2)
+{
+	return(key1->data->timestamp > key2->data->timestamp);
+}
 

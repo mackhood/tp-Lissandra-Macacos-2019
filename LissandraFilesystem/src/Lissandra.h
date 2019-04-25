@@ -25,6 +25,7 @@ int socketFD;
 int retardo;
 char* server_ip;
 int server_puerto;
+char* tablaAnalizada;
 
 /* FUNCIONES */
 
@@ -36,5 +37,7 @@ void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecib
 t_keysetter* selectKey(char* tabla, uint16_t receivedKey);
 int llamadoACrearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion);
 int llamarEliminarTabla(char* tablaPorEliminar);
+int perteneceATabla(t_Memtablekeys* key);
+int chequearTimestamps(t_Memtablekeys* key1, t_Memtablekeys* key2);
 
 #endif /* LISSANDRA_H_ */
