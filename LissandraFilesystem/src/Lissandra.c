@@ -132,15 +132,16 @@ void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecib
 		}
 	}
 	tamanio_memtable = 0;
-	free(auxiliar);
+//	free(auxiliar);
 	free(auxiliarprima);
 }
 
 t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 {
 		t_list* keysDeTablaPedida = list_create();
-		t_Memtablekeys* auxA;
+		t_Memtablekeys* auxA = malloc(sizeof(t_Memtablekeys));
 		tablaAnalizada = malloc(strlen(tabla) + 1);
+		strcpy(tablaAnalizada, tabla);
 		keysDeTablaPedida = list_filter(memtable, (void*)perteneceATabla);
 		list_sort(keysDeTablaPedida, (void*)chequearTimestamps);
 		auxA = list_get(keysDeTablaPedida, 0);
@@ -190,6 +191,6 @@ int perteneceATabla(t_Memtablekeys* key)
 
 int chequearTimestamps(t_Memtablekeys* key1, t_Memtablekeys* key2)
 {
-	return(key1->data->timestamp > key2->data->timestamp);
+	return !(key1->data->timestamp > key2->data->timestamp);
 }
 
