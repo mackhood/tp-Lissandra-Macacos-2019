@@ -109,7 +109,7 @@ void selectt (char** args)
 		strcpy(claveaux, args[2]);
 		uint16_t key = atoi(claveaux);
 		t_keysetter* keysetterObtenido = selectKey(tabla, key);
-		printf("La clave obtenida mas actualizada es %i,%ld,%s"
+		printf("La clave obtenida mas actualizada es %i,%lf,%s"
 				, keysetterObtenido->key, keysetterObtenido->timestamp, keysetterObtenido->clave);
 		free(tabla);
 		free(claveaux);
@@ -143,8 +143,8 @@ void insert (char** args)
 		strcpy(value, args[3]);
 		if(args[4] == NULL)
 		{
-			time_t timestampact = time(NULL)*1000;
-			printf("%ld", timestampact);
+			double timestampact = getCurrentTime();
+			printf("Current time: %lf\n", timestampact);
 			insertKeysetter(tabla, key, value, timestampact);
 			log_info(loggerLFL, "Consola: Insert realizado.");
 		}
@@ -153,7 +153,7 @@ void insert (char** args)
 			char* timestampaux = string_new();
 			timestampaux = malloc(strlen(args[4]) + 1);
 			strcpy(timestampaux, args[4]);
-			time_t timestamp = atoi(timestampaux);
+			double timestamp = atoi(timestampaux);
 			insertKeysetter(tabla, key, value, timestamp);
 		}
 		free(tabla);

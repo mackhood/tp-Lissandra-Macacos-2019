@@ -36,15 +36,15 @@ void iniciarServidor()
 		t_prot_mensaje* mensaje = prot_recibir_mensaje(socket_memoria);
 
 		uint16_t key_recibida;
-		time_t hora_actual;
+		double hora_actual;
 		int tamanio_value;
 
 		memcpy(&key_recibida, mensaje->payload, sizeof(uint16_t));
-		memcpy(&hora_actual, mensaje->payload + sizeof(uint16_t), sizeof(time_t));
-		memcpy(&tamanio_value, mensaje->payload + sizeof(uint16_t) + sizeof(time_t), sizeof(int));
+		memcpy(&hora_actual, mensaje->payload + sizeof(uint16_t), sizeof(double));
+		memcpy(&tamanio_value, mensaje->payload + sizeof(uint16_t) + sizeof(double), sizeof(int));
 
 		char* value = malloc(tamanio_value+1);
-		memcpy(value, mensaje->payload + sizeof(uint16_t) + sizeof(time_t) + sizeof(int), tamanio_value);
+		memcpy(value, mensaje->payload + sizeof(uint16_t) + sizeof(double) + sizeof(int), tamanio_value);
 		value[tamanio_value] = '\0';
 
 		printf("el CLIENTE es %s y nos manda de prueba la key %d y la hora %ld\n\n", value, key_recibida, hora_actual);
@@ -75,18 +75,22 @@ void escucharMemoria(int* socket_memoria)
 			{
 				uint16_t auxkey;
 				char* tabla;
+				int tamanioNombre;
 				memcpy(&auxkey, mensaje_memoria->payload, sizeof(uint16_t));
+				memcpy(&tamanioNombre, mensaje_memoria->payload + sizeof(uint16_t), sizeof(int));
+				tabla = malloc(tamanioNombre);
+				memcpy(tabla, mensaje_memoria->payload + sizeof(uint16_t) + sizeof(int), tamanioNombre);
 				t_keysetter* helpinghand = selectKey(tabla, auxkey);
-				time_t tiempo_pag = helpinghand->timestamp;
+				double tiempo_pag = helpinghand->timestamp;
 				char* value = helpinghand->clave;
 				int tamanio_value = strlen(value);
 
-				size_t tamanio_buffer = (sizeof(time_t)+tamanio_value+sizeof(int));
+				size_t tamanio_buffer = (sizeof(double)+tamanio_value+sizeof(int));
 				void* buffer = malloc(tamanio_buffer);
 
-				memcpy(buffer, &tiempo_pag, sizeof(time_t));
-				memcpy(buffer+sizeof(time_t), &tamanio_value, sizeof(int));
-				memcpy(buffer+sizeof(time_t)+sizeof(int), value, tamanio_value);
+				memcpy(buffer, &tiempo_pag, sizeof(double));
+				memcpy(buffer+sizeof(double), &tamanio_value, sizeof(int));
+				memcpy(buffer+sizeof(double)+sizeof(int), value, tamanio_value);
 
 				prot_enviar_mensaje(socket, VALUE_SOLICITADO_OK, tamanio_buffer, buffer);
 				break;
@@ -96,7 +100,7 @@ void escucharMemoria(int* socket_memoria)
 	}
 }
 
-void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibido, time_t timestampRecibido)
+void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibido, double timestampRecibido)
 {
 	tamanio_memtable = memtable->elements_count;
 	t_Memtablekeys* auxiliar = malloc(sizeof(t_Memtablekeys));

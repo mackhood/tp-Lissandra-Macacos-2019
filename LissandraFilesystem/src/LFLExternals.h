@@ -20,10 +20,11 @@
 #include <time.h>
 #include <ftw.h>
 #include <fts.h>
+#include <auxiliaryFunctions.h>
 
 /* ESTRUCTURAS */
 typedef struct {
-	time_t timestamp;
+	double timestamp;
 	uint16_t key;
 	char* clave;
 }__attribute__((packed)) t_keysetter;
