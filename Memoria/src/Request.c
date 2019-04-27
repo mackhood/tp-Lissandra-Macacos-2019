@@ -25,10 +25,10 @@ void selectt (char** args) {
 			t_prot_mensaje* mensaje_con_tabla = prot_recibir_mensaje(socket_fs);
 
 			//el fs nos manda tiempo + tamanio value + value
-			time_t tiempo_de_pag;
+			time_t tiempo_a_insertar;
 			int tamanio_value;
 
-			memcpy(&tiempo_de_pag, mensaje_con_tabla->payload, sizeof(time_t));
+			memcpy(&tiempo_a_insertar, mensaje_con_tabla->payload, sizeof(time_t));
 			memcpy(&tamanio_value, mensaje_con_tabla->payload+sizeof(time_t), sizeof(int));
 
 			char* value = malloc(tamanio_value);
@@ -36,9 +36,9 @@ void selectt (char** args) {
 
 			//prot_destruir_mensaje
 
-			t_est_pag* nueva_est_pag = crearPagina(tiempo_de_pag, key, tamanio_value, value);
-			chequearLugaresEinsertar(segmento_buscado, nueva_est_pag);
+			t_est_pag* nueva_est_pag = buscarEinsertarEnMem(segmento_buscado, key, tiempo_a_insertar, tamanio_value, value);
 
+			//prueba
 			printf("el nombre del segmento es: %s\n", segmento_buscado->nombre_tabla);
 
 			t_est_pag* pagina_buscada = buscarEstPagBuscada(key, segmento_buscado);
@@ -62,20 +62,18 @@ void selectt (char** args) {
 		t_prot_mensaje* mensaje_con_tabla = prot_recibir_mensaje(socket_fs);
 
 		//el fs nos manda tiempo + tamanio value + value
-		time_t tiempo_de_pag;
+		time_t tiempo_a_insertar;
 		int tamanio_value;
 
-		memcpy(&tiempo_de_pag, mensaje_con_tabla->payload, sizeof(time_t));
+		memcpy(&tiempo_a_insertar, mensaje_con_tabla->payload, sizeof(time_t));
 		memcpy(&tamanio_value, mensaje_con_tabla->payload+sizeof(time_t), sizeof(int));
 
 		char* value = malloc(tamanio_value);
 		memcpy(value, mensaje_con_tabla->payload+sizeof(time_t)+sizeof(int), tamanio_value);
 
-		//creo pagina
-		t_est_pag* nueva_est_pag = crearPagina(tiempo_de_pag, key, tamanio_value, value);
-		//chequeo lugar e inserto
-		chequearLugaresEinsertar(segmento_nuevo, nueva_est_pag);
+		t_est_pag* nueva_est_pag = buscarEinsertarEnMem(segmento_nuevo, key, tiempo_a_insertar, tamanio_value, value);
 
+		//prueba
 		printf("el nombre del segmento es: %s\n", segmento_nuevo->nombre_tabla);
 
 		t_est_pag* pagina_buscada = buscarEstPagBuscada(key, segmento_nuevo);

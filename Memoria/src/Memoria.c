@@ -3,11 +3,12 @@
 int main() {
 
 	levantar_config();
-
+	levantarEstrMemorias();
+/*
 	levantarConexion();
 	levantarEstrMemorias();
 	initThread();
-
+*/
 	while(1);
 	return EXIT_SUCCESS;
 }
@@ -65,12 +66,21 @@ void levantarEstrMemorias(){
 
 	//nos lo pasa el file system el tamanio del value, pero por ahora es 4 por el ejemplo
 	//la key es un uint16_t, tiene 16 bits por ende 2 bytes y no abarca numeros negativos (un int 4 bytes por ende 32 bits y si abarca negativos)
-	//el time_t es en segundos
+	//el time_t es en segundos (ya no lo usamos en la estructura pero esta bueno saberlo)
+	//el double ocupa 8 bytes
 	tamanio_value = 4; //copio la del config del fs por ahora
-	tamanio_pag = sizeof(uint16_t) + tamanio_value + sizeof(time_t);
-	//la cantidad de lugares se ira restando a medida que tenga nuevas páginas
-	cant_lugares = info_memoria.tamanio_mem / tamanio_pag;
-	printf("probando tamanios: \nel sizeof int es de %d\nel sizeof uint es de %d\nel tamanio del time_t es %d\ntamanio pag %d\ncantidad de marcos %d\n\n",sizeof(int),sizeof(uint16_t),sizeof(time_t),tamanio_pag, cant_lugares);
+	tamanio_pag = sizeof(uint16_t) + tamanio_value + sizeof(double);
+	cant_paginas = info_memoria.tamanio_mem/tamanio_pag; //PREGUNTAR ESTO PORQUE NI IDEA
+
+	//creo la memoria el cual va a tener cant_paginas posiciones
+	memoria_principal = malloc(info_memoria.tamanio_mem);
+	estados = malloc(cant_paginas * sizeof(t_estado));
+
+	//inicializo las values de la memoria
+	for(int i = 0; i<cant_paginas; i++){
+		memoria_principal[i].value = malloc(tamanio_value);
+		estados[i] = LIBRE;
+	}
 
 	//_____________________PRUEBA________________________________________//
 
@@ -84,14 +94,14 @@ void levantarEstrMemorias(){
 
 	//creo registro para la tabla
 	t_est_pag* est_pagina = malloc(sizeof(t_est_pag));
-	est_pagina->nro_pag = 4;
-	est_pagina->flag = 1;
-	est_pagina->pagina = malloc(sizeof(t_pagina));
+	//est_pagina->nro_pag = 4;
+	est_pagina->flag = 0;
+	est_pagina->pagina = &(memoria_principal[0]);
 
 	//creo la pagina a la cual apunta mi registro anterior
 	est_pagina->pagina->key = 32;
 	est_pagina->pagina->timestamp = time(NULL);
-	est_pagina->pagina->value = "hola";
+	est_pagina->pagina->value = "hol"; //incluye \0
 
 	list_add(lista_segmentos, (t_segmento*)segmento_prueba);
 	list_add((segmento_prueba->tabla_paginas.paginas), (t_est_pag*)est_pagina);
@@ -101,12 +111,13 @@ void levantarEstrMemorias(){
 	t_est_pag* est_pagina_def = (t_est_pag*)list_get(tabla, 0);
 
 	printf("prueba para el levantamiento de memoria\n");
-	printf("el nro de pagina es %d\n", est_pagina_def->nro_pag);
 	printf("el flag es %d\n", est_pagina_def->flag);
 	printf("la key de la pagina es %d\n", est_pagina_def->pagina->key);
 	printf("el value de la pagina es %s\n", est_pagina_def->pagina->value);
 	printf("el timestamp de la pagina es %ld\n", est_pagina_def->pagina->timestamp);
 	printf("finalizo la prueba de levantar memoria\n\n");
+	printf("en la posicion 0 de mi memoria se encuentra la key %d\n", memoria_principal[0].key);
+	printf("en la posicion 0 de mi memoria se encuentra el value %s\n", memoria_principal[0].value);
 
 	//busco key 32
 	t_pagina* pagina_buscada = estaTablaYkeyEnMemoria("tabla1", 32);
@@ -114,7 +125,8 @@ void levantarEstrMemorias(){
 	uint16_t key_buscado = pagina_buscada->key;
 	printf("la key buscada es %d\n", key_buscado);
 
-	//__________________________FIN DE PRUEBA_________________________________________________//
+
+	//__________________________FIN DE PRUEBA___________________________//
 }
 
 
