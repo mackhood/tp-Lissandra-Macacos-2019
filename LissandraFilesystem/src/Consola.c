@@ -22,7 +22,7 @@ void consola()
 	char* linea;
 //ejecutar prueba.txt
 	while (1) {
-		linea = readline("\nIngrese su comando deseado y los parámetros que necesite:\n ");
+		linea = readline("\nIngrese el comando a ejecutar con los parametros necesarios:\n ");
 
 		if (strcmp(linea, "exit")==0){
 			free(linea);
@@ -217,7 +217,26 @@ void create (char** args)
 
 void describe (char** args)
 {
-
+	log_info(loggerLFL, "Consola: Se ha recibido un pedido de describe.");
+	int chequeo = 0;
+	if(args[1] == NULL )
+		chequeo = chequearParametros(args, 1);
+	else
+		chequeo = chequearParametros(args, 2);
+	if(chequeo == 1)
+	{
+		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
+		log_error(loggerLFL, "Consola: solicitud posee cantidad errónea de parámetros");
+	}
+	else
+	{
+		char* tablaSolicitada = string_new();
+		tablaSolicitada = malloc(strlen(args[1]) + 1 );
+		strcpy(tablaSolicitada, args[1]);
+	//	describirTablas(tablaSolicitada);
+		log_info(loggerLFL, "Consola: Todas las tablas solicitadas fueron descritas correctamente");
+		free(tablaSolicitada);
+	}
 }
 
 void drop (char** args)

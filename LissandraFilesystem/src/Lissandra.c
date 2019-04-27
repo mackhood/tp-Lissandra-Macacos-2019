@@ -14,6 +14,7 @@ void setearValoresLissandra(t_config * archivoConfig)
 	retardo = config_get_int_value(archivoConfig, "RETARDO");
 	server_puerto = config_get_int_value(archivoConfig, "PUERTO_ESCUCHA");
 	server_ip = strdup(config_get_string_value(archivoConfig,"IP_FILE_SYSTEM"));
+	tamanio_value = config_get_int_value(archivoConfig, "TAMANIO_VALUE");
 }
 
 void mainLissandra ()
@@ -47,16 +48,15 @@ void iniciarServidor()
 		memcpy(value, mensaje->payload + sizeof(uint16_t) + sizeof(double) + sizeof(int), tamanio_value);
 		value[tamanio_value] = '\0';
 
-		printf("el CLIENTE es %s y nos manda de prueba la key %d y la hora %ld\n\n", value, key_recibida, hora_actual);
+		printf("el CLIENTE es %s y nos manda de prueba la key %d y la hora %lf\n\n", value, key_recibida, hora_actual);
 
 		prot_destruir_mensaje(mensaje);
-
-		//log_info(logger, "[Conexiones]: Se conecto una Memoria");
-		pthread_t RecibirMensajesEsi;
+		log_info(loggerLFL, "[Lissandra]: Se conecto una Memoria");
+		pthread_t RecibirMensajesMemoria;
 		/*Duplico la variable que tiene el valor del socket del cliente*/
 		int* memoria = (int*) malloc (sizeof(int));
 		*memoria = socket_memoria;
-		pthread_create(&RecibirMensajesEsi,NULL, (void*)escucharMemoria, memoria);
+		pthread_create(&RecibirMensajesMemoria,NULL, (void*)escucharMemoria, memoria);
 
 		}
 }
@@ -81,8 +81,12 @@ void escucharMemoria(int* socket_memoria)
 				tabla = malloc(tamanioNombre);
 				memcpy(tabla, mensaje_memoria->payload + sizeof(uint16_t) + sizeof(int), tamanioNombre);
 				t_keysetter* helpinghand = selectKey(tabla, auxkey);
-				double tiempo_pag = helpinghand->timestamp;
-				char* value = helpinghand->clave;
+//				double tiempo_pag = helpinghand->timestamp;
+	//			char* value = helpinghand->clave;
+		//		int tamanio_value = strlen(value);
+
+				double tiempo_pag = getCurrentTime();
+				char* value = "Ejemplo";
 				int tamanio_value = strlen(value);
 
 				size_t tamanio_buffer = (sizeof(double)+tamanio_value+sizeof(int));
@@ -103,8 +107,8 @@ void escucharMemoria(int* socket_memoria)
 void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibido, double timestampRecibido)
 {
 	tamanio_memtable = memtable->elements_count;
-	t_Memtablekeys* auxiliar = malloc(sizeof(t_Memtablekeys));
-	t_keysetter* auxiliarprima = malloc(sizeof(t_keysetter));
+	t_Memtablekeys* auxiliar = malloc(sizeof(t_Memtablekeys) + 4);
+	t_keysetter* auxiliarprima = malloc(sizeof(t_keysetter) + 3);
 	auxiliarprima->key = keyRecibida;
 	auxiliarprima->clave = valueRecibido;
 	auxiliarprima->timestamp = timestampRecibido;
@@ -113,7 +117,7 @@ void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecib
 
 
 	printf("%i, %s,", auxiliar->data->key, auxiliar->tabla);
-	printf(" %s, %ld\n", auxiliar->data->clave, auxiliar->data->timestamp);
+	printf(" %s, %lf\n", auxiliar->data->clave, auxiliar->data->timestamp);
 
 	if(0 == existeTabla(tablaRecibida))
 	{
@@ -136,20 +140,26 @@ void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecib
 		}
 	}
 	tamanio_memtable = 0;
-//	free(auxiliar);
+	free(auxiliar);
 	free(auxiliarprima);
 }
 
 t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 {
 		t_list* keysDeTablaPedida = list_create();
-		t_Memtablekeys* auxA = malloc(sizeof(t_Memtablekeys));
+		t_list* keyEspecifica = list_create();
+		t_Memtablekeys* auxA = malloc(sizeof(t_Memtablekeys) + 4);
 		tablaAnalizada = malloc(strlen(tabla) + 1);
+		keyAnalizada = receivedKey;
 		strcpy(tablaAnalizada, tabla);
 		keysDeTablaPedida = list_filter(memtable, (void*)perteneceATabla);
-		list_sort(keysDeTablaPedida, (void*)chequearTimestamps);
-		auxA = list_get(keysDeTablaPedida, 0);
-		t_keysetter* key = malloc(sizeof(t_keysetter*));//comparadorDeKeys();
+		keyEspecifica = list_filter(keysDeTablaPedida, (void*)esDeTalKey);
+		list_sort(keyEspecifica, (void*)chequearTimestamps);
+		auxA = list_get(keyEspecifica, 0);
+
+		//Acá hace falta implementar el compactador y las claves del FL, para eso, despues se llama a comparadorDeKeys();
+
+		t_keysetter* key = malloc(sizeof(t_keysetter) + 3);
 		key = auxA->data;
 		free(auxA);
 		list_destroy(keysDeTablaPedida);
@@ -188,13 +198,41 @@ int llamarEliminarTabla(char* tablaPorEliminar)
 	return dropTable(tablaPorEliminar);
 }
 
-int perteneceATabla(t_Memtablekeys* key)
+bool perteneceATabla(t_Memtablekeys* key)
 {
-	return tablaAnalizada == key->tabla;
+	char* testTable = string_new();
+	testTable = malloc(strlen(tablaAnalizada) + 1);
+	strcpy(testTable, tablaAnalizada);
+	bool saver;
+	saver = (key->tabla == testTable);
+	return saver;
 }
 
-int chequearTimestamps(t_Memtablekeys* key1, t_Memtablekeys* key2)
+bool chequearTimestamps(t_Memtablekeys* key1, t_Memtablekeys* key2)
 {
 	return !(key1->data->timestamp > key2->data->timestamp);
 }
+
+int esDeTalKey(t_Memtablekeys* chequeada)
+{
+	return chequeada->data->key == keyAnalizada;
+}
+
+/*void describirTablas(char* tablaSolicitada)
+{
+	char* tabla = string_new();
+	tabla = malloc(strlen(tablaSolicitada));
+	strcpy(tabla, tablaSolicitada);
+	if(strcmp(tabla, ""))
+	{
+		log_info(loggerLFL, "Lissandra: Me llega un pedido de describir todas las tablas");
+		mostrarTodosLosMetadatas();
+	}
+	else
+	{
+		log_info(loggerLFL, "Lissandra: Me llega un pedido de describir la tabla %s", tabla);
+		mostrarMetadataEspecificado(tabla);
+	}
+	free(tabla);
+}*/
 
