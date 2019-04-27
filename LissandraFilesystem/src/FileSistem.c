@@ -29,13 +29,13 @@ void testerFileSystem()
 
 void levantarBitmap(char* direccion)
 {
-/*	int i;
+	int i;
 	log_info(loggerLFL, "FileSystem: Se procede a crear el bitmap");
 	char* direccionBitmap= string_new();
 	direccionBitmap= malloc(strlen(punto_montaje) + 21);
 	strcpy(direccionBitmap, punto_montaje);
 	strcat(direccionBitmap, "Metadata/Bitmap.bin");
-	FILE* bitmap = fopen(direccionBitmap, "wb+");
+	FILE* bitmap = fopen(direccionBitmap, "w+");
 	for(i = 0; i < blocks; i++)
 	{
 		char* direccionpuenteada = string_new();
@@ -80,7 +80,7 @@ void levantarBitmap(char* direccion)
 	}
 	fclose(bitmap);
 	free(direccionBitmap);
-	log_info(loggerLFL, "FileSystem: El bitmap fue creado satisfactoriamente");*/
+	log_info(loggerLFL, "FileSystem: El bitmap fue creado satisfactoriamente");
 }
 
 void setearValoresFileSistem(t_config * archivoConfig)
@@ -101,9 +101,6 @@ void setearValoresFileSistem(t_config * archivoConfig)
 int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion)
 {
 	creatingFL = 0;
-	DIR* checkdir;
-	char* checkaux = string_new();
-	checkaux = malloc(strlen(nombre) + strlen(punto_montaje) + 9);
 	DIR* newdir;
 	char buff[128];
 	char* tablename = string_new();
@@ -115,8 +112,6 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 	memset(buff, 0, sizeof(buff));
 	strcat(puntodemontaje, "Tables/");
 	strcpy(buff, puntodemontaje);
-	strcpy(checkaux, puntodemontaje);
-	strcat(checkaux, nombre);
 	if(NULL == (newdir = opendir(punto_montaje)))// reviso si el punto de montaje es accesible
 	{
 		perror("[ERROR] Punto de montaje no accesible");
@@ -126,7 +121,7 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 
 	else
 	{
-		if(NULL != (checkdir = opendir(checkaux)))
+		if(1 == existeTabla(nombre))
 		{
 			log_info(loggerLFL, "FileSystem: La tabla que usted quiere crear ya existe");
 			return(2);
@@ -357,4 +352,25 @@ int limpiadorDeArchivos(char* direccion)
 		return 0;
 	}
 }
+
+int existeTabla(char* tabla)
+{
+	DIR* checkdir;
+	char* checkaux = string_new();
+	checkaux = malloc(strlen(tabla) + strlen(punto_montaje) + 9);
+	char* tablename = string_new();
+	tablename = malloc(strlen(tabla) + 3);
+	char* puntodemontaje = string_new();
+	puntodemontaje = malloc(strlen(tabla) + strlen(punto_montaje) + 9);
+	strcpy(puntodemontaje, punto_montaje);
+	strcpy(tablename, tabla);
+	strcat(puntodemontaje, "Tables/");
+	strcpy(checkaux, puntodemontaje);
+	strcat(checkaux, tabla);
+	if(NULL != (checkdir = opendir(checkaux)))
+		return 1;
+	else
+		return 0;
+}
+
 

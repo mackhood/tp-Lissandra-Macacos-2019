@@ -33,6 +33,7 @@ int crearMetadata(char* direccionFinal, char* consistencia, int particiones, int
 int crearParticiones(char* direccionFinal, int particiones);
 int dropTable(char* tablaPorEliminar);
 int limpiadorDeArchivos(char* direccion);
+int existeTabla(char* tabla);
 
 
 #endif /* FILESISTEM_H_ */

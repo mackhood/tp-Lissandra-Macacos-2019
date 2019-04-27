@@ -22,7 +22,7 @@ void consola()
 	char* linea;
 //ejecutar prueba.txt
 	while (1) {
-		linea = readline("\nIngrese su comando deseado y los parámetros que necesite:\n ");
+		linea = readline("\nIngrese el comando a ejecutar con los parametros necesarios:\n ");
 
 		if (strcmp(linea, "exit")==0){
 			free(linea);
@@ -102,13 +102,15 @@ void selectt (char** args)
 	else
 	{
 		char* tabla = string_new();
-		tabla = malloc(strlen(args[1]));
+		tabla = malloc(strlen(args[1]) + 1);
 		strcpy(tabla, args[1]);
 		char* claveaux = string_new();
-		claveaux = malloc(strlen(args[2]));
+		claveaux = malloc(strlen(args[2]) + 1);
 		strcpy(claveaux, args[2]);
 		uint16_t key = atoi(claveaux);
-//		t_keysetter keysetterObtenido = selectKey(tabla, key);
+		t_keysetter* keysetterObtenido = selectKey(tabla, key);
+		printf("La clave obtenida mas actualizada es %i,%lf,%s"
+				, keysetterObtenido->key, keysetterObtenido->timestamp, keysetterObtenido->clave);
 		free(tabla);
 		free(claveaux);
 	}
@@ -130,18 +132,19 @@ void insert (char** args)
 	else
 	{
 		char* tabla = string_new();
-		tabla = malloc(strlen(args[1]));
+		tabla = malloc(strlen(args[1]) + 1);
 		strcpy(tabla, args[1]);
 		char* claveaux = string_new();
-		claveaux = malloc(strlen(args[2]));
+		claveaux = malloc(strlen(args[2]) + 1);
 		strcpy(claveaux, args[2]);
 		uint16_t key = atoi(claveaux);
 		char* value = string_new();
-		value = malloc(strlen(args[3]));
+		value = malloc(strlen(args[3]) + 1);
+		strcpy(value, args[3]);
 		if(args[4] == NULL)
 		{
-			time_t timestampact = time(NULL)*1000;
-			printf("%ld", timestampact);
+			double timestampact = getCurrentTime();
+			printf("Current time: %lf\n", timestampact);
 			insertKeysetter(tabla, key, value, timestampact);
 			log_info(loggerLFL, "Consola: Insert realizado.");
 		}
@@ -150,8 +153,7 @@ void insert (char** args)
 			char* timestampaux = string_new();
 			timestampaux = malloc(strlen(args[4]) + 1);
 			strcpy(timestampaux, args[4]);
-			time_t timestamp = atoi(timestampaux);
-			printf("%ld", timestamp);
+			double timestamp = atoi(timestampaux);
 			insertKeysetter(tabla, key, value, timestamp);
 		}
 		free(tabla);
@@ -215,7 +217,26 @@ void create (char** args)
 
 void describe (char** args)
 {
-
+	log_info(loggerLFL, "Consola: Se ha recibido un pedido de describe.");
+	int chequeo = 0;
+	if(args[1] == NULL )
+		chequeo = chequearParametros(args, 1);
+	else
+		chequeo = chequearParametros(args, 2);
+	if(chequeo == 1)
+	{
+		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
+		log_error(loggerLFL, "Consola: solicitud posee cantidad errónea de parámetros");
+	}
+	else
+	{
+		char* tablaSolicitada = string_new();
+		tablaSolicitada = malloc(strlen(args[1]) + 1 );
+		strcpy(tablaSolicitada, args[1]);
+	//	describirTablas(tablaSolicitada);
+		log_info(loggerLFL, "Consola: Todas las tablas solicitadas fueron descritas correctamente");
+		free(tablaSolicitada);
+	}
 }
 
 void drop (char** args)

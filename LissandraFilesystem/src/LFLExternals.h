@@ -20,13 +20,19 @@
 #include <time.h>
 #include <ftw.h>
 #include <fts.h>
+#include <auxiliaryFunctions.h>
 
 /* ESTRUCTURAS */
 typedef struct {
-	time_t timestamp;
+	double timestamp;
 	uint16_t key;
 	char* clave;
-}t_keysetter;
+}__attribute__((packed)) t_keysetter;
+
+typedef struct {
+	t_keysetter* data;
+	char* tabla;
+}__attribute__((packed)) t_Memtablekeys;
 
 /* VARIABLES GLOBALES */
 t_log * loggerLFL;
