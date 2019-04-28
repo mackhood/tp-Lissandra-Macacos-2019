@@ -29,6 +29,7 @@ void iniciar()
 	iniciarFileSistem();
 	iniciarConsola();
 }
+
 void iniciarConsola(){
 	pthread_t hiloConsola;
 	log_info(loggerLFL,"MAIN: Se inicio un hilo para manejar la consola.");

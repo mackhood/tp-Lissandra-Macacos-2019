@@ -109,8 +109,7 @@ void selectt (char** args)
 		strcpy(claveaux, args[2]);
 		uint16_t key = atoi(claveaux);
 		t_keysetter* keysetterObtenido = selectKey(tabla, key);
-		printf("La clave obtenida mas actualizada es %i,%lf,%s"
-				, keysetterObtenido->key, keysetterObtenido->timestamp, keysetterObtenido->clave);
+		printf("La clave obtenida mas actualizada es %i,%lf,%s", keysetterObtenido->key, keysetterObtenido->timestamp, keysetterObtenido->clave);
 		free(tabla);
 		free(claveaux);
 	}
@@ -156,9 +155,6 @@ void insert (char** args)
 			double timestamp = atoi(timestampaux);
 			insertKeysetter(tabla, key, value, timestamp);
 		}
-		free(tabla);
-		free(claveaux);
-		free(value);
 	}
 }
 
@@ -233,7 +229,8 @@ void describe (char** args)
 		char* tablaSolicitada = string_new();
 		tablaSolicitada = malloc(strlen(args[1]) + 1 );
 		strcpy(tablaSolicitada, args[1]);
-	//	describirTablas(tablaSolicitada);
+		bool solicitadoPorMemoria = false;
+//		describirTablas(tablaSolicitada, solicitadoPorMemoria, NULL);
 		log_info(loggerLFL, "Consola: Todas las tablas solicitadas fueron descritas correctamente");
 		free(tablaSolicitada);
 	}
@@ -242,7 +239,7 @@ void describe (char** args)
 void drop (char** args)
 {
 	log_info(loggerLFL, "Consola: Se ha solicitado realizar un DROP");
-	if(chequearParametros(args, 1) == 1)
+	if(chequearParametros(args, 2) == 1)
 	{
 		printf("Por favor, especifique la cantidad de parámetros solicitada\n");
 		log_error(loggerLFL, "Consola: solicitud posee cantidad errónea de parámetros");

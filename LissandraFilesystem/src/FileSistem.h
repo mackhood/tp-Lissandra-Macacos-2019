@@ -34,6 +34,8 @@ int crearParticiones(char* direccionFinal, int particiones);
 int dropTable(char* tablaPorEliminar);
 int limpiadorDeArchivos(char* direccion);
 int existeTabla(char* tabla);
+char* mostrarMetadataEspecificado(char* tabla, bool solicitadoPorMemoria, void* buffer);
+char* mostrarTodosLosMetadatas(bool solicitadoPorMemoria, void* buffer);
 
 
 #endif /* FILESISTEM_H_ */

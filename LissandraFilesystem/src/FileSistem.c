@@ -62,7 +62,7 @@ void levantarBitmap(char* direccion)
 			fread(a, 64, 1, blockpointer);
 			int auxcomp = 0;
 			auxcomp = strcmp(a, "");
-			if(0 == auxcomp)
+			if(auxcomp == 0)
 			{
 				int auxb = 0;
 				fwrite(&auxb, 4, 1, bitmap);
@@ -373,4 +373,28 @@ int existeTabla(char* tabla)
 		return 0;
 }
 
+//void mostrarMetadataEspecificado(char* tabla, bool solicitadoPorMemoria, void* buffer)
+//{
+//	if(0 == existeTabla)
+//	{
+//		log_info(loggerLFL, "FileSystem: La tabla a la que quiere acceder no existe");
+//
+//	}
+//	else
+//	{
+//		if(solicitadoPorMemoria)
+//		{
+//
+//		}
+//		else
+//		{
+//
+//		}
+//	}
+//}
+//
+//char* mostrarTodosLosMetadatas(bool solicitadoPorMemoria,, void* buffer)
+//{
+//
+//}
 

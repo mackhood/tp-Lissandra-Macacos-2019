@@ -34,9 +34,9 @@ void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecib
 t_keysetter* selectKey(char* tabla, uint16_t receivedKey);
 int llamadoACrearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion);
 int llamarEliminarTabla(char* tablaPorEliminar);
-bool perteneceATabla(t_Memtablekeys* key);
-bool chequearTimestamps(t_Memtablekeys* key1, t_Memtablekeys* key2);
+int perteneceATabla(t_Memtablekeys* key);
+int chequearTimestamps(t_Memtablekeys* key1, t_Memtablekeys* key2);
 int esDeTalKey(t_Memtablekeys* chequeada);
-void describirTablas(char* tablaSolicitada);
+void describirTablas(char* tablaSolicitada, void* buffer);
 
 #endif /* LISSANDRA_H_ */
