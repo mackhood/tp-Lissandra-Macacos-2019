@@ -27,6 +27,7 @@ void consola()
 		if (strcmp(linea, "exit")==0){
 			free(linea);
 			puts("EXIT.");
+			signalExit = true;
 			break;
 		}
 
@@ -230,8 +231,15 @@ void describe (char** args)
 		tablaSolicitada = malloc(strlen(args[1]) + 1 );
 		strcpy(tablaSolicitada, args[1]);
 		bool solicitadoPorMemoria = false;
-//		describirTablas(tablaSolicitada, solicitadoPorMemoria, NULL);
-		log_info(loggerLFL, "Consola: Todas las tablas solicitadas fueron descritas correctamente");
+		int problem = 0;
+		if (0 == (problem = describirTablas(tablaSolicitada, solicitadoPorMemoria, NULL)))
+		{
+			log_info(loggerLFL, "Consola: Todas las tablas solicitadas fueron descritas correctamente");
+		}
+		else
+		{
+
+		}
 		free(tablaSolicitada);
 	}
 }

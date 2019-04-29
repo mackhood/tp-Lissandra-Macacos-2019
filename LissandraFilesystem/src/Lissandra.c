@@ -74,8 +74,8 @@ void escucharMemoria(int* socket_memoria)
 			case SOLICITUD_TABLA:
 			{
 				uint16_t auxkey;
-				char* tabla;
-				int tamanioNombre;
+	//			char* tabla;
+//				int tamanioNombre;
 				memcpy(&auxkey, mensaje_memoria->payload, sizeof(uint16_t));
 //				memcpy(&tamanioNombre, mensaje_memoria->payload + sizeof(uint16_t), sizeof(int));
 //				tabla = malloc(tamanioNombre);
@@ -215,21 +215,54 @@ int esDeTalKey(t_Memtablekeys* chequeada)
 	return chequeada->data->key == keyAnalizada;
 }
 
-//void describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, void* buffer)
-//{
-//	char* tabla = string_new();
-//	tabla = malloc(strlen(tablaSolicitada));
-//	strcpy(tabla, tablaSolicitada);
-//	void* auxbuffer;
-//	if(strcmp(tabla, ""))
-//	{
-//		log_info(loggerLFL, "Lissandra: Me llega un pedido de describir todas las tablas");
-//		mostrarTodosLosMetadatas(solicitadoPorMemoria, auxbuffer);
-//	}
-//	else
-//	{
-//		log_info(loggerLFL, "Lissandra: Me llega un pedido de describir la tabla %s", tabla);
-//		mostrarMetadataEspecificado(tabla, solicitadoPorMemoria, auxbuffer);
-//	}
-//}
+int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, void* buffer)
+{
+	char* tabla = string_new();
+	tabla = malloc(strlen(tablaSolicitada));
+	strcpy(tabla, tablaSolicitada);
+	char* auxbuffer = string_new();
+	if(strcmp(tabla, ""))
+	{
+		log_info(loggerLFL, "Lissandra: Me llega un pedido de describir todas las tablas");
+		int tablasExistentes = contarTablasExistentes();
+		if(tablasExistentes == 0)
+		{
+			log_error(loggerLFL, "Lissandra: No existe ningún directorio en le FileSystem");
+			printf("Error al acceder a todos los directorios");
+			char* errormarker = "error";
+			memcpy(buffer, errormarker, strlen(errormarker));
+			return 1;
+		}
+		else
+		{
+			if(solicitadoPorMemoria)
+			{
+				mostrarTodosLosMetadatas(solicitadoPorMemoria, auxbuffer);
+				return 0;
+			}
+			else
+			{
+				char* massiveBufferMetadatas = string_new();
+				massiveBufferMetadatas = malloc((sizeof(int) * 2 + 6) * tablasExistentes);
+				mostrarTodosLosMetadatas(solicitadoPorMemoria, massiveBufferMetadatas);
+				return 0;
+			}
+		}
+	}
+	else
+	{
+		log_info(loggerLFL, "Lissandra: Me llega un pedido de describir la tabla %s", tabla);
+		if(solicitadoPorMemoria)
+		{
+			mostrarMetadataEspecificada(tabla, solicitadoPorMemoria, auxbuffer);
+			return 0;
+		}
+		else
+		{
+			mostrarMetadataEspecificada(tabla, solicitadoPorMemoria, auxbuffer);
+			return 0;
+		}
+	}
+	free(tabla);
+}
 
