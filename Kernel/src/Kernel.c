@@ -80,7 +80,7 @@ void initConfiguracion(){
 void initThread(){
 
 	logInfo("Creando thread para atender las conexiones de memoria");
-	//pthread_create(&threadConexionMemoria, NULL, (void*) handler_conexion_memoria, tKernel);
+	pthread_create(&threadConexionMemoria, NULL, (void*) handler_conexion_memoria, tKernel);
 	pthread_create(&threadConsola, NULL, (void*)handleConsola, tKernel);
 	//pthread_create(&threadPlanificador, NULL, (void*)handlePlanificadorLP, tKernel);
 
