@@ -74,13 +74,13 @@ void escucharMemoria(int* socket_memoria)
 			case SOLICITUD_TABLA:
 			{
 				uint16_t auxkey;
-				char* tabla;
-				int tamanioNombre;
+	//			char* tabla;
+//				int tamanioNombre;
 				memcpy(&auxkey, mensaje_memoria->payload, sizeof(uint16_t));
-				memcpy(&tamanioNombre, mensaje_memoria->payload + sizeof(uint16_t), sizeof(int));
-				tabla = malloc(tamanioNombre);
-				memcpy(tabla, mensaje_memoria->payload + sizeof(uint16_t) + sizeof(int), tamanioNombre);
-				t_keysetter* helpinghand = selectKey(tabla, auxkey);
+//				memcpy(&tamanioNombre, mensaje_memoria->payload + sizeof(uint16_t), sizeof(int));
+//				tabla = malloc(tamanioNombre);
+//				memcpy(tabla, mensaje_memoria->payload + sizeof(uint16_t) + sizeof(int), tamanioNombre);
+//				t_keysetter* helpinghand = selectKey(tabla, auxkey);
 //				double tiempo_pag = helpinghand->timestamp;
 	//			char* value = helpinghand->clave;
 		//		int tamanio_value = strlen(value);
@@ -140,12 +140,12 @@ void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecib
 		}
 	}
 	tamanio_memtable = 0;
-	free(auxiliar);
-	free(auxiliarprima);
 }
 
 t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 {
+
+
 		t_list* keysDeTablaPedida = list_create();
 		t_list* keyEspecifica = list_create();
 		t_Memtablekeys* auxA = malloc(sizeof(t_Memtablekeys) + 4);
@@ -161,7 +161,6 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 
 		t_keysetter* key = malloc(sizeof(t_keysetter) + 3);
 		key = auxA->data;
-		free(auxA);
 		list_destroy(keysDeTablaPedida);
 		free(tablaAnalizada);
 		log_info(loggerLFL, "Lissandra: se ha obtenido la clave más actualizada en el proceso.");
@@ -198,19 +197,17 @@ int llamarEliminarTabla(char* tablaPorEliminar)
 	return dropTable(tablaPorEliminar);
 }
 
-bool perteneceATabla(t_Memtablekeys* key)
+int perteneceATabla(t_Memtablekeys* key)
 {
 	char* testTable = string_new();
 	testTable = malloc(strlen(tablaAnalizada) + 1);
 	strcpy(testTable, tablaAnalizada);
-	bool saver;
-	saver = (key->tabla == testTable);
-	return saver;
+	return 0 == strcmp(key->tabla, testTable);
 }
 
-bool chequearTimestamps(t_Memtablekeys* key1, t_Memtablekeys* key2)
+int chequearTimestamps(t_Memtablekeys* key1, t_Memtablekeys* key2)
 {
-	return !(key1->data->timestamp > key2->data->timestamp);
+	return (key1->data->timestamp > key2->data->timestamp);
 }
 
 int esDeTalKey(t_Memtablekeys* chequeada)
@@ -218,21 +215,54 @@ int esDeTalKey(t_Memtablekeys* chequeada)
 	return chequeada->data->key == keyAnalizada;
 }
 
-/*void describirTablas(char* tablaSolicitada)
+int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, void* buffer)
 {
 	char* tabla = string_new();
 	tabla = malloc(strlen(tablaSolicitada));
 	strcpy(tabla, tablaSolicitada);
+	char* auxbuffer = string_new();
 	if(strcmp(tabla, ""))
 	{
 		log_info(loggerLFL, "Lissandra: Me llega un pedido de describir todas las tablas");
-		mostrarTodosLosMetadatas();
+		int tablasExistentes = contarTablasExistentes();
+		if(tablasExistentes == 0)
+		{
+			log_error(loggerLFL, "Lissandra: No existe ningún directorio en le FileSystem");
+			printf("Error al acceder a todos los directorios");
+			char* errormarker = "error";
+			memcpy(buffer, errormarker, strlen(errormarker));
+			return 1;
+		}
+		else
+		{
+			if(!solicitadoPorMemoria)
+			{
+				mostrarTodosLosMetadatas(solicitadoPorMemoria, auxbuffer);
+				return 0;
+			}
+			else
+			{
+				char* massiveBufferMetadatas = string_new();
+				mostrarTodosLosMetadatas(solicitadoPorMemoria, massiveBufferMetadatas);
+				return 0;
+			}
+		}
 	}
 	else
 	{
+		int tamanio_buffer = 1;
 		log_info(loggerLFL, "Lissandra: Me llega un pedido de describir la tabla %s", tabla);
-		mostrarMetadataEspecificado(tabla);
+		if(solicitadoPorMemoria)
+		{
+			mostrarMetadataEspecificada(tabla, &tamanio_buffer, solicitadoPorMemoria, auxbuffer);
+			return 0;
+		}
+		else
+		{
+			mostrarMetadataEspecificada(tabla, &tamanio_buffer, solicitadoPorMemoria, auxbuffer);
+			return 0;
+		}
 	}
 	free(tabla);
-}*/
+}
 

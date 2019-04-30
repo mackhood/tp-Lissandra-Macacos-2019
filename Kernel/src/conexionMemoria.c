@@ -19,7 +19,7 @@ int conexion=conectar_a_servidor(tKernel->config->ip_memoria,tKernel->config->pu
 	}
 	logInfo("Se conecto a una memoria");
 
-//	prot_enviar_mensaje()
+	//prot_enviar_mensaje()
 
 
 

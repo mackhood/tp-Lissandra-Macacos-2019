@@ -62,7 +62,7 @@ void levantarBitmap(char* direccion)
 			fread(a, 64, 1, blockpointer);
 			int auxcomp = 0;
 			auxcomp = strcmp(a, "");
-			if(0 == auxcomp)
+			if(auxcomp == 0)
 			{
 				int auxb = 0;
 				fwrite(&auxb, 4, 1, bitmap);
@@ -371,6 +371,102 @@ int existeTabla(char* tabla)
 		return 1;
 	else
 		return 0;
+}
+
+void mostrarMetadataEspecificada(char* tabla, int* tamanio_buffer_metadatas, bool solicitadoPorMemoria, char* buffer)
+{
+	if(0 == existeTabla(tabla))
+	{
+		log_info(loggerLFL, "FileSystem: La tabla a la que quiere acceder no existe");
+		exit(1);
+	}
+	else
+	{
+		char* auxdir = string_new();
+		auxdir = malloc(strlen(punto_montaje) + 8);
+		strcpy(auxdir, punto_montaje);
+		strcat(auxdir, "Tables/");
+		char* direccionDeTableMetadata = string_new();
+		direccionDeTableMetadata = malloc(strlen(auxdir) + strlen(tabla) + 15);
+		strcpy(direccionDeTableMetadata, auxdir);
+		strcat(direccionDeTableMetadata, tabla);
+		strcat(direccionDeTableMetadata, "/Metadata.cfg");
+		t_config * temporalArchivoConfig;
+		temporalArchivoConfig = config_create(direccionDeTableMetadata);
+		char* consistencia = strdup(config_get_string_value(temporalArchivoConfig, "CONSISTENCIA"));
+		int	cantParticiones = config_get_int_value(temporalArchivoConfig, "PARTICIONES");
+		int tiempoEntreCompactaciones = config_get_int_value(temporalArchivoConfig, "TIEMPOENTRECOMPACTACIONES");
+		tamanio_buffer_metadatas += strlen(consistencia) + sizeof(int)*2 + 6;
+		realloc(buffer, tamanio_buffer_metadatas);
+	}
+}
+
+void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer)
+{
+	DIR* directorioDeTablas;
+	struct dirent* tdp;
+	char* auxdir = string_new();
+	auxdir = malloc(strlen(punto_montaje) + 8);
+	strcpy(auxdir, punto_montaje);
+	strcat(auxdir, "Tables/");
+	if(NULL == (directorioDeTablas = opendir(auxdir)))
+	{
+		log_error(loggerLFL, "FileSystem: error al acceder al directorio de tablas, abortando");
+		buffer = malloc(6);
+		strcpy(buffer, "error");
+		closedir(directorioDeTablas);
+	}
+	else
+	{
+		if(solicitadoPorMemoria)
+		{
+			int tamanio_buffer_metadatas = 0;
+			log_info(loggerLFL, "FileSystem: se procede a construir el paquete a enviar a Memoria.");
+			while(NULL != (tdp = readdir(directorioDeTablas)))
+			{
+				tamanio_buffer_metadatas += strlen(tdp->d_name) + 2;
+				realloc(buffer, tamanio_buffer_metadatas);
+				strcat(buffer, tdp->d_name);
+				strcat(buffer, ",");
+				mostrarMetadataEspecificada(tdp->d_name, &tamanio_buffer_metadatas, solicitadoPorMemoria, buffer);
+			}
+		}
+		else
+		{
+			int tamanio_buffer_metadatas = 0;
+			log_info(loggerLFL, "FileSystem: se procede a mostrar el contenido de las tablas del File System.");
+			while(NULL != (tdp = readdir(directorioDeTablas)))
+			{
+				buffer = realloc(buffer, tamanio_buffer_metadatas + strlen(tdp->d_name) + 1);
+				tamanio_buffer_metadatas += strlen(tdp->d_name) + 1;
+				mostrarMetadataEspecificada(tdp->d_name, &tamanio_buffer_metadatas, solicitadoPorMemoria, buffer);
+			}
+		}
+	}
+}
+
+int contarTablasExistentes()
+{
+	DIR* auxdir;
+	char* puntodemontaje = string_new();
+	puntodemontaje = malloc(strlen(punto_montaje) + 9);
+	strcpy(puntodemontaje, punto_montaje);
+	strcat(puntodemontaje, "Tables/");
+	struct dirent* dr;
+	if(NULL == (auxdir = opendir(puntodemontaje)))
+	{
+		log_error(loggerLFL, "FileSystem: No se pudo acceder al directorio de tablas.");
+		printf("Error al querer contar las tablas existentes");
+		return (0);
+	}
+	else
+	{
+		int contadorDirectorios;
+		while((dr = readdir(auxdir)) != NULL)
+			contadorDirectorios++;
+		log_info(loggerLFL, "FileSystem: La cantidad de directorios existente es: %i", contadorDirectorios);
+		return contadorDirectorios;
+	}
 }
 
 

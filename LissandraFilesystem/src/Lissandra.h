@@ -9,7 +9,6 @@
 t_list * hilos;
 t_list * compactadores;
 t_list * memorias;
-t_list * memtable;
 
 
 /*VARIABLES GLOBALES*/
@@ -34,9 +33,9 @@ void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecib
 t_keysetter* selectKey(char* tabla, uint16_t receivedKey);
 int llamadoACrearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion);
 int llamarEliminarTabla(char* tablaPorEliminar);
-bool perteneceATabla(t_Memtablekeys* key);
-bool chequearTimestamps(t_Memtablekeys* key1, t_Memtablekeys* key2);
+int perteneceATabla(t_Memtablekeys* key);
+int chequearTimestamps(t_Memtablekeys* key1, t_Memtablekeys* key2);
 int esDeTalKey(t_Memtablekeys* chequeada);
-void describirTablas(char* tablaSolicitada);
+int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, void* buffer);
 
 #endif /* LISSANDRA_H_ */
