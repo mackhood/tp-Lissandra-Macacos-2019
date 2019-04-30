@@ -26,6 +26,7 @@
 #include <netdb.h>
 #include <pthread.h>
 #include "protocolo.h"
+#include "auxiliaryFunctions.h"
 
 //Mensajes de error
 #define ERROR_CREAR_SOCKET "Crear socket con socket()"

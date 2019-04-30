@@ -22,17 +22,13 @@
 //Las unicas biblios nuestras que podemos tener en el include para no generar dependencia circular
 #include "../../SharedLibrary/protocolo.h"
 #include "../../SharedLibrary/conexiones.h"
-
-typedef struct{
-	uint16_t key;
-	time_t timestamp;
-	char* value;
-} t_pagina;
+#include "../../SharedLibrary/auxiliaryFunctions.h"
 
 typedef struct{
 	int nro_pag;
-	t_pagina* pagina;
+	uint16_t offset;
 	int flag;
+	int presencia;
 }t_est_pag;
 
 typedef struct{
@@ -46,18 +42,16 @@ typedef struct{
 }t_segmento;
 
 typedef enum{
-	OCUPADO,
-	LIBRE
+	LIBRE,
+	OCUPADO
 }t_estado;
 
 t_list* lista_segmentos;
 size_t tamanio_pag;
 size_t tamanio_value; //nos lo pasa el fs
 size_t cant_paginas;
-
-//nueva implementacion, preguntar el sabado
-t_pagina* memoria_principal;
-t_estado* estados;
+void* memoria_principal;
+t_estado* estados_memoria;
 
 //sockets
 int socket_escucha;
@@ -78,12 +72,11 @@ void levantarConexion();
 void escucharKernel();
 
 //funciones para la administracion de memoria
-t_pagina* estaTablaYkeyEnMemoria(char* tabla_a_buscar, uint16_t key);
 t_segmento* buscarSegmento(char* tabla_a_buscar);
 t_est_pag* buscarEstPagBuscada(uint16_t key, t_segmento* segmento_buscado);
 int aplicarLRU();
 t_est_pag* buscarEinsertarEnMem(t_segmento* segmento, uint16_t key, time_t time_a_insertar, int tamanio_value, char* value);
-t_pagina* buscarPaginaLibre();
+int buscarPaginaLibre(); //ahora devuelvo un marco
 
 
 #endif /* ESTRUCTURASMEMORIA_H_ */
