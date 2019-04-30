@@ -373,11 +373,12 @@ int existeTabla(char* tabla)
 		return 0;
 }
 
-void mostrarMetadataEspecificada(char* tabla, bool solicitadoPorMemoria, char* buffer)
+void mostrarMetadataEspecificada(char* tabla, int* tamanio_buffer_metadatas, bool solicitadoPorMemoria, char* buffer)
 {
 	if(0 == existeTabla(tabla))
 	{
 		log_info(loggerLFL, "FileSystem: La tabla a la que quiere acceder no existe");
+		exit(1);
 	}
 	else
 	{
@@ -392,6 +393,11 @@ void mostrarMetadataEspecificada(char* tabla, bool solicitadoPorMemoria, char* b
 		strcat(direccionDeTableMetadata, "/Metadata.cfg");
 		t_config * temporalArchivoConfig;
 		temporalArchivoConfig = config_create(direccionDeTableMetadata);
+		char* consistencia = strdup(config_get_string_value(temporalArchivoConfig, "CONSISTENCIA"));
+		int	cantParticiones = config_get_int_value(temporalArchivoConfig, "PARTICIONES");
+		int tiempoEntreCompactaciones = config_get_int_value(temporalArchivoConfig, "TIEMPOENTRECOMPACTACIONES");
+		tamanio_buffer_metadatas += strlen(consistencia) + sizeof(int)*2 + 6;
+		realloc(buffer, tamanio_buffer_metadatas);
 	}
 }
 
@@ -406,6 +412,7 @@ void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer)
 	if(NULL == (directorioDeTablas = opendir(auxdir)))
 	{
 		log_error(loggerLFL, "FileSystem: error al acceder al directorio de tablas, abortando");
+		buffer = malloc(6);
 		strcpy(buffer, "error");
 		closedir(directorioDeTablas);
 	}
@@ -413,9 +420,26 @@ void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer)
 	{
 		if(solicitadoPorMemoria)
 		{
+			int tamanio_buffer_metadatas = 0;
+			log_info(loggerLFL, "FileSystem: se procede a construir el paquete a enviar a Memoria.");
 			while(NULL != (tdp = readdir(directorioDeTablas)))
 			{
-				mostrarMetadataEspecificada(tdp->d_name, solicitadoPorMemoria, buffer);
+				tamanio_buffer_metadatas += strlen(tdp->d_name) + 2;
+				realloc(buffer, tamanio_buffer_metadatas);
+				strcat(buffer, tdp->d_name);
+				strcat(buffer, ",");
+				mostrarMetadataEspecificada(tdp->d_name, &tamanio_buffer_metadatas, solicitadoPorMemoria, buffer);
+			}
+		}
+		else
+		{
+			int tamanio_buffer_metadatas = 0;
+			log_info(loggerLFL, "FileSystem: se procede a mostrar el contenido de las tablas del File System.");
+			while(NULL != (tdp = readdir(directorioDeTablas)))
+			{
+				buffer = realloc(buffer, tamanio_buffer_metadatas + strlen(tdp->d_name) + 1);
+				tamanio_buffer_metadatas += strlen(tdp->d_name) + 1;
+				mostrarMetadataEspecificada(tdp->d_name, &tamanio_buffer_metadatas, solicitadoPorMemoria, buffer);
 			}
 		}
 	}

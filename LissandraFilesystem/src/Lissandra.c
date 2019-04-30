@@ -235,7 +235,7 @@ int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, void* buff
 		}
 		else
 		{
-			if(solicitadoPorMemoria)
+			if(!solicitadoPorMemoria)
 			{
 				mostrarTodosLosMetadatas(solicitadoPorMemoria, auxbuffer);
 				return 0;
@@ -243,7 +243,6 @@ int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, void* buff
 			else
 			{
 				char* massiveBufferMetadatas = string_new();
-				massiveBufferMetadatas = malloc((sizeof(int) * 2 + 6) * tablasExistentes);
 				mostrarTodosLosMetadatas(solicitadoPorMemoria, massiveBufferMetadatas);
 				return 0;
 			}
@@ -251,15 +250,16 @@ int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, void* buff
 	}
 	else
 	{
+		int tamanio_buffer = 1;
 		log_info(loggerLFL, "Lissandra: Me llega un pedido de describir la tabla %s", tabla);
 		if(solicitadoPorMemoria)
 		{
-			mostrarMetadataEspecificada(tabla, solicitadoPorMemoria, auxbuffer);
+			mostrarMetadataEspecificada(tabla, &tamanio_buffer, solicitadoPorMemoria, auxbuffer);
 			return 0;
 		}
 		else
 		{
-			mostrarMetadataEspecificada(tabla, solicitadoPorMemoria, auxbuffer);
+			mostrarMetadataEspecificada(tabla, &tamanio_buffer, solicitadoPorMemoria, auxbuffer);
 			return 0;
 		}
 	}

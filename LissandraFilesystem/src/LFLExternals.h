@@ -37,5 +37,6 @@ typedef struct {
 /* VARIABLES GLOBALES */
 t_log * loggerLFL;
 bool signalExit;
+t_list * memtable;
 
 #endif /* LFLEXTERNALS_H_ */

@@ -34,7 +34,7 @@ int crearParticiones(char* direccionFinal, int particiones);
 int dropTable(char* tablaPorEliminar);
 int limpiadorDeArchivos(char* direccion);
 int existeTabla(char* tabla);
-void mostrarMetadataEspecificada(char* tabla, bool solicitadoPorMemoria, char* buffer);
+void mostrarMetadataEspecificada(char* tabla, int* tamanio_buffer_metadatas, bool solicitadoPorMemoria, char* buffer);
 void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer);
 int contarTablasExistentes();
 
