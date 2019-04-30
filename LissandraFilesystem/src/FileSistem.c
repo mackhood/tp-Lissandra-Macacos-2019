@@ -62,7 +62,7 @@ void levantarBitmap(char* direccion)
 			fread(a, 64, 1, blockpointer);
 			int auxcomp = 0;
 			auxcomp = strcmp(a, "");
-			if(0 == auxcomp)
+			if(auxcomp == 0)
 			{
 				int auxb = 0;
 				fwrite(&auxb, 4, 1, bitmap);
@@ -371,6 +371,78 @@ int existeTabla(char* tabla)
 		return 1;
 	else
 		return 0;
+}
+
+void mostrarMetadataEspecificada(char* tabla, bool solicitadoPorMemoria, char* buffer)
+{
+	if(0 == existeTabla(tabla))
+	{
+		log_info(loggerLFL, "FileSystem: La tabla a la que quiere acceder no existe");
+	}
+	else
+	{
+		char* auxdir = string_new();
+		auxdir = malloc(strlen(punto_montaje) + 8);
+		strcpy(auxdir, punto_montaje);
+		strcat(auxdir, "Tables/");
+		char* direccionDeTableMetadata = string_new();
+		direccionDeTableMetadata = malloc(strlen(auxdir) + strlen(tabla) + 15);
+		strcpy(direccionDeTableMetadata, auxdir);
+		strcat(direccionDeTableMetadata, tabla);
+		strcat(direccionDeTableMetadata, "/Metadata.cfg");
+		t_config * temporalArchivoConfig;
+		temporalArchivoConfig = config_create(direccionDeTableMetadata);
+	}
+}
+
+void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer)
+{
+	DIR* directorioDeTablas;
+	struct dirent* tdp;
+	char* auxdir = string_new();
+	auxdir = malloc(strlen(punto_montaje) + 8);
+	strcpy(auxdir, punto_montaje);
+	strcat(auxdir, "Tables/");
+	if(NULL == (directorioDeTablas = opendir(auxdir)))
+	{
+		log_error(loggerLFL, "FileSystem: error al acceder al directorio de tablas, abortando");
+		strcpy(buffer, "error");
+		closedir(directorioDeTablas);
+	}
+	else
+	{
+		if(solicitadoPorMemoria)
+		{
+			while(NULL != (tdp = readdir(directorioDeTablas)))
+			{
+				mostrarMetadataEspecificada(tdp->d_name, solicitadoPorMemoria, buffer);
+			}
+		}
+	}
+}
+
+int contarTablasExistentes()
+{
+	DIR* auxdir;
+	char* puntodemontaje = string_new();
+	puntodemontaje = malloc(strlen(punto_montaje) + 9);
+	strcpy(puntodemontaje, punto_montaje);
+	strcat(puntodemontaje, "Tables/");
+	struct dirent* dr;
+	if(NULL == (auxdir = opendir(puntodemontaje)))
+	{
+		log_error(loggerLFL, "FileSystem: No se pudo acceder al directorio de tablas.");
+		printf("Error al querer contar las tablas existentes");
+		return (0);
+	}
+	else
+	{
+		int contadorDirectorios;
+		while((dr = readdir(auxdir)) != NULL)
+			contadorDirectorios++;
+		log_info(loggerLFL, "FileSystem: La cantidad de directorios existente es: %i", contadorDirectorios);
+		return contadorDirectorios;
+	}
 }
 
 

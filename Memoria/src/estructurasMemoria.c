@@ -1,3 +1,4 @@
+
 #include "estructurasMemoria.h"
 
 //ya no uso mas esta funcion
@@ -37,31 +38,39 @@ t_est_pag* buscarEstPagBuscada(uint16_t key, t_segmento* segmento_buscado){
 	return est_pagina_buscada;
 }
 
-t_est_pag* crearPagina(time_t tiempo_de_pag, uint16_t key, int tamanio_value, char* value){
-	t_est_pag* est_pag_nuevo = malloc(sizeof(t_est_pag));
-	est_pag_nuevo->flag = 0;
-	est_pag_nuevo->pagina = malloc(sizeof(t_pagina));
-	est_pag_nuevo->pagina->key = key;
-	est_pag_nuevo->pagina->timestamp = tiempo_de_pag;
-	est_pag_nuevo->pagina->value = malloc(tamanio_value+1); //+1 por el barra 0
-	memcpy(est_pag_nuevo->pagina->value, value, tamanio_value);
-	est_pag_nuevo->pagina->value[tamanio_value] = '\0';
 
-	return est_pag_nuevo;
+t_est_pag* buscarEinsertarEnMem(t_segmento* segmento, uint16_t key, time_t time_a_insertar, int tamanio_value, char* value){
+	t_pagina* pagina_libre = buscarPaginaLibre();
+	t_est_pag* nueva_est_pagina = malloc(sizeof(t_est_pag));
+
+	nueva_est_pagina->pagina = pagina_libre;
+	nueva_est_pagina->pagina->key = key;
+	nueva_est_pagina->pagina->timestamp = time_a_insertar;
+	memcpy(nueva_est_pagina->pagina->value, value, tamanio_value);
+	nueva_est_pagina->pagina->value[tamanio_value+1] = '\0';
+	list_add(segmento->tabla_paginas.paginas, (t_est_pag*)nueva_est_pagina);
+
+	return nueva_est_pagina; //el return lo hago nada mas para las pruebas
 }
 
-void chequearLugaresEinsertar(t_segmento* segmento, t_est_pag* est_pag_a_ins){
+t_pagina* buscarPaginaLibre(){
+	int i=0;
+	while(estados[i]==OCUPADO && i<cant_paginas){
+		i++;
+	}
 
-	if(cant_lugares>0){
-		list_add(segmento->tabla_paginas.paginas, (t_est_pag*)est_pag_a_ins);
-		cant_lugares--;
+	if(estados[i]==LIBRE){
+		return &(memoria_principal[i]);
 	}
 	else{
-		aplicarLRU();
-		list_add(segmento->tabla_paginas.paginas, (t_est_pag*)est_pag_a_ins);
+		int posicion_libre = aplicarLRU();
+		return &(memoria_principal[posicion_libre]);
 	}
 }
 
-void aplicarLRU(){
-	return;
+//LA VAMOS A USAR CUANDO USEMOS BUSCAR PAGINA LIBRE
+int aplicarLRU(){
+	return 0;
 }
+
+

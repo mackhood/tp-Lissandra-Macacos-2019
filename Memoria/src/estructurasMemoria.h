@@ -45,10 +45,19 @@ typedef struct{
 	t_tabla_pag tabla_paginas;
 }t_segmento;
 
+typedef enum{
+	OCUPADO,
+	LIBRE
+}t_estado;
+
 t_list* lista_segmentos;
 size_t tamanio_pag;
 size_t tamanio_value; //nos lo pasa el fs
-size_t cant_lugares;
+size_t cant_paginas;
+
+//nueva implementacion, preguntar el sabado
+t_pagina* memoria_principal;
+t_estado* estados;
 
 //sockets
 int socket_escucha;
@@ -72,10 +81,9 @@ void escucharKernel();
 t_pagina* estaTablaYkeyEnMemoria(char* tabla_a_buscar, uint16_t key);
 t_segmento* buscarSegmento(char* tabla_a_buscar);
 t_est_pag* buscarEstPagBuscada(uint16_t key, t_segmento* segmento_buscado);
-void aplicar_LRU();
-t_est_pag* crearPagina(time_t tiempo_de_pag, uint16_t key, int tamanio_value, char* value);
-void chequearLugaresEinsertar(t_segmento* segmento, t_est_pag* est_pag_a_ins);
-
+int aplicarLRU();
+t_est_pag* buscarEinsertarEnMem(t_segmento* segmento, uint16_t key, time_t time_a_insertar, int tamanio_value, char* value);
+t_pagina* buscarPaginaLibre();
 
 
 #endif /* ESTRUCTURASMEMORIA_H_ */
