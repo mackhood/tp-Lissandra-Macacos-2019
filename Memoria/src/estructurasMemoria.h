@@ -62,6 +62,8 @@ int socket_fs;
 pthread_t threadConsola;
 pthread_t threadReqKernel;
 
+//logs
+t_log* loggerMem;
 //funciones iniciales
 void setearValores();
 void initThread();

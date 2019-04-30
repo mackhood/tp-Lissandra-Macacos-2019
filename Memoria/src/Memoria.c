@@ -4,7 +4,7 @@ int main() {
 
 
 	levantar_config();
-
+	levantar_logs();
 	levantarConexion();
 	levantarEstrMemorias();
 	initThread();
@@ -20,6 +20,17 @@ void setearValores(){
 	return;
 }
 
+void levantar_logs(){
+
+	char* memoria_log_ruta = strdup("/home/utnso/workspace/tp-2019-1c-Macacos/Memoria/Memoria.log");
+	loggerMem = cearLogger(memoria_log_ruta, "Memoria");
+
+	log_info(loggerMem, "Prueba de log");
+
+	//Logeo si se levantan correctamente las configs
+	char*memoria_config_ruta = strdup("/home/utnso/workspace/tp-2019-1c-Macacos/Memoria/memoria.config");
+	leerConfig(memoria_config_ruta, loggerMem);
+}
 void initThread(){
 
 	pthread_create(&threadConsola, NULL, (void*)handleConsola, NULL);
