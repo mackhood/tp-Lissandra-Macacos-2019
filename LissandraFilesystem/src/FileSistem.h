@@ -17,7 +17,6 @@
 
 /* VARIABLES GLOBALES */
 
-char* punto_montaje;
 int tamanio_bloques;
 int blocks;
 int creatingFL;
