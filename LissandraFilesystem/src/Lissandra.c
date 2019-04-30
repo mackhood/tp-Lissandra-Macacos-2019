@@ -218,7 +218,7 @@ int esDeTalKey(t_Memtablekeys* chequeada)
 int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, void* buffer)
 {
 	char* tabla = string_new();
-	tabla = malloc(strlen(tablaSolicitada));
+	tabla = malloc(strlen(tablaSolicitada) + 1);
 	strcpy(tabla, tablaSolicitada);
 	char* auxbuffer = string_new();
 	if(strcmp(tabla, ""))
@@ -254,12 +254,12 @@ int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, void* buff
 		log_info(loggerLFL, "Lissandra: Me llega un pedido de describir la tabla %s", tabla);
 		if(solicitadoPorMemoria)
 		{
-			mostrarMetadataEspecificada(tabla, &tamanio_buffer, solicitadoPorMemoria, auxbuffer);
+			tamanio_buffer = mostrarMetadataEspecificada(tabla, tamanio_buffer, solicitadoPorMemoria, auxbuffer);
 			return 0;
 		}
 		else
 		{
-			mostrarMetadataEspecificada(tabla, &tamanio_buffer, solicitadoPorMemoria, auxbuffer);
+			mostrarMetadataEspecificada(tabla, tamanio_buffer, solicitadoPorMemoria, auxbuffer);
 			return 0;
 		}
 	}
