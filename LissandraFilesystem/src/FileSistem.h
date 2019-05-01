@@ -14,6 +14,7 @@
 #include <sys/stat.h>
 #include <commons/collections/list.h>
 #include "LFLExternals.h"
+#include "Compactador.h"
 
 /* VARIABLES GLOBALES */
 

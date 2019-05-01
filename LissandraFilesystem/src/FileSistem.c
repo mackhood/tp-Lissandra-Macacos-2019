@@ -156,7 +156,13 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 					return(1);
 				}
 				else
+				{
+					char* tablaaux = string_new();
+					tablaaux = malloc (strlen(nombre) + 1);
+					strcpy(tablaaux, nombre);
+					gestionarTabla(tablaaux);
 					closedir(newdir);
+				}
 			}
 			free(direccionFinal);
 			log_info(loggerLFL, "FileSystem: Tabla creada satisfactoriamente");
@@ -398,8 +404,8 @@ int mostrarMetadataEspecificada(char* tabla, int tamanio_buffer_metadatas, bool 
 		int tiempoEntreCompactaciones = config_get_int_value(temporalArchivoConfig, "TIEMPOENTRECOMPACTACIONES");
 		if(solicitadoPorMemoria)
 		{
-			tamanio_buffer_metadatas += strlen(consistencia) + sizeof(cantParticiones) + sizeof(tiempoEntreCompactaciones) + 6;
-			buffer = realloc(buffer, tamanio_buffer_metadatas);
+			tamanio_buffer_metadatas += strlen(consistencia) + sizeof(cantParticiones) + sizeof(tiempoEntreCompactaciones) + 3;
+			buffer = realloc(buffer, tamanio_buffer_metadatas + 1);
 			strcat(buffer, consistencia);
 			strcat(buffer, ",");
 			strcat(buffer, string_itoa(cantParticiones));

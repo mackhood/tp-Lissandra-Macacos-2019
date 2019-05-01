@@ -99,7 +99,6 @@ void escucharMemoria(int* socket_memoria)
 				prot_enviar_mensaje(socket, VALUE_SOLICITADO_OK, tamanio_buffer, buffer);
 				break;
 			}
-
 		}
 	}
 }
@@ -244,6 +243,8 @@ int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, void* buff
 			{
 				char* massiveBufferMetadatas = string_new();
 				mostrarTodosLosMetadatas(solicitadoPorMemoria, massiveBufferMetadatas);
+				int largoMassiveBuffer = strlen(massiveBufferMetadatas);
+				//memcpy();
 				return 0;
 			}
 		}
