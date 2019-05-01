@@ -23,7 +23,7 @@ void setearValores(){
 void levantar_logs(){
 
 	char* memoria_log_ruta = strdup("/home/utnso/workspace/tp-2019-1c-Macacos/Memoria/Memoria.log");
-	loggerMem = cearLogger(memoria_log_ruta, "Memoria");
+	loggerMem = crearLogger(memoria_log_ruta, "Memoria");
 
 	log_info(loggerMem, "Prueba de log");
 

@@ -62,6 +62,9 @@ int buscarPaginaLibre(){
 
 //LA VAMOS A USAR CUANDO USEMOS BUSCAR PAGINA LIBRE
 int aplicarLRU(){
+
+
+
 	return 0;
 }
 
