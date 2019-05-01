@@ -62,7 +62,7 @@ int buscarPaginaLibre(){
 
 //LA VAMOS A USAR CUANDO USEMOS BUSCAR PAGINA LIBRE
 int aplicarLRU(){
-
+	//dentro va a estar el journaling
 
 
 	return 0;
