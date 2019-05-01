@@ -157,10 +157,10 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 				}
 				else
 				{
-					char* tablaaux = string_new();
-					tablaaux = malloc (strlen(nombre) + 1);
-					strcpy(tablaaux, nombre);
-					gestionarTabla(tablaaux);
+//					char* tablaaux = string_new();
+//					tablaaux = malloc (strlen(nombre) + 1);
+//					strcpy(tablaaux, nombre);
+//					gestionarTabla(tablaaux);
 					closedir(newdir);
 				}
 			}

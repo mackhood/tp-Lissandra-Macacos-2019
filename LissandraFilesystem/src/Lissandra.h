@@ -36,6 +36,6 @@ int llamarEliminarTabla(char* tablaPorEliminar);
 int perteneceATabla(t_Memtablekeys* key);
 int chequearTimestamps(t_Memtablekeys* key1, t_Memtablekeys* key2);
 int esDeTalKey(t_Memtablekeys* chequeada);
-int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, void* buffer);
+int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, char* buffer);
 
 #endif /* LISSANDRA_H_ */
