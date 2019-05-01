@@ -99,6 +99,48 @@ void escucharMemoria(int* socket_memoria)
 				prot_enviar_mensaje(socket, VALUE_SOLICITADO_OK, tamanio_buffer, buffer);
 				break;
 			}
+			case CREATE_TABLA:
+			{
+				char* tablaRecibida = string_new();
+				char* consistenciaRecibida = string_new();
+				int cantParticionesRecibida;
+				int tiempoEntreCompactacionesRecibido;
+				int tamanioNombreTabla;
+				int tamanioConsistencia;
+				memcpy(&tamanioNombreTabla, mensaje_memoria->payload, sizeof(int));
+				tablaRecibida = malloc(tamanioNombreTabla + 1);
+				memcpy(tablaRecibida, mensaje_memoria->payload + sizeof(int), tamanioNombreTabla);
+				memcpy(&tamanioConsistencia, mensaje_memoria->payload + sizeof(int) + tamanioNombreTabla, sizeof(int));
+				consistenciaRecibida = malloc(tamanioConsistencia + 1);
+				memcpy(consistenciaRecibida, mensaje_memoria->payload + sizeof(int) + tamanioNombreTabla +sizeof(int),
+						tamanioConsistencia);
+				memcpy(&cantParticionesRecibida, mensaje_memoria->payload + sizeof(int) + tamanioNombreTabla +sizeof(int)
+						+ tamanioConsistencia, sizeof(int));
+				memcpy(&tiempoEntreCompactacionesRecibido, mensaje_memoria->payload + sizeof(int) + tamanioNombreTabla
+						+ sizeof(int) + tamanioConsistencia + sizeof(int), sizeof(int));
+				switch(llamadoACrearTabla(tablaRecibida, consistenciaRecibida, cantParticionesRecibida, tiempoEntreCompactacionesRecibido))
+				{
+					case 0:
+					{
+						log_info(loggerLFL, "Lissandra: Tabla creada satisfactoriamente a pedido de Memoria");
+						prot_enviar_mensaje(socket, TABLA_CREADA_OK, 0, NULL);
+						break;
+					}
+					case 2:
+					{
+						log_info(loggerLFL, "Lissandra: Tabla ya existía, lamentablemente para Memoria");
+						prot_enviar_mensaje(socket, TABLA_CREADA_YA_EXISTENTE, 0, NULL);
+						break;
+					}
+					default:
+					{
+						log_error(loggerLFL, "Lissandra: La tabla o alguna de sus partes no pudo ser creada, informo a Memoria");
+						prot_enviar_mensaje(socket, TABLA_CREADA_FALLO, 0, NULL);
+						break;
+					}
+				}
+				break;
+			}
 		}
 	}
 }
