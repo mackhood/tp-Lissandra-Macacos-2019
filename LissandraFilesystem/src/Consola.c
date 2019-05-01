@@ -228,8 +228,11 @@ void describe (char** args)
 	else
 	{
 		char* tablaSolicitada = string_new();
-		tablaSolicitada = malloc(strlen(args[1]) + 1 );
-		strcpy(tablaSolicitada, args[1]);
+		if(args[1] != NULL)
+		{
+			tablaSolicitada = malloc(strlen(args[1]) + 1 );
+			strcpy(tablaSolicitada, args[1]);
+		}
 		bool solicitadoPorMemoria = false;
 		int problem = 0;
 		if (0 == (problem = describirTablas(tablaSolicitada, solicitadoPorMemoria, NULL)))

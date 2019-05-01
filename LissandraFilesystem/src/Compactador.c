@@ -19,7 +19,11 @@ void mainCompactador()
 	{
 		while(NULL != (tdp = readdir(directorioDeTablas)))//primero: while para asignar direcciones para funcion que crea hilos.
 		{
-			gestionarTabla(tdp->d_name);
+			if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, ".."))	{}
+			else
+			{
+				gestionarTabla(tdp->d_name);
+			}
 
 			//segundo: llamado a gestion de dumps.
 

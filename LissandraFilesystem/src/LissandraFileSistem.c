@@ -26,7 +26,7 @@ void setearValores(t_config * archivoConfig)
 void iniciar()
 {
 	iniciarLissandra();
-	iniciarCompactador();
+	//iniciarCompactador();
 	iniciarFileSistem();
 	iniciarConsola();
 }
