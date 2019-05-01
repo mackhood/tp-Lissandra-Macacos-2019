@@ -444,13 +444,16 @@ void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer)
 			log_info(loggerLFL, "FileSystem: se procede a construir el paquete a enviar a Memoria.");
 			while(NULL != (tdp = readdir(directorioDeTablas)))
 			{
-				tamanio_buffer_metadatas += strlen(tdp->d_name) + 2;
-				buffer = realloc(buffer, tamanio_buffer_metadatas);
-				strcat(buffer, tdp->d_name);
-				strcat(buffer, ",");
-				int new_tamanio_buffer_metadatas = mostrarMetadataEspecificada(
-						tdp->d_name, tamanio_buffer_metadatas, solicitadoPorMemoria, buffer);
-				tamanio_buffer_metadatas = new_tamanio_buffer_metadatas;
+				if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, "..")){}
+				else
+				{
+					tamanio_buffer_metadatas += strlen(tdp->d_name) + 2;
+					buffer = realloc(buffer, tamanio_buffer_metadatas);
+					strcat(buffer, tdp->d_name);
+					strcat(buffer, ",");
+					int new_tamanio_buffer_metadatas = mostrarMetadataEspecificada(tdp->d_name, tamanio_buffer_metadatas, solicitadoPorMemoria, buffer);
+					tamanio_buffer_metadatas = new_tamanio_buffer_metadatas;
+				}
 			}
 		}
 		else
@@ -459,11 +462,14 @@ void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer)
 			log_info(loggerLFL, "FileSystem: se procede a mostrar el contenido de las tablas del File System.");
 			while(NULL != (tdp = readdir(directorioDeTablas)))
 			{
-				tamanio_buffer_metadatas += strlen(tdp->d_name) + 2;
-				buffer = realloc(buffer, tamanio_buffer_metadatas);
-				int new_tamanio_buffer_metadatas = mostrarMetadataEspecificada(
-						tdp->d_name, tamanio_buffer_metadatas, solicitadoPorMemoria, buffer);
-				tamanio_buffer_metadatas = new_tamanio_buffer_metadatas;
+				if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, ".."))	{}
+				else
+				{
+					tamanio_buffer_metadatas += strlen(tdp->d_name) + 2;
+					buffer = realloc(buffer, tamanio_buffer_metadatas);
+					int new_tamanio_buffer_metadatas = mostrarMetadataEspecificada(tdp->d_name, tamanio_buffer_metadatas, solicitadoPorMemoria, buffer);
+					tamanio_buffer_metadatas = new_tamanio_buffer_metadatas;
+				}
 			}
 		}
 	}
@@ -485,9 +491,16 @@ int contarTablasExistentes()
 	}
 	else
 	{
-		int contadorDirectorios;
+		int contadorDirectorios = 0;
 		while((dr = readdir(auxdir)) != NULL)
-			contadorDirectorios++;
+		{
+			if(!strcmp(dr->d_name, ".") || !strcmp(dr->d_name, ".."))
+			{
+				//no hace nada
+			}
+			else
+				contadorDirectorios++;
+		}
 		log_info(loggerLFL, "FileSystem: La cantidad de directorios existente es: %i", contadorDirectorios);
 		return contadorDirectorios;
 	}

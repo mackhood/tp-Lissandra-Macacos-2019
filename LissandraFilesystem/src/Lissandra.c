@@ -221,7 +221,7 @@ int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, void* buff
 	tabla = malloc(strlen(tablaSolicitada) + 1);
 	strcpy(tabla, tablaSolicitada);
 	char* auxbuffer = string_new();
-	if(strcmp(tabla, ""))
+	if(0 == strcmp(tabla, ""))
 	{
 		log_info(loggerLFL, "Lissandra: Me llega un pedido de describir todas las tablas");
 		int tablasExistentes = contarTablasExistentes();
