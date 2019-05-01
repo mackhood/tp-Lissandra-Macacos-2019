@@ -18,7 +18,7 @@ t_est_pag* buscarEstPagBuscada(uint16_t key, t_segmento* segmento_buscado){
 		uint16_t posible_key;
 		memcpy(&posible_key, memoria_principal+ (tamanio_pag*pagina_a_buscar->offset) + sizeof(double), sizeof(uint16_t));
 
-		return posible_key == key && pagina_a_buscar->presencia == 1;
+		return posible_key == key;
 	}
 
 	t_est_pag* est_pagina_buscada = (t_est_pag*)list_find(segmento_buscado->tabla_paginas.paginas, _seEncuentraKey);
@@ -30,19 +30,18 @@ t_est_pag* buscarEinsertarEnMem(t_segmento* segmento, uint16_t key, time_t time_
 	int marco_disponible = buscarPaginaLibre();
 	t_est_pag* nueva_est_pagina = malloc(sizeof(t_est_pag));
 
-	/*nueva_est_pagina->pagina = pagina_libre;
-	nueva_est_pagina->pagina->key = key;
-	nueva_est_pagina->pagina->timestamp = time_a_insertar;
-	memcpy(nueva_est_pagina->pagina->value, value, tamanio_value);
-	nueva_est_pagina->pagina->value[tamanio_value+1] = '\0';*/
-
 	nueva_est_pagina->offset = marco_disponible;
 	nueva_est_pagina->flag = 0;
 
+	//desplazo la memoria y copio en una posicion "libre" lo que tengo en time-key-value
 	memcpy(memoria_principal+(tamanio_pag*marco_disponible), &time_a_insertar, sizeof(double));
 	memcpy(memoria_principal+(tamanio_pag*marco_disponible)+sizeof(double), &key, sizeof(uint16_t));
 	memcpy(memoria_principal+(tamanio_pag*marco_disponible)+sizeof(double)+sizeof(uint16_t), value_con_barraCero, tamanio_value);
 
+	//marco frame como ocupado
+	estados_memoria[marco_disponible] = OCUPADO;
+
+	//agrego la estructura a la tabla de paginas del segmento en cuestion
 	list_add(segmento->tabla_paginas.paginas, (t_est_pag*)nueva_est_pagina);
 
 	return nueva_est_pagina; //el return lo hago nada mas para las pruebas
@@ -56,7 +55,7 @@ int buscarPaginaLibre(){
 			return marco_disponible;
 			}
 		}
-	int marco_disponible = aplicar_LRU();
+	int marco_disponible = aplicarLRU();
 	return marco_disponible;
 }
 

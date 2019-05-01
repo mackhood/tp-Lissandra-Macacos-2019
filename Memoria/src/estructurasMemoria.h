@@ -28,7 +28,6 @@ typedef struct{
 	int nro_pag;
 	uint16_t offset;
 	int flag;
-	int presencia;
 }t_est_pag;
 
 typedef struct{
@@ -75,7 +74,7 @@ void escucharKernel();
 t_segmento* buscarSegmento(char* tabla_a_buscar);
 t_est_pag* buscarEstPagBuscada(uint16_t key, t_segmento* segmento_buscado);
 int aplicarLRU();
-t_est_pag* buscarEinsertarEnMem(t_segmento* segmento, uint16_t key, time_t time_a_insertar, int tamanio_value, char* value);
+t_est_pag* buscarEinsertarEnMem(t_segmento* segmento, uint16_t key, time_t time_a_insertar, char* value);
 int buscarPaginaLibre(); //ahora devuelvo un marco
 
 

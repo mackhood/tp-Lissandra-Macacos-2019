@@ -68,19 +68,23 @@ void levantarEstrMemorias(){
 	//la key es un uint16_t, tiene 16 bits por ende 2 bytes y no abarca numeros negativos (un int 4 bytes por ende 32 bits y si abarca negativos)
 	//el time_t es en segundos (ya no lo usamos en la estructura pero esta bueno saberlo)
 	//el double ocupa 8 bytes
+
+	//variables iniciales
 	tamanio_value = 4; //copio la del config del fs por ahora
 	tamanio_pag = sizeof(uint16_t) + tamanio_value + sizeof(double);
 	cant_paginas = info_memoria.tamanio_mem/tamanio_pag;
 
+	//levanto memoria
 	memoria_principal = malloc(info_memoria.tamanio_mem);
 
+	//tengo un estados memoria para identificar frames libres, los levanto en LIBRE
 	estados_memoria = malloc(sizeof(t_estado) * cant_paginas);
 
 	for(int i=0; i<cant_paginas; i++){
 		estados_memoria[i] = LIBRE;
 	}
 
-
+	lista_segmentos = list_create();
 
 	//_____________________________PRUEBA________________________________//
 	double timestamp = 1876;
