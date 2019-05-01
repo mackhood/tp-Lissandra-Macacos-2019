@@ -451,3 +451,20 @@
 [INFO] 20:36:20:788 LissandraFileSystem/(13334:13334): MAIN: Se inicio un hilo para manejar la consola.
 [INFO] 20:36:21:50 LissandraFileSystem/(13334:13339): FileSystem: Se procede a crear el bitmap
 [INFO] 20:36:27:583 LissandraFileSystem/(13334:13339): FileSystem: El bitmap fue creado satisfactoriamente
+[INFO] 18:36:16:626 LissandraFileSystem/(17134:17134): Archivo de configuracion leido correctamente
+[INFO] 18:36:16:778 LissandraFileSystem/(17134:17134): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 18:36:17:46 LissandraFileSystem/(17134:17134): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 18:36:17:310 LissandraFileSystem/(17134:17134): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 18:36:17:546 LissandraFileSystem/(17134:17134): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 18:36:17:597 LissandraFileSystem/(17134:17144): FileSystem: Se procede a crear el bitmap
+[INFO] 18:36:26:261 LissandraFileSystem/(17134:17144): FileSystem: El bitmap fue creado satisfactoriamente
+[INFO] 18:41:52:562 LissandraFileSystem/(17134:17145): Consola: Se ha recibido un pedido de describe.
+[INFO] 18:41:52:588 LissandraFileSystem/(17134:17145): Lissandra: Me llega un pedido de describir todas las tablas
+[INFO] 18:41:52:721 LissandraFileSystem/(17134:17145): FileSystem: La cantidad de directorios existente es: 75897039
+[INFO] 18:41:52:753 LissandraFileSystem/(17134:17145): FileSystem: se procede a mostrar el contenido de las tablas del File System.
+[INFO] 18:55:35:385 LissandraFileSystem/(17881:17881): Archivo de configuracion leido correctamente
+[INFO] 18:55:35:558 LissandraFileSystem/(17881:17881): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 18:55:35:895 LissandraFileSystem/(17881:17881): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 18:55:36:156 LissandraFileSystem/(17881:17881): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 18:55:36:395 LissandraFileSystem/(17881:17881): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 18:55:36:648 LissandraFileSystem/(17881:17888): FileSystem: Se procede a crear el bitmap
