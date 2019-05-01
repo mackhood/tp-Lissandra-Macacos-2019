@@ -197,6 +197,9 @@ void create (char** args) {
 		case TABLA_CREADA_YA_EXISTENTE:{
 			printf("la tabla ya se encuentra existente\n");
 		}break;
+		case TABLA_CREADA_FALLO:{
+			printf("hubo un error al crear la tabla\n");
+		}break;
 		default:{
 			break;
 		}

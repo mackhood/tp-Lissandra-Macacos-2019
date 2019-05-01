@@ -15,13 +15,6 @@ COMANDO comandos[] = {
 		{"DESCRIBE",describe},
 		{"drop",drop},
 		{"journal",journal},
-		{"add",add},
-		{"run",run},
-		{"Read Latency",readLatency},
-		{"Write Latency",writeLatency},
-		{"Reads",reads},
-		{"Writes",writes},
-		{"Memory Load",memoryLoad},
 		//{(char *) NULL, (Function *) NULL}
 }; // para generalizar las funciones reciben un string.
 
