@@ -37,5 +37,7 @@ typedef struct {
 /* VARIABLES GLOBALES */
 t_log * loggerLFL;
 bool signalExit;
+t_list * memtable;
+char* punto_montaje;
 
 #endif /* LFLEXTERNALS_H_ */

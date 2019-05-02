@@ -87,16 +87,16 @@ int conectar_a_servidor(char* ip, int puerto, char* nombre_cliente){
 	printf("soy %s y me estoy conectando a mi servidor\n", nombre_cliente);
 
 	uint16_t key = 16;
-	time_t timestamp = time(NULL);
+	double tiempo_pag = getCurrentTime();
 	int largo_value = strlen(nombre_cliente);
 
-	int tamanio_buffer = sizeof(uint16_t)+ sizeof(time_t)+ sizeof(int) + largo_value;
+	int tamanio_buffer = sizeof(uint16_t)+ sizeof(double)+ sizeof(int) + largo_value;
 	void* buffer = malloc(tamanio_buffer);
 
 	memcpy(buffer, &key, sizeof(uint16_t));
-	memcpy(buffer+sizeof(uint16_t), &timestamp, sizeof(time_t));
-	memcpy(buffer+sizeof(uint16_t)+sizeof(time_t), &largo_value, sizeof(int));
-	memcpy(buffer+sizeof(uint16_t)+sizeof(time_t)+sizeof(int), nombre_cliente, largo_value);
+	memcpy(buffer+sizeof(uint16_t), &tiempo_pag, sizeof(double));
+	memcpy(buffer+sizeof(uint16_t)+sizeof(double), &largo_value, sizeof(int));
+	memcpy(buffer+sizeof(uint16_t)+sizeof(double)+sizeof(int), nombre_cliente, largo_value);
 
 	prot_enviar_mensaje(socket_cliente, CONEXION, tamanio_buffer, buffer);
 

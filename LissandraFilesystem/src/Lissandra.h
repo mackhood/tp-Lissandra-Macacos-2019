@@ -9,7 +9,6 @@
 t_list * hilos;
 t_list * compactadores;
 t_list * memorias;
-t_list * memtable;
 
 
 /*VARIABLES GLOBALES*/
@@ -30,13 +29,13 @@ void mainLissandra();
 void iniciarServidor();
 void escucharMemoria();
 void setearValoresLissandra(t_config * archivoConfig);
-void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibido, double timestampRecibido);
+int insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibido, double timestampRecibido);
 t_keysetter* selectKey(char* tabla, uint16_t receivedKey);
 int llamadoACrearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion);
 int llamarEliminarTabla(char* tablaPorEliminar);
 int perteneceATabla(t_Memtablekeys* key);
 int chequearTimestamps(t_Memtablekeys* key1, t_Memtablekeys* key2);
 int esDeTalKey(t_Memtablekeys* chequeada);
-int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, void* buffer);
+int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, char* buffer);
 
 #endif /* LISSANDRA_H_ */

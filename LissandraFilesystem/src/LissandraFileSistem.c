@@ -20,12 +20,13 @@ void setearValores(t_config * archivoConfig)
 {
 	setearValoresLissandra(archivoConfig);
 	setearValoresFileSistem(archivoConfig);
+	setearValoresCompactador(archivoConfig);
 }
 
 void iniciar()
 {
 	iniciarLissandra();
-	iniciarCompactador();
+//	iniciarCompactador();
 	iniciarFileSistem();
 	iniciarConsola();
 }

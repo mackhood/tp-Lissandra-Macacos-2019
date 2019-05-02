@@ -2,13 +2,13 @@
 
 int main() {
 
+
 	levantar_config();
-	levantarEstrMemorias();
-/*
+	levantar_logs();
 	levantarConexion();
 	levantarEstrMemorias();
 	initThread();
-*/
+
 	while(1);
 	return EXIT_SUCCESS;
 }
@@ -20,6 +20,17 @@ void setearValores(){
 	return;
 }
 
+void levantar_logs(){
+
+	char* memoria_log_ruta = strdup("/home/utnso/workspace/tp-2019-1c-Macacos/Memoria/Memoria.log");
+	loggerMem = crearLogger(memoria_log_ruta, "Memoria");
+
+	log_info(loggerMem, "Prueba de log");
+
+	//Logeo si se levantan correctamente las configs
+	char*memoria_config_ruta = strdup("/home/utnso/workspace/tp-2019-1c-Macacos/Memoria/memoria.config");
+	leerConfig(memoria_config_ruta, loggerMem);
+}
 void initThread(){
 
 	pthread_create(&threadConsola, NULL, (void*)handleConsola, NULL);
@@ -34,7 +45,7 @@ void levantarConexion(){
 	socket_fs = conectar_a_servidor(info_memoria.ip_fs, info_memoria.puerto_fs, "Memoria");
 
 	//levanto servidor para Kernel
-	socket_escucha = levantar_servidor(info_memoria.puerto);
+/*	socket_escucha = levantar_servidor(info_memoria.puerto);
 
 	struct sockaddr_in direccion_cliente;
 	unsigned int tamanio_direccion = sizeof(direccion_cliente);
@@ -59,7 +70,7 @@ void levantarConexion(){
 	printf("el CLIENTE es %s y nos manda de prueba la key %d y la hora %ld\n\n", value, key_recibida, hora_actual);
 
 	prot_destruir_mensaje(mensaje);
-
+*/
 }
 
 void levantarEstrMemorias(){
@@ -68,21 +79,61 @@ void levantarEstrMemorias(){
 	//la key es un uint16_t, tiene 16 bits por ende 2 bytes y no abarca numeros negativos (un int 4 bytes por ende 32 bits y si abarca negativos)
 	//el time_t es en segundos (ya no lo usamos en la estructura pero esta bueno saberlo)
 	//el double ocupa 8 bytes
+
+	//variables iniciales
 	tamanio_value = 4; //copio la del config del fs por ahora
 	tamanio_pag = sizeof(uint16_t) + tamanio_value + sizeof(double);
-	cant_paginas = info_memoria.tamanio_mem/tamanio_pag; //PREGUNTAR ESTO PORQUE NI IDEA
+	cant_paginas = info_memoria.tamanio_mem/tamanio_pag;
 
-	//creo la memoria el cual va a tener cant_paginas posiciones
+	//levanto memoria
 	memoria_principal = malloc(info_memoria.tamanio_mem);
-	estados = malloc(cant_paginas * sizeof(t_estado));
 
-	//inicializo las values de la memoria
-	for(int i = 0; i<cant_paginas; i++){
-		memoria_principal[i].value = malloc(tamanio_value);
-		estados[i] = LIBRE;
+	//tengo un estados memoria para identificar frames libres, los levanto en LIBRE
+	estados_memoria = malloc(sizeof(t_estado) * cant_paginas);
+
+	for(int i=0; i<cant_paginas; i++){
+		estados_memoria[i] = LIBRE;
 	}
 
-	//_____________________PRUEBA________________________________________//
+	lista_segmentos = list_create();
+
+	//_____________________________PRUEBA________________________________//
+	double timestamp = 1876;
+	uint16_t key = 16;
+	char* value = malloc(tamanio_value);
+	memcpy(value, "abc", tamanio_value);
+
+	memcpy(memoria_principal+(tamanio_pag*4), &timestamp, sizeof(double));
+	memcpy(memoria_principal+(tamanio_pag*4)+sizeof(double), &key, sizeof(uint16_t));
+	memcpy(memoria_principal+(tamanio_pag*4)+sizeof(double)+sizeof(uint16_t), value, tamanio_value);
+
+	uint16_t key_recolectada;
+	memcpy(&key_recolectada, memoria_principal+(tamanio_pag*4)+sizeof(double), sizeof(uint16_t));
+	printf("en el marco 4 deberia estar la key %d\n", key_recolectada);
+
+	free(memoria_principal);
+	//______________________________PRUEBA_______________________________//
+}
+
+
+
+
+
+
+
+
+/*	//_____________________PRUEBA________________________________________//
+	esto lo usabamos en el esquema anterior y ESTA MAL, pero era para probar que las otras funciones funcionen entonces podemos sacar
+	algun que otro modo de prueba (creo)
+
+	//creo la memoria el cual va a tener cant_paginas posiciones
+	memoria_principal = list_create();
+
+	for(int i=0; i<cant_paginas; i++){
+		t_pagina* pagina = malloc(sizeof(t_pagina));
+		pagina->value = malloc(tamanio_value);
+		list_add(memoria_principal, (t_pagina*)pagina);
+	}
 
 	//creo lista de segmentos
 	lista_segmentos = list_create();
@@ -96,11 +147,11 @@ void levantarEstrMemorias(){
 	t_est_pag* est_pagina = malloc(sizeof(t_est_pag));
 	//est_pagina->nro_pag = 4;
 	est_pagina->flag = 0;
-	est_pagina->pagina = &(memoria_principal[0]);
+	est_pagina->pagina = list_get(memoria_principal, 0);
 
 	//creo la pagina a la cual apunta mi registro anterior
 	est_pagina->pagina->key = 32;
-	est_pagina->pagina->timestamp = time(NULL);
+	est_pagina->pagina->timestamp = getCurrentTime();
 	est_pagina->pagina->value = "hol"; //incluye \0
 
 	list_add(lista_segmentos, (t_segmento*)segmento_prueba);
@@ -114,10 +165,8 @@ void levantarEstrMemorias(){
 	printf("el flag es %d\n", est_pagina_def->flag);
 	printf("la key de la pagina es %d\n", est_pagina_def->pagina->key);
 	printf("el value de la pagina es %s\n", est_pagina_def->pagina->value);
-	printf("el timestamp de la pagina es %ld\n", est_pagina_def->pagina->timestamp);
+	printf("el timestamp de la pagina es %lf\n", est_pagina_def->pagina->timestamp);
 	printf("finalizo la prueba de levantar memoria\n\n");
-	printf("en la posicion 0 de mi memoria se encuentra la key %d\n", memoria_principal[0].key);
-	printf("en la posicion 0 de mi memoria se encuentra el value %s\n", memoria_principal[0].value);
 
 	//busco key 32
 	t_pagina* pagina_buscada = estaTablaYkeyEnMemoria("tabla1", 32);
@@ -127,6 +176,7 @@ void levantarEstrMemorias(){
 
 
 	//__________________________FIN DE PRUEBA___________________________//
-}
+
+*/
 
 

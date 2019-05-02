@@ -156,7 +156,13 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 					return(1);
 				}
 				else
+				{
+//					char* tablaaux = string_new();
+//					tablaaux = malloc (strlen(nombre) + 1);
+//					strcpy(tablaaux, nombre);
+//					gestionarTabla(tablaaux);
 					closedir(newdir);
+				}
 			}
 			free(direccionFinal);
 			log_info(loggerLFL, "FileSystem: Tabla creada satisfactoriamente");
@@ -373,11 +379,12 @@ int existeTabla(char* tabla)
 		return 0;
 }
 
-void mostrarMetadataEspecificada(char* tabla, bool solicitadoPorMemoria, char* buffer)
+int mostrarMetadataEspecificada(char* tabla, int tamanio_buffer_metadatas, bool solicitadoPorMemoria, char* buffer)
 {
 	if(0 == existeTabla(tabla))
 	{
 		log_info(loggerLFL, "FileSystem: La tabla a la que quiere acceder no existe");
+		return 0;
 	}
 	else
 	{
@@ -392,6 +399,31 @@ void mostrarMetadataEspecificada(char* tabla, bool solicitadoPorMemoria, char* b
 		strcat(direccionDeTableMetadata, "/Metadata.cfg");
 		t_config * temporalArchivoConfig;
 		temporalArchivoConfig = config_create(direccionDeTableMetadata);
+		char* consistencia = strdup(config_get_string_value(temporalArchivoConfig, "CONSISTENCIA"));
+		int	cantParticiones = config_get_int_value(temporalArchivoConfig, "PARTICIONES");
+		int tiempoEntreCompactaciones = config_get_int_value(temporalArchivoConfig, "TIEMPOENTRECOMPACTACIONES");
+		if(solicitadoPorMemoria)
+		{
+			tamanio_buffer_metadatas += strlen(consistencia) + sizeof(cantParticiones) + sizeof(tiempoEntreCompactaciones) + 3;
+			buffer = realloc(buffer, tamanio_buffer_metadatas + 1);
+			strcat(buffer, consistencia);
+			strcat(buffer, ",");
+			strcat(buffer, string_itoa(cantParticiones));
+			strcat(buffer, ",");
+			strcat(buffer, string_itoa(tiempoEntreCompactaciones));
+			strcat(buffer, ";");
+			free(auxdir);
+			free(direccionDeTableMetadata);
+			config_destroy(temporalArchivoConfig);
+			return tamanio_buffer_metadatas;
+		}
+		else
+		{
+			printf("Las características del metadata de la tabla %s son: \n", tabla);
+			printf("Consistencia: %s. \n Cantidad de Particiones: %i. \n Tiempo entre compactaciones: %i. \n",
+					consistencia, cantParticiones, tiempoEntreCompactaciones);
+			return 0;
+		}
 	}
 }
 
@@ -406,6 +438,7 @@ void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer)
 	if(NULL == (directorioDeTablas = opendir(auxdir)))
 	{
 		log_error(loggerLFL, "FileSystem: error al acceder al directorio de tablas, abortando");
+		buffer = malloc(6);
 		strcpy(buffer, "error");
 		closedir(directorioDeTablas);
 	}
@@ -413,9 +446,36 @@ void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer)
 	{
 		if(solicitadoPorMemoria)
 		{
+			int tamanio_buffer_metadatas = 0;
+			log_info(loggerLFL, "FileSystem: se procede a construir el paquete a enviar a Memoria.");
 			while(NULL != (tdp = readdir(directorioDeTablas)))
 			{
-				mostrarMetadataEspecificada(tdp->d_name, solicitadoPorMemoria, buffer);
+				if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, "..")){}
+				else
+				{
+					tamanio_buffer_metadatas += strlen(tdp->d_name) + 2;
+					buffer = realloc(buffer, tamanio_buffer_metadatas);
+					strcat(buffer, tdp->d_name);
+					strcat(buffer, ",");
+					int new_tamanio_buffer_metadatas = mostrarMetadataEspecificada(tdp->d_name, tamanio_buffer_metadatas, solicitadoPorMemoria, buffer);
+					tamanio_buffer_metadatas = new_tamanio_buffer_metadatas;
+				}
+			}
+		}
+		else
+		{
+			int tamanio_buffer_metadatas = 0;
+			log_info(loggerLFL, "FileSystem: se procede a mostrar el contenido de las tablas del File System.");
+			while(NULL != (tdp = readdir(directorioDeTablas)))
+			{
+				if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, ".."))	{}
+				else
+				{
+					tamanio_buffer_metadatas += strlen(tdp->d_name) + 2;
+					buffer = realloc(buffer, tamanio_buffer_metadatas);
+					int new_tamanio_buffer_metadatas = mostrarMetadataEspecificada(tdp->d_name, tamanio_buffer_metadatas, solicitadoPorMemoria, buffer);
+					tamanio_buffer_metadatas = new_tamanio_buffer_metadatas;
+				}
 			}
 		}
 	}
@@ -437,9 +497,16 @@ int contarTablasExistentes()
 	}
 	else
 	{
-		int contadorDirectorios;
+		int contadorDirectorios = 0;
 		while((dr = readdir(auxdir)) != NULL)
-			contadorDirectorios++;
+		{
+			if(!strcmp(dr->d_name, ".") || !strcmp(dr->d_name, ".."))
+			{
+				//no hace nada
+			}
+			else
+				contadorDirectorios++;
+		}
 		log_info(loggerLFL, "FileSystem: La cantidad de directorios existente es: %i", contadorDirectorios);
 		return contadorDirectorios;
 	}

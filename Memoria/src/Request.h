@@ -10,13 +10,6 @@ void create (char** args);
 void describe (char** args);
 void drop (char** args);
 void journal (char** args);
-void add (char** args);
-void run (char** args);
-void readLatency (char** args) ;
-void writeLatency (char** args);
-void reads (char** args);
-void writes (char** args);
-void memoryLoad (char** args);
 int ejecutar_linea(char* linea);
 
 #endif /* REQUEST_H_ */

@@ -14,11 +14,11 @@ void consola()
 	puts("-_____________________________________________________");
 	puts("CONSOLA");
 	puts("------ Escriba un comando ------");
-	puts("1. - SELECT");
-	puts("2. - INSERT");
-	puts("3. - CREATE");
-	puts("4. - DESCRIBE");
-	puts("5. - DROP");
+	puts("1. - SELECT <Table> <Key>");
+	puts("2. - INSERT <Table> <Key> <Value> <Timestamp> (last one optional)");
+	puts("3. - CREATE <Table> <Consistency> <Amount of partitions> <Time until next compaction>");
+	puts("4. - DESCRIBE <Table> (Table is optional, if you want all tables to be shown, leave this parameter empty");
+	puts("5. - DROP <Table>");
 	char* linea;
 //ejecutar prueba.txt
 	while (1) {
@@ -155,6 +155,7 @@ void insert (char** args)
 			strcpy(timestampaux, args[4]);
 			double timestamp = atoi(timestampaux);
 			insertKeysetter(tabla, key, value, timestamp);
+			log_info(loggerLFL, "Consola: Insert realizado.");
 		}
 	}
 }
@@ -228,8 +229,11 @@ void describe (char** args)
 	else
 	{
 		char* tablaSolicitada = string_new();
-		tablaSolicitada = malloc(strlen(args[1]) + 1 );
-		strcpy(tablaSolicitada, args[1]);
+		if(args[1] != NULL)
+		{
+			tablaSolicitada = malloc(strlen(args[1]) + 1 );
+			strcpy(tablaSolicitada, args[1]);
+		}
 		bool solicitadoPorMemoria = false;
 		int problem = 0;
 		if (0 == (problem = describirTablas(tablaSolicitada, solicitadoPorMemoria, NULL)))

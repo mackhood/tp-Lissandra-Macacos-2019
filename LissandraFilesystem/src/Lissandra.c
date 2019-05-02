@@ -73,6 +73,7 @@ void escucharMemoria(int* socket_memoria)
 		{
 			case SOLICITUD_TABLA:
 			{
+				log_info(loggerLFL, "Lissandra: Nos llega un pedido de Select de parte de la Memoria");
 				uint16_t auxkey;
 	//			char* tabla;
 //				int tamanioNombre;
@@ -99,12 +100,179 @@ void escucharMemoria(int* socket_memoria)
 				prot_enviar_mensaje(socket, VALUE_SOLICITADO_OK, tamanio_buffer, buffer);
 				break;
 			}
-
+			case CREATE_TABLA:
+			{
+				log_info(loggerLFL, "Lissandra: Llega un pedido de Create de parte de Memoria");
+				char* tablaRecibida = string_new();
+				char* consistenciaRecibida = string_new();
+				int cantParticionesRecibida;
+				int tiempoEntreCompactacionesRecibido;
+				int tamanioNombreTabla;
+				int tamanioConsistencia;
+				memcpy(&tamanioNombreTabla, mensaje_memoria->payload, sizeof(int));
+				tablaRecibida = malloc(tamanioNombreTabla + 2);
+				memcpy(tablaRecibida, mensaje_memoria->payload + sizeof(int), tamanioNombreTabla);
+				tablaRecibida[tamanioNombreTabla] = '\0';
+				memcpy(&tamanioConsistencia, mensaje_memoria->payload + sizeof(int) + tamanioNombreTabla, sizeof(int));
+				consistenciaRecibida = malloc(tamanioConsistencia + 2);
+				memcpy(consistenciaRecibida, mensaje_memoria->payload + sizeof(int) + tamanioNombreTabla +sizeof(int),
+						tamanioConsistencia);
+				consistenciaRecibida[tamanioConsistencia] = '\0';
+				memcpy(&cantParticionesRecibida, mensaje_memoria->payload + sizeof(int) + tamanioNombreTabla +sizeof(int)
+						+ tamanioConsistencia, sizeof(int));
+				memcpy(&tiempoEntreCompactacionesRecibido, mensaje_memoria->payload + sizeof(int) + tamanioNombreTabla
+						+ sizeof(int) + tamanioConsistencia + sizeof(int), sizeof(int));
+				switch(llamadoACrearTabla(tablaRecibida, consistenciaRecibida, cantParticionesRecibida, tiempoEntreCompactacionesRecibido))
+				{
+					case 0:
+					{
+						log_info(loggerLFL, "Lissandra: Tabla creada satisfactoriamente a pedido de Memoria");
+						prot_enviar_mensaje(socket, TABLA_CREADA_OK, 0, NULL);
+						break;
+					}
+					case 2:
+					{
+						log_info(loggerLFL, "Lissandra: Tabla ya existía, lamentablemente para Memoria");
+						prot_enviar_mensaje(socket, TABLA_CREADA_YA_EXISTENTE, 0, NULL);
+						break;
+					}
+					default:
+					{
+						log_error(loggerLFL, "Lissandra: La tabla o alguna de sus partes no pudo ser creada, informo a Memoria");
+						prot_enviar_mensaje(socket, TABLA_CREADA_FALLO, 0, NULL);
+						break;
+					}
+				}
+				break;
+			}
+			case TABLE_DROP:
+			{
+				char* tablaRecibida = string_new();
+				int tamanioNombreTabla;
+				memcpy(&tamanioNombreTabla, mensaje_memoria->payload, sizeof(int));
+				tablaRecibida = malloc(tamanioNombreTabla + 2);
+				memcpy(tablaRecibida, mensaje_memoria->payload + sizeof(int), tamanioNombreTabla);
+				tablaRecibida[tamanioNombreTabla] = '\0';
+				int results = llamarEliminarTabla(tablaRecibida);
+				switch(results)
+				{
+					case 1:
+					{
+						prot_enviar_mensaje(socket, TABLE_DROP_NO_EXISTE, 0, NULL);
+						log_error(loggerLFL, "Lissandra: La %s no existe y no se puede eliminar.", tablaRecibida);
+						break;
+					}
+					case 0:
+					{
+						prot_enviar_mensaje(socket, TABLE_DROP_OK, 0, NULL);
+						log_info(loggerLFL, "Lissandra: La %s fue eliminada correctamente", tablaRecibida);
+						break;
+					}
+					default:
+					{
+						prot_enviar_mensaje(socket, TABLE_DROP_FALLO, 0, NULL);
+						log_error(loggerLFL, "Lissandra: la operacion no fue terminada por un fallo en acceder a la %s", tablaRecibida);
+						break;
+					}
+				}
+				break;
+			}
+			case DESCRIBE:
+			{
+				bool solicitadoPorMemoria = true;
+				if(mensaje_memoria->payload != NULL)
+				{
+					char* tablaRecibida = string_new();
+					int tamanioNombreTabla;
+					memcpy(&tamanioNombreTabla, mensaje_memoria->payload, sizeof(int));
+					tablaRecibida = malloc(tamanioNombreTabla + 2);
+					memcpy(tablaRecibida, mensaje_memoria->payload + sizeof(int), tamanioNombreTabla);
+					tablaRecibida[tamanioNombreTabla] = '\0';
+					char* buffer = string_new();
+					if(0 == describirTablas(tablaRecibida, solicitadoPorMemoria, buffer))
+					{
+						size_t tamanioBuffer = strlen(buffer);
+						void* messageBuffer = malloc(tamanioBuffer + 1);
+						memcpy(messageBuffer, buffer, strlen(buffer));
+						prot_enviar_mensaje(socket, POINT_DESCRIBE, tamanioBuffer, messageBuffer);
+						log_info(loggerLFL, "Lissandra: Se ha enviado la metadata de la %s a Memoria.", tablaRecibida);
+					}
+					else
+					{
+						prot_enviar_mensaje(socket, FAILED_DESCRIBE, 0, NULL);
+						log_error(loggerLFL, "Lissandra: fallo al leer la %s", tablaRecibida);
+					}
+					free(tablaRecibida);
+					free(buffer);
+				}
+				else
+				{
+					char* buffer = string_new();
+					if(0 == describirTablas("", solicitadoPorMemoria, buffer))
+					{
+						size_t tamanioBuffer = strlen(buffer);
+						void* messageBuffer = malloc(tamanioBuffer + 1);
+						memcpy(messageBuffer, buffer, strlen(buffer));
+						prot_enviar_mensaje(socket, FULL_DESCRIBE, tamanioBuffer, messageBuffer);
+						log_info(loggerLFL, "Lissandra: Se ha enviado la metadata de todas las tablas a Memoria.");
+					}
+					else
+					{
+						prot_enviar_mensaje(socket, FAILED_DESCRIBE, 0, NULL);
+						log_error(loggerLFL, "Lissandra: falló al leer todas las tablas");
+					}
+					free(buffer);
+				}
+				break;
+			}
+			case JOURNALING_INSERT:
+			{
+				char* tablaRecibida = string_new();
+				char* valueRecibido = string_new();
+				uint16_t keyRecibida;
+				double timestampRecibido;
+				int tamanioNombreTabla;
+				int tamanioValue;
+				memcpy(&tamanioNombreTabla, mensaje_memoria->payload, sizeof(int));
+				tablaRecibida = malloc(tamanioNombreTabla + 2);
+				memcpy(tablaRecibida, mensaje_memoria->payload + sizeof(int), tamanioNombreTabla);
+				tablaRecibida[tamanioNombreTabla] = '\0';
+				memcpy(&keyRecibida, mensaje_memoria->payload + sizeof(int) + tamanioNombreTabla
+						, sizeof(uint16_t));
+				memcpy(&tamanioValue, mensaje_memoria->payload + sizeof(int) + tamanioNombreTabla + sizeof(uint16_t)
+						, sizeof(int));
+				valueRecibido = malloc(tamanioValue + 2);
+				memcpy(valueRecibido, mensaje_memoria->payload + sizeof(int) + tamanioNombreTabla + sizeof(uint16_t)
+						+ sizeof(int), tamanioValue);
+				valueRecibido[tamanioValue] = '\0';
+				memcpy(&timestampRecibido, mensaje_memoria->payload + sizeof(int) + tamanioNombreTabla + sizeof(uint16_t)
+						+ sizeof(int) + tamanioValue, sizeof(double));
+				switch(insertKeysetter(tablaRecibida, keyRecibida, valueRecibido, timestampRecibido))
+				{
+					case 0:
+					{
+						prot_enviar_mensaje(socket, INSERT_SUCCESSFUL, 0, NULL);
+						break;
+					}
+					case 2:
+					{
+						prot_enviar_mensaje(socket, INSERT_FAILED_ON_MEMTABLE, 0, NULL);
+						break;
+					}
+					default:
+					{
+						prot_enviar_mensaje(socket, INSERT_FAILURE, 0, NULL);
+						break;
+					}
+				}
+				free(tablaRecibida);
+				free(valueRecibido);
+			}
 		}
 	}
 }
 
-void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibido, double timestampRecibido)
+int insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibido, double timestampRecibido)
 {
 	tamanio_memtable = memtable->elements_count;
 	t_Memtablekeys* auxiliar = malloc(sizeof(t_Memtablekeys) + 4);
@@ -123,6 +291,7 @@ void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecib
 	{
 		log_error(loggerLFL, "Lissandra: La tabla no existe, por lo que no puede insertarse una clave.");
 		printf("Tabla no existente.\n");
+		return 1;
 	}
 	else
 	{
@@ -132,11 +301,13 @@ void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecib
 		{
 			log_error(loggerLFL, "Lissandra: La clave fracasó en su intento de insertarse correctamente.");
 			printf("Fallo al agregar a memtable.\n");
+			return 2;
 		}
 		else
 		{
 			log_info(loggerLFL, "Lissandra: La clave fue insertada correctamente.");
 			printf("Agregado correctamente.\n");
+			return 0;
 		}
 	}
 	tamanio_memtable = 0;
@@ -144,8 +315,6 @@ void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecib
 
 t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 {
-
-
 		t_list* keysDeTablaPedida = list_create();
 		t_list* keyEspecifica = list_create();
 		t_Memtablekeys* auxA = malloc(sizeof(t_Memtablekeys) + 4);
@@ -215,13 +384,13 @@ int esDeTalKey(t_Memtablekeys* chequeada)
 	return chequeada->data->key == keyAnalizada;
 }
 
-int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, void* buffer)
+int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, char* buffer)
 {
 	char* tabla = string_new();
-	tabla = malloc(strlen(tablaSolicitada));
+	tabla = malloc(strlen(tablaSolicitada) + 1);
 	strcpy(tabla, tablaSolicitada);
 	char* auxbuffer = string_new();
-	if(strcmp(tabla, ""))
+	if(0 == strcmp(tabla, ""))
 	{
 		log_info(loggerLFL, "Lissandra: Me llega un pedido de describir todas las tablas");
 		int tablasExistentes = contarTablasExistentes();
@@ -230,12 +399,13 @@ int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, void* buff
 			log_error(loggerLFL, "Lissandra: No existe ningún directorio en le FileSystem");
 			printf("Error al acceder a todos los directorios");
 			char* errormarker = "error";
+			buffer = realloc(buffer, 6);
 			memcpy(buffer, errormarker, strlen(errormarker));
 			return 1;
 		}
 		else
 		{
-			if(solicitadoPorMemoria)
+			if(!solicitadoPorMemoria)
 			{
 				mostrarTodosLosMetadatas(solicitadoPorMemoria, auxbuffer);
 				return 0;
@@ -243,23 +413,29 @@ int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, void* buff
 			else
 			{
 				char* massiveBufferMetadatas = string_new();
-				massiveBufferMetadatas = malloc((sizeof(int) * 2 + 6) * tablasExistentes);
 				mostrarTodosLosMetadatas(solicitadoPorMemoria, massiveBufferMetadatas);
+				int largoMassiveBuffer = strlen(massiveBufferMetadatas);
+				buffer = realloc(buffer, largoMassiveBuffer + 1);
+				strcpy(buffer, massiveBufferMetadatas);
 				return 0;
 			}
 		}
 	}
 	else
 	{
+		int tamanio_buffer = 1;
 		log_info(loggerLFL, "Lissandra: Me llega un pedido de describir la tabla %s", tabla);
 		if(solicitadoPorMemoria)
 		{
-			mostrarMetadataEspecificada(tabla, solicitadoPorMemoria, auxbuffer);
+			tamanio_buffer = mostrarMetadataEspecificada(tabla, tamanio_buffer, solicitadoPorMemoria, auxbuffer);
+			int sizebuffer = strlen(auxbuffer);
+			buffer = realloc(buffer, sizebuffer + 1);
+			strcpy(buffer, auxbuffer);
 			return 0;
 		}
 		else
 		{
-			mostrarMetadataEspecificada(tabla, solicitadoPorMemoria, auxbuffer);
+			mostrarMetadataEspecificada(tabla, tamanio_buffer, solicitadoPorMemoria, auxbuffer);
 			return 0;
 		}
 	}
