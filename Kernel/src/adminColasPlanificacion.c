@@ -16,13 +16,12 @@ void initConfigAdminColas(){
 	tKernelEstados->new = queue_create();
 	tKernelEstados->pendReady = list_create();
 	tKernelEstados->ready = queue_create();
-	tKernelEstados->colaPrioridad = queue_create();
+//	tKernelEstados->colaPrioridad = queue_create();
 	tKernelEstados->exec = list_create();
-	tKernelEstados->block = list_create();
 	tKernelEstados->exit = queue_create();
 	tablaGDT = list_create();
 	tabla_recursos = dictionary_create();
-	tKernelEstados->ListaPrioridad=list_create();
+//	tKernelEstados->ListaPrioridad=list_create();
 	//inicializacion de mutex para cada lista
 	pthread_mutex_init(&mutexListNuevo, NULL);
 	pthread_mutex_init(&mutexListListo, NULL);
@@ -149,8 +148,8 @@ int getEstadoPlanficacion(DTB_KERNEL* dtb){
 	if (list_find(tKernelEstados->exec, encontrarDTB) != NULL)
 		return ESTADO_COLA_EXEC;
 
-	if (list_find(tKernelEstados->block, encontrarDTB) != NULL)
-		return ESTADO_COLA_BLOCK;
+//	if (list_find(tKernelEstados->block, encontrarDTB) != NULL)
+//		return ESTADO_COLA_BLOCK;
 
 	if (list_find(tKernelEstados->exit->elements, encontrarDTB) != NULL)
 		return ESTADO_COLA_EXIT;
@@ -160,7 +159,7 @@ int getEstadoPlanficacion(DTB_KERNEL* dtb){
 
 void enviarABLOCK(DTB_KERNEL* dtb) {
 	pthread_mutex_lock(&mutexListBloqueado);
-	list_add(tKernelEstados->block, dtb);
+//	list_add(tKernelEstados->block, dtb);
 	pthread_mutex_unlock(&mutexListBloqueado);
 	logTrace(" Se envio a cola de BLoqueados el DTB :%d", dtb->idGDT);
 }
@@ -171,14 +170,14 @@ DTB_KERNEL* get_elem_block_by_id(int id){
 		return dtbTemp->idGDT == id;
 	}
 
-	if(list_any_satisfy(tKernelEstados->block, encontrar)){
-		pthread_mutex_lock(&mutexListBloqueado);
-		DTB_KERNEL* dtb = list_find(tKernelEstados->block, encontrar);
-		pthread_mutex_unlock(&mutexListBloqueado);
-		return dtb;
-
-	}else
-		return NULL;
+//	if(list_any_satisfy(tKernelEstados->block, encontrar)){
+//		pthread_mutex_lock(&mutexListBloqueado);
+//		DTB_KERNEL* dtb = list_find(tKernelEstados->block, encontrar);
+//		pthread_mutex_unlock(&mutexListBloqueado);
+//		return dtb;
+//
+//	}else
+//		return NULL;
 
 }
 
@@ -235,15 +234,15 @@ DTB_KERNEL* getDTB_DUMMYofBLOCK(){
 	}
 
 	DTB_KERNEL* dtb ;
-	pthread_mutex_lock(&mutexListBloqueado);
-	dtb = list_remove_by_condition(tKernelEstados->block, condicionDTB_DUMMY);
-	pthread_mutex_unlock(&mutexListBloqueado);
-
-	if(dtb != NULL){
-		logInfo("Se removio DTB_DUMMY de la cola de bloqueados");
-	}else{
-		logInfo("Error al remover DTB_DUMMY de la cola de bloqueados");
-	}
+//	pthread_mutex_lock(&mutexListBloqueado);
+//	dtb = list_remove_by_condition(tKernelEstados->block, condicionDTB_DUMMY);
+//	pthread_mutex_unlock(&mutexListBloqueado);
+//
+//	if(dtb != NULL){
+//		logInfo("Se removio DTB_DUMMY de la cola de bloqueados");
+//	}else{
+//		logInfo("Error al remover DTB_DUMMY de la cola de bloqueados");
+//	}
 
 	return dtb;
 }
@@ -266,7 +265,7 @@ void removerDeBLOCK(DTB_KERNEL* dtb) {
 	bool condicionDTB(DTB_KERNEL* dtbTemp) {;
 		return dtbTemp->idGDT == dtb->idGDT;
 	}
-	list_remove_by_condition(tKernelEstados->block, (void*)condicionDTB);
+//	list_remove_by_condition(tKernelEstados->block, (void*)condicionDTB);
 	logTrace("El DTB:%d se removio de la cola de bloqueados", dtb->idGDT);
 }
 
@@ -402,14 +401,14 @@ DTB_KERNEL* crearDTBSAFA(int gdtId, char* path, int quantum){
 	dtb->idGDT = gdtId;
 	dtb->flag = 1;
 	dtb->pc = 0;
-	dtb->cant_usaron_diego = 0;
+//	dtb->cant_usaron_diego = 0;
 	dtb->se_ejecuto = false;
 	dtb->horacreacion = time(0);
 	dtb->quantum = quantum;
 	dtb->path = malloc( (sizeof(char)* string_length(path)) + 1 );
 	strcpy(dtb->path, path);
-	dtb->tablaDeArchivosAbiertos = list_create();
-	dtb->prox_io = queue_create();
+//	dtb->tablaDeArchivosAbiertos = list_create();
+//	dtb->prox_io = queue_create();
 	return dtb;
 }
 
@@ -418,8 +417,8 @@ void liberarMemoriaDTB_SAFA(DTB_KERNEL* dtb ){
 
 		free(dtb->sentencias);
 		free(dtb->path);
-		queue_destroy( dtb->prox_io );
-		list_destroy(dtb->tablaDeArchivosAbiertos);
+//		queue_destroy( dtb->prox_io );
+//		list_destroy(dtb->tablaDeArchivosAbiertos);
 		free(dtb);
 
 }

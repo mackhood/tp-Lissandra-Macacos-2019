@@ -41,14 +41,19 @@ void handleConsola(t_kernel* tKernel){
 	puts("-_____________________________________________________");
 	puts("CONSOLA");
 	puts("------ Escriba un comando ------");
-	puts("1. - Ejecutar  <ruta-al-escritorio>");
-	puts("2. - Status    <id_dtb>");
-	puts("3. - Finalizar <id_dtb>");
-	puts("4. - Metricas  <id_dtb>");
+	puts("1. - SELECT  <ruta-al-escritorio>");
+	puts("2. - INSERT  <ruta-al-escritorio>");
+	puts("3. - CREATE  <ruta-al-escritorio>");
+	puts("4. - DROP  <ruta-al-escritorio>");
+	puts("5. - JOURNAL  <ruta-al-escritorio>");
+	puts("6. - ADD    <id_dtb>");
+	puts("7. - DROP  <ruta-al-escritorio>");
+	puts("8. - RUN <ruta-al-escritorio>");
+	puts("9. - METRICS  <id_dtb>");
 	char* linea;
-//ejecutar prueba.txt
-	while (1) {
-		linea = readline("\nSharks: ");
+
+		while (1) {
+		linea = readline("\n Kernel: ");
 
 		if (strcmp(linea, "exit")==0){
 			free(linea);

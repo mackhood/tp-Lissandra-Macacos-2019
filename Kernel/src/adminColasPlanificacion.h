@@ -22,7 +22,6 @@
 #define ESTADO_COLA_NEW   		1
 #define ESTADO_COLA_READY   	2
 #define ESTADO_COLA_EXEC   		3
-#define ESTADO_COLA_BLOCK  	    4
 #define ESTADO_COLA_EXIT    	5
 #define ESTADO_NO_ENCONTRADO   -1
 
@@ -35,10 +34,7 @@ typedef struct {
 	t_list* pendReady ;	  //Aca paso los dtb que envie a cargar en memoria y esta pendiente de pasar a ready
 	t_queue* ready;
     t_list* exec;
-	t_list* block;
 	t_queue* exit;
-	t_queue* colaPrioridad;
-	t_list* ListaPrioridad;
 }t_kernel_estado;
 
 

@@ -45,14 +45,6 @@ void initConfiguracion(){
 	char* ip_memoria = config_get_string_value(config,"IP_MEMORIA");
 	kernelConfig->ip_memoria = malloc( string_length(ip_memoria) + 1 );
 	strcpy(kernelConfig->ip_memoria, ip_memoria);
-
-//
-//	char* algoritmo = config_get_string_value(config,"ALGORITMO_PLANIFICACION");
-//	safaConfig->algoritmoPlanificacion = malloc( string_length(algoritmo) + 1 );
-//	strcpy(safaConfig->algoritmoPlanificacion, algoritmo);
-//
-//	safaConfig->gradoMultiprogramacion = config_get_int_value(config,"GRADO_MULTIPRGRAMACION");
-//	safaConfig->retardoPlanificacion = config_get_int_value(config,"RETARDO_DE_PLANIFICACION");
 	config_destroy(config);
 
 
@@ -70,8 +62,8 @@ void initConfiguracion(){
 
 	tKernel = malloc(sizeof(t_kernel));
 	tKernel->config = kernelConfig;
-
-	socket_memoria = conectar_a_servidor(tKernel->config->ip_memoria, tKernel->config->puerto_memoria, "Kernel");
+	tKernel->memoriasSincriterio = list_create();
+	initConfigAdminColas();
 
 }
 
@@ -81,7 +73,11 @@ void initThread(){
 
 	logInfo("Creando thread para atender las conexiones de memoria");
 	pthread_create(&threadConexionMemoria, NULL, (void*) handler_conexion_memoria, tKernel);
+	logInfo("Creando thread para el funcionamiento de la consola");
 	pthread_create(&threadConsola, NULL, (void*)handleConsola, tKernel);
+
+
+
 	//pthread_create(&threadPlanificador, NULL, (void*)handlePlanificadorLP, tKernel);
 
 

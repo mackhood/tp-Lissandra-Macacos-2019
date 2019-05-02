@@ -41,9 +41,10 @@
 
 		void liberarDTB(DTB_KERNEL* dtb){
 			free(dtb->path);
-			free(dtb->tablaDeArchivosAbiertos);
-			free(dtb->tablaDeArchivosAbiertos);
-		}
+//			free(dtb->tablaDeArchivosAbiertos);
+//			free(dtb->tablaDeArchivosAbiertos);
+//
+			}
 
 
 

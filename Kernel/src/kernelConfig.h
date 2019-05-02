@@ -15,7 +15,8 @@
 
 #include <pthread.h>
 #include <semaphore.h>
-
+pthread_mutex_t mutexIdGDT;
+pthread_mutex_t mutexIdMemoria;
 
 typedef struct{
 	int	puerto_memoria;
@@ -29,8 +30,9 @@ typedef struct{
 typedef struct {
 
 	kernel_config* config;
-
-
+	int cantMemoriasPool;
+	int primerConexion; //falg utilizado para conectarse por primera vez
+	t_list* memoriasSincriterio;
 }t_kernel;
 
 
@@ -49,15 +51,10 @@ typedef struct{
 	char* path; // ruta del escriptorio
 	int quantum; //dato el ultimo algoritmo del hito presenciar, el quantum puede cambiar por DTB
 	int pc;
-	t_list* tablaDeArchivosAbiertos;
 	int posMemoria;
 
 	int total_sentencias;
 	char* sentencias;
-	int siguiente_io;
-	int cant_sentencia_new;
-	int cant_usaron_diego; //promedio
-	t_queue* prox_io;
 	bool se_ejecuto;
 	double tiempo_repuesta;
 	time_t horacreacion;  //se usa para calcular el tiempo de repuesta

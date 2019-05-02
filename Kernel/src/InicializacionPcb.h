@@ -16,7 +16,7 @@ void initConfigPLP();
 
 
 /********** Definir variables globales **********/
-pthread_mutex_t mutexIdGDT;
+
 
 
 #endif /* INICIALIZACIONPCB_H_ */
