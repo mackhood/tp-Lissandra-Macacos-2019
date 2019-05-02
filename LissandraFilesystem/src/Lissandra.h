@@ -29,7 +29,7 @@ void mainLissandra();
 void iniciarServidor();
 void escucharMemoria();
 void setearValoresLissandra(t_config * archivoConfig);
-void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibido, double timestampRecibido);
+int insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibido, double timestampRecibido);
 t_keysetter* selectKey(char* tabla, uint16_t receivedKey);
 int llamadoACrearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion);
 int llamarEliminarTabla(char* tablaPorEliminar);

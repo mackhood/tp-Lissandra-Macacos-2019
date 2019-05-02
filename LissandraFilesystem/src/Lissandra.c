@@ -202,6 +202,8 @@ void escucharMemoria(int* socket_memoria)
 						prot_enviar_mensaje(socket, FAILED_DESCRIBE, 0, NULL);
 						log_error(loggerLFL, "Lissandra: fallo al leer la %s", tablaRecibida);
 					}
+					free(tablaRecibida);
+					free(buffer);
 				}
 				else
 				{
@@ -217,16 +219,60 @@ void escucharMemoria(int* socket_memoria)
 					else
 					{
 						prot_enviar_mensaje(socket, FAILED_DESCRIBE, 0, NULL);
-						log_error(loggerLFL, "Lissandra: fallo al leer todas las tablas");
+						log_error(loggerLFL, "Lissandra: falló al leer todas las tablas");
 					}
+					free(buffer);
 				}
 				break;
+			}
+			case JOURNALING_INSERT:
+			{
+				char* tablaRecibida = string_new();
+				char* valueRecibido = string_new();
+				uint16_t keyRecibida;
+				double timestampRecibido;
+				int tamanioNombreTabla;
+				int tamanioValue;
+				memcpy(&tamanioNombreTabla, mensaje_memoria->payload, sizeof(int));
+				tablaRecibida = malloc(tamanioNombreTabla + 2);
+				memcpy(tablaRecibida, mensaje_memoria->payload + sizeof(int), tamanioNombreTabla);
+				tablaRecibida[tamanioNombreTabla] = '\0';
+				memcpy(&keyRecibida, mensaje_memoria->payload + sizeof(int) + tamanioNombreTabla
+						, sizeof(uint16_t));
+				memcpy(&tamanioValue, mensaje_memoria->payload + sizeof(int) + tamanioNombreTabla + sizeof(uint16_t)
+						, sizeof(int));
+				valueRecibido = malloc(tamanioValue + 2);
+				memcpy(valueRecibido, mensaje_memoria->payload + sizeof(int) + tamanioNombreTabla + sizeof(uint16_t)
+						+ sizeof(int), tamanioValue);
+				valueRecibido[tamanioValue] = '\0';
+				memcpy(&timestampRecibido, mensaje_memoria->payload + sizeof(int) + tamanioNombreTabla + sizeof(uint16_t)
+						+ sizeof(int) + tamanioValue, sizeof(double));
+				switch(insertKeysetter(tablaRecibida, keyRecibida, valueRecibido, timestampRecibido))
+				{
+					case 0:
+					{
+						prot_enviar_mensaje(socket, INSERT_SUCCESSFUL, 0, NULL);
+						break;
+					}
+					case 2:
+					{
+						prot_enviar_mensaje(socket, INSERT_FAILED_ON_MEMTABLE, 0, NULL);
+						break;
+					}
+					default:
+					{
+						prot_enviar_mensaje(socket, INSERT_FAILURE, 0, NULL);
+						break;
+					}
+				}
+				free(tablaRecibida);
+				free(valueRecibido);
 			}
 		}
 	}
 }
 
-void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibido, double timestampRecibido)
+int insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibido, double timestampRecibido)
 {
 	tamanio_memtable = memtable->elements_count;
 	t_Memtablekeys* auxiliar = malloc(sizeof(t_Memtablekeys) + 4);
@@ -245,6 +291,7 @@ void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecib
 	{
 		log_error(loggerLFL, "Lissandra: La tabla no existe, por lo que no puede insertarse una clave.");
 		printf("Tabla no existente.\n");
+		return 1;
 	}
 	else
 	{
@@ -254,11 +301,13 @@ void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecib
 		{
 			log_error(loggerLFL, "Lissandra: La clave fracasó en su intento de insertarse correctamente.");
 			printf("Fallo al agregar a memtable.\n");
+			return 2;
 		}
 		else
 		{
 			log_info(loggerLFL, "Lissandra: La clave fue insertada correctamente.");
 			printf("Agregado correctamente.\n");
+			return 0;
 		}
 	}
 	tamanio_memtable = 0;
@@ -266,8 +315,6 @@ void insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecib
 
 t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 {
-
-
 		t_list* keysDeTablaPedida = list_create();
 		t_list* keyEspecifica = list_create();
 		t_Memtablekeys* auxA = malloc(sizeof(t_Memtablekeys) + 4);
