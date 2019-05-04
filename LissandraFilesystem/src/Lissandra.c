@@ -71,24 +71,45 @@ void escucharMemoria(int* socket_memoria)
 
 		switch(mensaje_memoria->head)
 		{
+			case HANDSHAKE:
+			{
+				log_info(loggerLFL, "Lissandra: me llegó un handshake de una Memoria, procedo a enviar los Metadatas");
+				bool solicitadoPorMemoria = true;
+				char* buffer = string_new();
+				if(0 == describirTablas("", solicitadoPorMemoria, buffer))
+				{
+					size_t tamanioBuffer = strlen(buffer);
+					void* messageBuffer = malloc(tamanioBuffer + 1);
+					memcpy(messageBuffer, buffer, strlen(buffer));
+					prot_enviar_mensaje(socket, FULL_DESCRIBE, tamanioBuffer, messageBuffer);
+					log_info(loggerLFL, "Lissandra: Se ha enviado la metadata de todas las tablas a Memoria.");
+				}
+				else
+				{
+					prot_enviar_mensaje(socket, FAILED_DESCRIBE, 0, NULL);
+					log_error(loggerLFL, "Lissandra: falló al leer todas las tablas");
+				}
+				free(buffer);
+				break;
+			}
 			case SOLICITUD_TABLA:
 			{
 				log_info(loggerLFL, "Lissandra: Nos llega un pedido de Select de parte de la Memoria");
 				uint16_t auxkey;
-	//			char* tabla;
-//				int tamanioNombre;
+				char* tabla;
+				int tamanioNombre;
 				memcpy(&auxkey, mensaje_memoria->payload, sizeof(uint16_t));
-//				memcpy(&tamanioNombre, mensaje_memoria->payload + sizeof(uint16_t), sizeof(int));
-//				tabla = malloc(tamanioNombre);
-//				memcpy(tabla, mensaje_memoria->payload + sizeof(uint16_t) + sizeof(int), tamanioNombre);
-//				t_keysetter* helpinghand = selectKey(tabla, auxkey);
-//				double tiempo_pag = helpinghand->timestamp;
-	//			char* value = helpinghand->clave;
-		//		int tamanio_value = strlen(value);
-
-				double tiempo_pag = getCurrentTime();
-				char* value = "Ejemplo";
+				memcpy(&tamanioNombre, mensaje_memoria->payload + sizeof(uint16_t), sizeof(int));
+				tabla = malloc(tamanioNombre);
+				memcpy(tabla, mensaje_memoria->payload + sizeof(uint16_t) + sizeof(int), tamanioNombre);
+				t_keysetter* helpinghand = selectKey(tabla, auxkey);
+				double tiempo_pag = helpinghand->timestamp;
+				char* value = helpinghand->clave;
 				int tamanio_value = strlen(value);
+
+//				double tiempo_pag = getCurrentTime();
+//				char* value = "Ejemplo";
+//				int tamanio_value = strlen(value);
 
 				size_t tamanio_buffer = (sizeof(double)+tamanio_value+sizeof(int));
 				void* buffer = malloc(tamanio_buffer);
