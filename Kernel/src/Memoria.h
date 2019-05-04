@@ -10,7 +10,7 @@
 
 
 #include "kernelConfig.h"
-
+#include <stdlib.h>
 typedef struct  {
 
 int conexion;
