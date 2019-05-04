@@ -29,7 +29,7 @@ COMANDO comandos[] = {
 		{"Reads",reads},
 		{"Writes",writes},
 		{"Memory Load",memoryLoad},
-		{(char *) NULL, (Function *) NULL}
+		{(char *) NULL, (Funcion *) NULL}
 }; // para generalizar las funciones reciben un string.
 
 
