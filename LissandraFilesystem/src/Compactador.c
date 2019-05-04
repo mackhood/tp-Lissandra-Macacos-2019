@@ -2,7 +2,7 @@
 
 void mainCompactador()
 {
-	//acceso a las talas
+	//acceso a las tablas
 	DIR* directorioDeTablas;
 	struct dirent* tdp;
 	char* auxdir = string_new();
@@ -35,12 +35,14 @@ void setearValoresCompactador(t_config* archivoConfig){
 	tiempoDump = config_get_int_value(archivoConfig, "TIEMPO_DUMP");
 
 }
+
 void gestionarTabla(char*tabla){
 	pthread_t hiloTabla;
 	log_info(loggerLFL,"Compactador: Se inicio un hilo para manejar a %s.",tabla);
 	pthread_create(&hiloTabla, NULL, (void *) compactarTablas, tabla);
 	pthread_detach(hiloTabla);
 }
+
 void compactarTablas(char*tabla){
 	char* direccionMetadataTabla= string_new();
 	direccionMetadataTabla= malloc(strlen(punto_montaje) + strlen(tabla) + 21);//son 20 de tables/ y metadata.cfg +1 por las dudas

@@ -290,6 +290,7 @@ void escucharMemoria(int* socket_memoria)
 				free(valueRecibido);
 			}
 		}
+		usleep(retardo * 1000);
 	}
 }
 
@@ -338,23 +339,25 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 {
 		t_list* keysDeTablaPedida = list_create();
 		t_list* keyEspecifica = list_create();
-		t_Memtablekeys* auxA = malloc(sizeof(t_Memtablekeys) + 4);
+		t_Memtablekeys* auxMemtable = malloc(sizeof(t_Memtablekeys) + 4);
 		tablaAnalizada = malloc(strlen(tabla) + 1);
 		keyAnalizada = receivedKey;
 		strcpy(tablaAnalizada, tabla);
 		keysDeTablaPedida = list_filter(memtable, (void*)perteneceATabla);
 		keyEspecifica = list_filter(keysDeTablaPedida, (void*)esDeTalKey);
 		list_sort(keyEspecifica, (void*)chequearTimestamps);
-		auxA = list_get(keyEspecifica, 0);
+		auxMemtable = list_get(keyEspecifica, 0);
 
 		//Acá hace falta implementar el compactador y las claves del FL, para eso, despues se llama a comparadorDeKeys();
+		t_keysetter* keyTemps = selectTemps(tabla, receivedKey);
+		t_keysetter* keyMemtable = malloc(sizeof(t_keysetter) + 3);
+		keyMemtable = auxMemtable->data;
 
-		t_keysetter* key = malloc(sizeof(t_keysetter) + 3);
-		key = auxA->data;
+		t_keysetter* keyFinal = malloc(sizeof(t_keysetter) + 3);
 		list_destroy(keysDeTablaPedida);
 		free(tablaAnalizada);
 		log_info(loggerLFL, "Lissandra: se ha obtenido la clave más actualizada en el proceso.");
-		return key;
+		return keyFinal;
 }
 
 int llamadoACrearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion)

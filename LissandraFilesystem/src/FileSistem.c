@@ -512,4 +512,48 @@ int contarTablasExistentes()
 	}
 }
 
+t_keysetter* selectTemps(char* tabla, uint16_t keyRecibida)
+{
+	log_info(loggerLFL, "FileSystem: Empiezo a buscar el value más recente de la clave %i", keyRecibida);
+	DIR* dir;
+	struct dirent* tdp;
+	char* auxdir = string_new();
+	t_list* keysettersEspecificos = list_create();
+	auxdir = malloc(strlen(punto_montaje) + strlen(tabla) + 9);
+	strcpy(auxdir, punto_montaje);
+	strcat(auxdir, "Tables/");
+	strcat(auxdir, tabla);
+	strcat(auxdir, "/");
+	char* direccionTemp = string_new();
+
+	dir = opendir(auxdir);
+	int i = 0;
+	while(NULL != (tdp = readdir(dir)))
+	{
+		char* partitionName = string_new();
+		char* aux = string_itoa(i);
+		partitionName = malloc(strlen(aux) + 5);
+		strcpy(partitionName, aux);
+		strcat(partitionName, ".bin");
+		if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, "..") || !strcmp(tdp->d_name, "Metadata.cfg")){}
+		else
+		{
+			if(!strcmp(tdp->d_name[strlen(aux) + 1], "b"))
+			{
+				i++;
+			}
+			else
+			{
+				direccionTemp = malloc(strlen(auxdir) + strlen(tdp->d_name) + 1);
+				strcpy(direccionTemp, auxdir);
+				strcat(direccionTemp, tdp->d_name);
+			}
+
+		}
+	}
+	t_keysetter* keyTemps = malloc(sizeof(t_keysetter) + 4);
+	free(auxdir);
+	free(direccionTemp);
+	return keyTemps;
+}
 

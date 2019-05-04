@@ -89,6 +89,7 @@ int ejecutar_linea (char * linea){
 	free(args[1]);
 
 	free(args);
+	usleep(retardo * 1000);
 	return 1;
 }
 

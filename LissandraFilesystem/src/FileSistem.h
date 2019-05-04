@@ -37,6 +37,6 @@ int existeTabla(char* tabla);
 int mostrarMetadataEspecificada(char* tabla, int tamanio_buffer_metadatas, bool solicitadoPorMemoria, char* buffer);
 void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer);
 int contarTablasExistentes();
-
+t_keysetter* selectTemp(char* tabla, uint16_t keyRecibida);
 
 #endif /* FILESISTEM_H_ */
