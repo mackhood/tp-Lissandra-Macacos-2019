@@ -21,12 +21,18 @@
 
 //HEADER
 typedef enum{
+
+
+
+
 	CONEXION, //Un cliente informa a un servidor que se ha conectado. Payload: Algun t_cliente
 	FALLO_AL_RECIBIR,//Indica que un mensaje no se recibio correctamente en prot_recibir_mensaje
 	DESCONEXION, //Indica que un cliente se ha desconectado (usado para instancias)
 	FALLO_AL_ENVIAR,//Todavia no aplicado. Analogo al de arriba
 
 	//Kernel-Memoria
+	HANDSHAKE_KERNEL_MEMORIA,//CUANDO SE REALIZA LA PRIMERA CONEXION LA MEMORIA Y EL KERNEL
+
 	KEY_SOLICITADA_SELECT,
 	//Memoria-FileSystem
 	SOLICITUD_TABLA,
@@ -47,7 +53,7 @@ typedef enum{
 	JOURNALING_INSERT,
 	INSERT_SUCCESSFUL,
 	INSERT_FAILED_ON_MEMTABLE,
-	INSERT_FAILURE,
+	INSERT_FAILURE,POOL_MEMORIA
 
 
 }t_header;

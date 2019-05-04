@@ -66,39 +66,7 @@ sem_t semPcbReadyPrioridad;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void initConfigAdminColas();
 
 
 
