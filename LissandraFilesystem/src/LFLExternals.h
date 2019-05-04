@@ -39,5 +39,6 @@ t_log * loggerLFL;
 bool signalExit;
 t_list * memtable;
 char* punto_montaje;
+t_list* tablasEnEjecucion;
 
 #endif /* LFLEXTERNALS_H_ */

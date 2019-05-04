@@ -11,7 +11,10 @@ double getCurrentTime()
 {
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
-	return (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
+	double result = 0;
+	printf("%lf", (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000);
+	result =(tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
+	return result;
 }
 
 

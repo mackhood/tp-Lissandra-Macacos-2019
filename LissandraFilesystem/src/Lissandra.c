@@ -288,6 +288,11 @@ void escucharMemoria(int* socket_memoria)
 				}
 				free(tablaRecibida);
 				free(valueRecibido);
+				break;
+			}
+			default:
+			{
+				break;
 			}
 		}
 		usleep(retardo * 1000);
@@ -349,15 +354,16 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 		auxMemtable = list_get(keyEspecifica, 0);
 
 		//Acá hace falta implementar el compactador y las claves del FL, para eso, despues se llama a comparadorDeKeys();
-		t_keysetter* keyTemps = selectTemps(tabla, receivedKey);
-		t_keysetter* keyMemtable = malloc(sizeof(t_keysetter) + 3);
-		keyMemtable = auxMemtable->data;
+//		t_keysetter* keyTemps = selectTemps(tabla, receivedKey);
+//		t_keysetter* keyMemtable = malloc(sizeof(t_keysetter) + 3);
 
-		t_keysetter* keyFinal = malloc(sizeof(t_keysetter) + 3);
+
+		t_keysetter* key = malloc(sizeof(t_keysetter) + 3);
+		key = auxMemtable->data;
 		list_destroy(keysDeTablaPedida);
 		free(tablaAnalizada);
 		log_info(loggerLFL, "Lissandra: se ha obtenido la clave más actualizada en el proceso.");
-		return keyFinal;
+		return key;
 }
 
 int llamadoACrearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion)

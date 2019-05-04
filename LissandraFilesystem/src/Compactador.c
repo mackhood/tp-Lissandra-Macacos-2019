@@ -31,19 +31,37 @@ void mainCompactador()
 	}
 }
 
-void setearValoresCompactador(t_config* archivoConfig){
+void setearValoresCompactador(t_config* archivoConfig)
+{
 	tiempoDump = config_get_int_value(archivoConfig, "TIEMPO_DUMP");
-
+	tablasEnEjecucion = list_create();
 }
 
-void gestionarTabla(char*tabla){
+void gestionarTabla(char*tabla)
+{
 	pthread_t hiloTabla;
 	log_info(loggerLFL,"Compactador: Se inicio un hilo para manejar a %s.",tabla);
 	pthread_create(&hiloTabla, NULL, (void *) compactarTablas, tabla);
 	pthread_detach(hiloTabla);
 }
 
-void compactarTablas(char*tabla){
+void compactarTablas(char*tabla)
+{
+
+	bool estaTabla(void* tablaDeLista)
+	{
+		char* tablaAux = malloc(strlen(tabla) + 1);
+		strcpy(tablaAux, tabla);
+		int cantCarac = strlen((char*)tablaDeLista);
+		char* tablaDeListaAux;
+		//char* tablaDeListaAux = string_new();
+		tablaDeListaAux = malloc(cantCarac + 1);
+		memcpy(tablaDeListaAux, tablaDeLista, cantCarac);
+		bool result = (0 == strcmp(tablaDeListaAux, tablaAux));
+		return result;
+	}
+
+	list_add(tablasEnEjecucion, tabla);
 	char* direccionMetadataTabla= string_new();
 	direccionMetadataTabla= malloc(strlen(punto_montaje) + strlen(tabla) + 21);//son 20 de tables/ y metadata.cfg +1 por las dudas
 	strcpy(direccionMetadataTabla, punto_montaje);
@@ -53,17 +71,18 @@ void compactarTablas(char*tabla){
 	t_config * temporalArchivoConfig;
 	temporalArchivoConfig = config_create(direccionMetadataTabla);
 	int tiempoEntreCompactacion = config_get_int_value(temporalArchivoConfig, "TIEMPOENTRECOMPACTACIONES");
-	while(1){
-		int tiempoActual = getCurrentTime();
-		while(1){
-			int diferencia = getCurrentTime()-tiempoActual;
-			if(diferencia >= tiempoEntreCompactacion){
-				//llamado a compactar
-				break;
-			}
-			else{
-				continue;
-			}
+	while(1)
+	{
+		usleep(tiempoEntreCompactacion * 1000);
+		if(!list_find(tablasEnEjecucion, estaTabla))
+		{
+			break;
+		}
+		else
+		{
+			//llamar compactacion
 		}
 	}
 }
+
+
