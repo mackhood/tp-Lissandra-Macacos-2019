@@ -144,8 +144,7 @@ void insert (char** args)
 		strcpy(value, args[3]);
 		if(args[4] == NULL)
 		{
-			double timestampact = 0;
-			timestampact = getCurrentTime();
+			double timestampact = getCurrentTime();
 			printf("Current time: %lf\n", timestampact);
 			insertKeysetter(tabla, key, value, timestampact);
 			log_info(loggerLFL, "Consola: Insert realizado.");
