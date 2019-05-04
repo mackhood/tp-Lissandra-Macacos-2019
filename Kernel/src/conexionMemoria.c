@@ -25,9 +25,9 @@ while(1){
 	t_prot_mensaje* mensaje_recibido1 = prot_recibir_mensaje(conexion);
 
 
-	t_prot_mensaje* mensaje_recibido = prot_recibir_mensaje(un_socket);
-			 t_header header_recibido = mensaje_recibido->head;
-		 t_algo payload = *(t_algo*) mensaje_recibido->payload;
+//	t_prot_mensaje* mensaje_recibido = prot_recibir_mensaje(un_socket);
+//			 t_header header_recibido = mensaje_recibido->head;
+//		 t_algo payload = *(t_algo*) mensaje_recibido->payload;
 
 	if(mensaje_recibido1->head == HANDSHAKE_KERNEL_MEMORIA){
 

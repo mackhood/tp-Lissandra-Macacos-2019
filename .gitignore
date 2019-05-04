@@ -52,7 +52,7 @@ Mkfile.old
 dkms.conf
 
 
-
+*language.settings.xml 
 #agregados por Gerjugo
 
 *.xml
