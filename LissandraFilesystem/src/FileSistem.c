@@ -46,8 +46,8 @@ void levantarBitmap(char* direccion)
 		strcpy(aux, string_itoa(i));
 		strcat(direccionpuenteada, aux);
 		strcat(direccionpuenteada, ".bin");
-		FILE* blockpointer = fopen(direccionpuenteada, "r");
-		if(blockpointer == NULL)
+		FILE* blockpointer;
+		if(NULL == (blockpointer = fopen(direccionpuenteada, "r")))
 		{
 			log_error(loggerLFL, "FileSystem: No se encuentran los bloques del File System");
 			fclose(blockpointer);
@@ -58,19 +58,30 @@ void levantarBitmap(char* direccion)
 		else
 		{
 			char* a = string_new();
-			a = malloc(64);
-			fread(a, 64, 1, blockpointer);
+			a = malloc(2);
+			strcpy(a, " ");
+			fread(a, 1, 1, blockpointer);
 			int auxcomp = 0;
-			auxcomp = strcmp(a, "");
+			auxcomp = strcmp(a, " ");
 			if(auxcomp == 0)
 			{
 				int auxb = 0;
-				fwrite(&auxb, 4, 1, bitmap);
+				char* auxc = string_new();
+				auxc = malloc(strlen(string_itoa(auxb)) + 3);
+				strcpy(auxc, string_itoa(auxb));
+				strcat(auxc, "\n");
+				fwrite(auxc, strlen(auxc), 1, bitmap);
+				free(auxc);
 			}
 			else
 			{
 				int auxb = 1;
-				fwrite(&auxb, 4, 1, bitmap);
+				char* auxc = string_new();
+				auxc = malloc(strlen(string_itoa(auxb)) + 3);
+				strcpy(auxc, string_itoa(auxb));
+				strcat(auxc, "\n");
+				fwrite(auxc, strlen(auxc), 1, bitmap);
+				free(auxc);
 			}
 			free(a);
 		}
@@ -252,6 +263,8 @@ int crearParticiones(char* direccionFinal, int particiones)
 			}
 			else
 			{
+				char* testByte = " ";
+				fwrite(testByte, 1, 1, particion);
 				free(particionado);
 				fclose(particion);
 			}

@@ -2,6 +2,7 @@
 #define LFLEXTERNALS_H_
 
 #include <stdio.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <commons/config.h>
 #include <commons/log.h>
