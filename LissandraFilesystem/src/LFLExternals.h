@@ -42,4 +42,7 @@ t_list * memtable;
 char* punto_montaje;
 t_list* tablasEnEjecucion;
 
+/* FUNCIONES */
+int chequearTimestamps(t_Memtablekeys* key1, t_Memtablekeys* key2);
+
 #endif /* LFLEXTERNALS_H_ */

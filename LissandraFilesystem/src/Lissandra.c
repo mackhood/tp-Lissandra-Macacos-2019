@@ -342,12 +342,22 @@ int insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibi
 
 t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 {
+	int perteneceATabla(t_Memtablekeys* key)
+	{
+		char* testTable = string_new();
+		testTable = malloc(strlen(tabla) + 1);
+		strcpy(testTable, tabla);
+		return 0 == strcmp(key->tabla, testTable);
+	}
+
+	int esDeTalKey(t_Memtablekeys* chequeada)
+	{
+		return chequeada->data->key == receivedKey;
+	}
+
 		t_list* keysDeTablaPedida = list_create();
 		t_list* keyEspecifica = list_create();
 		t_Memtablekeys* auxMemtable = malloc(sizeof(t_Memtablekeys) + 4);
-		tablaAnalizada = malloc(strlen(tabla) + 1);
-		keyAnalizada = receivedKey;
-		strcpy(tablaAnalizada, tabla);
 		keysDeTablaPedida = list_filter(memtable, (void*)perteneceATabla);
 		keyEspecifica = list_filter(keysDeTablaPedida, (void*)esDeTalKey);
 		list_sort(keyEspecifica, (void*)chequearTimestamps);
@@ -361,7 +371,6 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 		t_keysetter* key = malloc(sizeof(t_keysetter) + 3);
 		key = auxMemtable->data;
 		list_destroy(keysDeTablaPedida);
-		free(tablaAnalizada);
 		log_info(loggerLFL, "Lissandra: se ha obtenido la clave más actualizada en el proceso.");
 		return key;
 }
@@ -394,24 +403,6 @@ int llamadoACrearTabla(char* nombre, char* consistencia, int particiones, int ti
 int llamarEliminarTabla(char* tablaPorEliminar)
 {
 	return dropTable(tablaPorEliminar);
-}
-
-int perteneceATabla(t_Memtablekeys* key)
-{
-	char* testTable = string_new();
-	testTable = malloc(strlen(tablaAnalizada) + 1);
-	strcpy(testTable, tablaAnalizada);
-	return 0 == strcmp(key->tabla, testTable);
-}
-
-int chequearTimestamps(t_Memtablekeys* key1, t_Memtablekeys* key2)
-{
-	return (key1->data->timestamp > key2->data->timestamp);
-}
-
-int esDeTalKey(t_Memtablekeys* chequeada)
-{
-	return chequeada->data->key == keyAnalizada;
 }
 
 int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, char* buffer)

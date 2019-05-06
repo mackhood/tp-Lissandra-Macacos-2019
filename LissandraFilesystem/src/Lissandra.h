@@ -20,8 +20,7 @@ int socketFD;
 int retardo;
 char* server_ip;
 int server_puerto;
-char* tablaAnalizada;
-uint16_t keyAnalizada;
+
 
 /* FUNCIONES */
 
@@ -34,7 +33,6 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey);
 int llamadoACrearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion);
 int llamarEliminarTabla(char* tablaPorEliminar);
 int perteneceATabla(t_Memtablekeys* key);
-int chequearTimestamps(t_Memtablekeys* key1, t_Memtablekeys* key2);
 int esDeTalKey(t_Memtablekeys* chequeada);
 int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, char* buffer);
 
