@@ -527,10 +527,17 @@ int contarTablasExistentes()
 
 t_keysetter* selectTemps(char* tabla, uint16_t keyRecibida)
 {
+
+	int esDeTalKey(t_keysetter* chequeada)
+	{
+		return chequeada->key == keyRecibida;
+	}
+
 	log_info(loggerLFL, "FileSystem: Empiezo a buscar el value más recente de la clave %i", keyRecibida);
 	DIR* dir;
 	struct dirent* tdp;
 	char* auxdir = string_new();
+	t_list* keysettersAllTemps = list_create();
 	t_list* keysettersEspecificos = list_create();
 	auxdir = malloc(strlen(punto_montaje) + strlen(tabla) + 9);
 	strcpy(auxdir, punto_montaje);
@@ -551,7 +558,7 @@ t_keysetter* selectTemps(char* tabla, uint16_t keyRecibida)
 		if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, "..") || !strcmp(tdp->d_name, "Metadata.cfg")){}
 		else
 		{
-			if(!strcmp(tdp->d_name[strlen(aux) + 1], "b"))
+			if(!strcmp(&tdp->d_name[strlen(aux) + 1], "b"))
 			{
 				i++;
 			}
@@ -560,13 +567,113 @@ t_keysetter* selectTemps(char* tabla, uint16_t keyRecibida)
 				direccionTemp = malloc(strlen(auxdir) + strlen(tdp->d_name) + 1);
 				strcpy(direccionTemp, auxdir);
 				strcat(direccionTemp, tdp->d_name);
+				FILE* temp = fopen(direccionTemp, "w+");
+				char* keyVector = string_new();
+				keyVector = malloc(sizeof(uint16_t) + sizeof(double) + tamanio_value + 1);
+				int keyLength = 0;
+				int valueLength = 0;
+				int timeLength = 0;
+				int situation = 0;
+				do
+				{
+					char auxiliaryKey = fgetc(temp);
+					switch(auxiliaryKey)
+					{
+						case ';':
+						{
+							int r = 0;
+							int z = 0;
+							int y = 0;
+							t_keysetter* auxKey = malloc(sizeof(t_keysetter) + 3);
+							char* preKey = string_new();
+							char* preValue = string_new();
+							char* preTime = string_new();
+							preKey = malloc(keyLength + 1);
+							preValue = malloc(valueLength + 1);
+							preTime = malloc(timeLength + 1);
+							for(z = 0; z < keyLength; z++)
+							{
+								strcat(preKey, &keyVector[z]);
+							}
+							for(r = 0; r < timeLength; r++)
+							{
+								strcat(preTime, &keyVector[r + z]);
+							}
+							for(y = 0; y < valueLength; y++)
+							{
+								strcat(preValue, &keyVector[r + z + y]);
+							}
+							auxKey->key = atoi(preKey);
+							auxKey->timestamp = atoi(preTime);
+							memcpy(auxKey->clave, preValue , valueLength);
+							list_add(keysettersAllTemps, auxKey);
+							free(preTime);
+							free(preValue);
+							free(preKey);
+							break;
+						}
+						case ',':
+						{
+							switch(situation)
+							{
+								case 0:
+								{
+									situation = 1;
+									break;
+								}
+								case 1:
+								{
+									situation = 2;
+									break;
+								}
+								case 2:
+								{
+									strcat(keyVector, &auxiliaryKey);
+									valueLength++;
+								}
+							}
+							break;
+						}
+						default:
+						{
+							strcat(keyVector, &auxiliaryKey);
+							switch(situation)
+							{
+								case 0:
+								{
+									keyLength++;
+									break;
+								}
+								case 1:
+								{
+									timeLength++;
+									break;
+								}
+								case 2:
+								{
+									valueLength++;
+									break;
+								}
+							}
+							break;
+						}
+					}
+					if(feof(temp))
+					{
+						break;
+					}
+				} while(1);
 			}
-
 		}
 	}
+	keysettersEspecificos = list_filter(keysettersAllTemps, (void*) esDeTalKey);
+	list_sort(keysettersEspecificos, (void*) chequearTimestamps);
 	t_keysetter* keyTemps = malloc(sizeof(t_keysetter) + 4);
+	keyTemps = list_get(keysettersEspecificos, 0);
 	free(auxdir);
 	free(direccionTemp);
+	list_destroy(keysettersEspecificos);
+	list_destroy(keysettersAllTemps);
 	return keyTemps;
 }
 

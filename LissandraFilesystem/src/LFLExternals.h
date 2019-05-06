@@ -36,6 +36,7 @@ typedef struct {
 }__attribute__((packed)) t_Memtablekeys;
 
 /* VARIABLES GLOBALES */
+int tamanio_value;
 t_log * loggerLFL;
 bool signalExit;
 t_list * memtable;

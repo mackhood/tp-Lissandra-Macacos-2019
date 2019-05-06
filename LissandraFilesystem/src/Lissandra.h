@@ -13,7 +13,6 @@ t_list * memorias;
 
 /*VARIABLES GLOBALES*/
 
-int tamanio_value;
 int tamanio_memtable;
 int socket_escucha;
 int socketFD;
