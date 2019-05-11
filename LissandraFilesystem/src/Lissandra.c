@@ -44,14 +44,14 @@ void iniciarServidor()
 		memcpy(&hora_actual, mensaje->payload + sizeof(uint16_t), sizeof(double));
 		memcpy(&tamanio_value, mensaje->payload + sizeof(uint16_t) + sizeof(double), sizeof(int));
 
-		char* value = malloc(tamanio_value+1);
+		char* value = malloc(tamanio_value + 1);
 		memcpy(value, mensaje->payload + sizeof(uint16_t) + sizeof(double) + sizeof(int), tamanio_value);
 		value[tamanio_value] = '\0';
 
 		printf("el CLIENTE es %s y nos manda de prueba la key %d y la hora %lf\n\n", value, key_recibida, hora_actual);
 
 		prot_destruir_mensaje(mensaje);
-		log_info(loggerLFL, "[Lissandra]: Se conecto una Memoria");
+		logInfo( "[Lissandra]: Se conecto una Memoria");
 		pthread_t RecibirMensajesMemoria;
 		/*Duplico la variable que tiene el valor del socket del cliente*/
 		int* memoria = (int*) malloc (sizeof(int));
@@ -73,7 +73,7 @@ void escucharMemoria(int* socket_memoria)
 		{
 			case HANDSHAKE:
 			{
-				log_info(loggerLFL, "Lissandra: me llegó un handshake de una Memoria, procedo a enviar los Metadatas");
+				logInfo( "Lissandra: me llegó un handshake de una Memoria, procedo a enviar los Metadatas");
 				bool solicitadoPorMemoria = true;
 				char* buffer = string_new();
 				if(0 == describirTablas("", solicitadoPorMemoria, buffer))
@@ -82,19 +82,19 @@ void escucharMemoria(int* socket_memoria)
 					void* messageBuffer = malloc(tamanioBuffer + 1);
 					memcpy(messageBuffer, buffer, strlen(buffer));
 					prot_enviar_mensaje(socket, FULL_DESCRIBE, tamanioBuffer, messageBuffer);
-					log_info(loggerLFL, "Lissandra: Se ha enviado la metadata de todas las tablas a Memoria.");
+					logInfo( "Lissandra: Se ha enviado la metadata de todas las tablas a Memoria.");
 				}
 				else
 				{
 					prot_enviar_mensaje(socket, FAILED_DESCRIBE, 0, NULL);
-					log_error(loggerLFL, "Lissandra: falló al leer todas las tablas");
+					logError( "Lissandra: falló al leer todas las tablas");
 				}
 				free(buffer);
 				break;
 			}
 			case SOLICITUD_TABLA:
 			{
-				log_info(loggerLFL, "Lissandra: Nos llega un pedido de Select de parte de la Memoria");
+				logInfo( "Lissandra: Nos llega un pedido de Select de parte de la Memoria");
 				uint16_t auxkey;
 				char* tabla;
 				int tamanioNombre;
@@ -123,7 +123,7 @@ void escucharMemoria(int* socket_memoria)
 			}
 			case CREATE_TABLA:
 			{
-				log_info(loggerLFL, "Lissandra: Llega un pedido de Create de parte de Memoria");
+				logInfo( "Lissandra: Llega un pedido de Create de parte de Memoria");
 				char* tablaRecibida = string_new();
 				char* consistenciaRecibida = string_new();
 				int cantParticionesRecibida;
@@ -147,19 +147,19 @@ void escucharMemoria(int* socket_memoria)
 				{
 					case 0:
 					{
-						log_info(loggerLFL, "Lissandra: Tabla creada satisfactoriamente a pedido de Memoria");
+						logInfo( "Lissandra: Tabla creada satisfactoriamente a pedido de Memoria");
 						prot_enviar_mensaje(socket, TABLA_CREADA_OK, 0, NULL);
 						break;
 					}
 					case 2:
 					{
-						log_info(loggerLFL, "Lissandra: Tabla ya existía, lamentablemente para Memoria");
+						logInfo( "Lissandra: Tabla ya existía, lamentablemente para Memoria");
 						prot_enviar_mensaje(socket, TABLA_CREADA_YA_EXISTENTE, 0, NULL);
 						break;
 					}
 					default:
 					{
-						log_error(loggerLFL, "Lissandra: La tabla o alguna de sus partes no pudo ser creada, informo a Memoria");
+						logError( "Lissandra: La tabla o alguna de sus partes no pudo ser creada, informo a Memoria");
 						prot_enviar_mensaje(socket, TABLA_CREADA_FALLO, 0, NULL);
 						break;
 					}
@@ -180,19 +180,19 @@ void escucharMemoria(int* socket_memoria)
 					case 1:
 					{
 						prot_enviar_mensaje(socket, TABLE_DROP_NO_EXISTE, 0, NULL);
-						log_error(loggerLFL, "Lissandra: La %s no existe y no se puede eliminar.", tablaRecibida);
+						logError( "Lissandra: La %s no existe y no se puede eliminar.", tablaRecibida);
 						break;
 					}
 					case 0:
 					{
 						prot_enviar_mensaje(socket, TABLE_DROP_OK, 0, NULL);
-						log_info(loggerLFL, "Lissandra: La %s fue eliminada correctamente", tablaRecibida);
+						logInfo( "Lissandra: La %s fue eliminada correctamente", tablaRecibida);
 						break;
 					}
 					default:
 					{
 						prot_enviar_mensaje(socket, TABLE_DROP_FALLO, 0, NULL);
-						log_error(loggerLFL, "Lissandra: la operacion no fue terminada por un fallo en acceder a la %s", tablaRecibida);
+						logError( "Lissandra: la operacion no fue terminada por un fallo en acceder a la %s", tablaRecibida);
 						break;
 					}
 				}
@@ -216,12 +216,12 @@ void escucharMemoria(int* socket_memoria)
 						void* messageBuffer = malloc(tamanioBuffer + 1);
 						memcpy(messageBuffer, buffer, strlen(buffer));
 						prot_enviar_mensaje(socket, POINT_DESCRIBE, tamanioBuffer, messageBuffer);
-						log_info(loggerLFL, "Lissandra: Se ha enviado la metadata de la %s a Memoria.", tablaRecibida);
+						logInfo( "Lissandra: Se ha enviado la metadata de la %s a Memoria.", tablaRecibida);
 					}
 					else
 					{
 						prot_enviar_mensaje(socket, FAILED_DESCRIBE, 0, NULL);
-						log_error(loggerLFL, "Lissandra: fallo al leer la %s", tablaRecibida);
+						logError( "Lissandra: fallo al leer la %s", tablaRecibida);
 					}
 					free(tablaRecibida);
 					free(buffer);
@@ -235,12 +235,12 @@ void escucharMemoria(int* socket_memoria)
 						void* messageBuffer = malloc(tamanioBuffer + 1);
 						memcpy(messageBuffer, buffer, strlen(buffer));
 						prot_enviar_mensaje(socket, FULL_DESCRIBE, tamanioBuffer, messageBuffer);
-						log_info(loggerLFL, "Lissandra: Se ha enviado la metadata de todas las tablas a Memoria.");
+						logInfo( "Lissandra: Se ha enviado la metadata de todas las tablas a Memoria.");
 					}
 					else
 					{
 						prot_enviar_mensaje(socket, FAILED_DESCRIBE, 0, NULL);
-						log_error(loggerLFL, "Lissandra: falló al leer todas las tablas");
+						logError( "Lissandra: falló al leer todas las tablas");
 					}
 					free(buffer);
 				}
@@ -316,23 +316,23 @@ int insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibi
 
 	if(0 == existeTabla(tablaRecibida))
 	{
-		log_error(loggerLFL, "Lissandra: La tabla no existe, por lo que no puede insertarse una clave.");
+		logError( "Lissandra: La tabla no existe, por lo que no puede insertarse una clave.");
 		printf("Tabla no existente.\n");
 		return 1;
 	}
 	else
 	{
-		log_info(loggerLFL, "Lissandra: Se procede a insertar la clave recibida en la Memtable.");
+		logInfo( "Lissandra: Se procede a insertar la clave recibida en la Memtable.");
 		list_add(memtable, auxiliar);
 		if(tamanio_memtable == memtable->elements_count)
 		{
-			log_error(loggerLFL, "Lissandra: La clave fracasó en su intento de insertarse correctamente.");
+			logError( "Lissandra: La clave fracasó en su intento de insertarse correctamente.");
 			printf("Fallo al agregar a memtable.\n");
 			return 2;
 		}
 		else
 		{
-			log_info(loggerLFL, "Lissandra: La clave fue insertada correctamente.");
+			logInfo( "Lissandra: La clave fue insertada correctamente.");
 			printf("Agregado correctamente.\n");
 			return 0;
 		}
@@ -371,7 +371,7 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 		t_keysetter* key = malloc(sizeof(t_keysetter) + 3);
 		key = auxMemtable->data;
 		list_destroy(keysDeTablaPedida);
-		log_info(loggerLFL, "Lissandra: se ha obtenido la clave más actualizada en el proceso.");
+		logInfo( "Lissandra: se ha obtenido la clave más actualizada en el proceso.");
 		return key;
 }
 
@@ -413,11 +413,11 @@ int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, char* buff
 	char* auxbuffer = string_new();
 	if(0 == strcmp(tabla, ""))
 	{
-		log_info(loggerLFL, "Lissandra: Me llega un pedido de describir todas las tablas");
+		logInfo( "Lissandra: Me llega un pedido de describir todas las tablas");
 		int tablasExistentes = contarTablasExistentes();
 		if(tablasExistentes == 0)
 		{
-			log_error(loggerLFL, "Lissandra: No existe ningún directorio en le FileSystem");
+			logError( "Lissandra: No existe ningún directorio en le FileSystem");
 			printf("Error al acceder a todos los directorios");
 			char* errormarker = "error";
 			buffer = realloc(buffer, 6);
@@ -445,7 +445,7 @@ int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, char* buff
 	else
 	{
 		int tamanio_buffer = 1;
-		log_info(loggerLFL, "Lissandra: Me llega un pedido de describir la tabla %s", tabla);
+		logInfo( "Lissandra: Me llega un pedido de describir la tabla %s", tabla);
 		if(solicitadoPorMemoria)
 		{
 			tamanio_buffer = mostrarMetadataEspecificada(tabla, tamanio_buffer, solicitadoPorMemoria, auxbuffer);

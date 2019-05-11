@@ -35,9 +35,14 @@ typedef struct {
 	char* tabla;
 }__attribute__((packed)) t_Memtablekeys;
 
+typedef struct {
+	char* tabla;
+	int cantTemps;
+}__attribute__((packed)) t_TablaEnEjecucion;
+
 /* VARIABLES GLOBALES */
 int tamanio_value;
-t_log * loggerLFL;
+t_log * logger;
 bool signalExit;
 t_list * memtable;
 char* punto_montaje;

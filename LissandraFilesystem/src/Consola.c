@@ -95,11 +95,11 @@ int ejecutar_linea (char * linea){
 
 void selectt (char** args)
 {
-	log_info(loggerLFL, "Consola: Se ha recibido un pedido de select.");
+	logInfo( "Consola: Se ha recibido un pedido de select.");
 	if(chequearParametros(args, 3) == 1)
 	{
 		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
-		log_error(loggerLFL, "Consola: solicitud posee cantidad errónea de parámetros");
+		logError( "Consola: solicitud posee cantidad errónea de parámetros");
 	}
 	else
 	{
@@ -119,7 +119,7 @@ void selectt (char** args)
 
 void insert (char** args)
 {
-	log_info(loggerLFL, "Consola: Se ha recibido un pedido de insert.");
+	logInfo( "Consola: Se ha recibido un pedido de insert.");
 	int chequeo = 0;
 	if(args[4] == NULL )
 		chequeo = chequearParametros(args, 4);
@@ -128,7 +128,7 @@ void insert (char** args)
 	if(chequeo == 1)
 	{
 		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
-		log_error(loggerLFL, "Consola: solicitud posee cantidad errónea de parámetros");
+		logError( "Consola: solicitud posee cantidad errónea de parámetros");
 	}
 	else
 	{
@@ -147,7 +147,7 @@ void insert (char** args)
 			double timestampact = getCurrentTime();
 			printf("Current time: %lf\n", timestampact);
 			insertKeysetter(tabla, key, value, timestampact);
-			log_info(loggerLFL, "Consola: Insert realizado.");
+			logInfo( "Consola: Insert realizado.");
 		}
 		else
 		{
@@ -156,18 +156,18 @@ void insert (char** args)
 			strcpy(timestampaux, args[4]);
 			double timestamp = atoi(timestampaux);
 			insertKeysetter(tabla, key, value, timestamp);
-			log_info(loggerLFL, "Consola: Insert realizado.");
+			logInfo( "Consola: Insert realizado.");
 		}
 	}
 }
 
 void create (char** args)
 {
-	log_info(loggerLFL, "Consola: Se ha recibido un pedido de create.");
+	logInfo( "Consola: Se ha recibido un pedido de create.");
 	if(chequearParametros(args, 5) == 1)
 	{
 		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
-		log_error(loggerLFL, "Consola: solicitud posee cantidad errónea de parámetros");
+		logError( "Consola: solicitud posee cantidad errónea de parámetros");
 	}
 	else
 	{
@@ -190,19 +190,19 @@ void create (char** args)
 			case 0:
 			{
 				printf("Operación exitosa\n");
-				log_info(loggerLFL, "Consola: Tabla creada satisfactoriamente");
+				logInfo( "Consola: Tabla creada satisfactoriamente");
 				break;
 			}
 			case 2:
 			{
 				printf("La tabla solicitada ya existe\n");
-				log_info(loggerLFL, "Consola: Tabla ya existía");
+				logInfo( "Consola: Tabla ya existía");
 				break;
 			}
 			default:
 			{
 				printf("Error al crear la tabla\n");
-				log_error(loggerLFL, "Consola: La tabla o alguna de sus partes no pudo ser creada");
+				logError( "Consola: La tabla o alguna de sus partes no pudo ser creada");
 				break;
 			}
 		}
@@ -216,7 +216,7 @@ void create (char** args)
 
 void describe (char** args)
 {
-	log_info(loggerLFL, "Consola: Se ha recibido un pedido de describe.");
+	logInfo( "Consola: Se ha recibido un pedido de describe.");
 	int chequeo = 0;
 	if(args[1] == NULL )
 		chequeo = chequearParametros(args, 1);
@@ -225,7 +225,7 @@ void describe (char** args)
 	if(chequeo == 1)
 	{
 		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
-		log_error(loggerLFL, "Consola: solicitud posee cantidad errónea de parámetros");
+		logError( "Consola: solicitud posee cantidad errónea de parámetros");
 	}
 	else
 	{
@@ -239,7 +239,7 @@ void describe (char** args)
 		int problem = 0;
 		if (0 == (problem = describirTablas(tablaSolicitada, solicitadoPorMemoria, NULL)))
 		{
-			log_info(loggerLFL, "Consola: Todas las tablas solicitadas fueron descritas correctamente");
+			logInfo( "Consola: Todas las tablas solicitadas fueron descritas correctamente");
 		}
 		else
 		{
@@ -251,11 +251,11 @@ void describe (char** args)
 
 void drop (char** args)
 {
-	log_info(loggerLFL, "Consola: Se ha solicitado realizar un DROP");
+	logInfo( "Consola: Se ha solicitado realizar un DROP");
 	if(chequearParametros(args, 2) == 1)
 	{
 		printf("Por favor, especifique la cantidad de parámetros solicitada\n");
-		log_error(loggerLFL, "Consola: solicitud posee cantidad errónea de parámetros");
+		logError( "Consola: solicitud posee cantidad errónea de parámetros");
 	}
 	else
 	{
@@ -268,19 +268,19 @@ void drop (char** args)
 		case 1:
 		{
 			printf("La tabla que usted deseaba eliminar no existe\n");
-			log_error(loggerLFL, "Consola: Tabla inexistente");
+			logError( "Consola: Tabla inexistente");
 			break;
 		}
 		case 0:
 		{
 			printf("La tabla ha sido eliminada exitosamente\n");
-			log_info(loggerLFL, "Consola: Tabla eliminada correctamente");
+			logInfo( "Consola: Tabla eliminada correctamente");
 			break;
 		}
 		default:
 		{
 			printf("Ocurrio un error al intentar eliminar la tabla deseada\n");
-			log_error(loggerLFL, "Consola: operacion no terminada");
+			logError( "Consola: operacion no terminada");
 		}
 		}
 	}

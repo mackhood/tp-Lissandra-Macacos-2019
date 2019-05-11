@@ -8,18 +8,16 @@ void mainFileSistem()
 void testerFileSystem()
 {
 	creatingFL = 1;
-	char* direccionFileSystem = string_new();
-	direccionFileSystem = malloc(strlen(punto_montaje) + 8);
+	char* direccionFileSystem = malloc(strlen(punto_montaje) + 8);
 	strcpy(direccionFileSystem, punto_montaje);
 	strcat(direccionFileSystem, "Blocks/");
-	char* aux = string_new();
-	aux = malloc(strlen(direccionFileSystem) + 8);
+	char* aux = malloc(strlen(direccionFileSystem) + 8);
 	strcpy(aux, direccionFileSystem);
 	strcat(aux, "0.bin");
 	FILE* doomsdaypointer;
 	if(NULL == (doomsdaypointer = fopen(aux, "r")))
 	{
-		log_info(loggerLFL, "FileSystem: Se procede a crear los bloques de memoria");
+		logInfo( "FileSystem: Se procede a crear los bloques de memoria");
 		crearParticiones(direccionFileSystem, blocks);
 	}
 	levantarBitmap(direccionFileSystem);
@@ -30,26 +28,23 @@ void testerFileSystem()
 void levantarBitmap(char* direccion)
 {
 	int i;
-	log_info(loggerLFL, "FileSystem: Se procede a crear el bitmap");
-	char* direccionBitmap= string_new();
-	direccionBitmap= malloc(strlen(punto_montaje) + 21);
+	logInfo( "FileSystem: Se procede a crear el bitmap");
+	char* direccionBitmap = malloc(strlen(punto_montaje) + 21);
 	strcpy(direccionBitmap, punto_montaje);
 	strcat(direccionBitmap, "Metadata/Bitmap.bin");
 	FILE* bitmap = fopen(direccionBitmap, "w+");
 	for(i = 0; i < blocks; i++)
 	{
-		char* direccionpuenteada = string_new();
-		direccionpuenteada = malloc(strlen(direccion) + 10);
+		char* direccionpuenteada = malloc(strlen(direccion) + 10);
 		strcpy(direccionpuenteada, direccion);
-		char* aux = string_new();
-		aux = malloc(sizeof(i) + 1);
+		char* aux = malloc(sizeof(i) + 1);
 		strcpy(aux, string_itoa(i));
 		strcat(direccionpuenteada, aux);
 		strcat(direccionpuenteada, ".bin");
 		FILE* blockpointer;
 		if(NULL == (blockpointer = fopen(direccionpuenteada, "r")))
 		{
-			log_error(loggerLFL, "FileSystem: No se encuentran los bloques del File System");
+			logError( "FileSystem: No se encuentran los bloques del File System");
 			fclose(blockpointer);
 			free(direccionpuenteada);
 			free(aux);
@@ -66,8 +61,7 @@ void levantarBitmap(char* direccion)
 			if(auxcomp == 0)
 			{
 				int auxb = 0;
-				char* auxc = string_new();
-				auxc = malloc(strlen(string_itoa(auxb)) + 3);
+				char* auxc = malloc(strlen(string_itoa(auxb)) + 3);
 				strcpy(auxc, string_itoa(auxb));
 				strcat(auxc, "\n");
 				fwrite(auxc, strlen(auxc), 1, bitmap);
@@ -91,14 +85,13 @@ void levantarBitmap(char* direccion)
 	}
 	fclose(bitmap);
 	free(direccionBitmap);
-	log_info(loggerLFL, "FileSystem: El bitmap fue creado satisfactoriamente");
+	logInfo( "FileSystem: El bitmap fue creado satisfactoriamente");
 }
 
 void setearValoresFileSistem(t_config * archivoConfig)
 {
 	punto_montaje = strdup(config_get_string_value(archivoConfig, "PUNTO_MONTAJE"));
-	char* direccionMetadataFileSystem = string_new();
-	direccionMetadataFileSystem = malloc(strlen(punto_montaje) + 23);
+	char* direccionMetadataFileSystem = malloc(strlen(punto_montaje) + 23);
 	strcpy(direccionMetadataFileSystem, punto_montaje);
 	strcat(direccionMetadataFileSystem, "Metadata/Metadata.cfg");
 	t_config * temporalArchivoConfig;
@@ -126,7 +119,7 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 	if(NULL == (newdir = opendir(punto_montaje)))// reviso si el punto de montaje es accesible
 	{
 		perror("[ERROR] Punto de montaje no accesible");
-		log_error(loggerLFL,"FileSistem: El punto de montaje al que usted desea entrar no es accesible");
+		logError("FileSistem: El punto de montaje al que usted desea entrar no es accesible");
 		return(1);
 	}
 
@@ -134,7 +127,7 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 	{
 		if(1 == existeTabla(nombre))
 		{
-			log_info(loggerLFL, "FileSystem: La tabla que usted quiere crear ya existe");
+			logInfo( "FileSystem: La tabla que usted quiere crear ya existe");
 			return(2);
 		}
 		else
@@ -146,13 +139,13 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 			direccionFinal = malloc(strlen(puntodemontaje) + 1);
 			strcpy(direccionFinal, puntodemontaje);
 
-			log_info(loggerLFL, "FileSistem: Se procede a la creacion del directorio");
+			logInfo( "FileSistem: Se procede a la creacion del directorio");
 			mkdir(buff, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); //creo el directorio de la tabla con sus respectivos permisos
 			int results = crearMetadata(direccionFinal, consistencia, particiones, tiempoCompactacion); //Crea el archivio metadata
 			if (results == 1)
 			{
 				perror("[ERROR] Error al crear Metadata, abortando");
-				log_error(loggerLFL, "FileSistem: Error al crear Metadata, abortando");
+				logError( "FileSistem: Error al crear Metadata, abortando");
 				closedir(newdir);
 				return(1);
 			}
@@ -162,7 +155,7 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 				if(resultsb == 1)
 				{
 					perror("[ERROR] Error al crear particiones, abortando");
-					log_error(loggerLFL, "FileSistem: Error al crear particiones, abortando");
+					logError( "FileSistem: Error al crear particiones, abortando");
 					closedir(newdir);
 					return(1);
 				}
@@ -175,8 +168,9 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 					closedir(newdir);
 				}
 			}
+			gestionarTabla(nombre);
 			free(direccionFinal);
-			log_info(loggerLFL, "FileSystem: Tabla creada satisfactoriamente");
+			logInfo( "FileSystem: Tabla creada satisfactoriamente y agregada a tablas en ejecucion");
 			return(0);
 		}
 	}
@@ -292,7 +286,7 @@ int dropTable(char* tablaPorEliminar)
 	if(NULL == (newdir = opendir(punto_montaje)))// reviso si el punto de montaje es accesible
 	{
 		perror("[ERROR] Punto de montaje no accesible");
-		log_error(loggerLFL,"FileSistem: El punto de montaje al que usted desea entrar no es accesible");
+		logError("FileSistem: El punto de montaje al que usted desea entrar no es accesible");
 		closedir(newdir);
 		return(1);
 	}
@@ -300,7 +294,7 @@ int dropTable(char* tablaPorEliminar)
 	{
 		if(NULL == (checkdir = opendir(checkaux)))
 		{
-			log_info(loggerLFL, "FileSystem: La tabla que usted quiere borrar no existe");
+			logInfo( "FileSystem: La tabla que usted quiere borrar no existe");
 			return(2);
 		}
 		else
@@ -309,12 +303,12 @@ int dropTable(char* tablaPorEliminar)
 			if (limpiadorDeArchivos(checkaux) == 1)
 			{
 				rmdir(checkaux);
-				log_info(loggerLFL, "FileSystem: el directorio ha sido eliminado correctamente");
+				logInfo( "FileSystem: el directorio ha sido eliminado correctamente");
 				return 0;
 			}
 			else
 			{
-				log_error(loggerLFL, "FileSystem: error al eliminar el directorio");
+				logError( "FileSystem: error al eliminar el directorio");
 				return(3);
 			}
 		}
@@ -351,7 +345,7 @@ int limpiadorDeArchivos(char* direccion)
 			continue;
 		else
 		{
-			log_error(loggerLFL, "FileSystem: Error al eliminar particiones");
+			logError( "FileSystem: Error al eliminar particiones");
 			return 0;
 		}
 		free(direccionBin);
@@ -396,7 +390,7 @@ int mostrarMetadataEspecificada(char* tabla, int tamanio_buffer_metadatas, bool 
 {
 	if(0 == existeTabla(tabla))
 	{
-		log_info(loggerLFL, "FileSystem: La tabla a la que quiere acceder no existe");
+		logInfo( "FileSystem: La tabla a la que quiere acceder no existe");
 		return 0;
 	}
 	else
@@ -450,7 +444,7 @@ void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer)
 	strcat(auxdir, "Tables/");
 	if(NULL == (directorioDeTablas = opendir(auxdir)))
 	{
-		log_error(loggerLFL, "FileSystem: error al acceder al directorio de tablas, abortando");
+		logError( "FileSystem: error al acceder al directorio de tablas, abortando");
 		buffer = malloc(6);
 		strcpy(buffer, "error");
 		closedir(directorioDeTablas);
@@ -460,7 +454,7 @@ void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer)
 		if(solicitadoPorMemoria)
 		{
 			int tamanio_buffer_metadatas = 0;
-			log_info(loggerLFL, "FileSystem: se procede a construir el paquete a enviar a Memoria.");
+			logInfo( "FileSystem: se procede a construir el paquete a enviar a Memoria.");
 			while(NULL != (tdp = readdir(directorioDeTablas)))
 			{
 				if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, "..")){}
@@ -478,7 +472,7 @@ void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer)
 		else
 		{
 			int tamanio_buffer_metadatas = 0;
-			log_info(loggerLFL, "FileSystem: se procede a mostrar el contenido de las tablas del File System.");
+			logInfo( "FileSystem: se procede a mostrar el contenido de las tablas del File System.");
 			while(NULL != (tdp = readdir(directorioDeTablas)))
 			{
 				if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, ".."))	{}
@@ -504,7 +498,7 @@ int contarTablasExistentes()
 	struct dirent* dr;
 	if(NULL == (auxdir = opendir(puntodemontaje)))
 	{
-		log_error(loggerLFL, "FileSystem: No se pudo acceder al directorio de tablas.");
+		logError( "FileSystem: No se pudo acceder al directorio de tablas.");
 		printf("Error al querer contar las tablas existentes");
 		return (0);
 	}
@@ -520,160 +514,17 @@ int contarTablasExistentes()
 			else
 				contadorDirectorios++;
 		}
-		log_info(loggerLFL, "FileSystem: La cantidad de directorios existente es: %i", contadorDirectorios);
+		logInfo( "FileSystem: La cantidad de directorios existente es: %i", contadorDirectorios);
 		return contadorDirectorios;
 	}
 }
 
-t_keysetter* selectTemps(char* tabla, uint16_t keyRecibida)
+/*t_keysetter* selectTemps(char* tabla, uint16_t keyRecibida)
 {
 
 	int esDeTalKey(t_keysetter* chequeada)
 	{
 		return chequeada->key == keyRecibida;
 	}
-
-	log_info(loggerLFL, "FileSystem: Empiezo a buscar el value más recente de la clave %i", keyRecibida);
-	DIR* dir;
-	struct dirent* tdp;
-	char* auxdir = string_new();
-	t_list* keysettersAllTemps = list_create();
-	t_list* keysettersEspecificos = list_create();
-	auxdir = malloc(strlen(punto_montaje) + strlen(tabla) + 9);
-	strcpy(auxdir, punto_montaje);
-	strcat(auxdir, "Tables/");
-	strcat(auxdir, tabla);
-	strcat(auxdir, "/");
-	char* direccionTemp = string_new();
-
-	dir = opendir(auxdir);
-	int i = 0;
-	while(NULL != (tdp = readdir(dir)))
-	{
-		char* partitionName = string_new();
-		char* aux = string_itoa(i);
-		partitionName = malloc(strlen(aux) + 5);
-		strcpy(partitionName, aux);
-		strcat(partitionName, ".bin");
-		if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, "..") || !strcmp(tdp->d_name, "Metadata.cfg")){}
-		else
-		{
-			if(!strcmp(&tdp->d_name[strlen(aux) + 1], "b"))
-			{
-				i++;
-			}
-			else
-			{
-				direccionTemp = malloc(strlen(auxdir) + strlen(tdp->d_name) + 1);
-				strcpy(direccionTemp, auxdir);
-				strcat(direccionTemp, tdp->d_name);
-				FILE* temp = fopen(direccionTemp, "w+");
-				char* keyVector = string_new();
-				keyVector = malloc(sizeof(uint16_t) + sizeof(double) + tamanio_value + 1);
-				int keyLength = 0;
-				int valueLength = 0;
-				int timeLength = 0;
-				int situation = 0;
-				do
-				{
-					char auxiliaryKey = fgetc(temp);
-					switch(auxiliaryKey)
-					{
-						case ';':
-						{
-							int r = 0;
-							int z = 0;
-							int y = 0;
-							t_keysetter* auxKey = malloc(sizeof(t_keysetter) + 3);
-							char* preKey = string_new();
-							char* preValue = string_new();
-							char* preTime = string_new();
-							preKey = malloc(keyLength + 1);
-							preValue = malloc(valueLength + 1);
-							preTime = malloc(timeLength + 1);
-							for(z = 0; z < keyLength; z++)
-							{
-								strcat(preKey, &keyVector[z]);
-							}
-							for(r = 0; r < timeLength; r++)
-							{
-								strcat(preTime, &keyVector[r + z]);
-							}
-							for(y = 0; y < valueLength; y++)
-							{
-								strcat(preValue, &keyVector[r + z + y]);
-							}
-							auxKey->key = atoi(preKey);
-							auxKey->timestamp = atoi(preTime);
-							memcpy(auxKey->clave, preValue , valueLength);
-							list_add(keysettersAllTemps, auxKey);
-							free(preTime);
-							free(preValue);
-							free(preKey);
-							break;
-						}
-						case ',':
-						{
-							switch(situation)
-							{
-								case 0:
-								{
-									situation = 1;
-									break;
-								}
-								case 1:
-								{
-									situation = 2;
-									break;
-								}
-								case 2:
-								{
-									strcat(keyVector, &auxiliaryKey);
-									valueLength++;
-								}
-							}
-							break;
-						}
-						default:
-						{
-							strcat(keyVector, &auxiliaryKey);
-							switch(situation)
-							{
-								case 0:
-								{
-									keyLength++;
-									break;
-								}
-								case 1:
-								{
-									timeLength++;
-									break;
-								}
-								case 2:
-								{
-									valueLength++;
-									break;
-								}
-							}
-							break;
-						}
-					}
-					if(feof(temp))
-					{
-						break;
-					}
-				} while(1);
-			}
-		}
-	}
-	keysettersEspecificos = list_filter(keysettersAllTemps, (void*) esDeTalKey);
-	list_sort(keysettersEspecificos, (void*) chequearTimestamps);
-	t_keysetter* keyTemps = malloc(sizeof(t_keysetter) + 4);
-	keyTemps = list_get(keysettersEspecificos, 0);
-	free(auxdir);
-	free(direccionTemp);
-	list_destroy(keysettersEspecificos);
-	list_destroy(keysettersAllTemps);
-	return keyTemps;
-}
+}*/
 
