@@ -35,6 +35,8 @@ void setearValoresCompactador(t_config* archivoConfig)
 {
 	tiempoDump = config_get_int_value(archivoConfig, "TIEMPO_DUMP");
 	tablasEnEjecucion = list_create();
+	biggestWaitTime = tiempoDump;
+	deathProtocol = 0;
 }
 
 void gestionarTabla(char*tabla)
@@ -72,12 +74,14 @@ void compactarTablas(char*tabla)
 	t_config * temporalArchivoConfig;
 	temporalArchivoConfig = config_create(direccionMetadataTabla);
 	int tiempoEntreCompactacion = config_get_int_value(temporalArchivoConfig, "TIEMPOENTRECOMPACTACIONES");
+	if(biggestWaitTime < tiempoEntreCompactacion)
+		biggestWaitTime = tiempoEntreCompactacion;
 	while(1)
 	{
 		usleep(tiempoEntreCompactacion * 1000);
 		if(!list_find(tablasEnEjecucion, (void*) estaTabla))
 		{
-			logInfo( "Compactador: La %s, al haber sido previamente desalojada dejará de ser buscada en el compactador");
+			logInfo("Compactador: La %s, al haber sido previamente desalojada dejará de ser buscada en el compactador", tabla);
 			break;
 		}
 		else
@@ -97,19 +101,23 @@ void gestionarDumps()
 
 void gestionarMemtable()
 {
-//	while(1)
-//	{
-//		usleep(tiempoDump * 1000);
-//		int a = 0;
-//		while(NULL != list_get(tablasEnEjecucion, a))
-//		{
-//			char* tabla = list_get(tablasEnEjecucion, a);
-//			crearTemporal(tabla);
-//			a++;
-//		}
-//		list_destroy(memtable);
-//		memtable = list_create();
-//	}
+	while(1)
+	{
+		usleep(tiempoDump * 1000);
+		int a = 0;
+		while(NULL != list_get(tablasEnEjecucion, a))
+		{
+			t_TablaEnEjecucion* tablaTomada = list_get(tablasEnEjecucion, a);
+			crearTemporal(tablaTomada->tabla);
+			a++;
+		}
+		if(deathProtocol){}
+		else
+		{
+			list_destroy(memtable);
+			memtable = list_create();
+		}
+	}
 }
 
 void crearTemporal(char* tabla)
@@ -191,7 +199,19 @@ void crearTemporal(char* tabla)
 		free(claveParaTemp);
 		free(auxiliaryKey);
 	}
-
+	if(!firstRun)
+	{
+		t_config* tempArchConf = config_create(tempDirection);
+		char* sizedUse = string_itoa(usedSize);
+		config_set_value(tempArchConf,"SIZE", sizedUse);
+	}
 }
 
+void killProtocolCompactador()
+{
+	deathProtocol = 1;
+	list_clean(tablasEnEjecucion);
+	logInfo("Compactador: Desconectando todas las tablas.");
+	usleep(biggestWaitTime * 1000); //Esto está para que el compactador tenga tiempo a matar todas las tablas de su sistema.
+}
 

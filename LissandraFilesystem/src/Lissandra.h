@@ -19,7 +19,7 @@ int socketFD;
 int retardo;
 char* server_ip;
 int server_puerto;
-
+bool killthreads;
 
 /* FUNCIONES */
 
@@ -34,5 +34,6 @@ int llamarEliminarTabla(char* tablaPorEliminar);
 int perteneceATabla(t_Memtablekeys* key);
 int esDeTalKey(t_Memtablekeys* chequeada);
 int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, char* buffer);
+void killProtocolLissandra();
 
 #endif /* LISSANDRA_H_ */

@@ -11,7 +11,10 @@ int main(void)
 	for(;;)
 	{
 		if(signalExit == true)
+		{
+			terminationProtocol();
 			break;
+		}
 	}
 	return EXIT_SUCCESS;
 }
@@ -61,4 +64,15 @@ void iniciarFileSistem()
 	logInfo("MAIN: Se inicio un hilo para manejar el FileSistem.");
 	pthread_create(&hiloFileSistem, NULL, (void *) mainFileSistem, NULL);
 	pthread_detach(hiloFileSistem);
+}
+
+void terminationProtocol()
+{
+	list_destroy(memtable);
+	list_destroy(hilosLFL);
+	free(punto_montaje);
+	killProtocolLissandra();
+	killProtocolCompactador();
+	logInfo("Main: Desconectando sistema");
+	list_destroy(tablasEnEjecucion);
 }

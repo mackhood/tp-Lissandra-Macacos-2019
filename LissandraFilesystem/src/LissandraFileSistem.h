@@ -12,6 +12,7 @@
 t_list * hilosLFL;
 
 
+
 /* SEMAFOROS */
 
 /* FUNCIONES */
@@ -22,6 +23,7 @@ void iniciarConsola();
 void iniciarLissandra();
 void iniciarFileSistem();
 void iniciarCompactador();
+void terminationProtocol();
 
 
 #endif /* LISSANDRAFILESISTEM_H_ */

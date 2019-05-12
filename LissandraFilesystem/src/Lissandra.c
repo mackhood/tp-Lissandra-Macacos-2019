@@ -6,6 +6,7 @@ void inicializar()
 	memorias = list_create();
 	compactadores = list_create();
 	memtable = list_create();
+	killthreads = false;
 	iniciarServidor();
 }
 
@@ -65,7 +66,7 @@ void escucharMemoria(int* socket_memoria)
 {
 	int socket = *socket_memoria;
 
-	while(1)
+	while(!killthreads)
 	{
 		t_prot_mensaje* mensaje_memoria = prot_recibir_mensaje(socket);
 
@@ -461,5 +462,15 @@ int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, char* buff
 		}
 	}
 	free(tabla);
+}
+
+void killProtocolLissandra()
+{
+	killthreads = true;
+	list_destroy(hilos);
+	list_destroy(memorias);
+	list_destroy(compactadores);
+	free(server_ip);
+	logInfo("Lissandra: Todas las memorias han sido desalojadas.");
 }
 

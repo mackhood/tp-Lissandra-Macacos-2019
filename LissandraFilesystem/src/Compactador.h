@@ -4,7 +4,11 @@
 #include <dirent.h>
 #include "LFLExternals.h"
 
+/* VARIABLES GLOBALES*/
+
 int tiempoDump;
+int deathProtocol;
+
 
 /* FUNCIONES */
 
@@ -16,6 +20,6 @@ void gestionarDumps();
 void gestionarMemtable();
 void crearTemporal(char* tabla);
 int perteneceATabla(t_Memtablekeys* key);
-
+void killProtocolCompactador();
 
 #endif /* COMPACTADOR_H_ */
