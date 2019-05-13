@@ -23,6 +23,9 @@
 #include <fts.h>
 #include <auxiliaryFunctions.h>
 #include <commons/bitarray.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <sys/types.h>
 
 /* ESTRUCTURAS */
 typedef struct {

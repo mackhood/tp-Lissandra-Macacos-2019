@@ -65,8 +65,7 @@ void compactarTablas(char*tabla)
 	tablaAAgregar->tabla = tabla;
 	tablaAAgregar->cantTemps = 0;
 	list_add(tablasEnEjecucion, tablaAAgregar);
-	char* direccionMetadataTabla= string_new();
-	direccionMetadataTabla= malloc(strlen(punto_montaje) + strlen(tabla) + 21);//son 20 de tables/ y metadata.cfg +1 por las dudas
+	char* direccionMetadataTabla = malloc(strlen(punto_montaje) + strlen(tabla) + 21);//son 20 de tables/ y metadata.cfg +1 por las dudas
 	strcpy(direccionMetadataTabla, punto_montaje);
 	strcat(direccionMetadataTabla, "Tables/");
 	strcat(direccionMetadataTabla, tabla);
@@ -142,12 +141,10 @@ void crearTemporal(char* tabla)
 		bool result = (0 == strcmp(tablaDeListaAux, tablaAux));
 		return result;
 	}
-
-	char* container;
 	t_list* keysTableSpecific = list_create();
 	keysTableSpecific = list_filter(memtable, (void*)perteneceATabla);
 	int sizeOfContainer = list_size(keysTableSpecific)*(tamanio_value + sizeof(uint16_t) + sizeof(double)) + 1;
-	container = malloc(sizeOfContainer);
+	char* container = malloc(sizeOfContainer);
 	t_TablaEnEjecucion* tablaEjecutada = list_find(tablasEnEjecucion, (void*) estaTabla);
 	t_Memtablekeys* auxiliaryKey;
 	int a = 0;
@@ -188,7 +185,7 @@ void crearTemporal(char* tabla)
 		char* claveParaTemp = malloc(sizeOfKey + 1);
 		strcpy(claveParaTemp, string_itoa(auxiliaryKey->data->key));
 		strcat(claveParaTemp, ",");
-		strcat(claveParaTemp, string_itoa(auxiliaryKey->data->timestamp));
+		strcat(claveParaTemp, string_itoa((long long)auxiliaryKey->data->timestamp));
 		strcat(claveParaTemp, ",");
 		strcat(claveParaTemp, auxiliaryKey->data->clave);
 		strcat(claveParaTemp, ";");
