@@ -35,7 +35,6 @@ void setearValoresCompactador(t_config* archivoConfig)
 {
 	tiempoDump = config_get_int_value(archivoConfig, "TIEMPO_DUMP");
 	tablasEnEjecucion = list_create();
-	biggestWaitTime = tiempoDump;
 	deathProtocol = 0;
 }
 
@@ -73,8 +72,6 @@ void compactarTablas(char*tabla)
 	t_config * temporalArchivoConfig;
 	temporalArchivoConfig = config_create(direccionMetadataTabla);
 	int tiempoEntreCompactacion = config_get_int_value(temporalArchivoConfig, "TIEMPOENTRECOMPACTACIONES");
-	if(biggestWaitTime < tiempoEntreCompactacion)
-		biggestWaitTime = tiempoEntreCompactacion;
 	while(1)
 	{
 		usleep(tiempoEntreCompactacion * 1000);
@@ -123,8 +120,7 @@ void crearTemporal(char* tabla)
 {
 	int perteneceATabla(t_Memtablekeys* key)
 	{
-		char* testTable = string_new();
-		testTable = malloc(strlen(tabla) + 1);
+		char* testTable = malloc(strlen(tabla) + 1);
 		strcpy(testTable, tabla);
 		return 0 == strcmp(key->tabla, testTable);
 	}
@@ -143,7 +139,7 @@ void crearTemporal(char* tabla)
 	}
 	t_list* keysTableSpecific = list_create();
 	keysTableSpecific = list_filter(memtable, (void*)perteneceATabla);
-	int sizeOfContainer = list_size(keysTableSpecific)*(tamanio_value + sizeof(uint16_t) + sizeof(double)) + 1;
+	size_t sizeOfContainer = list_size(keysTableSpecific)*(tamanio_value + sizeof(uint16_t) + sizeof(double) + 1);
 	char* container = malloc(sizeOfContainer);
 	t_TablaEnEjecucion* tablaEjecutada = list_find(tablasEnEjecucion, (void*) estaTabla);
 	t_Memtablekeys* auxiliaryKey;
@@ -173,11 +169,11 @@ void crearTemporal(char* tabla)
 			strcpy(blocks, "BLOCKS=");
 			strcat(blocks, "\n");
 			fwrite(blocks, strlen(blocks), 1, tempPointer);
-			free(tempDirection);
 			fclose(tempPointer);
 			tablaEjecutada->cantTemps++;
-			firstRun = false;
 		}
+		else
+			continue;
 		auxiliaryKey = malloc(sizeof(t_Memtablekeys) + 4);
 		auxiliaryKey = list_get(keysTableSpecific, a);
 		int sizeOfKey = strlen(string_itoa(auxiliaryKey->data->key)) + strlen(auxiliaryKey->data->clave)
@@ -189,18 +185,26 @@ void crearTemporal(char* tabla)
 		strcat(claveParaTemp, ",");
 		strcat(claveParaTemp, auxiliaryKey->data->clave);
 		strcat(claveParaTemp, ";");
-		memcpy(container + usedSize, claveParaTemp, sizeOfKey);
+		if(firstRun)
+		{
+			strcpy(container, claveParaTemp);
+			firstRun = false;
+		}
+		else
+			strcat(container, claveParaTemp);
+		free(claveParaTemp);
 		usedSize += sizeOfKey;
 		sizeOfKey = 0;
 		a++;
-		free(claveParaTemp);
-		free(auxiliaryKey);
 	}
 	if(!firstRun)
 	{
-		t_config* tempArchConf = config_create(tempDirection);
+		t_config* tempArchConf;
+		tempArchConf = config_create(tempDirection);
 		char* sizedUse = string_itoa(usedSize);
-		config_set_value(tempArchConf,"SIZE", sizedUse);
+		char* place = "SIZE";
+		config_set_value(tempArchConf, place, sizedUse);
+		free(tempDirection);
 	}
 }
 
@@ -209,6 +213,6 @@ void killProtocolCompactador()
 	deathProtocol = 1;
 	list_clean(tablasEnEjecucion);
 	logInfo("Compactador: Desconectando todas las tablas.");
-	usleep(biggestWaitTime * 1000); //Esto está para que el compactador tenga tiempo a matar todas las tablas de su sistema.
+	usleep(8000 * 1000); //Esto está para que el compactador tenga tiempo a matar todas las tablas de su sistema.
 }
 

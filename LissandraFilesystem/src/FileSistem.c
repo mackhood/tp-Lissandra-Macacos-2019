@@ -48,7 +48,7 @@ void levantarBitmap(char* direccion)
 //    	if (result == -1)
 //    	{
 //    		close(fd);
-//    		logError("FileSystem: error al abrir el bitmap, abortando sistema");
+//    		logError("FileSystem: error reposicionar el puntero al inicio del bitmap, abortando sistema");
 //    		signalExit = true;
 //    	}
 //    	else
@@ -200,10 +200,6 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 				}
 				else
 				{
-//					char* tablaaux = string_new();
-//					tablaaux = malloc (strlen(nombre) + 1);
-//					strcpy(tablaaux, nombre);
-//					gestionarTabla(tablaaux);
 					closedir(newdir);
 				}
 			}
@@ -423,6 +419,8 @@ int existeTabla(char* tabla)
 		return 1;
 	else
 		return 0;
+	closedir(checkdir);
+	free(checkaux);
 }
 
 int mostrarMetadataEspecificada(char* tabla, int tamanio_buffer_metadatas, bool solicitadoPorMemoria, char* buffer)
