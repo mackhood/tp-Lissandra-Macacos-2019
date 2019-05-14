@@ -14,13 +14,15 @@
 #include <sys/stat.h>
 #include <commons/collections/list.h>
 #include "LFLExternals.h"
-#include "Compactador.h"
+
 
 /* VARIABLES GLOBALES */
 
 int tamanio_bloques;
 int blocks;
 int creatingFL;
+char* direccionFileSystemBlocks;
+char* globalBitmapPath;
 
 /* FUNCIONES */
 
@@ -38,5 +40,8 @@ int mostrarMetadataEspecificada(char* tabla, int tamanio_buffer_metadatas, bool 
 void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer);
 int contarTablasExistentes();
 t_keysetter* selectTemp(char* tabla, uint16_t keyRecibida);
+char* escribirBloquesDeFs(char* todasLasClavesAImpactar, int tamanioUsado, char* tabla);
+char* obtenerBloqueLibre();
+void limpiadorDeBloques(char* direccion);
 
 #endif /* FILESISTEM_H_ */

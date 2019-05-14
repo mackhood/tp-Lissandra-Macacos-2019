@@ -3,6 +3,7 @@
 
 #include <dirent.h>
 #include "LFLExternals.h"
+#include "FileSistem.h"
 
 /* VARIABLES GLOBALES*/
 

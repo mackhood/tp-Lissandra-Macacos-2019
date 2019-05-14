@@ -202,8 +202,10 @@ void crearTemporal(char* tabla)
 		t_config* tempArchConf;
 		tempArchConf = config_create(tempDirection);
 		char* sizedUse = string_itoa(usedSize);
-		char* place = "SIZE";
-		config_set_value(tempArchConf, place, sizedUse);
+		config_set_value(tempArchConf, "SIZE", sizedUse);
+		char* bloquesAsignados = escribirBloquesDeFs(container, usedSize, tabla);
+		config_set_value(tempArchConf, "BLOCKS", bloquesAsignados);
+		config_save(tempArchConf);
 		free(tempDirection);
 	}
 }

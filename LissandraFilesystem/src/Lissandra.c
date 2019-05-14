@@ -383,6 +383,7 @@ int llamadoACrearTabla(char* nombre, char* consistencia, int particiones, int ti
 		case 0:
 		{
 			return 0;
+			gestionarTabla(nombre);
 			break;
 		}
 		case 1:

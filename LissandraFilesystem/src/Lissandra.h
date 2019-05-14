@@ -3,6 +3,7 @@
 
 #include "LFLExternals.h"
 #include "FileSistem.h"
+#include "Compactador.h"
 
 /* ESTRUCTURAS */
 

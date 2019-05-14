@@ -11,6 +11,7 @@ void testerFileSystem()
 	char* direccionFileSystem = malloc(strlen(punto_montaje) + 8);
 	strcpy(direccionFileSystem, punto_montaje);
 	strcat(direccionFileSystem, "Blocks/");
+	strcpy(direccionFileSystemBlocks, direccionFileSystem);
 	char* aux = malloc(strlen(direccionFileSystem) + 8);
 	strcpy(aux, direccionFileSystem);
 	strcat(aux, "0.bin");
@@ -27,104 +28,105 @@ void testerFileSystem()
 
 void levantarBitmap(char* direccion)
 {
-//	int i;
-//	logInfo( "FileSystem: Se procede a crear el bitmap");
-//	char* direccionBitmap = malloc(strlen(punto_montaje) + 21);
-//	strcpy(direccionBitmap, punto_montaje);
-//	strcat(direccionBitmap, "Metadata/Bitmap.bin");
-//	int fd;
-//	int result;
-//	int *map;  /* mmapped array of int's */
-//
-//    fd = open(direccionBitmap, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
-//    if (fd == -1)
-//    {
-//    	logError("FileSystem: error al abrir el bitmap, abortando sistema");
-//    	signalExit = true;
-//    }
-//    else
-//    {
-//    	result = lseek(fd, blocks, SEEK_SET);
-//    	if (result == -1)
-//    	{
-//    		close(fd);
-//    		logError("FileSystem: error reposicionar el puntero al inicio del bitmap, abortando sistema");
-//    		signalExit = true;
-//    	}
-//    	else
-//    	{
-//    		result = write(fd, "", 1);
-//    		if (result != 1)
-//    		{
-//    			close(fd);
-//    			logError("FileSystem: error al escribir el ultimo bite al final del archivo, abortando sistema");
-//    			signalExit = true;
-//    		}
-//    		else
-//    		{
-//    			map = (int*)mmap(0, blocks, PROT_READ | PROT_EXEC | PROT_WRITE, MAP_SHARED, fd, 0);
-//    			if (map == MAP_FAILED)
-//    			{
-//    				close(fd);
-//    				logError("FileSystem: error al ejecutar mmap, abortando sistema");
-//    				signalExit = true;
-//    			}
-//    			else
-//    			{
-//    				for (i = 1; i <= blocks; i++)
-//    				{
-//    					char* direccionpuenteada = malloc(strlen(direccion) + 10);
-//    					strcpy(direccionpuenteada, direccion);
-//    					char* aux = malloc(sizeof(i) + 1);
-//    					strcpy(aux, string_itoa(i));
-//    					strcat(direccionpuenteada, aux);
-//    					strcat(direccionpuenteada, ".bin");
-//    					FILE* blockpointer;
-//    					if(NULL == (blockpointer = fopen(direccionpuenteada, "r")))
-//    					{
-//    						logError( "FileSystem: No se encuentran los bloques del File System");
-//    						fclose(blockpointer);
-//    						free(direccionpuenteada);
-//    						free(aux);
-//    						break;
-//    					}
-//    					else
-//    					{
-//    						char* a = string_new();
-//    						a = malloc(2);
-//    						strcpy(a, " ");
-//    						fread(a, 1, 1, blockpointer);
-//    						int auxcomp = 0;
-//    						auxcomp = strcmp(a, " ");
-//    						if(auxcomp == 0)
-//    						{
-//    							map[i] = 0;
-//    						}
-//    						else
-//    						{
-//    							map[i] = 1;
-//    						}
-//    						free(a);
-//    					}
-//    					free(aux);
-//    					free(direccionpuenteada);
-//    					fclose(blockpointer);
-//    				}
-//    				if (munmap(map, blocks) == -1)
-//    				{
-//    					logError("FileSystem: Error al deshacer el map del puntero.");
-//    					signalExit = true;
-//    				}
-//    				else
-//    				{
-//    					close(fd);
-//    					free(direccionBitmap);
-//						logInfo( "FileSystem: El bitmap fue creado satisfactoriamente");
-//    				}
-//    			}
-//    		}
-//    	}
-//    }
+	int i;
+	logInfo( "FileSystem: Se procede a crear el bitmap");
+	char* direccionBitmap = malloc(strlen(punto_montaje) + 21);
+	strcpy(direccionBitmap, punto_montaje);
+	strcat(direccionBitmap, "Metadata/Bitmap.bin");
+	strcpy(globalBitmapPath, direccionBitmap);
+	int fd;
+	int result;
+	int *map;  /* mmapped array of int's */
+
+    fd = open(direccionBitmap, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
+    if (fd == -1)
+    {
+    	logError("FileSystem: error al abrir el bitmap, abortando sistema");
+    	signalExit = true;
+    }
+    else
+    {
+    	result = lseek(fd, blocks, SEEK_SET);
+    	if (result == -1)
+    	{
+    		close(fd);
+    		logError("FileSystem: error reposicionar el puntero al inicio del bitmap, abortando sistema");
+    		signalExit = true;
+    	}
+    	else
+    	{
+    		result = write(fd, "", 1);
+    		if (result != 1)
+    		{
+    			close(fd);
+    			logError("FileSystem: error al escribir el ultimo bite al final del archivo, abortando sistema");
+    			signalExit = true;
+    		}
+    		else
+    		{
+    			map = (int*)mmap(0, blocks, PROT_READ | PROT_EXEC | PROT_WRITE, MAP_SHARED, fd, 0);
+    			if (map == MAP_FAILED)
+    			{
+    				close(fd);
+    				logError("FileSystem: error al ejecutar mmap, abortando sistema");
+    				signalExit = true;
+    			}
+    			else
+    			{
+    				for (i = 1; i <= blocks; i++)
+    				{
+    					char* direccionpuenteada = malloc(strlen(direccion) + 10);
+    					strcpy(direccionpuenteada, direccion);
+    					char* aux = malloc(sizeof(i) + 1);
+    					strcpy(aux, string_itoa(i));
+    					strcat(direccionpuenteada, aux);
+    					strcat(direccionpuenteada, ".bin");
+    					FILE* blockpointer;
+    					if(NULL == (blockpointer = fopen(direccionpuenteada, "r")))
+    					{
+    						logError( "FileSystem: No se encuentran los bloques del File System");
+    						fclose(blockpointer);
+    						free(direccionpuenteada);
+    						free(aux);
+    						break;
+    					}
+    					else
+    					{
+    						char* a = string_new();
+    						a = malloc(2);
+    						strcpy(a, " ");
+    						fread(a, 1, 1, blockpointer);
+    						int auxcomp = 0;
+    						auxcomp = strcmp(a, " ");
+    						if(auxcomp == 0)
+    						{
+    							map[i] = 0;
+    						}
+    						else
+    						{
+    							map[i] = 1;
+    						}
+    						free(a);
+    					}
+    					free(aux);
+    					free(direccionpuenteada);
+    					fclose(blockpointer);
+    				}
+    				if (munmap(map, blocks) == -1)
+    				{
+    					logError("FileSystem: Error al deshacer el map del puntero.");
+    					signalExit = true;
+    				}
+    				else
+    				{
+    					close(fd);
+    					free(direccionBitmap);
+						logInfo( "FileSystem: El bitmap fue creado satisfactoriamente");
+    				}
+    			}
+    		}
+    	}
+    }
 }
 
 void setearValoresFileSistem(t_config * archivoConfig)
@@ -203,9 +205,8 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 					closedir(newdir);
 				}
 			}
-			gestionarTabla(nombre);
 			free(direccionFinal);
-			logInfo( "FileSystem: Tabla creada satisfactoriamente y agregada a tablas en ejecucion");
+			logInfo("FileSystem: Tabla creada satisfactoriamente");
 			return(0);
 		}
 	}
@@ -565,4 +566,58 @@ int contarTablasExistentes()
 	}
 }*/
 
+char* escribirBloquesDeFs(char* todasLasClavesAImpactar, int tamanioUsado, char* tabla)
+{
+	char* direccionTabla = malloc(strlen(tabla) + strlen(punto_montaje) + 9);
+	strcpy(direccionTabla, punto_montaje);
+	strcat(direccionTabla, "Tables/");
+	strcat(direccionTabla, tabla);
+	strcat(direccionTabla, "/");
+	int bloquesAUsar = (tamanioUsado/tamanio_bloques) + 1;
+	char* bloquesAsignados = malloc(bloquesAUsar*(sizeof(int) + 1) + 3);
+	strcpy(bloquesAsignados, "[");
+	bool firstBlock = true;
+	while(tamanioUsado != 0)
+	{
+		char* bloque = obtenerBloqueLibre();
+		if(firstBlock)
+		{
+			strcat(bloquesAsignados, bloque);
+			firstBlock = false;
+		}
+		else
+		{
+			strcat(bloquesAsignados, ",");
+			strcat(bloquesAsignados, bloque);
+		}
+	}
+
+	return bloquesAsignados;
+}
+
+char* obtenerBloqueLibre()
+{
+	int a = 0;
+	char* bloqueAEnviar = string_new();
+	do
+	{
+		//Hago que consulte al bitmap por el primer bloque libre//
+		if(true)
+		{
+			bloqueAEnviar = malloc(strlen(string_itoa(a)) + 1);
+		}
+		else
+		{
+			a++;
+			continue;
+		}
+
+	}while(!strcmp(bloqueAEnviar, " "));
+	return bloqueAEnviar;
+}
+
+void limpiadorDeBloques(char* direccion)
+{
+
+}
 
