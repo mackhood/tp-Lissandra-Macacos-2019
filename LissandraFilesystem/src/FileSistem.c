@@ -36,9 +36,9 @@ void levantarBitmap(char* direccion)
 	strcpy(globalBitmapPath, direccionBitmap);
 	int fd;
 	int result;
-	int *map;  /* mmapped array of int's */
+	char *bitmap;  /* mmapped array of chars */
 
-    fd = open(direccionBitmap, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
+    fd = open(direccionBitmap, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
     if (fd == -1)
     {
     	logError("FileSystem: error al abrir el bitmap, abortando sistema");
@@ -46,86 +46,8 @@ void levantarBitmap(char* direccion)
     }
     else
     {
-    	result = lseek(fd, blocks, SEEK_SET);
-    	if (result == -1)
-    	{
-    		close(fd);
-    		logError("FileSystem: error reposicionar el puntero al inicio del bitmap, abortando sistema");
-    		signalExit = true;
-    	}
-    	else
-    	{
-    		result = write(fd, "", 1);
-    		if (result != 1)
-    		{
-    			close(fd);
-    			logError("FileSystem: error al escribir el ultimo bite al final del archivo, abortando sistema");
-    			signalExit = true;
-    		}
-    		else
-    		{
-    			map = (int*)mmap(0, blocks, PROT_READ | PROT_EXEC | PROT_WRITE, MAP_SHARED, fd, 0);
-    			if (map == MAP_FAILED)
-    			{
-    				close(fd);
-    				logError("FileSystem: error al ejecutar mmap, abortando sistema");
-    				signalExit = true;
-    			}
-    			else
-    			{
-    				for (i = 1; i <= blocks; i++)
-    				{
-    					char* direccionpuenteada = malloc(strlen(direccion) + 10);
-    					strcpy(direccionpuenteada, direccion);
-    					char* aux = malloc(sizeof(i) + 1);
-    					strcpy(aux, string_itoa(i));
-    					strcat(direccionpuenteada, aux);
-    					strcat(direccionpuenteada, ".bin");
-    					FILE* blockpointer;
-    					if(NULL == (blockpointer = fopen(direccionpuenteada, "r")))
-    					{
-    						logError( "FileSystem: No se encuentran los bloques del File System");
-    						fclose(blockpointer);
-    						free(direccionpuenteada);
-    						free(aux);
-    						break;
-    					}
-    					else
-    					{
-    						char* a = string_new();
-    						a = malloc(2);
-    						strcpy(a, " ");
-    						fread(a, 1, 1, blockpointer);
-    						int auxcomp = 0;
-    						auxcomp = strcmp(a, " ");
-    						if(auxcomp == 0)
-    						{
-    							map[i] = 0;
-    						}
-    						else
-    						{
-    							map[i] = 1;
-    						}
-    						free(a);
-    					}
-    					free(aux);
-    					free(direccionpuenteada);
-    					fclose(blockpointer);
-    				}
-    				if (munmap(map, blocks) == -1)
-    				{
-    					logError("FileSystem: Error al deshacer el map del puntero.");
-    					signalExit = true;
-    				}
-    				else
-    				{
-    					close(fd);
-    					free(direccionBitmap);
-						logInfo( "FileSystem: El bitmap fue creado satisfactoriamente");
-    				}
-    			}
-    		}
-    	}
+    	bitmap = mmap(NULL, blocks, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    	t_bitarray* bitarray = bitarray_create(bitmap, blocks);
     }
 }
 
