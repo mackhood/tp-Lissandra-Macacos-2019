@@ -11,6 +11,7 @@ void testerFileSystem()
 	char* direccionFileSystem = malloc(strlen(punto_montaje) + 8);
 	strcpy(direccionFileSystem, punto_montaje);
 	strcat(direccionFileSystem, "Blocks/");
+	direccionFileSystemBlocks = malloc(strlen(direccionFileSystem) + 1);
 	strcpy(direccionFileSystemBlocks, direccionFileSystem);
 	char* aux = malloc(strlen(direccionFileSystem) + 8);
 	strcpy(aux, direccionFileSystem);
@@ -28,14 +29,13 @@ void testerFileSystem()
 
 void levantarBitmap(char* direccion)
 {
-	int i;
 	logInfo( "FileSystem: Se procede a crear el bitmap");
 	char* direccionBitmap = malloc(strlen(punto_montaje) + 21);
 	strcpy(direccionBitmap, punto_montaje);
 	strcat(direccionBitmap, "Metadata/Bitmap.bin");
+	globalBitmapPath = malloc(strlen(direccionBitmap) + 1);
 	strcpy(globalBitmapPath, direccionBitmap);
 	int fd;
-	int result;
 	char *bitmap;  /* mmapped array of chars */
 
     fd = open(direccionBitmap, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
@@ -47,7 +47,14 @@ void levantarBitmap(char* direccion)
     else
     {
     	bitmap = mmap(NULL, blocks, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-    	t_bitarray* bitarray = bitarray_create(bitmap, blocks);
+    	t_bitarray* bitarray = bitarray_create_with_mode(bitmap, blocks, LSB_FIRST);
+    	int a;
+    	for(a = 0; a < 9; a++)
+    	{
+    		bitarray_set_bit(bitarray, a);
+//    		bool result = bitarray_test_bit(bitarray,a);
+//    		printf("%d\n", result);
+    	}
     }
 }
 
