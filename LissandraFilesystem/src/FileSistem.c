@@ -67,16 +67,11 @@ void levantarBitmap(char* direccion)
     		{
         		bitarray_set_bit(bitarray, a);
     		}
-    		if(a < 10)
-    		{
-    			bool result = bitarray_test_bit(bitarray, a);
-    			printf("En el index %i, hay un %i\n", a , result);
-    		}
-    		msync(bitarraychar, fd, MS_SYNC);
     		free(auxb);
     		fclose(blockpointer);
     		free(direccionBloque);
     	}
+		msync(bitarraychar, fd, MS_SYNC);
     	bitarray_destroy(bitarray);
     	munmap(bitarraychar, (blocks/8));
     	close(fd);
