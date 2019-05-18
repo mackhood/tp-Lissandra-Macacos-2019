@@ -8,6 +8,7 @@
 /* VARIABLES GLOBALES*/
 
 int tiempoDump;
+int slowestDump;
 int deathProtocol;
 
 

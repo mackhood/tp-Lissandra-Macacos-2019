@@ -531,16 +531,18 @@ char* escribirBloquesDeFs(char* todasLasClavesAImpactar, int tamanioUsado, char*
 		char* bloque = obtenerBloqueLibre();
 		if(firstBlock)
 		{
-			escribirBloque(&bloquesCorridos, &tamanioOcupado, tamanioUsado, bloque);
+			escribirBloque(&bloquesCorridos, &tamanioOcupado, tamanioUsado, bloque, todasLasClavesAImpactar);
 			strcat(bloquesAsignados, bloque);
 			firstBlock = false;
 		}
 		else
 		{
+			escribirBloque(&bloquesCorridos, &tamanioOcupado, tamanioUsado, bloque, todasLasClavesAImpactar);
 			strcat(bloquesAsignados, ",");
 			strcat(bloquesAsignados, bloque);
 		}
 	}
+	strcat(bloquesAsignados, "]");
 
 	return bloquesAsignados;
 }
@@ -564,6 +566,48 @@ char* obtenerBloqueLibre()
 
 	}while(!strcmp(bloqueAEnviar, " "));
 	return bloqueAEnviar;
+}
+
+void escribirBloque(int* usedBlocks, int* seizedSize, int usedSize, char* block, char* clavesAImpactar)
+{
+	int a;
+	int mmapsize;
+	int stillUnsaved = usedSize - (int)seizedSize;
+	if(64 > stillUnsaved)
+		mmapsize = usedSize - (int)seizedSize;
+	else
+		mmapsize = 64;
+	char* blockDirection = malloc(strlen(direccionFileSystemBlocks) + strlen(block) + 5);
+	strcpy(blockDirection, direccionFileSystemBlocks);
+	strcat(blockDirection, block);
+	strcat(blockDirection, ".bin");
+	int fd2 = open(blockDirection, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    ftruncate(fd2, mmapsize);
+    if (fd2 == -1)
+        {
+        	logError("FileSystem: error al abrir el bloque %s, abortando sistema", block);
+        	signalExit = true;
+        }
+    else
+    {
+    	char* mmaplocator = mmap(NULL, mmapsize, PROT_READ | PROT_WRITE, MAP_SHARED, fd2, 0);
+    	for(a = 0; a < 64; a++)
+    	{
+    		if((int)seizedSize != usedSize)
+    		{
+    			mmaplocator[a] = clavesAImpactar[(64*(int)usedBlocks) + a];
+    			seizedSize++;
+    		}
+    		else
+    		{
+    			usedBlocks++;
+    			break;
+    		}
+    	}
+    	msync(mmaplocator, fd2, MS_SYNC);
+    	munmap(mmaplocator, mmapsize);
+    	close(fd2);
+    }
 }
 
 void limpiadorDeBloques(char* direccion)
