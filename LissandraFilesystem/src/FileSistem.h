@@ -23,6 +23,7 @@ int blocks;
 int creatingFL;
 char* direccionFileSystemBlocks;
 char* globalBitmapPath;
+t_bitarray* bitarray;
 
 /* FUNCIONES */
 
@@ -43,5 +44,6 @@ t_keysetter* selectTemp(char* tabla, uint16_t keyRecibida);
 char* escribirBloquesDeFs(char* todasLasClavesAImpactar, int tamanioUsado, char* tabla);
 char* obtenerBloqueLibre();
 void limpiadorDeBloques(char* direccion);
+void escribirBloque(int* bloquesCorridos, int* tamanioOcupado, int tamanioUsado, char* bloque);
 
 #endif /* FILESISTEM_H_ */

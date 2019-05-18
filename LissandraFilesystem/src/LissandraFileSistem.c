@@ -68,11 +68,13 @@ void iniciarFileSistem()
 
 void terminationProtocol()
 {
-	list_destroy(memtable);
+
 	list_destroy(hilosLFL);
-	free(punto_montaje);
 	killProtocolLissandra();
 	killProtocolCompactador();
-	logInfo("Main: Desconectando sistema");
+
+	free(punto_montaje);
+	list_destroy(memtable);
 	list_destroy(tablasEnEjecucion);
+	logInfo("Main: Desconectando sistema");
 }

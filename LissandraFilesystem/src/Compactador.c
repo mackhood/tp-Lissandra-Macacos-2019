@@ -214,7 +214,7 @@ void crearTemporal(char* tabla)
 void killProtocolCompactador()
 {
 	deathProtocol = 1;
-	gestionarMemtable();
+//	gestionarMemtable();
 	list_clean(tablasEnEjecucion);
 	logInfo("Compactador: Desconectando todas las tablas.");
 	usleep(8000 * 1000); //Esto está para que el compactador tenga tiempo a matar todas las tablas de su sistema.

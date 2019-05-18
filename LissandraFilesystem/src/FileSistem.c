@@ -47,7 +47,7 @@ void levantarBitmap(char* direccion)
     else
     {
     	bitarraychar = mmap(NULL, (blocks/8), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-    	t_bitarray* bitarray = bitarray_create_with_mode(bitarraychar, (blocks/8), LSB_FIRST);
+    	bitarray = bitarray_create_with_mode(bitarraychar, (blocks/8), LSB_FIRST);
     	int a;
     	for(a = 0; a < blocks; a++)
     	{
@@ -72,9 +72,9 @@ void levantarBitmap(char* direccion)
     		free(direccionBloque);
     	}
 		msync(bitarraychar, fd, MS_SYNC);
-    	bitarray_destroy(bitarray);
-    	munmap(bitarraychar, (blocks/8));
-    	close(fd);
+//    	bitarray_destroy(bitarray);
+//    	munmap(bitarraychar, (blocks/8));
+//    	close(fd);
     }
 }
 
@@ -524,11 +524,14 @@ char* escribirBloquesDeFs(char* todasLasClavesAImpactar, int tamanioUsado, char*
 	char* bloquesAsignados = malloc(bloquesAUsar*(sizeof(int) + 1) + 3);
 	strcpy(bloquesAsignados, "[");
 	bool firstBlock = true;
-	while(tamanioUsado != 0)
+	int tamanioOcupado = 0;
+	int bloquesCorridos = 0;
+	while(tamanioOcupado != tamanioUsado)
 	{
 		char* bloque = obtenerBloqueLibre();
 		if(firstBlock)
 		{
+			escribirBloque(&bloquesCorridos, &tamanioOcupado, tamanioUsado, bloque);
 			strcat(bloquesAsignados, bloque);
 			firstBlock = false;
 		}
