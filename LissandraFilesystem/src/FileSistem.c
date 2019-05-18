@@ -35,10 +35,9 @@ void levantarBitmap(char* direccion)
 	strcat(direccionBitmap, "Metadata/Bitmap.bin");
 	globalBitmapPath = malloc(strlen(direccionBitmap) + 1);
 	strcpy(globalBitmapPath, direccionBitmap);
-	int fd;
-	char *bitmap;  /* mmapped array of chars */
-
-    fd = open(direccionBitmap, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+	char* bitarraychar = malloc((int)(blocks/8) + 1);
+    int fd = open(direccionBitmap, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    ftruncate(fd, (blocks/8));
     if (fd == -1)
     {
     	logError("FileSystem: error al abrir el bitmap, abortando sistema");
@@ -46,14 +45,28 @@ void levantarBitmap(char* direccion)
     }
     else
     {
-    	bitmap = mmap(NULL, blocks, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-    	t_bitarray* bitarray = bitarray_create_with_mode(bitmap, blocks, LSB_FIRST);
+    	//fread(bitarraychar, blocks/8, 1, fd);
+    	bitarraychar = mmap(NULL, (blocks/8), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    	t_bitarray* bitarray = bitarray_create_with_mode(bitarraychar, (blocks/8), LSB_FIRST);
     	int a;
-    	for(a = 0; a < 9; a++)
+    	for(a = 0; a < blocks; a++)
     	{
     		bitarray_set_bit(bitarray, a);
-//    		bool result = bitarray_test_bit(bitarray,a);
-//    		printf("%d\n", result);
+    		char* auxb = string_itoa(a);
+    		char* direccionBloque = malloc(strlen(direccionFileSystemBlocks) + strlen(auxb) + 5);
+    		strcpy(direccionBloque, direccionFileSystemBlocks);
+    		strcat(direccionBloque, auxb);
+    		strcat(direccionBloque, ".bin");
+    		FILE* blockpointer = fopen(direccionBloque, "w+");
+    		char* aux = malloc(tamanio_bloques + 1);
+    		fread(aux, tamanio_bloques, 1, blockpointer);
+    		if(!strcmp(aux, " "))
+    			bitarray_set_bit(bitarray, a);
+    		msync(NULL, fd, MS_SYNC);
+    		free(auxb);
+    		fclose(blockpointer);
+    		free(direccionBloque);
+    		free(aux);
     	}
     }
 }

@@ -145,7 +145,8 @@ void crearTemporal(char* tabla)
 	t_Memtablekeys* auxiliaryKey;
 	int a = 0;
 	FILE* tempPointer;
-	char* tempDirection = malloc(strlen(tabla) + strlen(punto_montaje) + 8 + strlen(string_itoa(tablaEjecutada->cantTemps)) + 5);
+	char* auxTempDir = string_itoa(tablaEjecutada->cantTemps);
+	char* tempDirection = malloc(strlen(tabla) + strlen(punto_montaje) + 8 + strlen(auxTempDir) + 5);
 	strcpy(tempDirection, punto_montaje);
 	strcat(tempDirection, "Tables/");
 	strcat(tempDirection, tabla);
@@ -177,7 +178,7 @@ void crearTemporal(char* tabla)
 		auxiliaryKey = malloc(sizeof(t_Memtablekeys) + 4);
 		auxiliaryKey = list_get(keysTableSpecific, a);
 		int sizeOfKey = strlen(string_itoa(auxiliaryKey->data->key)) + strlen(auxiliaryKey->data->clave)
-				+ strlen(string_itoa(auxiliaryKey->data->timestamp)) + 4;
+				+ strlen(string_itoa(auxiliaryKey->data->timestamp)) + 3;
 		char* claveParaTemp = malloc(sizeOfKey + 1);
 		strcpy(claveParaTemp, string_itoa(auxiliaryKey->data->key));
 		strcat(claveParaTemp, ",");
@@ -203,8 +204,8 @@ void crearTemporal(char* tabla)
 		tempArchConf = config_create(tempDirection);
 		char* sizedUse = string_itoa(usedSize);
 		config_set_value(tempArchConf, "SIZE", sizedUse);
-		char* bloquesAsignados = escribirBloquesDeFs(container, usedSize, tabla);
-		config_set_value(tempArchConf, "BLOCKS", bloquesAsignados);
+		//char* bloquesAsignados = escribirBloquesDeFs(container, usedSize, tabla);
+		//config_set_value(tempArchConf, "BLOCKS", bloquesAsignados);
 		config_save(tempArchConf);
 		free(tempDirection);
 	}
