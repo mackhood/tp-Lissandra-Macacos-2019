@@ -51,23 +51,32 @@ void levantarBitmap(char* direccion)
     	int a;
     	for(a = 0; a < blocks; a++)
     	{
-    		bitarray_set_bit(bitarray, a);
+    		bitarray_clean_bit(bitarray, a);
+    		//bitarray_set_bit(bitarray, a);
     		char* auxb = string_itoa(a);
     		char* direccionBloque = malloc(strlen(direccionFileSystemBlocks) + strlen(auxb) + 5);
     		strcpy(direccionBloque, direccionFileSystemBlocks);
     		strcat(direccionBloque, auxb);
     		strcat(direccionBloque, ".bin");
     		FILE* blockpointer = fopen(direccionBloque, "w+");
-    		char* aux = malloc(tamanio_bloques + 1);
-    		fread(aux, tamanio_bloques, 1, blockpointer);
+    		char* aux = string_new();
+    		aux = malloc(tamanio_bloques + 1);
+    		fread(aux, 1, 1, blockpointer);
     		if(!strcmp(aux, " "))
     			bitarray_set_bit(bitarray, a);
-    		msync(NULL, fd, MS_SYNC);
+    		if(a < 10)
+    		{
+    			bool result = bitarray_test_bit(bitarray, a);
+    			printf("En el index %i, hay un %i\n", a , result);
+    		}
+    		msync(bitarraychar, fd, MS_SYNC);
     		free(auxb);
     		fclose(blockpointer);
     		free(direccionBloque);
     		free(aux);
     	}
+    	bitarray_destroy(bitarray);
+    	munmap(bitarraychar, (blocks/8));
     }
 }
 
