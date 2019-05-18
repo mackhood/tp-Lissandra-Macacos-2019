@@ -17,10 +17,11 @@ void testerFileSystem()
 	strcpy(aux, direccionFileSystem);
 	strcat(aux, "0.bin");
 	FILE* doomsdaypointer;
-	if(NULL == (doomsdaypointer = fopen(aux, "r")))
+	if(NULL == (doomsdaypointer = fopen(aux, "r+")))
 	{
 		logInfo( "FileSystem: Se procede a crear los bloques de memoria");
 		crearParticiones(direccionFileSystem, blocks);
+		fwrite("I exist", 8, 1, doomsdaypointer);
 	}
 	levantarBitmap(direccionFileSystem);
 	free(direccionFileSystem);
@@ -45,25 +46,27 @@ void levantarBitmap(char* direccion)
     }
     else
     {
-    	//fread(bitarraychar, blocks/8, 1, fd);
     	bitarraychar = mmap(NULL, (blocks/8), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     	t_bitarray* bitarray = bitarray_create_with_mode(bitarraychar, (blocks/8), LSB_FIRST);
     	int a;
     	for(a = 0; a < blocks; a++)
     	{
-    		bitarray_clean_bit(bitarray, a);
-    		//bitarray_set_bit(bitarray, a);
     		char* auxb = string_itoa(a);
     		char* direccionBloque = malloc(strlen(direccionFileSystemBlocks) + strlen(auxb) + 5);
     		strcpy(direccionBloque, direccionFileSystemBlocks);
     		strcat(direccionBloque, auxb);
     		strcat(direccionBloque, ".bin");
-    		FILE* blockpointer = fopen(direccionBloque, "w+");
-    		char* aux = string_new();
-    		aux = malloc(tamanio_bloques + 1);
-    		fread(aux, 1, 1, blockpointer);
-    		if(!strcmp(aux, " "))
-    			bitarray_set_bit(bitarray, a);
+    		FILE* blockpointer = fopen(direccionBloque, "r+");
+    		fseek(blockpointer, 0, SEEK_END);
+    		unsigned long blocklength = (unsigned long)ftell(blockpointer);
+    		if(0 == blocklength)
+    		{
+    			bitarray_clean_bit(bitarray, a);
+    		}
+    		else
+    		{
+        		bitarray_set_bit(bitarray, a);
+    		}
     		if(a < 10)
     		{
     			bool result = bitarray_test_bit(bitarray, a);
@@ -73,10 +76,10 @@ void levantarBitmap(char* direccion)
     		free(auxb);
     		fclose(blockpointer);
     		free(direccionBloque);
-    		free(aux);
     	}
     	bitarray_destroy(bitarray);
     	munmap(bitarraychar, (blocks/8));
+    	close(fd);
     }
 }
 
@@ -244,8 +247,6 @@ int crearParticiones(char* direccionFinal, int particiones)
 			}
 			else
 			{
-				char* testByte = " ";
-				fwrite(testByte, 1, 1, particion);
 				free(particionado);
 				fclose(particion);
 			}
