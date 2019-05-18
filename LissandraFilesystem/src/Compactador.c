@@ -35,7 +35,9 @@ void setearValoresCompactador(t_config* archivoConfig)
 {
 	tiempoDump = config_get_int_value(archivoConfig, "TIEMPO_DUMP");
 	tablasEnEjecucion = list_create();
+	slowestCompactationInterval = 0;
 	deathProtocol = 0;
+	lastDumpSituation = 0;
 }
 
 void gestionarTabla(char*tabla)
@@ -72,6 +74,8 @@ void compactarTablas(char*tabla)
 	t_config * temporalArchivoConfig;
 	temporalArchivoConfig = config_create(direccionMetadataTabla);
 	int tiempoEntreCompactacion = config_get_int_value(temporalArchivoConfig, "TIEMPOENTRECOMPACTACIONES");
+	if(tiempoEntreCompactacion > slowestCompactationInterval)
+		slowestCompactationInterval = tiempoEntreCompactacion;
 	while(1)
 	{
 		usleep(tiempoEntreCompactacion * 1000);
@@ -82,7 +86,7 @@ void compactarTablas(char*tabla)
 		}
 		else
 		{
-			//llamar compactacion
+			ejecutarCompactacion(tabla);
 		}
 	}
 }
@@ -97,7 +101,7 @@ void gestionarDumps()
 
 void gestionarMemtable()
 {
-	while(1)
+	while(!lastDumpSituation)
 	{
 		usleep(tiempoDump * 1000);
 		int a = 0;
@@ -204,19 +208,43 @@ void crearTemporal(char* tabla)
 		tempArchConf = config_create(tempDirection);
 		char* sizedUse = string_itoa(usedSize);
 		config_set_value(tempArchConf, "SIZE", sizedUse);
-		//char* bloquesAsignados = escribirBloquesDeFs(container, usedSize, tabla);
-		//config_set_value(tempArchConf, "BLOCKS", bloquesAsignados);
+		char* bloquesAsignados = escribirBloquesDeFs(container, usedSize, tabla);
+		config_set_value(tempArchConf, "BLOCKS", bloquesAsignados);
 		config_save(tempArchConf);
 		free(tempDirection);
+	}
+}
+
+void ejecutarCompactacion(char* tabla)
+{
+	char* direccionTabla = malloc(strlen(tabla) + strlen(punto_montaje) + 9);
+	strcpy(direccionTabla, punto_montaje);
+	strcat(direccionTabla, "Tables/");
+	strcat(direccionTabla, tabla);
+	strcat(direccionTabla, "/");
+	struct dirent* tdp;
+	DIR* tableDirectory = opendir(direccionTabla);
+	while(NULL != (tdp = readdir(tableDirectory)))
+	{
+		if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, "..")){}
+		else
+		{
+			if(string_ends_with(tdp->d_name, ".tmp"))
+			{
+				char* direccionTemp = malloc(strlen(direccionTabla) + strlen(tdp->d_name) + 1);
+				t_config temporalData = config_create(direccionTemp);
+				char* asignedBlocks = config_get_string_value(temporalData, "BLOCKS");
+			}
+		}
 	}
 }
 
 void killProtocolCompactador()
 {
 	deathProtocol = 1;
-//	gestionarMemtable();
+	lastDumpSituation = 1;
 	list_clean(tablasEnEjecucion);
 	logInfo("Compactador: Desconectando todas las tablas.");
-	usleep(8000 * 1000); //Esto está para que el compactador tenga tiempo a matar todas las tablas de su sistema.
+	usleep(slowestCompactationInterval * 1000); //Esto está para que el compactador tenga tiempo a matar todas las tablas de su sistema.
 }
 

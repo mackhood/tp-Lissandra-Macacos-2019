@@ -8,8 +8,9 @@
 /* VARIABLES GLOBALES*/
 
 int tiempoDump;
-int slowestDump;
+int slowestCompactationInterval;
 int deathProtocol;
+int lastDumpSituation;
 
 
 /* FUNCIONES */
@@ -22,6 +23,7 @@ void gestionarDumps();
 void gestionarMemtable();
 void crearTemporal(char* tabla);
 int perteneceATabla(t_Memtablekeys* key);
+void ejecutarCompactacion(char* tabla);
 void killProtocolCompactador();
 
 #endif /* COMPACTADOR_H_ */
