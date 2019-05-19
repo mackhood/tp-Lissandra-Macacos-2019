@@ -554,9 +554,11 @@ char* obtenerBloqueLibre()
 	do
 	{
 		//Hago que consulte al bitmap por el primer bloque libre//
-		if(true)
+		if(!bitarrat_test_bit(bitarray, a))
 		{
 			bloqueAEnviar = malloc(strlen(string_itoa(a)) + 1);
+			bitarray_set_bit(bitarray, a);
+			strcpy(bloqueAEnviar, string_itoa(a));
 		}
 		else
 		{
