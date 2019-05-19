@@ -75,7 +75,49 @@ int ejecutar_linea (char * linea){
 
 	COMANDO * comando = buscar_comando(funcion);
 
-	char** args = string_split(linea_aux, " ");
+	char** args;
+	if(!strcmp(comando->nombre, "INSERT"))
+	{
+		args = malloc(strlen(linea_aux) + 1);
+		int a = 0;
+		int b = 0;
+		int c = 0;
+		while(linea_aux[a] != '\0')
+		{
+			switch(linea_aux[a])
+			{
+				case ' ':
+				{
+					b++;
+					a++;
+					c = 0;
+					break;
+				}
+				case '"':
+				{
+					a++;
+					while(linea_aux[a] != '"')
+					{
+
+						args[b][c] = linea_aux[a];
+						a++;
+						c++;
+					}
+					a++;
+					break;
+				}
+				default:
+				{
+					args[b][c] = linea_aux[a];
+					a++;
+					c++;
+					break;
+				}
+			}
+		}
+	}
+	else
+		args = string_split(linea_aux, " ");
 	if (!comando) {
 		printf ("%s: el comando ingresado es incorrecto.", funcion);
 		return (-1);

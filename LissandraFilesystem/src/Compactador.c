@@ -86,7 +86,7 @@ void compactarTablas(char*tabla)
 		}
 		else
 		{
-			ejecutarCompactacion(tabla);
+			//ejecutarCompactacion(tabla);
 		}
 	}
 }
@@ -208,8 +208,8 @@ void crearTemporal(char* tabla)
 		tempArchConf = config_create(tempDirection);
 		char* sizedUse = string_itoa(usedSize);
 		config_set_value(tempArchConf, "SIZE", sizedUse);
-		char* bloquesAsignados = escribirBloquesDeFs(container, usedSize, tabla);
-		config_set_value(tempArchConf, "BLOCKS", bloquesAsignados);
+		//char* bloquesAsignados = escribirBloquesDeFs(container, usedSize, tabla);
+		//config_set_value(tempArchConf, "BLOCKS", bloquesAsignados);
 		config_save(tempArchConf);
 		free(tempDirection);
 	}
@@ -226,14 +226,47 @@ void ejecutarCompactacion(char* tabla)
 	DIR* tableDirectory = opendir(direccionTabla);
 	while(NULL != (tdp = readdir(tableDirectory)))
 	{
+		t_list* keysToManage = list_create();
 		if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, "..")){}
 		else
 		{
+			bool firstRead = true;
 			if(string_ends_with(tdp->d_name, ".tmp"))
 			{
 				char* direccionTemp = malloc(strlen(direccionTabla) + strlen(tdp->d_name) + 1);
-				t_config temporalData = config_create(direccionTemp);
+				t_config* temporalData = config_create(direccionTemp);
 				char* asignedBlocks = config_get_string_value(temporalData, "BLOCKS");
+				int fullTempSize = config_get_int_value(temporalData, "SIZE");
+				char** blocks = string_get_string_as_array(asignedBlocks);
+				int counter = 0;
+				int alreadyCountedSize = 0;
+				char* keysToParse = malloc(fullTempSize + 1);
+				while(blocks[counter] != NULL)
+				{
+					char* blockDirection = malloc(strlen(direccionFileSystemBlocks) + strlen(blocks[counter]) + 5);
+					strcpy(blockDirection, direccionFileSystemBlocks);
+					strcat(blockDirection, blocks[counter]);
+					strcat(blockDirection, ".bin");
+					FILE* blockPointer = fopen(blockDirection, "r+");
+					int sizeToRead;
+					if((fullTempSize - alreadyCountedSize) > 64)
+						sizeToRead = 64;
+					else
+						sizeToRead = fullTempSize - alreadyCountedSize;
+					char* blockContents = malloc(sizeToRead + 1);
+					fread(blockContents, sizeToRead, 1, blockPointer);
+					if(firstRead)
+					{
+						strcpy(keysToParse, blockContents);
+						firstRead = false;
+					}
+					else
+						strcat(keysToParse, blockContents);
+					fclose(blockPointer);
+					free(blockContents);
+					free(blockDirection);
+				}
+
 			}
 		}
 	}

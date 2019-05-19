@@ -554,11 +554,9 @@ char* obtenerBloqueLibre()
 	do
 	{
 		//Hago que consulte al bitmap por el primer bloque libre//
-		if(!bitarrat_test_bit(bitarray, a))
+		if(true)
 		{
 			bloqueAEnviar = malloc(strlen(string_itoa(a)) + 1);
-			bitarray_set_bit(bitarray, a);
-			strcpy(bloqueAEnviar, string_itoa(a));
 		}
 		else
 		{
@@ -597,8 +595,15 @@ void escribirBloque(int* usedBlocks, int* seizedSize, int usedSize, char* block,
     	{
     		if((int)seizedSize != usedSize)
     		{
-    			mmaplocator[a] = clavesAImpactar[(64*(int)usedBlocks) + a];
-    			seizedSize++;
+    			if(clavesAImpactar[(64*(int)usedBlocks) + a] == ';')
+    			{
+    				mmaplocator[a] = '\n';
+    			}
+    			else
+    			{
+    				mmaplocator[a] = clavesAImpactar[(64*(int)usedBlocks) + a];
+    				(int)seizedSize++;
+    			}
     		}
     		else
     		{
