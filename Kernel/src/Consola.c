@@ -92,20 +92,39 @@ int ejecutar_linea (char * linea){
 	int i = 0;
 	char * funcion;
 
-	if(string_contains(linea, " "))
+	if(string_contains(linea, "|"))
 	{
+			while (linea_aux[i] != '|') i++;
+
+			funcion = malloc((sizeof(char) * i) + 1);
+			strncpy(funcion, linea_aux, i);
+			funcion[i] = '\0';
+	}
+	else
+	{
+		if(string_contains(linea, " "))
+		{
 			while (linea_aux[i] != ' ') i++;
 
 			funcion = malloc((sizeof(char) * i) + 1);
 			strncpy(funcion, linea_aux, i);
 			funcion[i] = '\0';
-	}else{
+		}
+		else
+		{
 			funcion = string_duplicate(linea_aux);
+		}
 	}
 
 	COMANDO * comando = buscar_comando(funcion);
 
-	char** args = string_split(linea_aux, " ");
+	char** args;
+	if(!strcmp(comando->nombre, "INSERT"))
+	{
+		args = string_split(linea_aux, "|");
+	}
+	else
+		args = string_split(linea_aux, " ");
 	if (!comando) {
 		printf ("%s: el comando ingresado es incorrecto.", funcion);
 		return (-1);
