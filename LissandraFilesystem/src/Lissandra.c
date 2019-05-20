@@ -103,14 +103,14 @@ void escucharMemoria(int* socket_memoria)
 				memcpy(&tamanioNombre, mensaje_memoria->payload + sizeof(uint16_t), sizeof(int));
 				tabla = malloc(tamanioNombre);
 				memcpy(tabla, mensaje_memoria->payload + sizeof(uint16_t) + sizeof(int), tamanioNombre);
-				t_keysetter* helpinghand = selectKey(tabla, auxkey);
-				double tiempo_pag = helpinghand->timestamp;
-				char* value = helpinghand->clave;
-				int tamanio_value = strlen(value);
-
-//				double tiempo_pag = getCurrentTime();
-//				char* value = "Ejemplo";
+//				t_keysetter* helpinghand = selectKey(tabla, auxkey);
+//				double tiempo_pag = helpinghand->timestamp;
+//				char* value = helpinghand->clave;
 //				int tamanio_value = strlen(value);
+
+				double tiempo_pag = getCurrentTime();
+				char* value = "Ejemplo";
+				int tamanio_value = strlen(value);
 
 				size_t tamanio_buffer = (sizeof(double)+tamanio_value+sizeof(int));
 				void* buffer = malloc(tamanio_buffer);
