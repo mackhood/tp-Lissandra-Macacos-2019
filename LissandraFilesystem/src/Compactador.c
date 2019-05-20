@@ -76,6 +76,7 @@ void compactarTablas(char*tabla)
 	int tiempoEntreCompactacion = config_get_int_value(temporalArchivoConfig, "TIEMPOENTRECOMPACTACIONES");
 	if(tiempoEntreCompactacion > slowestCompactationInterval)
 		slowestCompactationInterval = tiempoEntreCompactacion;
+	config_destroy(temporalArchivoConfig);
 	while(1)
 	{
 		usleep(tiempoEntreCompactacion * 1000);
@@ -89,6 +90,7 @@ void compactarTablas(char*tabla)
 			//ejecutarCompactacion(tabla);
 		}
 	}
+	free(direccionMetadataTabla);
 }
 
 void gestionarDumps()
@@ -211,8 +213,8 @@ void crearTemporal(char* tabla)
 		//char* bloquesAsignados = escribirBloquesDeFs(container, usedSize, tabla);
 		//config_set_value(tempArchConf, "BLOCKS", bloquesAsignados);
 		config_save(tempArchConf);
-		free(tempDirection);
 	}
+	free(tempDirection);
 }
 
 void ejecutarCompactacion(char* tabla)

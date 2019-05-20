@@ -748,3 +748,275 @@
 [INFO] 15:39:24:782 LissandraFileSystem/(5607:5614): Compactador: Se inicio un hilo para manejar a TablaL.
 [INFO] 15:39:25:9 LissandraFileSystem/(5607:5614): Compactador: Se inicio un hilo para manejar a TablaE.
 [INFO] 15:39:25:221 LissandraFileSystem/(5607:5614): Compactador: Se inicio un hilo para manejar a TablaD.
+[INFO] 20:10:46:729 LissandraFileSystem/(4501:4501): Archivo de configuracion leido correctamente
+[INFO] 20:10:46:881 LissandraFileSystem/(4501:4501): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 20:10:47:158 LissandraFileSystem/(4501:4501): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 20:10:47:375 LissandraFileSystem/(4501:4501): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 20:10:47:587 LissandraFileSystem/(4501:4506): Compactador: Se inicio un hilo para manejar a la memtable
+[INFO] 20:10:47:787 LissandraFileSystem/(4501:4508): FileSystem: Se procede a crear el bitmap
+[INFO] 20:10:47:798 LissandraFileSystem/(4501:4501): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 20:10:48:17 LissandraFileSystem/(4501:4506): Compactador: Se inicio un hilo para manejar a TablaA.
+[INFO] 20:10:48:287 LissandraFileSystem/(4501:4506): Compactador: Se inicio un hilo para manejar a TablaC.
+[INFO] 20:10:48:540 LissandraFileSystem/(4501:4506): Compactador: Se inicio un hilo para manejar a TablaG.
+[INFO] 20:10:48:768 LissandraFileSystem/(4501:4506): Compactador: Se inicio un hilo para manejar a TablaL.
+[INFO] 20:10:48:989 LissandraFileSystem/(4501:4506): Compactador: Se inicio un hilo para manejar a TablaE.
+[INFO] 20:10:49:302 LissandraFileSystem/(4501:4506): Compactador: Se inicio un hilo para manejar a TablaD.
+[INFO] 20:33:47:751 LissandraFileSystem/(5284:5284): Archivo de configuracion leido correctamente
+[INFO] 20:33:47:751 LissandraFileSystem/(5284:5284): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 20:33:47:759 LissandraFileSystem/(5284:5284): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 20:33:47:775 LissandraFileSystem/(5284:5284): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 20:33:47:776 LissandraFileSystem/(5284:5302): Compactador: Se inicio un hilo para manejar a la memtable
+[INFO] 20:33:47:784 LissandraFileSystem/(5284:5284): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 20:33:47:784 LissandraFileSystem/(5284:5302): Compactador: Se inicio un hilo para manejar a TablaA.
+[INFO] 20:33:47:784 LissandraFileSystem/(5284:5303): FileSystem: Se procede a crear el bitmap
+[INFO] 20:33:47:794 LissandraFileSystem/(5284:5302): Compactador: Se inicio un hilo para manejar a TablaC.
+[INFO] 20:33:50:666 LissandraFileSystem/(5284:5302): Compactador: Se inicio un hilo para manejar a TablaG.
+[INFO] 20:33:50:684 LissandraFileSystem/(5284:5302): Compactador: Se inicio un hilo para manejar a TablaL.
+[INFO] 20:33:50:695 LissandraFileSystem/(5284:5302): Compactador: Se inicio un hilo para manejar a TablaE.
+[INFO] 20:33:50:697 LissandraFileSystem/(5284:5302): Compactador: Se inicio un hilo para manejar a TablaD.
+[INFO] 20:38:47:239 LissandraFileSystem/(5567:5567): Archivo de configuracion leido correctamente
+[INFO] 20:38:47:239 LissandraFileSystem/(5567:5567): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 20:38:47:249 LissandraFileSystem/(5567:5567): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 20:38:47:256 LissandraFileSystem/(5567:5567): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 20:38:47:256 LissandraFileSystem/(5567:5589): Compactador: Se inicio un hilo para manejar a la memtable
+[INFO] 20:38:47:269 LissandraFileSystem/(5567:5567): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 20:38:47:269 LissandraFileSystem/(5567:5589): Compactador: Se inicio un hilo para manejar a TablaA.
+[INFO] 20:38:47:269 LissandraFileSystem/(5567:5590): FileSystem: Se procede a crear el bitmap
+[INFO] 20:38:47:278 LissandraFileSystem/(5567:5589): Compactador: Se inicio un hilo para manejar a TablaC.
+[INFO] 20:38:47:284 LissandraFileSystem/(5567:5589): Compactador: Se inicio un hilo para manejar a TablaG.
+[INFO] 20:38:50:110 LissandraFileSystem/(5567:5589): Compactador: Se inicio un hilo para manejar a TablaL.
+[INFO] 20:38:50:123 LissandraFileSystem/(5567:5589): Compactador: Se inicio un hilo para manejar a TablaE.
+[INFO] 20:38:50:124 LissandraFileSystem/(5567:5589): Compactador: Se inicio un hilo para manejar a TablaD.
+[INFO] 20:41:36:671 LissandraFileSystem/(5710:5710): Archivo de configuracion leido correctamente
+[INFO] 20:41:36:671 LissandraFileSystem/(5710:5710): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 20:41:36:676 LissandraFileSystem/(5710:5710): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 20:41:36:687 LissandraFileSystem/(5710:5710): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 20:41:36:687 LissandraFileSystem/(5710:5729): Compactador: Se inicio un hilo para manejar a la memtable
+[INFO] 20:41:36:691 LissandraFileSystem/(5710:5710): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 20:41:36:691 LissandraFileSystem/(5710:5729): Compactador: Se inicio un hilo para manejar a TablaA.
+[INFO] 20:41:36:691 LissandraFileSystem/(5710:5730): FileSystem: Se procede a crear el bitmap
+[INFO] 20:41:36:698 LissandraFileSystem/(5710:5729): Compactador: Se inicio un hilo para manejar a TablaC.
+[INFO] 20:41:36:703 LissandraFileSystem/(5710:5729): Compactador: Se inicio un hilo para manejar a TablaG.
+[INFO] 20:41:40:250 LissandraFileSystem/(5710:5729): Compactador: Se inicio un hilo para manejar a TablaL.
+[INFO] 20:41:40:272 LissandraFileSystem/(5710:5729): Compactador: Se inicio un hilo para manejar a TablaE.
+[INFO] 20:41:40:279 LissandraFileSystem/(5710:5729): Compactador: Se inicio un hilo para manejar a TablaD.
+[INFO] 20:50:59:332 LissandraFileSystem/(6261:6261): Archivo de configuracion leido correctamente
+[INFO] 20:50:59:498 LissandraFileSystem/(6261:6261): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 20:50:59:797 LissandraFileSystem/(6261:6261): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 20:51:00:52 LissandraFileSystem/(6261:6261): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 20:51:00:317 LissandraFileSystem/(6261:6266): Compactador: Se inicio un hilo para manejar a la memtable
+[INFO] 20:51:00:563 LissandraFileSystem/(6261:6267): FileSystem: Se procede a crear el bitmap
+[INFO] 20:51:00:574 LissandraFileSystem/(6261:6261): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 20:51:00:826 LissandraFileSystem/(6261:6266): Compactador: Se inicio un hilo para manejar a TablaA.
+[INFO] 20:51:01:84 LissandraFileSystem/(6261:6266): Compactador: Se inicio un hilo para manejar a TablaC.
+[INFO] 20:51:01:475 LissandraFileSystem/(6261:6266): Compactador: Se inicio un hilo para manejar a TablaG.
+[INFO] 20:51:01:738 LissandraFileSystem/(6261:6266): Compactador: Se inicio un hilo para manejar a TablaL.
+[INFO] 20:51:01:965 LissandraFileSystem/(6261:6266): Compactador: Se inicio un hilo para manejar a TablaE.
+[INFO] 20:51:02:227 LissandraFileSystem/(6261:6266): Compactador: Se inicio un hilo para manejar a TablaD.
+[INFO] 20:52:41:19 LissandraFileSystem/(6344:6344): Archivo de configuracion leido correctamente
+[INFO] 20:52:42:191 LissandraFileSystem/(6344:6344): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 20:52:42:488 LissandraFileSystem/(6344:6344): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 20:52:42:736 LissandraFileSystem/(6344:6344): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 20:52:42:962 LissandraFileSystem/(6344:6349): Compactador: Se inicio un hilo para manejar a la memtable
+[INFO] 20:52:43:177 LissandraFileSystem/(6344:6350): FileSystem: Se procede a crear el bitmap
+[INFO] 20:52:43:188 LissandraFileSystem/(6344:6344): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 20:52:43:445 LissandraFileSystem/(6344:6349): Compactador: Se inicio un hilo para manejar a TablaA.
+[INFO] 20:52:43:792 LissandraFileSystem/(6344:6349): Compactador: Se inicio un hilo para manejar a TablaC.
+[INFO] 20:52:44:62 LissandraFileSystem/(6344:6349): Compactador: Se inicio un hilo para manejar a TablaG.
+[INFO] 20:52:44:314 LissandraFileSystem/(6344:6349): Compactador: Se inicio un hilo para manejar a TablaL.
+[INFO] 20:52:44:538 LissandraFileSystem/(6344:6349): Compactador: Se inicio un hilo para manejar a TablaE.
+[INFO] 20:52:44:795 LissandraFileSystem/(6344:6349): Compactador: Se inicio un hilo para manejar a TablaD.
+[INFO] 20:54:11:573 LissandraFileSystem/(6344:6352): Consola: Se ha solicitado realizar un DROP
+[INFO] 20:54:11:724 LissandraFileSystem/(6344:6352): FileSystem: el directorio ha sido eliminado correctamente
+[INFO] 20:54:11:776 LissandraFileSystem/(6344:6352): Consola: Tabla eliminada correctamente
+[INFO] 20:54:22:347 LissandraFileSystem/(6344:6344): Lissandra: Todas las memorias han sido desalojadas.
+[INFO] 20:54:22:357 LissandraFileSystem/(6344:6344): Compactador: Desconectando todas las tablas.
+[INFO] 20:54:22:790 LissandraFileSystem/(6344:6357): Compactador: La TablaL, al haber sido previamente desalojada dejará de ser buscada en el compactador
+[INFO] 20:54:25:502 LissandraFileSystem/(6344:6359): Compactador: La TablaD, al haber sido previamente desalojada dejará de ser buscada en el compactador
+[INFO] 20:54:25:968 LissandraFileSystem/(6344:6353): Compactador: La TablaA, al haber sido previamente desalojada dejará de ser buscada en el compactador
+[INFO] 20:54:26:547 LissandraFileSystem/(6344:6355): Compactador: La TablaC, al haber sido previamente desalojada dejará de ser buscada en el compactador
+[INFO] 20:55:03:353 LissandraFileSystem/(6458:6458): Archivo de configuracion leido correctamente
+[INFO] 20:55:03:535 LissandraFileSystem/(6458:6458): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 20:55:03:832 LissandraFileSystem/(6458:6458): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 20:55:04:78 LissandraFileSystem/(6458:6458): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 20:55:04:304 LissandraFileSystem/(6458:6458): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 20:55:04:566 LissandraFileSystem/(6458:6463): Compactador: Se inicio un hilo para manejar a la memtable
+[INFO] 20:55:04:847 LissandraFileSystem/(6458:6465): FileSystem: Se procede a crear el bitmap
+[INFO] 20:55:04:872 LissandraFileSystem/(6458:6463): Compactador: Se inicio un hilo para manejar a TablaA.
+[INFO] 20:55:05:126 LissandraFileSystem/(6458:6463): Compactador: Se inicio un hilo para manejar a TablaC.
+[INFO] 20:55:05:449 LissandraFileSystem/(6458:6463): Compactador: Se inicio un hilo para manejar a TablaG.
+[INFO] 20:55:05:717 LissandraFileSystem/(6458:6463): Compactador: Se inicio un hilo para manejar a TablaE.
+[INFO] 20:55:05:975 LissandraFileSystem/(6458:6463): Compactador: Se inicio un hilo para manejar a TablaD.
+[INFO] 20:55:12:999 LissandraFileSystem/(6458:6466): Consola: Se ha solicitado realizar un DROP
+[INFO] 20:55:13:132 LissandraFileSystem/(6458:6466): FileSystem: el directorio ha sido eliminado correctamente
+[INFO] 20:55:13:183 LissandraFileSystem/(6458:6466): Consola: Tabla eliminada correctamente
+[INFO] 20:56:12:626 LissandraFileSystem/(6549:6549): Archivo de configuracion leido correctamente
+[INFO] 20:56:12:626 LissandraFileSystem/(6549:6549): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 20:56:12:639 LissandraFileSystem/(6549:6549): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 20:56:12:646 LissandraFileSystem/(6549:6549): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 20:56:12:647 LissandraFileSystem/(6549:6564): Compactador: Se inicio un hilo para manejar a la memtable
+[INFO] 20:56:12:658 LissandraFileSystem/(6549:6549): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 20:56:12:658 LissandraFileSystem/(6549:6564): Compactador: Se inicio un hilo para manejar a TablaA.
+[INFO] 20:56:12:660 LissandraFileSystem/(6549:6565): FileSystem: Se procede a crear el bitmap
+[INFO] 20:56:12:672 LissandraFileSystem/(6549:6564): Compactador: Se inicio un hilo para manejar a TablaC.
+[INFO] 20:56:12:680 LissandraFileSystem/(6549:6564): Compactador: Se inicio un hilo para manejar a TablaE.
+[INFO] 20:56:26:810 LissandraFileSystem/(6549:6564): Compactador: Se inicio un hilo para manejar a TablaD.
+[INFO] 20:58:43:893 LissandraFileSystem/(6697:6697): Archivo de configuracion leido correctamente
+[INFO] 20:58:43:893 LissandraFileSystem/(6697:6697): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 20:58:43:907 LissandraFileSystem/(6697:6697): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 20:58:43:915 LissandraFileSystem/(6697:6697): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 20:58:43:915 LissandraFileSystem/(6697:6709): Compactador: Se inicio un hilo para manejar a la memtable
+[INFO] 20:58:43:924 LissandraFileSystem/(6697:6697): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 20:58:43:924 LissandraFileSystem/(6697:6709): Compactador: Se inicio un hilo para manejar a TablaA.
+[INFO] 20:58:43:924 LissandraFileSystem/(6697:6710): FileSystem: Se procede a crear el bitmap
+[INFO] 20:58:43:935 LissandraFileSystem/(6697:6709): Compactador: Se inicio un hilo para manejar a TablaC.
+[INFO] 20:58:43:943 LissandraFileSystem/(6697:6709): Compactador: Se inicio un hilo para manejar a TablaE.
+[INFO] 20:58:52:758 LissandraFileSystem/(6697:6709): Compactador: Se inicio un hilo para manejar a TablaD.
+[INFO] 20:59:50:155 LissandraFileSystem/(6780:6780): Archivo de configuracion leido correctamente
+[INFO] 20:59:50:155 LissandraFileSystem/(6780:6780): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 20:59:50:159 LissandraFileSystem/(6780:6780): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 20:59:50:162 LissandraFileSystem/(6780:6780): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 20:59:50:162 LissandraFileSystem/(6780:6795): Compactador: Se inicio un hilo para manejar a la memtable
+[INFO] 20:59:50:171 LissandraFileSystem/(6780:6780): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 20:59:50:171 LissandraFileSystem/(6780:6795): Compactador: Se inicio un hilo para manejar a TablaA.
+[INFO] 20:59:50:171 LissandraFileSystem/(6780:6796): FileSystem: Se procede a crear el bitmap
+[INFO] 20:59:50:186 LissandraFileSystem/(6780:6795): Compactador: Se inicio un hilo para manejar a TablaC.
+[INFO] 20:59:50:197 LissandraFileSystem/(6780:6795): Compactador: Se inicio un hilo para manejar a TablaE.
+[INFO] 20:59:55:330 LissandraFileSystem/(6780:6795): Compactador: Se inicio un hilo para manejar a TablaD.
+[INFO] 21:07:41:691 LissandraFileSystem/(7052:7052): Archivo de configuracion leido correctamente
+[INFO] 21:07:41:691 LissandraFileSystem/(7052:7052): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 21:07:41:699 LissandraFileSystem/(7052:7052): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 21:07:41:703 LissandraFileSystem/(7052:7052): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 21:07:41:703 LissandraFileSystem/(7052:7068): Compactador: Se inicio un hilo para manejar a la memtable
+[INFO] 21:07:41:707 LissandraFileSystem/(7052:7052): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 21:07:41:707 LissandraFileSystem/(7052:7068): Compactador: Se inicio un hilo para manejar a TablaA.
+[INFO] 21:07:41:707 LissandraFileSystem/(7052:7069): FileSystem: Se procede a crear el bitmap
+[INFO] 21:07:41:718 LissandraFileSystem/(7052:7068): Compactador: Se inicio un hilo para manejar a TablaC.
+[INFO] 21:07:41:728 LissandraFileSystem/(7052:7068): Compactador: Se inicio un hilo para manejar a TablaE.
+[INFO] 21:07:44:986 LissandraFileSystem/(7052:7068): Compactador: Se inicio un hilo para manejar a TablaD.
+[INFO] 21:09:56:320 LissandraFileSystem/(7190:7190): Archivo de configuracion leido correctamente
+[INFO] 21:09:56:320 LissandraFileSystem/(7190:7190): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 21:09:56:331 LissandraFileSystem/(7190:7190): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 21:09:56:335 LissandraFileSystem/(7190:7190): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 21:09:56:335 LissandraFileSystem/(7190:7203): Compactador: Se inicio un hilo para manejar a la memtable
+[INFO] 21:09:56:345 LissandraFileSystem/(7190:7190): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 21:09:56:345 LissandraFileSystem/(7190:7203): Compactador: Se inicio un hilo para manejar a TablaA.
+[INFO] 21:09:56:345 LissandraFileSystem/(7190:7204): FileSystem: Se procede a crear el bitmap
+[INFO] 21:09:56:354 LissandraFileSystem/(7190:7203): Compactador: Se inicio un hilo para manejar a TablaC.
+[INFO] 21:09:56:372 LissandraFileSystem/(7190:7203): Compactador: Se inicio un hilo para manejar a TablaE.
+[INFO] 21:10:03:922 LissandraFileSystem/(7190:7203): Compactador: Se inicio un hilo para manejar a TablaD.
+[INFO] 21:10:54:909 LissandraFileSystem/(7269:7269): Archivo de configuracion leido correctamente
+[INFO] 21:10:59:499 LissandraFileSystem/(7269:7269): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 21:11:00:163 LissandraFileSystem/(7269:7269): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 21:11:00:167 LissandraFileSystem/(7269:7293): Compactador: Se inicio un hilo para manejar a la memtable
+[INFO] 21:11:01:179 LissandraFileSystem/(7269:7293): Compactador: Se inicio un hilo para manejar a TablaA.
+[INFO] 21:11:01:193 LissandraFileSystem/(7269:7293): Compactador: Se inicio un hilo para manejar a TablaC.
+[INFO] 21:11:01:199 LissandraFileSystem/(7269:7269): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 21:11:01:206 LissandraFileSystem/(7269:7293): Compactador: Se inicio un hilo para manejar a TablaE.
+[INFO] 21:11:01:206 LissandraFileSystem/(7269:7298): FileSystem: Se procede a crear el bitmap
+[INFO] 21:11:01:215 LissandraFileSystem/(7269:7293): Compactador: Se inicio un hilo para manejar a TablaD.
+[INFO] 21:11:09:773 LissandraFileSystem/(7269:7269): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 21:16:37:674 LissandraFileSystem/(7734:7734): Archivo de configuracion leido correctamente
+[INFO] 21:16:37:980 LissandraFileSystem/(7734:7734): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 21:16:38:594 LissandraFileSystem/(7734:7734): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 21:16:39:45 LissandraFileSystem/(7734:7734): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 21:16:39:483 LissandraFileSystem/(7734:7740): Compactador: Se inicio un hilo para manejar a la memtable
+[INFO] 21:16:39:851 LissandraFileSystem/(7734:7741): FileSystem: Se procede a crear el bitmap
+[INFO] 21:16:39:868 LissandraFileSystem/(7734:7734): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 21:16:40:140 LissandraFileSystem/(7734:7740): Compactador: Se inicio un hilo para manejar a TablaA.
+[INFO] 21:16:40:596 LissandraFileSystem/(7734:7740): Compactador: Se inicio un hilo para manejar a TablaC.
+[INFO] 21:16:40:914 LissandraFileSystem/(7734:7740): Compactador: Se inicio un hilo para manejar a TablaE.
+[INFO] 21:16:41:221 LissandraFileSystem/(7734:7740): Compactador: Se inicio un hilo para manejar a TablaD.
+[INFO] 21:18:19:699 LissandraFileSystem/(7852:7852): Archivo de configuracion leido correctamente
+[INFO] 21:18:19:700 LissandraFileSystem/(7852:7852): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 21:18:19:707 LissandraFileSystem/(7852:7852): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 21:18:19:711 LissandraFileSystem/(7852:7852): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 21:18:19:711 LissandraFileSystem/(7852:7867): Compactador: Se inicio un hilo para manejar a la memtable
+[INFO] 21:18:19:717 LissandraFileSystem/(7852:7852): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 21:18:19:717 LissandraFileSystem/(7852:7867): Compactador: Se inicio un hilo para manejar a TablaA.
+[INFO] 21:18:19:717 LissandraFileSystem/(7852:7868): FileSystem: Se procede a crear el bitmap
+[INFO] 21:18:19:730 LissandraFileSystem/(7852:7867): Compactador: Se inicio un hilo para manejar a TablaC.
+[INFO] 21:18:19:737 LissandraFileSystem/(7852:7867): Compactador: Se inicio un hilo para manejar a TablaE.
+[INFO] 21:18:25:402 LissandraFileSystem/(7852:7867): Compactador: Se inicio un hilo para manejar a TablaD.
+[INFO] 21:20:27:416 LissandraFileSystem/(8033:8033): Archivo de configuracion leido correctamente
+[INFO] 21:20:27:604 LissandraFileSystem/(8033:8033): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 21:20:28:258 LissandraFileSystem/(8033:8033): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 21:20:28:660 LissandraFileSystem/(8033:8033): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 21:20:29:112 LissandraFileSystem/(8033:8039): Compactador: Se inicio un hilo para manejar a la memtable
+[INFO] 21:20:29:608 LissandraFileSystem/(8033:8040): FileSystem: Se procede a crear el bitmap
+[INFO] 21:20:29:619 LissandraFileSystem/(8033:8033): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 21:20:30:64 LissandraFileSystem/(8033:8039): Compactador: Se inicio un hilo para manejar a TablaA.
+[INFO] 21:20:30:467 LissandraFileSystem/(8033:8039): Compactador: Se inicio un hilo para manejar a TablaC.
+[INFO] 21:20:30:846 LissandraFileSystem/(8033:8039): Compactador: Se inicio un hilo para manejar a TablaE.
+[INFO] 21:20:31:217 LissandraFileSystem/(8033:8039): Compactador: Se inicio un hilo para manejar a TablaD.
+[INFO] 21:22:02:518 LissandraFileSystem/(8033:8042): Consola: Se ha recibido un pedido de insert.
+[INFO] 21:22:02:802 LissandraFileSystem/(8033:8042): Lissandra: Se procede a insertar la clave recibida en la Memtable.
+[INFO] 21:22:02:804 LissandraFileSystem/(8033:8042): Lissandra: La clave fue insertada correctamente.
+[INFO] 21:22:02:835 LissandraFileSystem/(8033:8042): Consola: Insert realizado.
+[INFO] 21:22:21:664 LissandraFileSystem/(8033:8042): Consola: Se ha recibido un pedido de insert.
+[INFO] 21:22:21:716 LissandraFileSystem/(8033:8042): Lissandra: Se procede a insertar la clave recibida en la Memtable.
+[INFO] 21:22:21:727 LissandraFileSystem/(8033:8042): Lissandra: La clave fue insertada correctamente.
+[INFO] 21:22:21:750 LissandraFileSystem/(8033:8042): Consola: Insert realizado.
+[INFO] 21:22:33:377 LissandraFileSystem/(8033:8033): Lissandra: Todas las memorias han sido desalojadas.
+[INFO] 21:22:33:387 LissandraFileSystem/(8033:8033): Compactador: Desconectando todas las tablas.
+[INFO] 21:22:37:155 LissandraFileSystem/(8033:8047): Compactador: La TablaD, al haber sido previamente desalojada dejará de ser buscada en el compactador
+[INFO] 21:22:37:5 LissandraFileSystem/(8033:8043): Compactador: La TablaA, al haber sido previamente desalojada dejará de ser buscada en el compactador
+[INFO] 21:22:38:9 LissandraFileSystem/(8033:8045): Compactador: La TablaC, al haber sido previamente desalojada dejará de ser buscada en el compactador
+[INFO] 21:23:21:27 LissandraFileSystem/(8146:8146): Archivo de configuracion leido correctamente
+[INFO] 21:23:22:219 LissandraFileSystem/(8146:8146): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 21:23:22:562 LissandraFileSystem/(8146:8146): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 21:23:22:860 LissandraFileSystem/(8146:8146): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 21:23:23:117 LissandraFileSystem/(8146:8146): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 21:23:23:370 LissandraFileSystem/(8146:8151): Compactador: Se inicio un hilo para manejar a la memtable
+[INFO] 21:23:23:994 LissandraFileSystem/(8146:8151): Compactador: Se inicio un hilo para manejar a TablaA.
+[INFO] 21:23:24:484 LissandraFileSystem/(8146:8152): FileSystem: Se procede a crear el bitmap
+[INFO] 21:23:24:635 LissandraFileSystem/(8146:8151): Compactador: Se inicio un hilo para manejar a TablaC.
+[INFO] 21:23:24:914 LissandraFileSystem/(8146:8151): Compactador: Se inicio un hilo para manejar a TablaE.
+[INFO] 21:23:25:181 LissandraFileSystem/(8146:8151): Compactador: Se inicio un hilo para manejar a TablaD.
+[INFO] 21:24:24:913 LissandraFileSystem/(8250:8250): Archivo de configuracion leido correctamente
+[INFO] 21:24:25:106 LissandraFileSystem/(8250:8250): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 21:24:25:706 LissandraFileSystem/(8250:8250): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 21:24:26:239 LissandraFileSystem/(8250:8250): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 21:24:26:658 LissandraFileSystem/(8250:8256): Compactador: Se inicio un hilo para manejar a la memtable
+[INFO] 21:24:26:907 LissandraFileSystem/(8250:8257): FileSystem: Se procede a crear el bitmap
+[INFO] 21:24:26:910 LissandraFileSystem/(8250:8250): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 21:24:27:189 LissandraFileSystem/(8250:8256): Compactador: Se inicio un hilo para manejar a TablaA.
+[INFO] 21:24:27:502 LissandraFileSystem/(8250:8256): Compactador: Se inicio un hilo para manejar a TablaC.
+[INFO] 21:24:28:45 LissandraFileSystem/(8250:8256): Compactador: Se inicio un hilo para manejar a TablaE.
+[INFO] 21:24:28:548 LissandraFileSystem/(8250:8256): Compactador: Se inicio un hilo para manejar a TablaD.
+[INFO] 21:28:42:524 LissandraFileSystem/(8250:8259): Consola: Se ha recibido un pedido de insert.
+[INFO] 21:28:42:723 LissandraFileSystem/(8250:8259): Lissandra: Se procede a insertar la clave recibida en la Memtable.
+[INFO] 21:28:42:725 LissandraFileSystem/(8250:8259): Lissandra: La clave fue insertada correctamente.
+[INFO] 21:28:42:726 LissandraFileSystem/(8250:8259): Consola: Insert realizado.
+[INFO] 21:33:50:775 LissandraFileSystem/(8250:8250): Lissandra: Todas las memorias han sido desalojadas.
+[INFO] 21:33:50:776 LissandraFileSystem/(8250:8250): Compactador: Desconectando todas las tablas.
+[INFO] 21:33:53:361 LissandraFileSystem/(8250:8260): Compactador: La TablaA, al haber sido previamente desalojada dejará de ser buscada en el compactador
+[INFO] 21:33:54:54 LissandraFileSystem/(8250:8261): Compactador: La TablaC, al haber sido previamente desalojada dejará de ser buscada en el compactador
+[INFO] 21:33:55:636 LissandraFileSystem/(8250:8264): Compactador: La TablaD, al haber sido previamente desalojada dejará de ser buscada en el compactador
+[INFO] 21:34:25:627 LissandraFileSystem/(8250:8263): Compactador: La TablaE, al haber sido previamente desalojada dejará de ser buscada en el compactador
+[INFO] 21:35:05:362 LissandraFileSystem/(8250:8250): Main: Desconectando sistema
+[INFO] 21:40:33:372 LissandraFileSystem/(9043:9043): Archivo de configuracion leido correctamente
+[INFO] 21:40:33:520 LissandraFileSystem/(9043:9043): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 21:40:33:777 LissandraFileSystem/(9043:9043): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 21:40:34:8 LissandraFileSystem/(9043:9043): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 21:40:34:214 LissandraFileSystem/(9043:9048): Compactador: Se inicio un hilo para manejar a la memtable
+[INFO] 21:40:34:227 LissandraFileSystem/(9043:9043): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 21:40:34:419 LissandraFileSystem/(9043:9049): FileSystem: Se procede a crear el bitmap
+[INFO] 21:40:34:686 LissandraFileSystem/(9043:9048): Compactador: Se inicio un hilo para manejar a TablaA.
+[INFO] 21:40:35:27 LissandraFileSystem/(9043:9048): Compactador: Se inicio un hilo para manejar a TablaC.
+[INFO] 21:40:35:247 LissandraFileSystem/(9043:9048): Compactador: Se inicio un hilo para manejar a TablaE.
+[INFO] 21:40:35:467 LissandraFileSystem/(9043:9048): Compactador: Se inicio un hilo para manejar a TablaD.
+[INFO] 21:41:02:731 LissandraFileSystem/(9043:9050): Consola: Se ha recibido un pedido de insert.
+[ERROR] 21:41:02:922 LissandraFileSystem/(9043:9050): Lissandra: el value a agregar era demasiado grande
+[ERROR] 21:41:02:938 LissandraFileSystem/(9043:9050): Consola: el value era demasiado grande para realizar el insert
+[INFO] 21:41:14:792 LissandraFileSystem/(9043:9050): Consola: Se ha recibido un pedido de insert.
+[INFO] 21:41:14:795 LissandraFileSystem/(9043:9050): Lissandra: Se procede a insertar la clave recibida en la Memtable.
+[INFO] 21:41:14:797 LissandraFileSystem/(9043:9050): Lissandra: La clave fue insertada correctamente.
+[INFO] 21:41:14:816 LissandraFileSystem/(9043:9050): Consola: Insert realizado.
+[INFO] 21:43:26:114 LissandraFileSystem/(9043:9043): Lissandra: Todas las memorias han sido desalojadas.
+[INFO] 21:43:26:116 LissandraFileSystem/(9043:9043): Compactador: Desconectando todas las tablas.
+[INFO] 21:43:29:321 LissandraFileSystem/(9043:9052): Compactador: La TablaA, al haber sido previamente desalojada dejará de ser buscada en el compactador
+[INFO] 21:43:30:9 LissandraFileSystem/(9043:9053): Compactador: La TablaC, al haber sido previamente desalojada dejará de ser buscada en el compactador
+[INFO] 21:43:30:998 LissandraFileSystem/(9043:9056): Compactador: La TablaD, al haber sido previamente desalojada dejará de ser buscada en el compactador
+[INFO] 21:44:19:211 LissandraFileSystem/(9043:9055): Compactador: La TablaE, al haber sido previamente desalojada dejará de ser buscada en el compactador
+[INFO] 21:44:40:692 LissandraFileSystem/(9043:9043): Main: Desconectando sistema

@@ -18,7 +18,6 @@
 
 /* VARIABLES GLOBALES */
 
-t_list* bitarray;
 int tamanio_bloques;
 int blocks;
 int creatingFL;

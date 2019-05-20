@@ -15,10 +15,11 @@ void consola()
 	puts("CONSOLA");
 	puts("------ Escriba un comando ------");
 	puts("1. - SELECT <Table> <Key>");
-	puts("2. - INSERT <Table> <Key> <Value> <Timestamp> (last one optional)");
+	puts("2. - INSERT|<Table>|<Key>|<Value>|<Timestamp> (last one optional)");
 	puts("3. - CREATE <Table> <Consistency> <Amount of partitions> <Time until next compaction>");
 	puts("4. - DESCRIBE <Table> (Table is optional, if you want all tables to be shown, leave this parameter empty");
 	puts("5. - DROP <Table>");
+	puts("Detalle amistoso: Para los insert usar pipes o '|' no usar pipes en ninguna otra función ni nombre por consola, gracias.");
 	char* linea;
 //ejecutar prueba.txt
 	while (1) {
@@ -62,15 +63,28 @@ int ejecutar_linea (char * linea){
 	int i = 0;
 	char * funcion;
 
-	if(string_contains(linea, " "))
+	if(string_contains(linea, "|"))
 	{
+			while (linea_aux[i] != '|') i++;
+
+			funcion = malloc((sizeof(char) * i) + 1);
+			strncpy(funcion, linea_aux, i);
+			funcion[i] = '\0';
+	}
+	else
+	{
+		if(string_contains(linea, " "))
+		{
 			while (linea_aux[i] != ' ') i++;
 
 			funcion = malloc((sizeof(char) * i) + 1);
 			strncpy(funcion, linea_aux, i);
 			funcion[i] = '\0';
-	}else{
+		}
+		else
+		{
 			funcion = string_duplicate(linea_aux);
+		}
 	}
 
 	COMANDO * comando = buscar_comando(funcion);
@@ -78,43 +92,7 @@ int ejecutar_linea (char * linea){
 	char** args;
 	if(!strcmp(comando->nombre, "INSERT"))
 	{
-		args = malloc(strlen(linea_aux) + 1);
-		int a = 0;
-		int b = 0;
-		int c = 0;
-		while(linea_aux[a] != '\0')
-		{
-			switch(linea_aux[a])
-			{
-				case ' ':
-				{
-					b++;
-					a++;
-					c = 0;
-					break;
-				}
-				case '"':
-				{
-					a++;
-					while(linea_aux[a] != '"')
-					{
-
-						args[b][c] = linea_aux[a];
-						a++;
-						c++;
-					}
-					a++;
-					break;
-				}
-				default:
-				{
-					args[b][c] = linea_aux[a];
-					a++;
-					c++;
-					break;
-				}
-			}
-		}
+		args = string_split(linea_aux, "|");
 	}
 	else
 		args = string_split(linea_aux, " ");
@@ -184,12 +162,12 @@ void insert (char** args)
 		char* value = string_new();
 		value = malloc(strlen(args[3]) + 1);
 		strcpy(value, args[3]);
+		int result = 0;
 		if(args[4] == NULL)
 		{
 			double timestampact = getCurrentTime();
 			printf("Current time: %lf\n", timestampact);
-			insertKeysetter(tabla, key, value, timestampact);
-			logInfo( "Consola: Insert realizado.");
+			result = insertKeysetter(tabla, key, value, timestampact);
 		}
 		else
 		{
@@ -197,8 +175,30 @@ void insert (char** args)
 			timestampaux = malloc(strlen(args[4]) + 1);
 			strcpy(timestampaux, args[4]);
 			double timestamp = atoi(timestampaux);
-			insertKeysetter(tabla, key, value, timestamp);
+			result = insertKeysetter(tabla, key, value, timestamp);
+		}
+		switch(result)
+		{
+		case 0:
+		{
 			logInfo( "Consola: Insert realizado.");
+			break;
+		}
+		case 1:
+		{
+			logError("Consola: Insert fallido por tabla inexistente");
+			break;
+		}
+		case 2:
+		{
+			logError("Consola: la memtable no pudo recibir la clave");
+			break;
+		}
+		case 3:
+		{
+			logError("Consola: el value era demasiado grande para realizar el insert");
+			break;
+		}
 		}
 	}
 }

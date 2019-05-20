@@ -314,7 +314,6 @@ int insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibi
 
 	printf("%i, %s,", auxiliar->data->key, auxiliar->tabla);
 	printf(" %s, %lf\n", auxiliar->data->clave, auxiliar->data->timestamp);
-
 	if(0 == existeTabla(tablaRecibida))
 	{
 		logError( "Lissandra: La tabla no existe, por lo que no puede insertarse una clave.");
@@ -323,6 +322,12 @@ int insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibi
 	}
 	else
 	{
+		if(strlen(valueRecibido) > tamanio_value)
+		{
+			logError("Lissandra: el value a agregar era demasiado grande");
+			printf("El value ingresado era demasiado grande, por favor, ingrese uno más pequeño.\n");
+			return 3;
+		}
 		logInfo( "Lissandra: Se procede a insertar la clave recibida en la Memtable.");
 		list_add(memtable, auxiliar);
 		if(tamanio_memtable == memtable->elements_count)
