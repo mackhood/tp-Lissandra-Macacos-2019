@@ -308,6 +308,7 @@ int limpiadorDeArchivos(char* direccion)
 	int particiones = 0;
 	particiones = config_get_int_value(temporalArchivoConfig, "PARTICIONES");
 	int i;
+	limpiadorDeBloques(direccion);
 	for(i = 0; i < particiones; i++)
 	{
 		char* direccionBin = string_new();
@@ -618,6 +619,57 @@ void escribirBloque(int* usedBlocks, int* seizedSize, int usedSize, char* block,
 
 void limpiadorDeBloques(char* direccion)
 {
-
+	logInfo("File System: procedo a limpiar los bloques otorgados a la tabla.");
+	DIR* tabla;
+	struct dirent* tdp;
+	tabla = opendir(direccion);
+	while(NULL != (tdp = readdir(tabla)))
+	{
+		if(string_ends_with(tdp->d_name, ".cfg")){}
+		else
+		{
+			if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, "..")){}
+			else
+			{
+				char* direccionPart = malloc(strlen(direccion) + strlen(tdp->d_name) + 1);
+				strcpy(direccionPart, direccion);
+				strcat(direccionPart, tdp->d_name);
+				struct stat* helpMe;
+				int result = stat(direccionPart, helpMe);
+				if(result == 0)
+					continue;
+				else
+				{
+					signalExit = true;
+					break;
+				}
+				if(helpMe->st_size == 14){}
+				else
+				{
+					t_config* archivo = config_create(direccionPart);
+					char* bloquesAsignados = strdup(config_get_string_value(archivo, "BLOCKS"));
+					int i = 0;
+					char** bloques = string_get_string_as_array(bloquesAsignados);
+					while(bloques[i] != NULL)
+					{
+						char* direccionBloqueALiberar = malloc(strlen(direccionFileSystemBlocks) + strlen(bloques[i]) + 5);
+						strcpy(direccionBloqueALiberar, direccionFileSystemBlocks);
+						strcat(direccionBloqueALiberar, bloques[i]);
+						strcat(direccionBloqueALiberar, ".bin");
+						int fd = open(direccionBloqueALiberar, O_RDWR, S_IRUSR | S_IWUSR);
+						ftruncate(fd, 0);
+						close(fd);
+						free(direccionBloqueALiberar);
+						i++;
+					}
+					free(bloques);
+					free(bloquesAsignados);
+					free(direccionPart);
+				}
+			}
+		}
+	}
+	closedir(tabla);
+	logInfo("File System: todos los bloques fueron limpiados satisfactoriamente");
 }
 

@@ -161,7 +161,7 @@ void crearTemporal(char* tabla)
 		bool result = (0 == strcmp(tablaDeListaAux, tablaAux));
 		return result;
 	}
-	logInfo("Compactador: se iniciar el proceso de crear un .tmp nuevo a la %s", tabla);
+
 	t_list* keysTableSpecific = list_create();
 	keysTableSpecific = list_filter(memtable, (void*)perteneceATabla);
 	size_t sizeOfContainer = list_size(keysTableSpecific)*(tamanio_value + sizeof(uint16_t) + sizeof(double) + 1);
@@ -182,6 +182,7 @@ void crearTemporal(char* tabla)
 	int usedSize = 0;
 	while(NULL != list_get(keysTableSpecific, a))
 	{
+		logInfo("Compactador: se iniciar el proceso de crear un .tmp nuevo a la %s", tabla);
 		if(firstRun)
 		{
 			tempPointer = fopen(tempDirection, "w+");
