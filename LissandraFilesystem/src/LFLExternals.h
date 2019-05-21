@@ -11,6 +11,7 @@
 #include <string.h>
 #include <netdb.h>
 #include <unistd.h>
+#include <dirent.h>
 #include <arpa/inet.h>
 #include <sys/wait.h>
 #include <commons/collections/list.h>

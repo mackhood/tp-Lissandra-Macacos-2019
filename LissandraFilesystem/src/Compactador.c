@@ -64,7 +64,25 @@ void compactarTablas(char*tabla)
 	}
 	t_TablaEnEjecucion* tablaAAgregar = malloc(sizeof(t_TablaEnEjecucion) + 2);
 	tablaAAgregar->tabla = tabla;
-	tablaAAgregar->cantTemps = 0;
+	char* direccionTabla = malloc(strlen(punto_montaje) + strlen(tabla) + 10);//son 20 de tables/ y metadata.cfg +1 por las dudas
+	strcpy(direccionTabla, punto_montaje);
+	strcat(direccionTabla, "Tables/");
+	strcat(direccionTabla, tabla);
+	strcat(direccionTabla, "/");
+	DIR* tablaAccedida = opendir(direccionTabla);
+	struct dirent* tbp;
+	int cantTempsActuales = 0;
+	while(NULL != (tbp = readdir(tablaAccedida)))
+	{
+		if(string_ends_with(tbp->d_name, ".tmp"))
+		{
+			cantTempsActuales++;
+		}
+	}
+	free(tbp);
+	closedir(tablaAccedida);
+	free(direccionTabla);
+	tablaAAgregar->cantTemps = cantTempsActuales;
 	list_add(tablasEnEjecucion, tablaAAgregar);
 	char* direccionMetadataTabla = malloc(strlen(punto_montaje) + strlen(tabla) + 21);//son 20 de tables/ y metadata.cfg +1 por las dudas
 	strcpy(direccionMetadataTabla, punto_montaje);
@@ -143,6 +161,7 @@ void crearTemporal(char* tabla)
 		bool result = (0 == strcmp(tablaDeListaAux, tablaAux));
 		return result;
 	}
+	logInfo("Compactador: se iniciar el proceso de crear un .tmp nuevo a la %s", tabla);
 	t_list* keysTableSpecific = list_create();
 	keysTableSpecific = list_filter(memtable, (void*)perteneceATabla);
 	size_t sizeOfContainer = list_size(keysTableSpecific)*(tamanio_value + sizeof(uint16_t) + sizeof(double) + 1);
@@ -210,9 +229,10 @@ void crearTemporal(char* tabla)
 		tempArchConf = config_create(tempDirection);
 		char* sizedUse = string_itoa(usedSize);
 		config_set_value(tempArchConf, "SIZE", sizedUse);
-		//char* bloquesAsignados = escribirBloquesDeFs(container, usedSize, tabla);
-		//config_set_value(tempArchConf, "BLOCKS", bloquesAsignados);
+		char* bloquesAsignados = escribirBloquesDeFs(container, usedSize, tabla);
+		config_set_value(tempArchConf, "BLOCKS", bloquesAsignados);
 		config_save(tempArchConf);
+		logInfo("Compactador: temporal creado");
 	}
 	free(tempDirection);
 }

@@ -21,7 +21,6 @@ void testerFileSystem()
 	{
 		logInfo( "FileSystem: Se procede a crear los bloques de memoria");
 		crearParticiones(direccionFileSystem, blocks);
-		fwrite("I exist", 8, 1, doomsdaypointer);
 	}
 	levantarBitmap(direccionFileSystem);
 	free(direccionFileSystem);
@@ -512,6 +511,7 @@ int contarTablasExistentes()
 
 char* escribirBloquesDeFs(char* todasLasClavesAImpactar, int tamanioUsado, char* tabla)
 {
+	logInfo("File System: con lo que llega del Compactador, inicio la escritura de las claves a los bloques correspondientes");
 	char* direccionTabla = malloc(strlen(tabla) + strlen(punto_montaje) + 9);
 	strcpy(direccionTabla, punto_montaje);
 	strcat(direccionTabla, "Tables/");
@@ -548,7 +548,7 @@ char* obtenerBloqueLibre()
 {
 	int a = 0;
 	char* bloqueAEnviar = string_new();
-	do
+	while(!strcmp(bloqueAEnviar, ""))
 	{
 		//Hago que consulte al bitmap por el primer bloque libre//
 		if(!bitarray_test_bit(bitarray, a))
@@ -560,10 +560,8 @@ char* obtenerBloqueLibre()
 		else
 		{
 			a++;
-			continue;
 		}
-
-	}while(!strcmp(bloqueAEnviar, " "));
+	}
 	return bloqueAEnviar;
 }
 
@@ -571,9 +569,9 @@ void escribirBloque(int* usedBlocks, int* seizedSize, int usedSize, char* block,
 {
 	int a;
 	int mmapsize;
-	int stillUnsaved = usedSize - (int)seizedSize;
+	int stillUnsaved = usedSize - *seizedSize;
 	if(64 > stillUnsaved)
-		mmapsize = usedSize - (int)seizedSize;
+		mmapsize = usedSize - *seizedSize;
 	else
 		mmapsize = 64;
 	char* blockDirection = malloc(strlen(direccionFileSystemBlocks) + strlen(block) + 5);
@@ -592,27 +590,29 @@ void escribirBloque(int* usedBlocks, int* seizedSize, int usedSize, char* block,
     	char* mmaplocator = mmap(NULL, mmapsize, PROT_READ | PROT_WRITE, MAP_SHARED, fd2, 0);
     	for(a = 0; a < 64; a++)
     	{
-    		if((int)seizedSize != usedSize)
+    		if(*seizedSize != usedSize)
     		{
-    			if(clavesAImpactar[(64*(int)usedBlocks) + a] == ';')
+    			int alreadyUsedBlocks = *usedBlocks;
+    			if(clavesAImpactar[(64*alreadyUsedBlocks) + a] == ';')
     			{
     				mmaplocator[a] = '\n';
     			}
     			else
     			{
-    				mmaplocator[a] = clavesAImpactar[(64*(int)usedBlocks) + a];
-    				(int)seizedSize++;
+    				mmaplocator[a] = clavesAImpactar[(64*alreadyUsedBlocks) + a];
+    				*seizedSize = *seizedSize + 1;
     			}
     		}
     		else
     		{
-    			usedBlocks++;
+    			*usedBlocks = *usedBlocks + 1;
     			break;
     		}
     	}
     	msync(mmaplocator, fd2, MS_SYNC);
     	munmap(mmaplocator, mmapsize);
     	close(fd2);
+    	free(blockDirection);
     }
 }
 
