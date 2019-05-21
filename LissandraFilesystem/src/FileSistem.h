@@ -35,7 +35,7 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 int crearMetadata(char* direccionFinal, char* consistencia, int particiones, int tiempoCompactacion);
 int crearParticiones(char* direccionFinal, int particiones);
 int dropTable(char* tablaPorEliminar);
-int limpiadorDeArchivos(char* direccion);
+int limpiadorDeArchivos(char* direccion, char* tabla);
 int existeTabla(char* tabla);
 int mostrarMetadataEspecificada(char* tabla, int tamanio_buffer_metadatas, bool solicitadoPorMemoria, char* buffer);
 void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer);

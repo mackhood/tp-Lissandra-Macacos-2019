@@ -279,7 +279,7 @@ int dropTable(char* tablaPorEliminar)
 		else
 		{
 			closedir(checkdir);
-			if (limpiadorDeArchivos(checkaux) == 1)
+			if (limpiadorDeArchivos(checkaux, tablaPorEliminar) == 1)
 			{
 				rmdir(checkaux);
 				logInfo( "FileSystem: el directorio ha sido eliminado correctamente");
@@ -297,8 +297,21 @@ int dropTable(char* tablaPorEliminar)
 	free(puntodemontaje);
 }
 
-int limpiadorDeArchivos(char* direccion)
+int limpiadorDeArchivos(char* direccion, char* tabla)
 {
+	bool estaTabla(t_TablaEnEjecucion* tablaDeLista)
+	{
+		char* tablaAux = malloc(strlen(tabla) + 1);
+		strcpy(tablaAux, tabla);
+		int cantCarac = strlen(tablaDeLista->tabla);
+		char* tablaDeListaAux = string_new();
+		//char* tablaDeListaAux = string_new();
+		tablaDeListaAux = malloc(cantCarac + 1);
+		strcpy(tablaDeListaAux, tablaDeLista->tabla);
+		bool result = (0 == strcmp(tablaDeListaAux, tablaAux));
+		return result;
+	}
+	limpiadorDeBloques(direccion);
 	char* direccionMetadata = string_new();
 	direccionMetadata = malloc(strlen(direccion) + 14);
 	strcpy(direccionMetadata, direccion);
@@ -308,7 +321,6 @@ int limpiadorDeArchivos(char* direccion)
 	int particiones = 0;
 	particiones = config_get_int_value(temporalArchivoConfig, "PARTICIONES");
 	int i;
-	limpiadorDeBloques(direccion);
 	for(i = 0; i < particiones; i++)
 	{
 		char* direccionBin = string_new();
@@ -336,7 +348,6 @@ int limpiadorDeArchivos(char* direccion)
 	{
 		free(direccionMetadata);
 		config_destroy(temporalArchivoConfig);
-		return 1;
 	}
 	else
 	{
@@ -344,6 +355,29 @@ int limpiadorDeArchivos(char* direccion)
 		config_destroy(temporalArchivoConfig);
 		return 0;
 	}
+	t_TablaEnEjecucion* tablaABorrar = list_find(tablasEnEjecucion, (void*)estaTabla);
+	int b;
+	for(b = 0; b < tablaABorrar->cantTemps; b++)
+	{
+		char* direccionTemp = malloc(strlen(direccion) + strlen(string_itoa(b)) + 6);
+		strcpy(direccionTemp, direccion);
+		char* archivo = malloc(strlen(string_itoa(b)) + 5);
+		strcpy(archivo, string_itoa(b));
+		strcat(archivo, ".tmp");
+		strcat(direccionTemp, "/");
+		strcat(direccionTemp, archivo);
+		int statusTemp = remove(direccionTemp);
+		if(statusTemp == 0)
+			continue;
+		else
+		{
+			logError( "FileSystem: Error al eliminar temporales");
+			return 0;
+		}
+		free(direccionTemp);
+		free(archivo);
+	}
+	return 1;
 }
 
 int existeTabla(char* tabla)
@@ -631,21 +665,20 @@ void limpiadorDeBloques(char* direccion)
 			if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, "..")){}
 			else
 			{
-				char* direccionPart = malloc(strlen(direccion) + strlen(tdp->d_name) + 1);
+				char* direccionPart = malloc(strlen(direccion) + strlen(tdp->d_name) + 2);
 				strcpy(direccionPart, direccion);
+				strcat(direccionPart, "/");
 				strcat(direccionPart, tdp->d_name);
-				struct stat* helpMe;
-				int result = stat(direccionPart, helpMe);
-				if(result == 0)
-					continue;
-				else
+				FILE* partpointer = fopen(direccionPart, "r+");
+				fseek(partpointer, 0, SEEK_END);
+				unsigned long partlength = (unsigned long)ftell(partpointer);
+				if(partlength == 14)
 				{
-					signalExit = true;
-					break;
+					fclose(partpointer);
 				}
-				if(helpMe->st_size == 14){}
 				else
 				{
+					fclose(partpointer);
 					t_config* archivo = config_create(direccionPart);
 					char* bloquesAsignados = strdup(config_get_string_value(archivo, "BLOCKS"));
 					int i = 0;
@@ -656,9 +689,8 @@ void limpiadorDeBloques(char* direccion)
 						strcpy(direccionBloqueALiberar, direccionFileSystemBlocks);
 						strcat(direccionBloqueALiberar, bloques[i]);
 						strcat(direccionBloqueALiberar, ".bin");
-						int fd = open(direccionBloqueALiberar, O_RDWR, S_IRUSR | S_IWUSR);
-						ftruncate(fd, 0);
-						close(fd);
+						FILE* fd = fopen(direccionBloqueALiberar, "w");
+						fclose(fd);
 						free(direccionBloqueALiberar);
 						i++;
 					}
