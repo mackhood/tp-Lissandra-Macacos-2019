@@ -535,14 +535,19 @@ int contarTablasExistentes()
 	}
 }
 
-/*t_keysetter* selectTemps(char* tabla, uint16_t keyRecibida)
+t_keysetter* selectTemps(char* tabla, uint16_t keyRecibida)
 {
-
 	int esDeTalKey(t_keysetter* chequeada)
 	{
 		return chequeada->key == keyRecibida;
 	}
-}*/
+	t_list* clavesDentroDeLosBloques = list_create();
+
+
+	t_keysetter* claveMasActualizada;
+	list_destroy(clavesDentroDeLosBloques);
+	return claveMasActualizada;
+}
 
 char* escribirBloquesDeFs(char* todasLasClavesAImpactar, int tamanioUsado, char* tabla)
 {
