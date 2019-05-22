@@ -361,24 +361,30 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 		return chequeada->data->key == receivedKey;
 	}
 
-		t_list* keysDeTablaPedida = list_create();
-		t_list* keyEspecifica = list_create();
-		t_Memtablekeys* auxMemtable = malloc(sizeof(t_Memtablekeys) + 4);
-		keysDeTablaPedida = list_filter(memtable, (void*)perteneceATabla);
-		keyEspecifica = list_filter(keysDeTablaPedida, (void*)esDeTalKey);
-		list_sort(keyEspecifica, (void*)chequearTimestamps);
-		auxMemtable = list_get(keyEspecifica, 0);
+		if(existeTabla(tabla))
+		{
+			t_list* keysDeTablaPedida = list_create();
+			t_list* keyEspecifica = list_create();
+			t_Memtablekeys* auxMemtable = malloc(sizeof(t_Memtablekeys) + 4);
+			keysDeTablaPedida = list_filter(memtable, (void*)perteneceATabla);
+			keyEspecifica = list_filter(keysDeTablaPedida, (void*)esDeTalKey);
+			list_sort(keyEspecifica, (void*)chequearTimestamps);
+			auxMemtable = list_get(keyEspecifica, 0);
+	//Acá hace falta implementar el compactador y las claves del FL, para eso, despues se llama a comparadorDeKeys();
+	//		t_keysetter* keyTemps = selectTemps(tabla, receivedKey);
+	//		t_keysetter* keyMemtable = malloc(sizeof(t_keysetter) + 3);
+			t_keysetter* key = malloc(sizeof(t_keysetter) + 3);
+			key = auxMemtable->data;
+			list_destroy(keysDeTablaPedida);
+			logInfo( "Lissandra: se ha obtenido la clave más actualizada en el proceso.");
+			return key;
+		}
+		else
+		{
+			t_keysetter* key = NULL;
+			return NULL;
+		}
 
-		//Acá hace falta implementar el compactador y las claves del FL, para eso, despues se llama a comparadorDeKeys();
-//		t_keysetter* keyTemps = selectTemps(tabla, receivedKey);
-//		t_keysetter* keyMemtable = malloc(sizeof(t_keysetter) + 3);
-
-
-		t_keysetter* key = malloc(sizeof(t_keysetter) + 3);
-		key = auxMemtable->data;
-		list_destroy(keysDeTablaPedida);
-		logInfo( "Lissandra: se ha obtenido la clave más actualizada en el proceso.");
-		return key;
 }
 
 int llamadoACrearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion)

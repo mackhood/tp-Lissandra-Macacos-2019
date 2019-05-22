@@ -542,6 +542,12 @@ t_keysetter* selectTemps(char* tabla, uint16_t keyRecibida)
 		return chequeada->key == keyRecibida;
 	}
 	t_list* clavesDentroDeLosBloques = list_create();
+	char* direccionTabla = malloc(strlen(punto_montaje) + strlen(tabla) + 9);
+	strcpy(direccionTabla, punto_montaje);
+	strcat(direccionTabla, "Tables/");
+	strcat(direccionTabla, tabla);
+	strcat(direccionTabla, "/");
+	DIR* table = opendir(direccionTabla);
 
 
 	t_keysetter* claveMasActualizada;

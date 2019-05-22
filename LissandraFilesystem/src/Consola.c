@@ -131,7 +131,10 @@ void selectt (char** args)
 		strcpy(claveaux, args[2]);
 		uint16_t key = atoi(claveaux);
 		t_keysetter* keysetterObtenido = selectKey(tabla, key);
-		printf("La clave obtenida mas actualizada es %i,%lf,%s", keysetterObtenido->key, keysetterObtenido->timestamp, keysetterObtenido->clave);
+		if(keysetterObtenido != NULL)
+			printf("La clave obtenida mas actualizada es %i,%lf,%s", keysetterObtenido->key, keysetterObtenido->timestamp, keysetterObtenido->clave);
+		else
+			printf("La tabla que usted quiso acceder, o la clave que usted buscó, no existía dentro del File System.");
 		free(tabla);
 		free(claveaux);
 	}
