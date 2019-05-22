@@ -690,10 +690,8 @@ void limpiadorDeBloques(char* direccion)
 				else
 				{
 					fclose(partpointer);
-					t_config* archivo = config_create(direccionPart);
-					char* bloquesAsignados = strdup(config_get_string_value(archivo, "BLOCKS"));
 					int i = 0;
-					char** bloques = string_get_string_as_array(bloquesAsignados);
+					char** bloques = obtenerBloques(direccionPart);
 					while(bloques[i] != NULL)
 					{
 						char* direccionBloqueALiberar = malloc(strlen(direccionFileSystemBlocks) + strlen(bloques[i]) + 5);
@@ -716,3 +714,15 @@ void limpiadorDeBloques(char* direccion)
 	logInfo("File System: todos los bloques fueron limpiados satisfactoriamente");
 }
 
+char* leerBloque(char* bloque)
+{
+
+}
+
+char** obtenerBloques(char* direccion)
+{
+	t_config* archivo = config_create(direccion);
+	char* bloquesAsignados = strdup(config_get_string_value(archivo, "BLOCKS"));
+	char** bloques = string_get_string_as_array(bloquesAsignados);
+	return bloques;
+}

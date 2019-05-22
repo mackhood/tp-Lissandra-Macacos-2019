@@ -45,6 +45,8 @@ char* escribirBloquesDeFs(char* todasLasClavesAImpactar, int tamanioUsado, char*
 char* obtenerBloqueLibre();
 void escribirBloque(int* usedBlocks, int* seizedSize, int usedSize, char* block, char* clavesAImpactar);
 void limpiadorDeBloques(char* direccion);
+char* leerBloque(char* bloque)
+char** obtenerBloques(char* direccion);
 
 
 #endif /* FILESISTEM_H_ */
