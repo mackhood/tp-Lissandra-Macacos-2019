@@ -40,12 +40,12 @@ int existeTabla(char* tabla);
 int mostrarMetadataEspecificada(char* tabla, int tamanio_buffer_metadatas, bool solicitadoPorMemoria, char* buffer);
 void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer);
 int contarTablasExistentes();
-t_keysetter* selectTemp(char* tabla, uint16_t keyRecibida);
+t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida);
 char* escribirBloquesDeFs(char* todasLasClavesAImpactar, int tamanioUsado, char* tabla);
 char* obtenerBloqueLibre();
 void escribirBloque(int* usedBlocks, int* seizedSize, int usedSize, char* block, char* clavesAImpactar);
 void limpiadorDeBloques(char* direccion);
-char* leerBloque(char* bloque)
+char* leerBloque(char* bloque);
 char** obtenerBloques(char* direccion);
 
 

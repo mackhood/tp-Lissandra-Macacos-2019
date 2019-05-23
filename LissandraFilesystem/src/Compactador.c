@@ -272,8 +272,8 @@ void ejecutarCompactacion(char* tabla)
 					strcat(blockDirection, ".bin");
 					FILE* blockPointer = fopen(blockDirection, "r+");
 					int sizeToRead;
-					if((fullTempSize - alreadyCountedSize) > 64)
-						sizeToRead = 64;
+					if((fullTempSize - alreadyCountedSize) > tamanio_bloques)
+						sizeToRead = tamanio_bloques;
 					else
 						sizeToRead = fullTempSize - alreadyCountedSize;
 					char* blockContents = malloc(sizeToRead + 1);

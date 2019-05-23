@@ -535,22 +535,94 @@ int contarTablasExistentes()
 	}
 }
 
-t_keysetter* selectTemps(char* tabla, uint16_t keyRecibida)
+t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 {
 	int esDeTalKey(t_keysetter* chequeada)
 	{
 		return chequeada->key == keyRecibida;
 	}
+
+	char* particionARevisar;
 	t_list* clavesDentroDeLosBloques = list_create();
+	t_list* clavesPostParseo = list_create();
 	char* direccionTabla = malloc(strlen(punto_montaje) + strlen(tabla) + 9);
 	strcpy(direccionTabla, punto_montaje);
 	strcat(direccionTabla, "Tables/");
 	strcat(direccionTabla, tabla);
 	strcat(direccionTabla, "/");
 	DIR* table = opendir(direccionTabla);
+	struct dirent* tdp;
+	while(NULL != (tdp = readdir(tabla)))
+	{
+		if(string_ends_with(tdp->d_name, ".cfg"))
+		{
+			char* direccionMetadataTabla = malloc(strlen(direccionTabla) + strlen(tdp->d_name) + 1);
+			strcpy(direccionMetadataTabla, direccionTabla);
+			strcat(direccionMetadataTabla, tdp->d_name);
+			t_config* metadata = config_create(direccionMetadataTabla);
+			int particiones = config_get_int_value(metadata, "PARTICIONES");
+			int particionObjetivo = keyRecibida%particiones;
+			particionARevisar = string_itoa(particionObjetivo);
+		}
+		else if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, "..")){}
+		else if(string_ends_with(tdp->d_name, ".tmp"))
+		{
+			char* direccionTemp = malloc(strlen(direccionTabla) + strlen(tdp->d_name) + 2);
+			strcpy(direccionTemp, direccionTabla);
+			strcat(direccionTemp, "/");
+			strcat(direccionTemp, tdp->d_name);
+			FILE* temppointer = fopen(direccionTemp, "r+");
+			fseek(temppointer, 0, SEEK_END);
+			unsigned long templength = (unsigned long)ftell(temppointer);
+			if(templength == 14)
+			{
+				fclose(temppointer);
+			}
+			else
+			{
+				fclose(temppointer);
+				int i = 0;
+				char** bloques = obtenerBloques(direccionTemp);
+				int tamanio_temp = obtenerTamanioArchivoConfig(direccionTemp);
+				char* clavesLeidas = malloc(tamanio_temp + 1);
+				while(bloques[i] != NULL)
+				{
+					if(i == 0)
+						strcpy(clavesLeidas, leerBloque(bloques[i]));
+					else
+						strcat(clavesLeidas, leerBloque(bloques[i]));
+					i++;
+				}
+				list_add(clavesDentroDeLosBloques, clavesLeidas);
+				free(bloques);
+				free(direccionTemp);
+			}
+		}
+	}
+	free(tdp);
+	closedir(table);
+	char* direccionParticion = malloc(strlen(direccionTabla) + strlen(particionARevisar) + 5);
+	strcpy(direccionParticion, direccionTabla);
+	strcat(direccionParticion, particionARevisar);
+	strcat(direccionParticion, ".bin");
+	int tamanioParticion = obtenerTamanioArchivoConfig(direccionParticion);
+	char** bloques = obtenerBloques(direccionParticion);
+	char* clavesLeidas = malloc(tamanioParticion + 1);
+	int a = 0;
+	while(bloques[a] != NULL)
+	{
+		if(a == 0)
+			strcpy(clavesLeidas, leerBloque(bloques[a]));
+		else
+			strcat(clavesLeidas, leerBloque(bloques[a]));
+		a++;
+	}
+	list_add(clavesDentroDeLosBloques, clavesLeidas);
+	// Fin de primera parte del select que setea todos los arrays y listas necesarios para reevisar y comparar las claves
 
-
+	free(bloques);
 	t_keysetter* claveMasActualizada;
+	list_destroy(clavesPostParseo);
 	list_destroy(clavesDentroDeLosBloques);
 	return claveMasActualizada;
 }
@@ -616,10 +688,10 @@ void escribirBloque(int* usedBlocks, int* seizedSize, int usedSize, char* block,
 	int a;
 	int mmapsize;
 	int stillUnsaved = usedSize - *seizedSize;
-	if(64 > stillUnsaved)
+	if(tamanio_bloques > stillUnsaved)
 		mmapsize = usedSize - *seizedSize;
 	else
-		mmapsize = 64;
+		mmapsize = tamanio_bloques;
 	char* blockDirection = malloc(strlen(direccionFileSystemBlocks) + strlen(block) + 5);
 	strcpy(blockDirection, direccionFileSystemBlocks);
 	strcat(blockDirection, block);
@@ -634,18 +706,18 @@ void escribirBloque(int* usedBlocks, int* seizedSize, int usedSize, char* block,
     else
     {
     	char* mmaplocator = mmap(NULL, mmapsize, PROT_READ | PROT_WRITE, MAP_SHARED, fd2, 0);
-    	for(a = 0; a < 64; a++)
+    	for(a = 0; a < tamanio_bloques; a++)
     	{
     		if(*seizedSize != usedSize)
     		{
     			int alreadyUsedBlocks = *usedBlocks;
-    			if(clavesAImpactar[(64*alreadyUsedBlocks) + a] == ';')
+    			if(clavesAImpactar[(tamanio_bloques*alreadyUsedBlocks) + a] == ';')
     			{
     				mmaplocator[a] = '\n';
     			}
     			else
     			{
-    				mmaplocator[a] = clavesAImpactar[(64*alreadyUsedBlocks) + a];
+    				mmaplocator[a] = clavesAImpactar[(tamanio_bloques*alreadyUsedBlocks) + a];
     				*seizedSize = *seizedSize + 1;
     			}
     		}
@@ -704,7 +776,6 @@ void limpiadorDeBloques(char* direccion)
 						i++;
 					}
 					free(bloques);
-					free(bloquesAsignados);
 					free(direccionPart);
 				}
 			}
@@ -716,7 +787,25 @@ void limpiadorDeBloques(char* direccion)
 
 char* leerBloque(char* bloque)
 {
-
+	char* direccionBloque = malloc(strlen(direccionFileSystemBlocks) + strlen(bloque) + 5);
+	FILE* partpointer = fopen(direccionBloque, "r+");
+	fseek(partpointer, 0, SEEK_END);
+	unsigned long partlength = (unsigned long)ftell(partpointer);
+	char* contenidoBloque = calloc(1, partlength + 1);
+	if(!contenidoBloque)
+	{
+		fclose(partpointer);
+		logError("FileSystem: error al usar calloc para abrir el contenido del bloque %s.bin", bloque);
+		return "error";
+	}
+	else
+	{
+		rewind(partpointer);
+		fread(contenidoBloque, partlength, 1, partpointer);
+		fclose(partpointer);
+		free(direccionBloque);
+		return contenidoBloque;
+	}
 }
 
 char** obtenerBloques(char* direccion)
@@ -724,5 +813,8 @@ char** obtenerBloques(char* direccion)
 	t_config* archivo = config_create(direccion);
 	char* bloquesAsignados = strdup(config_get_string_value(archivo, "BLOCKS"));
 	char** bloques = string_get_string_as_array(bloquesAsignados);
+	free(bloquesAsignados);
+	config_destroy(archivo);
 	return bloques;
 }
+
