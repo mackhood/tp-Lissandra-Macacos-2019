@@ -122,6 +122,54 @@ int ejecutar_linea (char * linea){
 	return 1;
 }
 
+void selectt(char** args){
+	char* nombre_tabla = string_duplicate(args[1]);
+	uint16_t key = atoi(args[2]);
 
+	char* value_buscado = selectReq(nombre_tabla, key);
 
+	printf("el value buscado es %s\n", value_buscado);
+	free(nombre_tabla);
+	free(value_buscado);
+}
 
+void insert(char** args){
+	char* nombre_tabla = string_duplicate(args[1]);
+	uint16_t key = atoi(args[2]);
+	char* value = string_duplicate(args[3]);
+
+	double time_actualizado = insertReq(nombre_tabla, key, value);
+
+	printf("el nuevo time para la key %d es %f\n", key, time_actualizado);
+	free(nombre_tabla);
+	free(value);
+}
+
+void create(char** args){
+	char* nombre_tabla = strdup(args[1]);
+	int largo_nombre_tabla = strlen(nombre_tabla);
+	char* tipo_consistencia = strdup(args[2]);
+	int largo_tipo_consistencia = strlen(tipo_consistencia);
+	int numero_particiones = atoi(args[3]);
+	int compaction_time = atoi(args[4]);
+
+	t_prot_mensaje* mensaje_fs = createReq(nombre_tabla, largo_nombre_tabla, tipo_consistencia, largo_tipo_consistencia, numero_particiones, compaction_time);
+	switch(mensaje_fs->head){
+			case TABLA_CREADA_OK:{
+				printf("la tabla fue creada\n");
+			}break;
+			case TABLA_CREADA_YA_EXISTENTE:{
+				printf("la tabla ya se encuentra existente\n");
+			}break;
+			case TABLA_CREADA_FALLO:{
+				printf("hubo un error al crear la tabla\n");
+			}break;
+			default:{
+				break;
+			}
+		}
+
+	prot_destruir_mensaje(mensaje_fs);
+	free(nombre_tabla);
+	free(tipo_consistencia);
+}

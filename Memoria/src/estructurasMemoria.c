@@ -26,7 +26,7 @@ t_est_pag* buscarEstPagBuscada(uint16_t key, t_segmento* segmento_buscado){
 }
 
 
-t_est_pag* buscarEinsertarEnMem(t_segmento* segmento, uint16_t key, time_t time_a_insertar, char* value_con_barraCero){
+void buscarEinsertarEnMem(t_segmento* segmento, uint16_t key, double time_a_insertar, char* value_con_barraCero){
 	int marco_disponible = buscarPaginaLibre();
 	t_est_pag* nueva_est_pagina = malloc(sizeof(t_est_pag));
 
@@ -36,6 +36,7 @@ t_est_pag* buscarEinsertarEnMem(t_segmento* segmento, uint16_t key, time_t time_
 	//desplazo la memoria y copio en una posicion "libre" lo que tengo en time-key-value
 	memcpy(memoria_principal+(tamanio_pag*marco_disponible), &time_a_insertar, sizeof(double));
 	memcpy(memoria_principal+(tamanio_pag*marco_disponible)+sizeof(double), &key, sizeof(uint16_t));
+	//el tamanio_value es el maximo tamanio del value el cual nos lo va a enviar el fs desde un principio
 	memcpy(memoria_principal+(tamanio_pag*marco_disponible)+sizeof(double)+sizeof(uint16_t), value_con_barraCero, tamanio_value);
 
 	//marco frame como ocupado
@@ -44,7 +45,6 @@ t_est_pag* buscarEinsertarEnMem(t_segmento* segmento, uint16_t key, time_t time_
 	//agrego la estructura a la tabla de paginas del segmento en cuestion
 	list_add(segmento->tabla_paginas.paginas, (t_est_pag*)nueva_est_pagina);
 
-	return nueva_est_pagina; //el return lo hago nada mas para las pruebas
 }
 
 int buscarPaginaLibre(){
@@ -54,7 +54,8 @@ int buscarPaginaLibre(){
 			{
 			return marco_disponible;
 			}
-		}
+	}
+	//sali del for por ende estan todos los marcos ocupados
 	int marco_disponible = aplicarLRU();
 	return marco_disponible;
 }
@@ -64,9 +65,33 @@ int buscarPaginaLibre(){
 int aplicarLRU(){
 	//dentro va a estar el journaling
 
-
 	return 0;
 }
 
-
+/*
+ *  time mas viejo = 0
+ *  for(cant segmentos){
+ *  	obtengo segmento
+ * 	 	for(cantidad paginas de segmento obtenido){
+ *	 		if(pagina.flag == 0 && pagina.time < time_mas_viejo){
+ *				time_mas_viejo = pagina.time
+ *				t_est_pagina* pagina_mas_vieja = list_get(segmento->paginas, contador);
+ *			}
+ *		}
+ *	}
+ *
+ *	si salgo del for y mi time sigue en 0 significa que todas las paginas de todos los segmentos se encuentran modificados o que algo raro pasó
+ *	if(time_mas_viejo == 0){
+ *		Aplicar JOURNALING --> devuelve 0 luego de realizar el journaling?
+ *	}
+ *	else{
+ *		//quito la pagina de memoria principal
+ *
+ *		//devuelvo el marco de la pagina
+ *		return pagina_mas_vieja.marco
+ *	}
+ *
+ *
+ *
+ */
 

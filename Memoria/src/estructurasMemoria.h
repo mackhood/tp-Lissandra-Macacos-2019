@@ -76,7 +76,7 @@ void escucharKernel();
 t_segmento* buscarSegmento(char* tabla_a_buscar);
 t_est_pag* buscarEstPagBuscada(uint16_t key, t_segmento* segmento_buscado);
 int aplicarLRU();
-t_est_pag* buscarEinsertarEnMem(t_segmento* segmento, uint16_t key, time_t time_a_insertar, char* value);
+void buscarEinsertarEnMem(t_segmento* segmento, uint16_t key, double time_a_insertar, char* value);
 int buscarPaginaLibre(); //ahora devuelvo un marco
 
 

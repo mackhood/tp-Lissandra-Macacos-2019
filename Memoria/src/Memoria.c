@@ -2,7 +2,6 @@
 
 int main() {
 
-
 	levantar_config();
 	levantar_logs();
 	levantarConexion();
@@ -111,7 +110,6 @@ void levantarEstrMemorias(){
 	memcpy(&key_recolectada, memoria_principal+(tamanio_pag*4)+sizeof(double), sizeof(uint16_t));
 	printf("en el marco 4 deberia estar la key %d\n", key_recolectada);
 
-	free(memoria_principal);
 	//______________________________PRUEBA_______________________________//
 }
 

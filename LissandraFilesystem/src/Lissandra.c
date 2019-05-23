@@ -255,20 +255,20 @@ void escucharMemoria(int* socket_memoria)
 				double timestampRecibido;
 				int tamanioNombreTabla;
 				int tamanioValue;
-				memcpy(&tamanioNombreTabla, mensaje_memoria->payload, sizeof(int));
+				memcpy(&timestampRecibido, mensaje_memoria->payload, sizeof(double));
+				memcpy(&tamanioNombreTabla, mensaje_memoria->payload + sizeof(double), sizeof(int));
 				tablaRecibida = malloc(tamanioNombreTabla + 2);
-				memcpy(tablaRecibida, mensaje_memoria->payload + sizeof(int), tamanioNombreTabla);
+				memcpy(tablaRecibida, mensaje_memoria->payload + sizeof(double) + sizeof(int), tamanioNombreTabla);
 				tablaRecibida[tamanioNombreTabla] = '\0';
-				memcpy(&keyRecibida, mensaje_memoria->payload + sizeof(int) + tamanioNombreTabla
+				memcpy(&keyRecibida, mensaje_memoria->payload + sizeof(double) + sizeof(int) + tamanioNombreTabla
 						, sizeof(uint16_t));
-				memcpy(&tamanioValue, mensaje_memoria->payload + sizeof(int) + tamanioNombreTabla + sizeof(uint16_t)
+				memcpy(&tamanioValue, mensaje_memoria->payload + sizeof(double) + sizeof(int) + tamanioNombreTabla + sizeof(uint16_t)
 						, sizeof(int));
 				valueRecibido = malloc(tamanioValue + 2);
-				memcpy(valueRecibido, mensaje_memoria->payload + sizeof(int) + tamanioNombreTabla + sizeof(uint16_t)
+				memcpy(valueRecibido, mensaje_memoria->payload + sizeof(double) + sizeof(int) + tamanioNombreTabla + sizeof(uint16_t)
 						+ sizeof(int), tamanioValue);
 				valueRecibido[tamanioValue] = '\0';
-				memcpy(&timestampRecibido, mensaje_memoria->payload + sizeof(int) + tamanioNombreTabla + sizeof(uint16_t)
-						+ sizeof(int) + tamanioValue, sizeof(double));
+
 				switch(insertKeysetter(tablaRecibida, keyRecibida, valueRecibido, timestampRecibido))
 				{
 					case 0:
