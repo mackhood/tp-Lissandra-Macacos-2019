@@ -72,7 +72,7 @@ void terminationProtocol()
 	list_destroy(hilosLFL);
 	killProtocolLissandra();
 	killProtocolCompactador();
-
+	killProtocolFileSystem();
 	free(punto_montaje);
 	list_destroy(memtable);
 	list_destroy(tablasEnEjecucion);

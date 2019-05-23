@@ -393,8 +393,8 @@ int llamadoACrearTabla(char* nombre, char* consistencia, int particiones, int ti
 	{
 		case 0:
 		{
-			return 0;
 			gestionarTabla(nombre);
+			return 0;
 			break;
 		}
 		case 1:
@@ -415,7 +415,6 @@ int llamadoACrearTabla(char* nombre, char* consistencia, int particiones, int ti
 
 int llamarEliminarTabla(char* tablaPorEliminar)
 {
-	//list_remove_by_condition();
 	return dropTable(tablaPorEliminar);
 }
 

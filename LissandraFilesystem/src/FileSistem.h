@@ -23,6 +23,8 @@ int blocks;
 int creatingFL;
 char* direccionFileSystemBlocks;
 char* globalBitmapPath;
+char* bitarraycontent;
+int bitarrayfd;
 t_bitarray* bitarray;
 
 /* FUNCIONES */
@@ -47,6 +49,7 @@ void escribirBloque(int* usedBlocks, int* seizedSize, int usedSize, char* block,
 void limpiadorDeBloques(char* direccion);
 char* leerBloque(char* bloque);
 char** obtenerBloques(char* direccion);
+void killProtocolFileSystem();
 
 
 #endif /* FILESISTEM_H_ */

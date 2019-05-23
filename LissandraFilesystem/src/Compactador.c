@@ -55,15 +55,15 @@ void compactarTablas(char*tabla)
 		char* tablaAux = malloc(strlen(tabla) + 1);
 		strcpy(tablaAux, tabla);
 		int cantCarac = strlen(tablaDeLista->tabla);
-		char* tablaDeListaAux = string_new();
 		//char* tablaDeListaAux = string_new();
-		tablaDeListaAux = malloc(cantCarac + 1);
+		char* tablaDeListaAux = malloc(cantCarac + 1);
 		strcpy(tablaDeListaAux, tablaDeLista->tabla);
 		bool result = (0 == strcmp(tablaDeListaAux, tablaAux));
 		return result;
 	}
-	t_TablaEnEjecucion* tablaAAgregar = malloc(sizeof(t_TablaEnEjecucion) + 2);
-	tablaAAgregar->tabla = tabla;
+	t_TablaEnEjecucion* tablaAAgregar;
+	tablaAAgregar->tabla = malloc(strlen(tabla) + 1);
+	strcpy(tablaAAgregar->tabla, tabla);
 	char* direccionTabla = malloc(strlen(punto_montaje) + strlen(tabla) + 10);//son 20 de tables/ y metadata.cfg +1 por las dudas
 	strcpy(direccionTabla, punto_montaje);
 	strcat(direccionTabla, "Tables/");
@@ -154,9 +154,8 @@ void crearTemporal(char* tabla)
 		char* tablaAux = malloc(strlen(tabla) + 1);
 		strcpy(tablaAux, tabla);
 		int cantCarac = strlen(tablaDeLista->tabla);
-		char* tablaDeListaAux = string_new();
 		//char* tablaDeListaAux = string_new();
-		tablaDeListaAux = malloc(cantCarac + 1);
+		char* tablaDeListaAux = malloc(cantCarac + 1);
 		strcpy(tablaDeListaAux, tablaDeLista->tabla);
 		bool result = (0 == strcmp(tablaDeListaAux, tablaAux));
 		return result;
@@ -206,12 +205,12 @@ void crearTemporal(char* tabla)
 		int sizeOfKey = strlen(string_itoa(auxiliaryKey->data->key)) + strlen(auxiliaryKey->data->clave)
 				+ strlen(string_itoa(auxiliaryKey->data->timestamp)) + 3;
 		char* claveParaTemp = malloc(sizeOfKey + 1);
-		strcpy(claveParaTemp, string_itoa(auxiliaryKey->data->key));
-		strcat(claveParaTemp, ",");
-		strcat(claveParaTemp, string_itoa((long long)auxiliaryKey->data->timestamp));
-		strcat(claveParaTemp, ",");
-		strcat(claveParaTemp, auxiliaryKey->data->clave);
+		strcpy(claveParaTemp, string_itoa((long long)auxiliaryKey->data->timestamp));
 		strcat(claveParaTemp, ";");
+		strcat(claveParaTemp, string_itoa(auxiliaryKey->data->key));
+		strcat(claveParaTemp, ";");
+		strcat(claveParaTemp, auxiliaryKey->data->clave);
+		strcat(claveParaTemp, "\n");
 		if(firstRun)
 		{
 			strcpy(container, claveParaTemp);
@@ -234,8 +233,10 @@ void crearTemporal(char* tabla)
 		config_set_value(tempArchConf, "BLOCKS", bloquesAsignados);
 		config_save(tempArchConf);
 		logInfo("Compactador: temporal creado");
+		config_destroy(tempArchConf);
 	}
 	free(tempDirection);
+	list_destroy(keysTableSpecific);
 }
 
 void ejecutarCompactacion(char* tabla)

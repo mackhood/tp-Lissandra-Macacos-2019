@@ -35,18 +35,20 @@ void levantarBitmap(char* direccion)
 	strcat(direccionBitmap, "Metadata/Bitmap.bin");
 	globalBitmapPath = malloc(strlen(direccionBitmap) + 1);
 	strcpy(globalBitmapPath, direccionBitmap);
-	char* bitarraychar = malloc((int)(blocks/8) + 1);
-    int fd = open(direccionBitmap, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
-    ftruncate(fd, (blocks/8));
-    if (fd == -1)
+	bitarraycontent = malloc((int)(blocks/8) + 1);
+    bitarrayfd = open(direccionBitmap, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    ftruncate(bitarrayfd, (blocks/8));
+    if (bitarrayfd == -1)
     {
     	logError("FileSystem: error al abrir el bitmap, abortando sistema");
+    	free(bitarraycontent);
+    	close(bitarrayfd);
     	signalExit = true;
     }
     else
     {
-    	bitarraychar = mmap(NULL, (blocks/8), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-    	bitarray = bitarray_create_with_mode(bitarraychar, (blocks/8), LSB_FIRST);
+    	bitarraycontent = mmap(NULL, (blocks/8), PROT_READ | PROT_WRITE, MAP_SHARED, bitarrayfd, 0);
+    	bitarray = bitarray_create_with_mode(bitarraycontent, (blocks/8), LSB_FIRST);
     	int a;
     	for(a = 0; a < blocks; a++)
     	{
@@ -70,7 +72,7 @@ void levantarBitmap(char* direccion)
     		fclose(blockpointer);
     		free(direccionBloque);
     	}
-		msync(bitarraychar, fd, MS_SYNC);
+		msync(bitarraycontent, bitarrayfd, MS_SYNC);
     }
 }
 
@@ -191,7 +193,7 @@ int crearMetadata (char* direccion, char* consistencia, int particiones, int tie
 		free(Linea2);
 		char* Linea3 = string_new();
 		char* tiempoEntreCompactaciones = string_new();
-		Linea3 = malloc(sizeof(tiempoCompactacion) + 28);
+		Linea3 = malloc(strlen(string_itoa(tiempoCompactacion)) + 28);
 		strcpy(Linea3, "TIEMPOENTRECOMPACTACIONES=");
 		tiempoEntreCompactaciones = string_itoa(tiempoCompactacion);
 		strcat(Linea3, tiempoEntreCompactaciones);
@@ -262,7 +264,8 @@ int dropTable(char* tablaPorEliminar)
 	strcpy(tablename, tablaPorEliminar);
 	strcpy(checkaux, puntodemontaje);
 	strcat(checkaux, tablaPorEliminar);
-	if(NULL == (newdir = opendir(punto_montaje)))// reviso si el punto de montaje es accesible
+	newdir = opendir(punto_montaje);
+	if(NULL == opendir)// reviso si el punto de montaje es accesible
 	{
 		perror("[ERROR] Punto de montaje no accesible");
 		logError("FileSistem: El punto de montaje al que usted desea entrar no es accesible");
@@ -394,7 +397,8 @@ int existeTabla(char* tabla)
 	strcat(puntodemontaje, "Tables/");
 	strcpy(checkaux, puntodemontaje);
 	strcat(checkaux, tabla);
-	if(NULL != (checkdir = opendir(checkaux)))
+	checkdir = opendir(checkaux);
+	if(NULL != checkdir)
 		return 1;
 	else
 		return 0;
@@ -552,7 +556,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 	strcat(direccionTabla, "/");
 	DIR* table = opendir(direccionTabla);
 	struct dirent* tdp;
-	while(NULL != (tdp = readdir(tabla)))
+	while(NULL != (tdp = readdir(table)))
 	{
 		if(string_ends_with(tdp->d_name, ".cfg"))
 		{
@@ -618,9 +622,57 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 		a++;
 	}
 	list_add(clavesDentroDeLosBloques, clavesLeidas);
+	free(bloques);
 	// Fin de primera parte del select que setea todos los arrays y listas necesarios para reevisar y comparar las claves
 
-	free(bloques);
+	// Parte 2 parser de lista de claves sacada de cada tmp.
+	int parserListPointer = 0;
+	char* keyHandler;
+	while((keyHandler = list_get(clavesDentroDeLosBloques, parserListPointer)) != NULL)
+	{
+		t_keysetter* helpingHand = malloc(sizeof(t_keysetter) + 3);
+		int parserPointer = 0;
+		int handlerSize = strlen(keyHandler);
+		char* key = malloc(sizeof(int) + 1);
+		char* value = malloc(tamanio_value + 1);
+		char* timestamp = malloc(sizeof(double) + 1);
+		int status = 0;
+		while(parserPointer < handlerSize)
+		{
+			switch(keyHandler[parserPointer])
+			{
+			case ',':
+			{
+				break;
+			}
+			case '\n':
+			{
+				break;
+			}
+			default:
+			{
+				switch(status)
+				{
+				case 0:
+				{
+					break;
+				}
+				case 1:
+				{
+					break;
+				}
+				case 2:
+				{
+					break;
+				}
+				}
+				break;
+			}
+			}
+		}
+	}
+
+
 	t_keysetter* claveMasActualizada;
 	list_destroy(clavesPostParseo);
 	list_destroy(clavesDentroDeLosBloques);
@@ -711,15 +763,8 @@ void escribirBloque(int* usedBlocks, int* seizedSize, int usedSize, char* block,
     		if(*seizedSize != usedSize)
     		{
     			int alreadyUsedBlocks = *usedBlocks;
-    			if(clavesAImpactar[(tamanio_bloques*alreadyUsedBlocks) + a] == ';')
-    			{
-    				mmaplocator[a] = '\n';
-    			}
-    			else
-    			{
-    				mmaplocator[a] = clavesAImpactar[(tamanio_bloques*alreadyUsedBlocks) + a];
-    				*seizedSize = *seizedSize + 1;
-    			}
+    			mmaplocator[a] = clavesAImpactar[(tamanio_bloques*alreadyUsedBlocks) + a];
+    			*seizedSize = *seizedSize + 1;
     		}
     		else
     		{
@@ -816,5 +861,14 @@ char** obtenerBloques(char* direccion)
 	free(bloquesAsignados);
 	config_destroy(archivo);
 	return bloques;
+}
+
+void killProtocolFileSystem()
+{
+	bitarray_destroy(bitarray);
+	munmap(bitarraycontent, strlen(bitarraycontent));
+	free(bitarraycontent);
+	close(bitarrayfd);
+
 }
 

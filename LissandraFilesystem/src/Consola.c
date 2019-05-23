@@ -162,46 +162,54 @@ void insert (char** args)
 		claveaux = malloc(strlen(args[2]) + 1);
 		strcpy(claveaux, args[2]);
 		uint16_t key = atoi(claveaux);
-		char* value = string_new();
-		value = malloc(strlen(args[3]) + 1);
-		strcpy(value, args[3]);
-		int result = 0;
-		if(args[4] == NULL)
+		if(string_contains(args[3], ";"))
 		{
-			double timestampact = getCurrentTime();
-			printf("Current time: %lf\n", timestampact);
-			result = insertKeysetter(tabla, key, value, timestampact);
+			printf("Por favor, ingrese un value que no tenga ';' dentro.");
+			logError("Consola: se ingreso un value invalido");
 		}
 		else
 		{
-			char* timestampaux = string_new();
-			timestampaux = malloc(strlen(args[4]) + 1);
-			strcpy(timestampaux, args[4]);
-			double timestamp = atoi(timestampaux);
-			result = insertKeysetter(tabla, key, value, timestamp);
-		}
-		switch(result)
-		{
-		case 0:
-		{
-			logInfo( "Consola: Insert realizado.");
-			break;
-		}
-		case 1:
-		{
-			logError("Consola: Insert fallido por tabla inexistente");
-			break;
-		}
-		case 2:
-		{
-			logError("Consola: la memtable no pudo recibir la clave");
-			break;
-		}
-		case 3:
-		{
-			logError("Consola: el value era demasiado grande para realizar el insert");
-			break;
-		}
+			char* value = string_new();
+			value = malloc(strlen(args[3]) + 1);
+			strcpy(value, args[3]);
+			int result = 0;
+			if(args[4] == NULL)
+			{
+				double timestampact = getCurrentTime();
+				printf("Current time: %lf\n", timestampact);
+				result = insertKeysetter(tabla, key, value, timestampact);
+			}
+			else
+			{
+				char* timestampaux = string_new();
+				timestampaux = malloc(strlen(args[4]) + 1);
+				strcpy(timestampaux, args[4]);
+				double timestamp = atoi(timestampaux);
+				result = insertKeysetter(tabla, key, value, timestamp);
+			}
+			switch(result)
+			{
+			case 0:
+			{
+				logInfo( "Consola: Insert realizado.");
+				break;
+			}
+			case 1:
+			{
+				logError("Consola: Insert fallido por tabla inexistente");
+				break;
+			}
+			case 2:
+			{
+				logError("Consola: la memtable no pudo recibir la clave");
+				break;
+			}
+			case 3:
+			{
+				logError("Consola: el value era demasiado grande para realizar el insert");
+				break;
+			}
+			}
 		}
 	}
 }
@@ -251,7 +259,6 @@ void create (char** args)
 				break;
 			}
 		}
-		free(tabla);
 		free(consistencia);
 		free(particionesaux);
 		free(intervaloCompactacionaux);
