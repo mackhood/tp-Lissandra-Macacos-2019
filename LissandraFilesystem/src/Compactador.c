@@ -61,9 +61,8 @@ void compactarTablas(char*tabla)
 		bool result = (0 == strcmp(tablaDeListaAux, tablaAux));
 		return result;
 	}
-	t_TablaEnEjecucion* tablaAAgregar;
-	tablaAAgregar->tabla = malloc(strlen(tabla) + 1);
-	strcpy(tablaAAgregar->tabla, tabla);
+	t_TablaEnEjecucion* tablaAAgregar = malloc(sizeof(t_TablaEnEjecucion*) + 4);
+	tablaAAgregar->tabla = tabla;
 	char* direccionTabla = malloc(strlen(punto_montaje) + strlen(tabla) + 10);//son 20 de tables/ y metadata.cfg +1 por las dudas
 	strcpy(direccionTabla, punto_montaje);
 	strcat(direccionTabla, "Tables/");

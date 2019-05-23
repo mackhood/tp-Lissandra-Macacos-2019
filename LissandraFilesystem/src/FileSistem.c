@@ -641,7 +641,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 		{
 			switch(keyHandler[parserPointer])
 			{
-			case ',':
+			case ';':
 			{
 				break;
 			}
