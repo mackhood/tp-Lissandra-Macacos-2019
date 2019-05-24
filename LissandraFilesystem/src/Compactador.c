@@ -162,8 +162,8 @@ void crearTemporal(char* tabla)
 
 	t_list* keysTableSpecific = list_create();
 	keysTableSpecific = list_filter(memtable, (void*)perteneceATabla);
-	size_t sizeOfContainer = list_size(keysTableSpecific)*(tamanio_value + sizeof(uint16_t) + sizeof(double) + 1);
-	char* container = malloc(sizeOfContainer);
+	size_t sizeOfContainer = list_size(keysTableSpecific)*(tamanio_value + sizeof(uint16_t) + sizeof(double) + 4);
+	char* container = malloc(sizeOfContainer + 1);
 	t_TablaEnEjecucion* tablaEjecutada = list_find(tablasEnEjecucion, (void*) estaTabla);
 	t_Memtablekeys* auxiliaryKey;
 	int a = 0;
@@ -197,14 +197,13 @@ void crearTemporal(char* tabla)
 			fclose(tempPointer);
 			tablaEjecutada->cantTemps++;
 		}
-		else
-			continue;
 		auxiliaryKey = malloc(sizeof(t_Memtablekeys) + 4);
 		auxiliaryKey = list_get(keysTableSpecific, a);
 		int sizeOfKey = strlen(string_itoa(auxiliaryKey->data->key)) + strlen(auxiliaryKey->data->clave)
-				+ strlen(string_itoa(auxiliaryKey->data->timestamp)) + 3;
+				+ strlen(string_from_format("%lf", auxiliaryKey->data->timestamp)) + 3;
 		char* claveParaTemp = malloc(sizeOfKey + 1);
-		strcpy(claveParaTemp, string_itoa((long long)auxiliaryKey->data->timestamp));
+		char* auxTimestamp = string_from_format("%lf", auxiliaryKey->data->timestamp);
+		strcpy(claveParaTemp, string_substring_until(auxTimestamp, strlen(auxTimestamp) - 7));
 		strcat(claveParaTemp, ";");
 		strcat(claveParaTemp, string_itoa(auxiliaryKey->data->key));
 		strcat(claveParaTemp, ";");

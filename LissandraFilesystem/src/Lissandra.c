@@ -287,8 +287,6 @@ void escucharMemoria(int* socket_memoria)
 						break;
 					}
 				}
-				free(tablaRecibida);
-				free(valueRecibido);
 				break;
 			}
 			default:

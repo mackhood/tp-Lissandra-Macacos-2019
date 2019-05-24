@@ -867,7 +867,6 @@ void killProtocolFileSystem()
 {
 	bitarray_destroy(bitarray);
 	munmap(bitarraycontent, strlen(bitarraycontent));
-	free(bitarraycontent);
 	close(bitarrayfd);
 
 }
