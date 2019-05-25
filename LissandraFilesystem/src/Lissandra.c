@@ -103,10 +103,7 @@ void escucharMemoria(int* socket_memoria)
 				memcpy(&tamanioNombre, mensaje_memoria->payload + sizeof(uint16_t), sizeof(int));
 				tabla = malloc(tamanioNombre);
 				memcpy(tabla, mensaje_memoria->payload + sizeof(uint16_t) + sizeof(int), tamanioNombre);
-//				t_keysetter* helpinghand = selectKey(tabla, auxkey);
-//				double tiempo_pag = helpinghand->timestamp;
-//				char* value = helpinghand->clave;
-//				int tamanio_value = strlen(value);
+
 
 				double tiempo_pag = getCurrentTime();
 				char* value = "Ejemplo";
@@ -120,6 +117,27 @@ void escucharMemoria(int* socket_memoria)
 				memcpy(buffer+sizeof(double)+sizeof(int), value, tamanio_value);
 
 				prot_enviar_mensaje(socket, VALUE_SOLICITADO_OK, tamanio_buffer, buffer);
+				/*
+				 t_keysetter* helpinghand = selectKey(tabla, auxkey);
+				 if(helpingHand != NULL)
+				 {
+					double tiempo_pag = helpinghand->timestamp;
+					char* value = helpinghand->clave;
+					int tamanio_value = strlen(value);
+					size_t tamanio_buffer = (sizeof(double)+tamanio_value+sizeof(int));
+					void* buffer = malloc(tamanio_buffer);
+
+					memcpy(buffer, &tiempo_pag, sizeof(double));
+					memcpy(buffer+sizeof(double), &tamanio_value, sizeof(int));
+					memcpy(buffer+sizeof(double)+sizeof(int), value, tamanio_value);
+
+					prot_enviar_mensaje(socket, VALUE_SOLICITADO_OK, tamanio_buffer, buffer);
+				 }
+				 else
+				 {
+				 	 prot_enviar_mensaje(socket, VALUE_FAILURE, 0, NULL);
+				 }
+				 */
 				break;
 			}
 			case CREATE_TABLA:
@@ -364,15 +382,32 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 			t_list* keysDeTablaPedida = list_create();
 			t_list* keyEspecifica = list_create();
 			t_Memtablekeys* auxMemtable = malloc(sizeof(t_Memtablekeys) + 4);
+			t_keysetter* keyTemps = selectKeyFS(tabla, receivedKey);
+			t_keysetter* key = malloc(sizeof(t_keysetter) + 3);
 			keysDeTablaPedida = list_filter(memtable, (void*)perteneceATabla);
 			keyEspecifica = list_filter(keysDeTablaPedida, (void*)esDeTalKey);
-			list_sort(keyEspecifica, (void*)chequearTimestamps);
-			auxMemtable = list_get(keyEspecifica, 0);
-	//Acá hace falta implementar el compactador y las claves del FL, para eso, despues se llama a comparadorDeKeys();
-	//		t_keysetter* keyTemps = selectTemps(tabla, receivedKey);
-	//		t_keysetter* keyMemtable = malloc(sizeof(t_keysetter) + 3);
-			t_keysetter* key = malloc(sizeof(t_keysetter) + 3);
-			key = auxMemtable->data;
+			if(!list_is_empty(keysDeTablaPedida))
+			{
+				list_sort(keyEspecifica, (void*)chequearTimestamps);
+				auxMemtable = list_get(keyEspecifica, 0);
+				if(keyTemps != NULL)
+				{
+					if(chequearTimeKey(keyTemps, auxMemtable->data))
+						key = keyTemps;
+					else
+						key = auxMemtable->data;
+				}
+				else
+					key = auxMemtable->data;
+			}
+			else
+			{
+				if(keyTemps != NULL)
+					key = keyTemps;
+				else
+					key = NULL;
+			}
+
 			list_destroy(keysDeTablaPedida);
 			logInfo( "Lissandra: se ha obtenido la clave más actualizada en el proceso.");
 			return key;
@@ -380,7 +415,7 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 		else
 		{
 			t_keysetter* key = NULL;
-			return NULL;
+			return key;
 		}
 
 }

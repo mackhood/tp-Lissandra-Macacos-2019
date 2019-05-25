@@ -239,6 +239,8 @@ void crearTemporal(char* tabla)
 
 void ejecutarCompactacion(char* tabla)
 {
+	while(selectActivo){}
+	pthread_mutex_lock(&compactacionActiva);
 	char* direccionTabla = malloc(strlen(tabla) + strlen(punto_montaje) + 9);
 	strcpy(direccionTabla, punto_montaje);
 	strcat(direccionTabla, "Tables/");
@@ -292,6 +294,7 @@ void ejecutarCompactacion(char* tabla)
 			}
 		}
 	}
+	pthread_mutex_unlock(&compactacionActiva);
 }
 
 void killProtocolCompactador()

@@ -265,7 +265,7 @@ int dropTable(char* tablaPorEliminar)
 	strcpy(checkaux, puntodemontaje);
 	strcat(checkaux, tablaPorEliminar);
 	newdir = opendir(punto_montaje);
-	if(NULL == opendir)// reviso si el punto de montaje es accesible
+	if(NULL == newdir)// reviso si el punto de montaje es accesible
 	{
 		perror("[ERROR] Punto de montaje no accesible");
 		logError("FileSistem: El punto de montaje al que usted desea entrar no es accesible");
@@ -546,6 +546,12 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 		return chequeada->key == keyRecibida;
 	}
 
+	while(1)
+	{
+		if(0 == pthread_mutex_trylock(&compactacionActiva))
+			break;
+	}
+	selectActivo = 1;
 	char* particionARevisar;
 	t_list* clavesDentroDeLosBloques = list_create();
 	t_list* clavesPostParseo = list_create();
@@ -573,7 +579,6 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 		{
 			char* direccionTemp = malloc(strlen(direccionTabla) + strlen(tdp->d_name) + 2);
 			strcpy(direccionTemp, direccionTabla);
-			strcat(direccionTemp, "/");
 			strcat(direccionTemp, tdp->d_name);
 			FILE* temppointer = fopen(direccionTemp, "r+");
 			fseek(temppointer, 0, SEEK_END);
@@ -609,20 +614,25 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 	strcpy(direccionParticion, direccionTabla);
 	strcat(direccionParticion, particionARevisar);
 	strcat(direccionParticion, ".bin");
-	int tamanioParticion = obtenerTamanioArchivoConfig(direccionParticion);
-	char** bloques = obtenerBloques(direccionParticion);
-	char* clavesLeidas = malloc(tamanioParticion + 1);
-	int a = 0;
-	while(bloques[a] != NULL)
+	unsigned long tamanioParticion = obtenerTamanioArchivo(direccionParticion);
+	if(tamanioParticion == 14){}
+	else
 	{
-		if(a == 0)
-			strcpy(clavesLeidas, leerBloque(bloques[a]));
-		else
-			strcat(clavesLeidas, leerBloque(bloques[a]));
-		a++;
+		char** bloques = obtenerBloques(direccionParticion);
+		char* clavesLeidas = malloc(tamanioParticion + 1);
+		int a = 0;
+		while(bloques[a] != NULL)
+		{
+			if(a == 0)
+				strcpy(clavesLeidas, leerBloque(bloques[a]));
+			else
+				strcat(clavesLeidas, leerBloque(bloques[a]));
+			a++;
+		}
+		list_add(clavesDentroDeLosBloques, clavesLeidas);
+		free(bloques);
 	}
-	list_add(clavesDentroDeLosBloques, clavesLeidas);
-	free(bloques);
+
 	// Fin de primera parte del select que setea todos los arrays y listas necesarios para reevisar y comparar las claves
 
 	// Parte 2 parser de lista de claves sacada de cada tmp.
@@ -633,49 +643,99 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 		t_keysetter* helpingHand = malloc(sizeof(t_keysetter) + 3);
 		int parserPointer = 0;
 		int handlerSize = strlen(keyHandler);
-		char* key = malloc(sizeof(int) + 1);
+		char* key = malloc(24);
 		char* value = malloc(tamanio_value + 1);
-		char* timestamp = malloc(sizeof(double) + 1);
+		char* timestamp = malloc(14);
 		int status = 0;
+		int k = 1;
+		int v = 1;
+		int t = 1;
 		while(parserPointer < handlerSize)
 		{
 			switch(keyHandler[parserPointer])
 			{
 			case ';':
 			{
+				parserPointer++;
+				status++;
 				break;
 			}
 			case '\n':
 			{
+				helpingHand = construirKeysetter(timestamp, key, value);
+				list_add(clavesPostParseo, helpingHand);
+				parserPointer++;
+				status = 0;
+				k = 1;
+				v = 1;
+				t = 1;
 				break;
 			}
 			default:
 			{
+				char* aux = malloc(2);
+				aux[0] = keyHandler[parserPointer];
+				aux[1] = '\0';
 				switch(status)
 				{
 				case 0:
 				{
+					if(t)
+					{
+						strcpy(timestamp, aux);
+						t = 0;
+					}
+					else
+						strcat(timestamp, aux);
 					break;
 				}
 				case 1:
 				{
+					if(k)
+					{
+						strcpy(key, aux);
+						k = 0;
+					}
+					else
+						strcat(key, aux);
 					break;
 				}
 				case 2:
 				{
+					if(v)
+					{
+						strcpy(value, aux);
+						v = 0;
+					}
+					else
+						strcat(value, aux);
 					break;
 				}
 				}
+				free(aux);
+				parserPointer++;
 				break;
 			}
 			}
 		}
+		parserListPointer++;
 	}
+	//Paso 3 Correr select
+	t_list* keysettersDeClave = list_create();
+	keysettersDeClave = list_filter(clavesPostParseo, (void*)esDeTalKey);
+	t_keysetter* claveMasActualizada = malloc(sizeof(t_keysetter) + 3);
+	if(!list_is_empty(keysettersDeClave))
+	{
+		list_sort(keysettersDeClave, (void*)chequearTimeKey);
+		claveMasActualizada = list_get(keysettersDeClave, 0);
+	}
+	else
+		claveMasActualizada = NULL;
 
-
-	t_keysetter* claveMasActualizada;
+	list_destroy(keysettersDeClave);
 	list_destroy(clavesPostParseo);
 	list_destroy(clavesDentroDeLosBloques);
+	selectActivo = 0;
 	return claveMasActualizada;
 }
 
@@ -833,6 +893,9 @@ void limpiadorDeBloques(char* direccion)
 char* leerBloque(char* bloque)
 {
 	char* direccionBloque = malloc(strlen(direccionFileSystemBlocks) + strlen(bloque) + 5);
+	strcpy(direccionBloque, direccionFileSystemBlocks);
+	strcat(direccionBloque, bloque);
+	strcat(direccionBloque, ".bin");
 	FILE* partpointer = fopen(direccionBloque, "r+");
 	fseek(partpointer, 0, SEEK_END);
 	unsigned long partlength = (unsigned long)ftell(partpointer);
