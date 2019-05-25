@@ -31,8 +31,9 @@ void consola()
 			signalExit = true;
 			break;
 		}
-
-		if (ejecutar_linea(linea)){
+		if(!strcmp(linea, ""))
+			continue;
+		else if (ejecutar_linea(linea)){
 			add_history(linea);
 		}
 		free(linea);
@@ -132,9 +133,9 @@ void selectt (char** args)
 		uint16_t key = atoi(claveaux);
 		t_keysetter* keysetterObtenido = selectKey(tabla, key);
 		if(keysetterObtenido != NULL)
-			printf("La clave obtenida mas actualizada es %i,%lf,%s", keysetterObtenido->key, keysetterObtenido->timestamp, keysetterObtenido->clave);
+			printf("La clave obtenida mas actualizada es %i,%lf,%s\n", keysetterObtenido->key, keysetterObtenido->timestamp, keysetterObtenido->clave);
 		else
-			printf("La tabla que usted quiso acceder, o la clave que usted buscó, no existía dentro del File System.");
+			printf("La tabla que usted quiso acceder, o la clave que usted buscó, no existía dentro del File System.\n");
 		free(tabla);
 		free(claveaux);
 	}

@@ -70,7 +70,6 @@ void iniciarFileSistem()
 
 void terminationProtocol()
 {
-
 	list_destroy(hilosLFL);
 	killProtocolLissandra();
 	killProtocolCompactador();

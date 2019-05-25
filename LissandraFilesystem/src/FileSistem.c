@@ -35,7 +35,6 @@ void levantarBitmap(char* direccion)
 	strcat(direccionBitmap, "Metadata/Bitmap.bin");
 	globalBitmapPath = malloc(strlen(direccionBitmap) + 1);
 	strcpy(globalBitmapPath, direccionBitmap);
-	bitarraycontent = malloc((int)(blocks/8) + 1);
     bitarrayfd = open(direccionBitmap, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
     ftruncate(bitarrayfd, (blocks/8));
     if (bitarrayfd == -1)
@@ -386,12 +385,9 @@ int limpiadorDeArchivos(char* direccion, char* tabla)
 int existeTabla(char* tabla)
 {
 	DIR* checkdir;
-	char* checkaux = string_new();
-	checkaux = malloc(strlen(tabla) + strlen(punto_montaje) + 9);
-	char* tablename = string_new();
-	tablename = malloc(strlen(tabla) + 3);
-	char* puntodemontaje = string_new();
-	puntodemontaje = malloc(strlen(tabla) + strlen(punto_montaje) + 9);
+	char* checkaux = malloc(strlen(tabla) + strlen(punto_montaje) + 9);
+	char* tablename = malloc(strlen(tabla) + 3);
+	char* puntodemontaje = malloc(strlen(tabla) + strlen(punto_montaje) + 9);
 	strcpy(puntodemontaje, punto_montaje);
 	strcpy(tablename, tabla);
 	strcat(puntodemontaje, "Tables/");
@@ -399,11 +395,21 @@ int existeTabla(char* tabla)
 	strcat(checkaux, tabla);
 	checkdir = opendir(checkaux);
 	if(NULL != checkdir)
+	{
+		closedir(checkdir);
+		free(checkaux);
+		free(puntodemontaje);
+		free(tablename);
 		return 1;
+	}
 	else
+	{
+		closedir(checkdir);
+		free(checkaux);
+		free(puntodemontaje);
+		free(tablename);
 		return 0;
-	closedir(checkdir);
-	free(checkaux);
+	}
 }
 
 int mostrarMetadataEspecificada(char* tabla, int tamanio_buffer_metadatas, bool solicitadoPorMemoria, char* buffer)
@@ -549,7 +555,10 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 	while(1)
 	{
 		if(0 == pthread_mutex_trylock(&compactacionActiva))
+		{
+			pthread_mutex_unlock(&compactacionActiva);
 			break;
+		}
 	}
 	selectActivo = 1;
 	char* particionARevisar;
@@ -573,6 +582,8 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 			int particiones = config_get_int_value(metadata, "PARTICIONES");
 			int particionObjetivo = keyRecibida%particiones;
 			particionARevisar = string_itoa(particionObjetivo);
+			config_destroy(metadata);
+			free(direccionMetadataTabla);
 		}
 		else if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, "..")){}
 		else if(string_ends_with(tdp->d_name, ".tmp"))
@@ -610,12 +621,14 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 	}
 	free(tdp);
 	closedir(table);
+
+
 	char* direccionParticion = malloc(strlen(direccionTabla) + strlen(particionARevisar) + 5);
 	strcpy(direccionParticion, direccionTabla);
 	strcat(direccionParticion, particionARevisar);
 	strcat(direccionParticion, ".bin");
 	unsigned long tamanioParticion = obtenerTamanioArchivo(direccionParticion);
-	if(tamanioParticion == 14){}
+	if(tamanioParticion == 14){	}
 	else
 	{
 		char** bloques = obtenerBloques(direccionParticion);
@@ -632,6 +645,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 		list_add(clavesDentroDeLosBloques, clavesLeidas);
 		free(bloques);
 	}
+	free(direccionParticion);
 
 	// Fin de primera parte del select que setea todos los arrays y listas necesarios para reevisar y comparar las claves
 
@@ -735,6 +749,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 	list_destroy(keysettersDeClave);
 	list_destroy(clavesPostParseo);
 	list_destroy(clavesDentroDeLosBloques);
+	free(direccionTabla);
 	selectActivo = 0;
 	return claveMasActualizada;
 }
@@ -817,7 +832,7 @@ void escribirBloque(int* usedBlocks, int* seizedSize, int usedSize, char* block,
         }
     else
     {
-    	char* mmaplocator = mmap(NULL, mmapsize, PROT_READ | PROT_WRITE, MAP_SHARED, fd2, 0);
+    	char* mmaplocator = mmap(NULL, mmapsize + 1, PROT_READ | PROT_WRITE, MAP_SHARED, fd2, 0);
     	for(a = 0; a < tamanio_bloques; a++)
     	{
     		if(*seizedSize != usedSize)

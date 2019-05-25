@@ -11,6 +11,7 @@ void mainCompactador()
 	if(NULL == (directorioDeTablas = opendir(auxdir)))
 	{
 		logError( "FileSystem: error al acceder al directorio de tablas, abortando");
+		free(auxdir);
 		closedir(directorioDeTablas);
 	}
 	else
@@ -29,6 +30,7 @@ void mainCompactador()
 
 		}
 	}
+
 }
 
 void setearValoresCompactador(t_config* archivoConfig)
@@ -59,9 +61,11 @@ void compactarTablas(char*tabla)
 		char* tablaDeListaAux = malloc(cantCarac + 1);
 		strcpy(tablaDeListaAux, tablaDeLista->tabla);
 		bool result = (0 == strcmp(tablaDeListaAux, tablaAux));
+		free(tablaDeListaAux);
+		free(tablaAux);
 		return result;
 	}
-	t_TablaEnEjecucion* tablaAAgregar = malloc(sizeof(t_TablaEnEjecucion*) + 4);
+	t_TablaEnEjecucion* tablaAAgregar = malloc(sizeof(t_TablaEnEjecucion) + 4);
 	tablaAAgregar->tabla = tabla;
 	char* direccionTabla = malloc(strlen(punto_montaje) + strlen(tabla) + 10);//son 20 de tables/ y metadata.cfg +1 por las dudas
 	strcpy(direccionTabla, punto_montaje);
@@ -133,8 +137,9 @@ void gestionarMemtable()
 		if(deathProtocol){}
 		else
 		{
-			list_destroy(memtable);
-			memtable = list_create();
+//			list_destroy(memtable);
+//			memtable = list_create();
+			list_clean(memtable);
 		}
 	}
 }
@@ -157,12 +162,14 @@ void crearTemporal(char* tabla)
 		char* tablaDeListaAux = malloc(cantCarac + 1);
 		strcpy(tablaDeListaAux, tablaDeLista->tabla);
 		bool result = (0 == strcmp(tablaDeListaAux, tablaAux));
+		free(tablaDeListaAux);
+		free(tablaAux);
 		return result;
 	}
 
 	t_list* keysTableSpecific = list_create();
 	keysTableSpecific = list_filter(memtable, (void*)perteneceATabla);
-	size_t sizeOfContainer = list_size(keysTableSpecific)*(tamanio_value + sizeof(uint16_t) + sizeof(double) + 4);
+	size_t sizeOfContainer = list_size(keysTableSpecific)*(tamanio_value + 24 + 15 + 4);
 	char* container = malloc(sizeOfContainer + 1);
 	t_TablaEnEjecucion* tablaEjecutada = list_find(tablasEnEjecucion, (void*) estaTabla);
 	t_Memtablekeys* auxiliaryKey;
@@ -216,9 +223,8 @@ void crearTemporal(char* tabla)
 		}
 		else
 			strcat(container, claveParaTemp);
+		usedSize += strlen(claveParaTemp);
 		free(claveParaTemp);
-		usedSize += sizeOfKey;
-		sizeOfKey = 0;
 		a++;
 	}
 	if(!firstRun)
@@ -258,10 +264,10 @@ void ejecutarCompactacion(char* tabla)
 			if(string_ends_with(tdp->d_name, ".tmp"))
 			{
 				char* direccionTemp = malloc(strlen(direccionTabla) + strlen(tdp->d_name) + 1);
-				t_config* temporalData = config_create(direccionTemp);
-				char* asignedBlocks = config_get_string_value(temporalData, "BLOCKS");
-				int fullTempSize = config_get_int_value(temporalData, "SIZE");
-				char** blocks = string_get_string_as_array(asignedBlocks);
+				strcpy(direccionTemp, direccionTabla);
+				strcat(direccionTemp, tdp->d_name);
+				int fullTempSize = obtenerTamanioArchivoConfig(direccionTemp);
+				char** blocks = obtenerBloques(direccionTemp);
 				int counter = 0;
 				int alreadyCountedSize = 0;
 				char* keysToParse = malloc(fullTempSize + 1);
