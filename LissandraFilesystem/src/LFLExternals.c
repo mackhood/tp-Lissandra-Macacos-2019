@@ -39,6 +39,7 @@ unsigned long obtenerTamanioArchivo(char* direccionArchivo)
 	FILE* FP = fopen(direccionArchivo, "r+");
 	fseek(FP, 0, SEEK_END);
 	unsigned long tamanio = (unsigned long)ftell(FP);
+	fclose(FP);
 	return tamanio;
 }
 

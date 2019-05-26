@@ -16,6 +16,8 @@ int main(void)
 			break;
 		}
 	}
+	free(lissandraFL_log_ruta);
+	free(lissandraFL_config_ruta);
 	return EXIT_SUCCESS;
 }
 
@@ -78,4 +80,5 @@ void terminationProtocol()
 	list_destroy(memtable);
 	list_destroy(tablasEnEjecucion);
 	logInfo("Main: Desconectando sistema");
+	log_destroy(logger);
 }

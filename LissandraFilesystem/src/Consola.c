@@ -28,6 +28,7 @@ void consola()
 		if (strcmp(linea, "exit")==0){
 			free(linea);
 			puts("EXIT.");
+			clear_history();
 			signalExit = true;
 			break;
 		}

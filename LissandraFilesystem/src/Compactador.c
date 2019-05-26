@@ -15,7 +15,6 @@ void mainCompactador()
 		closedir(directorioDeTablas);
 	}
 	else
-
 	{
 		gestionarDumps();
 		while(NULL != (tdp = readdir(directorioDeTablas)))//primero: while para asignar direcciones para funcion que crea hilos.
@@ -25,12 +24,8 @@ void mainCompactador()
 			{
 				gestionarTabla(tdp->d_name);
 			}
-
-			//segundo: llamado a gestion de dumps.
-
 		}
 	}
-
 }
 
 void setearValoresCompactador(t_config* archivoConfig)
@@ -65,7 +60,7 @@ void compactarTablas(char*tabla)
 		free(tablaAux);
 		return result;
 	}
-	t_TablaEnEjecucion* tablaAAgregar = malloc(sizeof(t_TablaEnEjecucion) + 4);
+	t_TablaEnEjecucion* tablaAAgregar = malloc(sizeof(t_TablaEnEjecucion) + 2);
 	tablaAAgregar->tabla = tabla;
 	char* direccionTabla = malloc(strlen(punto_montaje) + strlen(tabla) + 10);//son 20 de tables/ y metadata.cfg +1 por las dudas
 	strcpy(direccionTabla, punto_montaje);
@@ -137,8 +132,6 @@ void gestionarMemtable()
 		if(deathProtocol){}
 		else
 		{
-//			list_destroy(memtable);
-//			memtable = list_create();
 			list_clean(memtable);
 		}
 	}
@@ -181,9 +174,10 @@ void crearTemporal(char* tabla)
 	strcat(tempDirection, "Tables/");
 	strcat(tempDirection, tabla);
 	strcat(tempDirection, "/");
-	strcat(tempDirection, string_itoa(tablaEjecutada->cantTemps));
+	strcat(tempDirection, auxTempDir);
 	strcat(tempDirection, ".tmp");
 	bool firstRun = true;
+	free(auxTempDir);
 	int usedSize = 0;
 	while(NULL != list_get(keysTableSpecific, a))
 	{
@@ -239,6 +233,7 @@ void crearTemporal(char* tabla)
 		logInfo("Compactador: temporal creado");
 		config_destroy(tempArchConf);
 	}
+	free(container);
 	free(tempDirection);
 	list_destroy(keysTableSpecific);
 }

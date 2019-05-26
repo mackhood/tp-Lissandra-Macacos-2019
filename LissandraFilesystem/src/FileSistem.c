@@ -23,6 +23,7 @@ void testerFileSystem()
 		crearParticiones(direccionFileSystem, blocks);
 	}
 	levantarBitmap(direccionFileSystem);
+	fclose(doomsdaypointer);
 	free(direccionFileSystem);
 	free(aux);
 }
@@ -35,7 +36,7 @@ void levantarBitmap(char* direccion)
 	strcat(direccionBitmap, "Metadata/Bitmap.bin");
 	globalBitmapPath = malloc(strlen(direccionBitmap) + 1);
 	strcpy(globalBitmapPath, direccionBitmap);
-    bitarrayfd = open(direccionBitmap, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    bitarrayfd = open(globalBitmapPath, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
     ftruncate(bitarrayfd, (blocks/8));
     if (bitarrayfd == -1)
     {
@@ -72,6 +73,7 @@ void levantarBitmap(char* direccion)
     		free(direccionBloque);
     	}
 		msync(bitarraycontent, bitarrayfd, MS_SYNC);
+		free(direccionBitmap);
     }
 }
 
@@ -94,10 +96,8 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 	creatingFL = 0;
 	DIR* newdir;
 	char buff[128];
-	char* tablename = string_new();
-	tablename = malloc(strlen(nombre) + 3);
-	char* puntodemontaje = string_new();
-	puntodemontaje = malloc(strlen(nombre) + strlen(punto_montaje) + 9);
+	char* tablename = malloc(strlen(nombre) + 3);
+	char* puntodemontaje = malloc(strlen(nombre) + strlen(punto_montaje) + 9);
 	strcpy(puntodemontaje, punto_montaje);
 	strcpy(tablename, nombre);
 	memset(buff, 0, sizeof(buff));
@@ -107,6 +107,8 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 	{
 		perror("[ERROR] Punto de montaje no accesible");
 		logError("FileSistem: El punto de montaje al que usted desea entrar no es accesible");
+		free(tablename);
+		free(puntodemontaje);
 		return(1);
 	}
 
@@ -115,15 +117,16 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 		if(1 == existeTabla(nombre))
 		{
 			logInfo( "FileSystem: La tabla que usted quiere crear ya existe");
+			free(tablename);
+			free(puntodemontaje);
 			return(2);
 		}
 		else
 		{
-			char* direccionFinal = string_new();
 			strcat(tablename,"/");
 			strncpy(buff + strlen(buff), tablename, strlen(tablename) + 1);
 			strcat(puntodemontaje, tablename);
-			direccionFinal = malloc(strlen(puntodemontaje) + 1);
+			char* direccionFinal = malloc(strlen(puntodemontaje) + 1);
 			strcpy(direccionFinal, puntodemontaje);
 
 			logInfo( "FileSistem: Se procede a la creacion del directorio");
@@ -134,6 +137,8 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 				perror("[ERROR] Error al crear Metadata, abortando");
 				logError( "FileSistem: Error al crear Metadata, abortando");
 				closedir(newdir);
+				free(tablename);
+				free(puntodemontaje);
 				return(1);
 			}
 			else
@@ -144,6 +149,8 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 					perror("[ERROR] Error al crear particiones, abortando");
 					logError( "FileSistem: Error al crear particiones, abortando");
 					closedir(newdir);
+					free(tablename);
+					free(puntodemontaje);
 					return(1);
 				}
 				else
@@ -153,6 +160,8 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 			}
 			free(direccionFinal);
 			logInfo("FileSystem: Tabla creada satisfactoriamente");
+			free(tablename);
+			free(puntodemontaje);
 			return(0);
 		}
 	}
@@ -160,16 +169,17 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 
 int crearMetadata (char* direccion, char* consistencia, int particiones, int tiempoCompactacion)
 {
-	char* direccionaux = string_new();
-	direccionaux = malloc(strlen(direccion)+13);
+	char* direccionaux = malloc(strlen(direccion)+13);
 	strcpy(direccionaux, direccion);
 	char* direccionDelMetadata = malloc(strlen(direccionaux)+13);
 	FILE* metadata;
 	strcat(direccionaux, "Metadata.cfg");
 	strcpy(direccionDelMetadata, direccionaux);
+	free(direccionaux);
 	metadata = fopen(direccionDelMetadata, "w+");
 	if(metadata == NULL)
 	{
+		free(direccionDelMetadata);
 		return 1;
 	}
 	else
@@ -199,6 +209,7 @@ int crearMetadata (char* direccion, char* consistencia, int particiones, int tie
 		strcat(Linea3, "\n");
 		fwrite(Linea3, strlen(Linea3), 1, metadata);
 		fclose(metadata);
+		free(direccionDelMetadata);
 		return 0;
 	}
 }
@@ -209,10 +220,8 @@ int crearParticiones(char* direccionFinal, int particiones)
 	FILE* particion;
 	while(i < particiones)
 	{
-		char* particionado = string_new();
-		char* aux = string_new();
-		aux = malloc(sizeof(i)+1);
-		particionado = malloc(strlen(direccionFinal)+sizeof(i)+5);
+		char* aux = malloc(sizeof(i)+1);
+		char* particionado = malloc(strlen(direccionFinal)+sizeof(i)+5);
 		strcpy(aux, string_itoa(i));
 		strcpy(particionado, direccionFinal);
 		strcat(particionado, aux);
@@ -224,18 +233,18 @@ int crearParticiones(char* direccionFinal, int particiones)
 		{
 			if(creatingFL == 0)
 			{
-				char* size = string_new();
-				size = malloc(7);
+				char* size = malloc(7);
 				strcpy(size, "SIZE=");
 				strcat(size, "\n");
 				fwrite(size, strlen(size), 1, particion);
-				char* blocks = string_new();
-				blocks = malloc (9);
+				char* blocks = malloc (9);
 				strcpy(blocks, "BLOCKS=");
 				strcat(blocks, "\n");
 				fwrite(blocks, strlen(blocks), 1, particion);
 				free(particionado);
 				fclose(particion);
+				free(size);
+				free(blocks);
 			}
 			else
 			{
@@ -243,6 +252,7 @@ int crearParticiones(char* direccionFinal, int particiones)
 				fclose(particion);
 			}
 		}
+		free(aux);
 		i++;
 	}
 	return 0;
@@ -252,12 +262,9 @@ int dropTable(char* tablaPorEliminar)
 {
 	DIR* checkdir;
 	DIR* newdir;
-	char* checkaux = string_new();
-	char* tablename = string_new();
-	char* puntodemontaje = string_new();
-	tablename = malloc(strlen(tablaPorEliminar) + 2);
-	checkaux = malloc(strlen(tablaPorEliminar) + strlen(punto_montaje) + 9);
-	puntodemontaje = malloc(strlen(tablaPorEliminar) + strlen(punto_montaje) + 9);
+	char* tablename = malloc(strlen(tablaPorEliminar) + 2);
+	char* checkaux = malloc(strlen(tablaPorEliminar) + strlen(punto_montaje) + 9);
+	char* puntodemontaje = malloc(strlen(tablaPorEliminar) + strlen(punto_montaje) + 9);
 	strcpy(puntodemontaje, punto_montaje);
 	strcat(puntodemontaje, "Tables/");
 	strcpy(tablename, tablaPorEliminar);
@@ -269,6 +276,9 @@ int dropTable(char* tablaPorEliminar)
 		perror("[ERROR] Punto de montaje no accesible");
 		logError("FileSistem: El punto de montaje al que usted desea entrar no es accesible");
 		closedir(newdir);
+		free(tablename);
+		free(checkaux);
+		free(puntodemontaje);
 		return(1);
 	}
 	else
@@ -276,27 +286,35 @@ int dropTable(char* tablaPorEliminar)
 		if(NULL == (checkdir = opendir(checkaux)))
 		{
 			logInfo( "FileSystem: La tabla que usted quiere borrar no existe");
+			closedir(newdir);
+			free(tablename);
+			free(checkaux);
+			free(puntodemontaje);
 			return(2);
 		}
 		else
 		{
+			closedir(newdir);
 			closedir(checkdir);
 			if (limpiadorDeArchivos(checkaux, tablaPorEliminar) == 1)
 			{
 				rmdir(checkaux);
 				logInfo( "FileSystem: el directorio ha sido eliminado correctamente");
+				free(tablename);
+				free(checkaux);
+				free(puntodemontaje);
 				return 0;
 			}
 			else
 			{
 				logError( "FileSystem: error al eliminar el directorio");
+				free(tablename);
+				free(checkaux);
+				free(puntodemontaje);
 				return(3);
 			}
 		}
 	}
-	free(tablename);
-	free(checkaux);
-	free(puntodemontaje);
 }
 
 int limpiadorDeArchivos(char* direccion, char* tabla)
@@ -314,8 +332,7 @@ int limpiadorDeArchivos(char* direccion, char* tabla)
 		return result;
 	}
 	limpiadorDeBloques(direccion);
-	char* direccionMetadata = string_new();
-	direccionMetadata = malloc(strlen(direccion) + 14);
+	char* direccionMetadata = malloc(strlen(direccion) + 14);
 	strcpy(direccionMetadata, direccion);
 	strcat(direccionMetadata, "/Metadata.cfg");
 	t_config * temporalArchivoConfig;
@@ -325,18 +342,15 @@ int limpiadorDeArchivos(char* direccion, char* tabla)
 	int i;
 	for(i = 0; i < particiones; i++)
 	{
-		char* direccionBin = string_new();
-		direccionBin = malloc(strlen(direccion) + sizeof(i) + 3);
+		char* direccionBin = malloc(strlen(direccion) + sizeof(i) + 3);
 		strcpy(direccionBin, direccion);
-		char* archivo = string_new();
-		archivo = malloc(sizeof(i) + 2);
+		char* archivo = malloc(sizeof(i) + 2);
 		strcpy(archivo, string_itoa(i));
 		strcat(archivo, ".bin");
 		strcat(direccionBin, "/");
 		strcat(direccionBin, archivo);
 		int status = remove(direccionBin);
-		if(status == 0)
-			continue;
+		if(status == 0){}
 		else
 		{
 			logError( "FileSystem: Error al eliminar particiones");
@@ -369,11 +383,12 @@ int limpiadorDeArchivos(char* direccion, char* tabla)
 		strcat(direccionTemp, "/");
 		strcat(direccionTemp, archivo);
 		int statusTemp = remove(direccionTemp);
-		if(statusTemp == 0)
-			continue;
+		if(statusTemp == 0){}
 		else
 		{
 			logError( "FileSystem: Error al eliminar temporales");
+			free(direccionTemp);
+			free(archivo);
 			return 0;
 		}
 		free(direccionTemp);
@@ -421,17 +436,14 @@ int mostrarMetadataEspecificada(char* tabla, int tamanio_buffer_metadatas, bool 
 	}
 	else
 	{
-		char* auxdir = string_new();
-		auxdir = malloc(strlen(punto_montaje) + 8);
+		char* auxdir = malloc(strlen(punto_montaje) + 8);
 		strcpy(auxdir, punto_montaje);
 		strcat(auxdir, "Tables/");
-		char* direccionDeTableMetadata = string_new();
-		direccionDeTableMetadata = malloc(strlen(auxdir) + strlen(tabla) + 15);
+		char* direccionDeTableMetadata = malloc(strlen(auxdir) + strlen(tabla) + 15);
 		strcpy(direccionDeTableMetadata, auxdir);
 		strcat(direccionDeTableMetadata, tabla);
 		strcat(direccionDeTableMetadata, "/Metadata.cfg");
-		t_config * temporalArchivoConfig;
-		temporalArchivoConfig = config_create(direccionDeTableMetadata);
+		t_config * temporalArchivoConfig = config_create(direccionDeTableMetadata);
 		char* consistencia = strdup(config_get_string_value(temporalArchivoConfig, "CONSISTENCIA"));
 		int	cantParticiones = config_get_int_value(temporalArchivoConfig, "PARTICIONES");
 		int tiempoEntreCompactaciones = config_get_int_value(temporalArchivoConfig, "TIEMPOENTRECOMPACTACIONES");
@@ -448,6 +460,7 @@ int mostrarMetadataEspecificada(char* tabla, int tamanio_buffer_metadatas, bool 
 			free(auxdir);
 			free(direccionDeTableMetadata);
 			config_destroy(temporalArchivoConfig);
+			free(consistencia);
 			return tamanio_buffer_metadatas;
 		}
 		else
@@ -455,6 +468,10 @@ int mostrarMetadataEspecificada(char* tabla, int tamanio_buffer_metadatas, bool 
 			printf("Las características del metadata de la tabla %s son: \n", tabla);
 			printf("Consistencia: %s. \n Cantidad de Particiones: %i. \n Tiempo entre compactaciones: %i. \n",
 					consistencia, cantParticiones, tiempoEntreCompactaciones);
+			free(direccionDeTableMetadata);
+			config_destroy(temporalArchivoConfig);
+			free(auxdir);
+			free(consistencia);
 			return 0;
 		}
 	}
@@ -734,6 +751,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 		}
 		parserListPointer++;
 	}
+	free(keyHandler);
 	//Paso 3 Correr select
 	t_list* keysettersDeClave = list_create();
 	keysettersDeClave = list_filter(clavesPostParseo, (void*)esDeTalKey);
@@ -877,6 +895,7 @@ void limpiadorDeBloques(char* direccion)
 				unsigned long partlength = (unsigned long)ftell(partpointer);
 				if(partlength == 14)
 				{
+					free(direccionPart);
 					fclose(partpointer);
 				}
 				else
@@ -905,6 +924,7 @@ void limpiadorDeBloques(char* direccion)
 	logInfo("File System: todos los bloques fueron limpiados satisfactoriamente");
 }
 
+
 char* leerBloque(char* bloque)
 {
 	char* direccionBloque = malloc(strlen(direccionFileSystemBlocks) + strlen(bloque) + 5);
@@ -931,6 +951,7 @@ char* leerBloque(char* bloque)
 	}
 }
 
+
 char** obtenerBloques(char* direccion)
 {
 	t_config* archivo = config_create(direccion);
@@ -941,11 +962,13 @@ char** obtenerBloques(char* direccion)
 	return bloques;
 }
 
+
 void killProtocolFileSystem()
 {
 	bitarray_destroy(bitarray);
 	munmap(bitarraycontent, strlen(bitarraycontent));
 	close(bitarrayfd);
-
+	free(globalBitmapPath);
+	free(direccionFileSystemBlocks);
 }
 
