@@ -23,7 +23,7 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 
 			//se lo pido al fs porque no esta
 			int largo_nombre_tabla = strlen(nombre_tabla);
-			size_t tamanio_buffer = sizeof(uint16_t) + sizeof(int);
+			size_t tamanio_buffer = sizeof(uint16_t) + sizeof(int) + largo_nombre_tabla;
 			void* buffer = malloc(tamanio_buffer);
 
 			memcpy(buffer, &key, sizeof(uint16_t));
@@ -81,7 +81,7 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 
 		//se lo pido al fs porque no esta
 		int largo_nombre_tabla = strlen(nombre_tabla);
-		size_t tamanio_buffer = sizeof(uint16_t) + sizeof(int);
+		size_t tamanio_buffer = sizeof(uint16_t) + sizeof(int) + largo_nombre_tabla;
 		void* buffer = malloc(tamanio_buffer);
 
 		memcpy(buffer, &key, sizeof(uint16_t));
@@ -123,6 +123,7 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 		printf("la key de la pagina es %d\n", key_buscada);
 		printf("el value de la pagina es %s\n", value_buscado);
 
+		free(buffer);
 		return value;
 	}
 }
@@ -155,7 +156,7 @@ double insertReq (char* nombre_tabla, uint16_t key, char* value) {
 			buscarEinsertarEnMem(segmento_buscado, key, nuevo_time, value);
 			//preguntar si tiene que tener el 1 o puede ser 0 (es la primera vez que aparece en memoria)
 
-			//prueba
+			//prueba y ademas marco el flag en 1
 			t_est_pag* pagina_buscada = buscarEstPagBuscada(key, segmento_buscado);
 			pagina_buscada->flag = 1;
 
@@ -187,7 +188,7 @@ double insertReq (char* nombre_tabla, uint16_t key, char* value) {
 		buscarEinsertarEnMem(segmento_nuevo, key, nuevo_time, value);
 		//preguntar si tiene que tener el 1 o puede ser 0 (es la primera vez que aparece en memoria)
 
-		//prueba
+		//prueba y ademas marco el flag en 1
 		t_est_pag* pagina_buscada = buscarEstPagBuscada(key, segmento_nuevo);
 		pagina_buscada->flag = 1;
 
@@ -248,13 +249,19 @@ void drop (char** args) {
 
 }
 
-void journal (char** args) {
+void journal () {
 
 //Encontrar paginas con el flag de modificado
 
+	//Si bien no necesito ninguna otra variable como en los casos anterior, al utilizar funciones de orden superior, la meto dentro del
+	//journaling para una mejor abstraccion
+	bool _esPaginaModificada(void* pagina){
+
+		t_est_pag* pagina_a_buscar = (t_est_pag*)pagina;
+		return pagina_a_buscar->flag==1;
+	}
+
 	int cant_segmentos = list_size(lista_segmentos);
-
-
 	char* nombre_tabla;
 
 	if (cant_segmentos ==0)
@@ -263,115 +270,107 @@ void journal (char** args) {
 	}
 	else {
 		//itero segmentos
-	for (int i=0; i<cant_segmentos; i++)
-	{
-
-		t_list* paginas_modif_seg = list_create();
-
-		//tomo uno por uno c/segmento
-		t_segmento* seg_buscado = list_get(lista_segmentos, i);
-
-		//guardo nombre y lista de paginas del segmento
-		nombre_tabla = seg_buscado->nombre_tabla;
-		int tamanio_tabla = strlen(nombre_tabla);
-		t_list* paginas_del_segmento = seg_buscado->tabla_paginas.paginas;
-
-		//filtro las páginas que fueron modificadas
-		paginas_modif_seg = list_filter(paginas_del_segmento, esPaginaModificada);
-
-		int cant_pag_modif = list_size(paginas_modif_seg);
-
-		if (cant_pag_modif == 0)
+		for (int i=0; i<cant_segmentos; i++)
 		{
-			log_info(loggerMem, "No existen páginas modificadas para ejecutar el Journaling");
-		}
-		else
-		{
+			//tomo uno por uno c/segmento
+			t_segmento* seg_buscado = list_get(lista_segmentos, i);
 
-		double timestamp_enviar;
-		uint16_t key_enviar;
-		char* value_enviar = malloc(tamanio_value);
+			//guardo nombre y lista de paginas del segmento
+			nombre_tabla = seg_buscado->nombre_tabla;
+			int tamanio_tabla = strlen(nombre_tabla);
+			t_list* paginas_del_segmento = seg_buscado->tabla_paginas.paginas;
 
+			//filtro las páginas que fueron modificadas
+			t_list* paginas_modif_seg = list_filter(paginas_del_segmento, _esPaginaModificada);
 
-		//recorro cada página del segmento
-		for (int j=0; j<cant_pag_modif; j++)
+			int cant_pag_modif = list_size(paginas_modif_seg);
+
+			if (cant_pag_modif == 0)
+			{
+				log_info(loggerMem, "No existen páginas modificadas para ejecutar el Journaling");
+			}
+			else
 			{
 
-				t_est_pag* pag_a_enviar = list_get(paginas_modif_seg, j);
+			//recorro cada página del segmento
+				for (int j=0; j<cant_pag_modif; j++)
+					{
 
-				//guardo info de la página
-				memcpy(&timestamp_enviar, memoria_principal+(pag_a_enviar->offset*tamanio_pag), sizeof(double));
-				memcpy(&key_enviar, memoria_principal+(pag_a_enviar->offset*tamanio_pag)+sizeof(double), sizeof(uint16_t));
-				memcpy(value_enviar, memoria_principal+(pag_a_enviar->offset*tamanio_pag)+sizeof(double)+sizeof(uint16_t), tamanio_value);
+						t_est_pag* pag_a_enviar = list_get(paginas_modif_seg, j);
+						double timestamp_enviar;
+						uint16_t key_enviar;
+						char* value_enviar = malloc(tamanio_value);
 
-				int tamanio_value_enviar = strlen(value_enviar);
-				//creo un buffer para enviar con tamaño de tabla, tabla, key, tamaño de value, value y timestamp
-				size_t tamanio_buffer = sizeof(int) + tamanio_tabla + sizeof(uint16_t) + sizeof(int) + tamanio_value_enviar  + sizeof(double);
-				void*buffer = malloc(tamanio_buffer);
+						//guardo info de la página
+						memcpy(&timestamp_enviar, memoria_principal+(pag_a_enviar->offset*tamanio_pag), sizeof(double));
+						memcpy(&key_enviar, memoria_principal+(pag_a_enviar->offset*tamanio_pag)+sizeof(double), sizeof(uint16_t));
+						memcpy(value_enviar, memoria_principal+(pag_a_enviar->offset*tamanio_pag)+sizeof(double)+sizeof(uint16_t), tamanio_value);
 
-				memcpy(buffer, &timestamp_enviar, sizeof(double));
-				memcpy(buffer+sizeof(double), &tamanio_tabla, sizeof(int));
-				memcpy(buffer+sizeof(double)+sizeof(int), nombre_tabla, tamanio_tabla);
-				memcpy(buffer+sizeof(double)+sizeof(int)+tamanio_tabla, &key_enviar, sizeof(uint16_t));
-				memcpy(buffer+sizeof(double)+sizeof(int)+tamanio_tabla+sizeof(uint16_t), &tamanio_value_enviar, sizeof(int));
-				memcpy(buffer+sizeof(double)+sizeof(int)+tamanio_tabla+sizeof(uint16_t)+sizeof(int), value_enviar, tamanio_value_enviar);
+						int tamanio_value_enviar = strlen(value_enviar);
+						//creo un buffer para enviar con tamaño de tabla, tabla, key, tamaño de value, value y timestamp
+						size_t tamanio_buffer = sizeof(int) + tamanio_tabla + sizeof(uint16_t) + sizeof(int) + tamanio_value_enviar  + sizeof(double);
+						void*buffer = malloc(tamanio_buffer);
 
-				double timeAchequear;
-				memcpy(&timeAchequear, buffer+sizeof(int)+tamanio_tabla+sizeof(uint16_t)+sizeof(int)+tamanio_value, sizeof(double) );
+						memcpy(buffer, &timestamp_enviar, sizeof(double));
+						memcpy(buffer+sizeof(double), &tamanio_tabla, sizeof(int));
+						memcpy(buffer+sizeof(double)+sizeof(int), nombre_tabla, tamanio_tabla);
+						memcpy(buffer+sizeof(double)+sizeof(int)+tamanio_tabla, &key_enviar, sizeof(uint16_t));
+						memcpy(buffer+sizeof(double)+sizeof(int)+tamanio_tabla+sizeof(uint16_t), &tamanio_value_enviar, sizeof(int));
+						memcpy(buffer+sizeof(double)+sizeof(int)+tamanio_tabla+sizeof(uint16_t)+sizeof(int), value_enviar, tamanio_value_enviar);
 
-				printf("Time a chequear: %lf", timeAchequear);
+						printf("la pagina del segmento %s posee: \n el timestamp %lf\n la key %d\n y el value %s\n", nombre_tabla, timestamp_enviar, key_enviar, value_enviar);
 
-				printf("la pagina del segmento %s posee: \n el timestamp %lf\n la key %d\n y el value %s\n", nombre_tabla, timestamp_enviar, key_enviar, value_enviar);
+						//enviar por c/u una petición de insert al FileSystem
 
-				//enviar por c/u una petición de insert al FileSystem
+						prot_enviar_mensaje(socket_fs, JOURNALING_INSERT, tamanio_buffer, buffer);
 
-				prot_enviar_mensaje(socket_fs, JOURNALING_INSERT, tamanio_buffer, buffer);
+						//posibles respuestas: INSERT_SUCCESSFUL, INSERT_FAILED_ON_MEMTABLE, INSERT_FAILURE
 
-				//posibles respuestas: INSERT_SUCCESSFUL, INSERT_FAILED_ON_MEMTABLE, INSERT_FAILURE
+						t_prot_mensaje* mensaje_fs = prot_recibir_mensaje(socket_fs);
 
-				t_prot_mensaje* mensaje_fs = prot_recibir_mensaje(socket_fs);
+						switch(mensaje_fs->head){
 
-				switch(mensaje_fs->head){
+						case INSERT_SUCCESSFUL:{
+								printf("Los datos de la tabla fueron actualizados\n");
+							}break;
 
-				case INSERT_SUCCESSFUL:{
-						printf("Los datos de la tabla fueron actualizados\n");
-					}break;
+						case INSERT_FAILED_ON_MEMTABLE:{
+								printf("El insert falló en la memtable\n");
+							}break;
 
-				case INSERT_FAILED_ON_MEMTABLE:{
-						printf("El insert falló en la memtable\n");
-					}break;
+						case INSERT_FAILURE:{
+								printf("Hubo un error al insertar la tabla\n");
+							}break;
+							default:{
+								break;
+							}
 
-				case INSERT_FAILURE:{
-						printf("Hubo un error al insertar la tabla\n");
-					}break;
-					default:{
-						break;
+						}
+						prot_destruir_mensaje(mensaje_fs);
+
+						free(buffer);
+						free(pag_a_enviar);
 					}
 
-				}
-				prot_destruir_mensaje(mensaje_fs);
-
-				free(buffer);
-				free(pag_a_enviar);
 			}
-
+			//list_destroy(paginas_modif_seg);
 		}
-
-		list_destroy(paginas_modif_seg);
-		//free(seg_buscado); PREGUNTAR, list_get precisa free?
 
 	}
 
-}
-	//eliminar segmentos actuales (list_destroy(lista_segmentos))
-	list_destroy(lista_segmentos);
+	int cant_seg_antes = list_size(lista_segmentos);
+	printf("Segmentos que habían: %d \n", cant_seg_antes);
+
+	//elimino segmentos y paginas actuales
+	eliminar_segmentos();
+
+	int cant_seg_ahora=list_size(lista_segmentos);
+	printf("Segmentos que quedaron: %d \n", cant_seg_ahora);
+
+	liberar_marcos();
 }
 
-bool esPaginaModificada(void* pagina){
 
-	t_est_pag* pagina_a_buscar = (t_est_pag*)pagina;
-	return pagina_a_buscar->flag==1;
-}
 
 
 

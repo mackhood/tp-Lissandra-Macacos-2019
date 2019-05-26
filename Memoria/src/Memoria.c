@@ -97,7 +97,7 @@ void levantarEstrMemorias(){
 	lista_segmentos = list_create();
 
 	//_____________________________PRUEBA________________________________//
-	double timestamp = 1876;
+	/*double timestamp = 1876;
 	uint16_t key = 16;
 	char* value = malloc(tamanio_value);
 	memcpy(value, "abc", tamanio_value);
@@ -108,7 +108,7 @@ void levantarEstrMemorias(){
 
 	uint16_t key_recolectada;
 	memcpy(&key_recolectada, memoria_principal+(tamanio_pag*4)+sizeof(double), sizeof(uint16_t));
-	printf("en el marco 4 deberia estar la key %d\n", key_recolectada);
+	printf("en el marco 4 deberia estar la key %d\n", key_recolectada);*/
 
 	//______________________________PRUEBA_______________________________//
 }
