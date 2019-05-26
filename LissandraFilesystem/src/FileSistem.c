@@ -472,7 +472,7 @@ int mostrarMetadataEspecificada(char* tabla, int tamanio_buffer_metadatas, bool 
 		else
 		{
 			printf("Las características del metadata de la tabla %s son: \n", tabla);
-			printf("Consistencia: %s. \n Cantidad de Particiones: %i. \n Tiempo entre compactaciones: %i. \n",
+			printf(" Consistencia: %s. \n Cantidad de Particiones: %i. \n Tiempo entre compactaciones: %i. \n",
 					consistencia, cantParticiones, tiempoEntreCompactaciones);
 			free(direccionDeTableMetadata);
 			config_destroy(temporalArchivoConfig);
