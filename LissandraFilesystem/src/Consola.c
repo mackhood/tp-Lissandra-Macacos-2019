@@ -28,11 +28,13 @@ void consola()
 		if (strcmp(linea, "exit")==0){
 			free(linea);
 			puts("EXIT.");
+			clear_history();
 			signalExit = true;
 			break;
 		}
-
-		if (ejecutar_linea(linea)){
+		if(!strcmp(linea, ""))
+			continue;
+		else if (ejecutar_linea(linea)){
 			add_history(linea);
 		}
 		free(linea);
@@ -123,18 +125,16 @@ void selectt (char** args)
 	}
 	else
 	{
-		char* tabla = string_new();
-		tabla = malloc(strlen(args[1]) + 1);
+		char* tabla = malloc(strlen(args[1]) + 1);
 		strcpy(tabla, args[1]);
-		char* claveaux = string_new();
-		claveaux = malloc(strlen(args[2]) + 1);
+		char* claveaux = malloc(strlen(args[2]) + 1);
 		strcpy(claveaux, args[2]);
 		uint16_t key = atoi(claveaux);
 		t_keysetter* keysetterObtenido = selectKey(tabla, key);
 		if(keysetterObtenido != NULL)
-			printf("La clave obtenida mas actualizada es %i,%lf,%s", keysetterObtenido->key, keysetterObtenido->timestamp, keysetterObtenido->clave);
+			printf("La clave obtenida mas actualizada es %i,%lf,%s\n", keysetterObtenido->key, keysetterObtenido->timestamp, keysetterObtenido->clave);
 		else
-			printf("La tabla que usted quiso acceder, o la clave que usted buscó, no existía dentro del File System.");
+			printf("La tabla que usted quiso acceder, o la clave que usted buscó, no existía dentro del File System.\n");
 		free(tabla);
 		free(claveaux);
 	}
@@ -155,11 +155,9 @@ void insert (char** args)
 	}
 	else
 	{
-		char* tabla = string_new();
-		tabla = malloc(strlen(args[1]) + 1);
+		char* tabla = malloc(strlen(args[1]) + 1);
 		strcpy(tabla, args[1]);
-		char* claveaux = string_new();
-		claveaux = malloc(strlen(args[2]) + 1);
+		char* claveaux = malloc(strlen(args[2]) + 1);
 		strcpy(claveaux, args[2]);
 		uint16_t key = atoi(claveaux);
 		if(string_contains(args[3], ";"))
@@ -169,8 +167,7 @@ void insert (char** args)
 		}
 		else
 		{
-			char* value = string_new();
-			value = malloc(strlen(args[3]) + 1);
+			char* value = malloc(strlen(args[3]) + 1);
 			strcpy(value, args[3]);
 			int result = 0;
 			if(args[4] == NULL)
@@ -181,8 +178,7 @@ void insert (char** args)
 			}
 			else
 			{
-				char* timestampaux = string_new();
-				timestampaux = malloc(strlen(args[4]) + 1);
+				char* timestampaux = malloc(strlen(args[4]) + 1);
 				strcpy(timestampaux, args[4]);
 				double timestamp = atoi(timestampaux);
 				result = insertKeysetter(tabla, key, value, timestamp);
@@ -224,18 +220,14 @@ void create (char** args)
 	}
 	else
 	{
-		char* tabla = string_new();
-		tabla = malloc(strlen(args[1]) + 1);
+		char* tabla = malloc(strlen(args[1]) + 1);
 		strcpy(tabla, args[1]);
-		char* consistencia = string_new();
-		consistencia = malloc(strlen(args[2]) + 1);
+		char* consistencia = malloc(strlen(args[2]) + 1);
 		strcpy(consistencia, args[2]);
-		char* particionesaux = string_new();
-		particionesaux = malloc(strlen(args[3]) + 1);
+		char* particionesaux = malloc(strlen(args[3]) + 1);
 		strcpy(particionesaux, args[3]);
 		int particiones = atoi(particionesaux);
-		char* intervaloCompactacionaux = string_new();
-		intervaloCompactacionaux = malloc(strlen(args[4]) + 1);
+		char* intervaloCompactacionaux = malloc(strlen(args[4]) + 1);
 		strcpy(intervaloCompactacionaux, args[4]);
 		int intervaloCompactacion = atoi(intervaloCompactacionaux);
 		switch(llamadoACrearTabla(tabla, consistencia, particiones, intervaloCompactacion))
@@ -311,8 +303,7 @@ void drop (char** args)
 	}
 	else
 	{
-		char* tablaAEliminar = string_new();
-		tablaAEliminar = malloc(strlen(args[1]) + 6);
+		char* tablaAEliminar = malloc(strlen(args[1]) + 6);
 		strcpy(tablaAEliminar, args[1]);
 		int results = llamarEliminarTabla(tablaAEliminar);
 		switch(results)
@@ -335,6 +326,7 @@ void drop (char** args)
 			logError( "Consola: operacion no terminada");
 		}
 		}
+		free(tablaAEliminar);
 	}
 }
 
@@ -355,3 +347,4 @@ int chequearParametros(char** args, int cantParametros)
 	}
 	return parametroinvalido;
 }
+

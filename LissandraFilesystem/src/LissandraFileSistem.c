@@ -16,6 +16,8 @@ int main(void)
 			break;
 		}
 	}
+	free(lissandraFL_log_ruta);
+	free(lissandraFL_config_ruta);
 	return EXIT_SUCCESS;
 }
 
@@ -28,6 +30,8 @@ void setearValores(t_config * archivoConfig)
 
 void iniciar()
 {
+	selectActivo = 0;
+	pthread_mutex_init(&compactacionActiva, NULL);
 	iniciarLissandra();
 	iniciarCompactador();
 	iniciarFileSistem();
@@ -68,7 +72,6 @@ void iniciarFileSistem()
 
 void terminationProtocol()
 {
-
 	list_destroy(hilosLFL);
 	killProtocolLissandra();
 	killProtocolCompactador();
@@ -77,4 +80,5 @@ void terminationProtocol()
 	list_destroy(memtable);
 	list_destroy(tablasEnEjecucion);
 	logInfo("Main: Desconectando sistema");
+	log_destroy(logger);
 }
