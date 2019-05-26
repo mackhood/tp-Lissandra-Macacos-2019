@@ -448,7 +448,22 @@ int llamadoACrearTabla(char* nombre, char* consistencia, int particiones, int ti
 
 int llamarEliminarTabla(char* tablaPorEliminar)
 {
-	return dropTable(tablaPorEliminar);
+	bool estaTabla(t_TablaEnEjecucion* tablaDeLista)
+	{
+		char* tablaAux = malloc(strlen(tablaPorEliminar) + 1);
+		strcpy(tablaAux, tablaPorEliminar);
+		int cantCarac = strlen(tablaDeLista->tabla);
+		//char* tablaDeListaAux = string_new();
+		char* tablaDeListaAux = malloc(cantCarac + 1);
+		strcpy(tablaDeListaAux, tablaDeLista->tabla);
+		bool result = (0 == strcmp(tablaDeListaAux, tablaAux));
+		free(tablaDeListaAux);
+		free(tablaAux);
+		return result;
+	}
+	int result = dropTable(tablaPorEliminar);
+	list_remove_by_condition(tablasEnEjecucion, (void*) estaTabla);
+	return result;
 }
 
 int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, char* buffer)

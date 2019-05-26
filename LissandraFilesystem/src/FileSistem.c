@@ -22,8 +22,9 @@ void testerFileSystem()
 		logInfo( "FileSystem: Se procede a crear los bloques de memoria");
 		crearParticiones(direccionFileSystem, blocks);
 	}
+	else
+		fclose(doomsdaypointer);
 	levantarBitmap(direccionFileSystem);
-	fclose(doomsdaypointer);
 	free(direccionFileSystem);
 	free(aux);
 }
@@ -233,16 +234,19 @@ int crearParticiones(char* direccionFinal, int particiones)
 		{
 			if(creatingFL == 0)
 			{
-				char* size = malloc(7);
-				strcpy(size, "SIZE=");
+				char* size = malloc(8);
+				strcpy(size, "SIZE=0");
 				strcat(size, "\n");
 				fwrite(size, strlen(size), 1, particion);
-				char* blocks = malloc (9);
-				strcpy(blocks, "BLOCKS=");
-				strcat(blocks, "\n");
+				char* blocks = malloc(sizeof(int) + 13);
+				char* auxBlock = obtenerBloqueLibre();
+				strcpy(blocks, "BLOCKS=[");
+				strcat(blocks, auxBlock);
+				strcat(blocks, "]\n");
 				fwrite(blocks, strlen(blocks), 1, particion);
 				free(particionado);
 				fclose(particion);
+				free(auxBlock);
 				free(size);
 				free(blocks);
 			}
@@ -373,6 +377,8 @@ int limpiadorDeArchivos(char* direccion, char* tabla)
 	}
 	t_TablaEnEjecucion* tablaABorrar = list_find(tablasEnEjecucion, (void*)estaTabla);
 	int b;
+	if(tablaABorrar->cantTemps == 0)
+		return 1;
 	for(b = 0; b < tablaABorrar->cantTemps; b++)
 	{
 		char* direccionTemp = malloc(strlen(direccion) + strlen(string_itoa(b)) + 6);
@@ -608,20 +614,16 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 			char* direccionTemp = malloc(strlen(direccionTabla) + strlen(tdp->d_name) + 2);
 			strcpy(direccionTemp, direccionTabla);
 			strcat(direccionTemp, tdp->d_name);
-			FILE* temppointer = fopen(direccionTemp, "r+");
-			fseek(temppointer, 0, SEEK_END);
-			unsigned long templength = (unsigned long)ftell(temppointer);
-			if(templength == 14)
+			int partSize = obtenerTamanioArchivoConfig(direccionTemp);
+			if(partSize == 0)
 			{
-				fclose(temppointer);
+				free(direccionTemp);
 			}
 			else
 			{
-				fclose(temppointer);
 				int i = 0;
 				char** bloques = obtenerBloques(direccionTemp);
-				int tamanio_temp = obtenerTamanioArchivoConfig(direccionTemp);
-				char* clavesLeidas = malloc(tamanio_temp + 1);
+				char* clavesLeidas = malloc(partSize + 1);
 				while(bloques[i] != NULL)
 				{
 					if(i == 0)
@@ -644,8 +646,8 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 	strcpy(direccionParticion, direccionTabla);
 	strcat(direccionParticion, particionARevisar);
 	strcat(direccionParticion, ".bin");
-	unsigned long tamanioParticion = obtenerTamanioArchivo(direccionParticion);
-	if(tamanioParticion == 14){	}
+	int tamanioParticion = obtenerTamanioArchivoConfig(direccionParticion);
+	if(tamanioParticion == 0){	}
 	else
 	{
 		char** bloques = obtenerBloques(direccionParticion);
@@ -890,40 +892,30 @@ void limpiadorDeBloques(char* direccion)
 				strcpy(direccionPart, direccion);
 				strcat(direccionPart, "/");
 				strcat(direccionPart, tdp->d_name);
-				FILE* partpointer = fopen(direccionPart, "r+");
-				fseek(partpointer, 0, SEEK_END);
-				unsigned long partlength = (unsigned long)ftell(partpointer);
-				if(partlength == 14)
+				int i = 0;
+				char** bloques = obtenerBloques(direccionPart);
+				while(bloques[i] != NULL)
 				{
-					free(direccionPart);
-					fclose(partpointer);
+					char* direccionBloqueALiberar = malloc(strlen(direccionFileSystemBlocks) + strlen(bloques[i]) + 5);
+					strcpy(direccionBloqueALiberar, direccionFileSystemBlocks);
+					strcat(direccionBloqueALiberar, bloques[i]);
+					strcat(direccionBloqueALiberar, ".bin");
+					FILE* fd = fopen(direccionBloqueALiberar, "w");
+					fclose(fd);
+					int indexBit = atoi(bloques[i]);
+					bitarray_clean_bit(bitarray, indexBit);
+					free(direccionBloqueALiberar);
+					i++;
 				}
-				else
-				{
-					fclose(partpointer);
-					int i = 0;
-					char** bloques = obtenerBloques(direccionPart);
-					while(bloques[i] != NULL)
-					{
-						char* direccionBloqueALiberar = malloc(strlen(direccionFileSystemBlocks) + strlen(bloques[i]) + 5);
-						strcpy(direccionBloqueALiberar, direccionFileSystemBlocks);
-						strcat(direccionBloqueALiberar, bloques[i]);
-						strcat(direccionBloqueALiberar, ".bin");
-						FILE* fd = fopen(direccionBloqueALiberar, "w");
-						fclose(fd);
-						free(direccionBloqueALiberar);
-						i++;
-					}
-					free(bloques);
-					free(direccionPart);
-				}
+				free(bloques);
+				free(direccionPart);
+				msync(bitarraycontent, bitarrayfd, MS_SYNC);
 			}
 		}
 	}
 	closedir(tabla);
 	logInfo("File System: todos los bloques fueron limpiados satisfactoriamente");
 }
-
 
 char* leerBloque(char* bloque)
 {
@@ -951,7 +943,6 @@ char* leerBloque(char* bloque)
 	}
 }
 
-
 char** obtenerBloques(char* direccion)
 {
 	t_config* archivo = config_create(direccion);
@@ -961,7 +952,6 @@ char** obtenerBloques(char* direccion)
 	config_destroy(archivo);
 	return bloques;
 }
-
 
 void killProtocolFileSystem()
 {
