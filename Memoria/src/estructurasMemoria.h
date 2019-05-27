@@ -78,6 +78,10 @@ t_est_pag* buscarEstPagBuscada(uint16_t key, t_segmento* segmento_buscado);
 int aplicarLRU();
 void buscarEinsertarEnMem(t_segmento* segmento, uint16_t key, double time_a_insertar, char* value);
 int buscarPaginaLibre(); //ahora devuelvo un marco
-
+void journal (); //Si bien es una request la pongo aca dentro debido a que el LRU debe utilizarla
+void eliminar_segmentos();
+void liberar_marcos();
+void freePaginas(void* pagina);
+void freeSegmentos(void* segmento);
 
 #endif /* ESTRUCTURASMEMORIA_H_ */

@@ -52,10 +52,12 @@ int buscarPaginaLibre(){
 	for(int marco_disponible=0; marco_disponible<cant_paginas; marco_disponible++){
 		if(estados_memoria[marco_disponible]==LIBRE)
 			{
+			printf("el marco a asignar es %d\n", marco_disponible);
 			return marco_disponible;
 			}
 	}
 	//sali del for por ende estan todos los marcos ocupados
+	printf("aplico LRU debido a que estan todos los marcos ocupados\n");
 	int marco_disponible = aplicarLRU();
 	return marco_disponible;
 }
@@ -65,11 +67,95 @@ int buscarPaginaLibre(){
 int aplicarLRU(){
 	//dentro va a estar el journaling
 
-	return 0;
+	//declaro el time, la pag, el segmento y la pos de la pag en tp del seg debido a que los asignare a futuro para la operatoria
+	//t_est_pag* pag_mas_vieja;
+	double time_mas_viejo = getCurrentTime();
+	t_segmento* seg_con_pag_mas_vieja;
+	int pos_pag_en_tp_seg;
+
+	int cant_segmentos = list_size(lista_segmentos);
+
+	//No pregunto si hay segmentos debido a que si hago el LRU es porque CLARAMENTE hay segmentos, lo mismo con las paginas
+	for(int i = 0; i< cant_segmentos; i++){
+		t_segmento* segmento_a_evaluar = list_get(lista_segmentos, i);
+		int cant_paginas_segmento = list_size(segmento_a_evaluar->tabla_paginas.paginas);
+
+		for(int j = 0; j< cant_paginas_segmento; j++){
+			t_est_pag* pagina_a_evaluar = list_get(segmento_a_evaluar->tabla_paginas.paginas, j);
+			double time_pag_a_evaluar;
+			memcpy(&time_pag_a_evaluar, memoria_principal+tamanio_pag*(pagina_a_evaluar->offset), sizeof(double));
+
+			if( (pagina_a_evaluar->flag == 0) && (time_pag_a_evaluar < time_mas_viejo) ){
+				time_mas_viejo = time_pag_a_evaluar;
+				//pag_mas_vieja = pagina_a_evaluar;
+				seg_con_pag_mas_vieja = segmento_a_evaluar;
+				pos_pag_en_tp_seg = j;
+			}
+		}
+	}
+
+	//si salgo del for y mi time sigue en 0 significa que todas las paginas de todos los segmentos se encuentran modificados (FULL) o que algo raro pasó
+	if(time_mas_viejo == 0){
+		printf("Aplico Journal debido a que mi memoria se encuentra FULL\n");
+		journal();
+		return 0;
+	}
+	else{
+		//significa que encontre la pag mas vieja y tiene flag == 0
+		//devuelvo la misma pagina que pag_mas_vieja
+
+		t_est_pag* pagina_a_remover = (t_est_pag*)list_remove(seg_con_pag_mas_vieja->tabla_paginas.paginas, pos_pag_en_tp_seg);
+		estados_memoria[pagina_a_remover->offset] = LIBRE;
+		int marco_libre = pagina_a_remover->offset;
+		printf("Encontre la pag mas vieja con flag en 0 y nos habilitara el marco %d\n", marco_libre);
+		free(pagina_a_remover);
+
+		return marco_libre;
+	}
 }
 
-/*
- *  time mas viejo = 0
+void eliminar_segmentos(){
+
+	int cant_segmentos = list_size(lista_segmentos);
+
+	for(int i = 0; i<cant_segmentos; i++){
+
+		t_segmento* segmento = list_get(lista_segmentos, i);
+
+		//creo que usando free libero todas las posiciones
+		t_list* paginas_segmento = segmento->tabla_paginas.paginas;
+		//list_clean_and_destroy_elements(paginas_segmento, &free);
+		list_destroy(paginas_segmento); //--> asi funcionaba
+	}
+
+	//list_clean_and_destroy_elements(lista_segmentos, &free);
+	list_clean(lista_segmentos); //asi funcionaba pero tengo que liquidar lo de adentro tambien
+}
+
+void liberar_marcos(){
+
+	for(int marco_ocupado=0; marco_ocupado<cant_paginas; marco_ocupado++){
+			if(estados_memoria[marco_ocupado]==OCUPADO)
+				{
+					estados_memoria[marco_ocupado] = LIBRE;
+				}
+			}
+}
+
+void freePaginas(void* pagina){
+	t_est_pag* pag_a_liberar = (t_est_pag*)pagina;
+	free(pag_a_liberar);
+}
+
+void freeSegmentos(void* segmento){
+	t_segmento* segmento_a_liberar = (t_segmento*)segmento;
+	free(segmento_a_liberar->tabla_paginas.paginas);
+	free(segmento_a_liberar);
+}
+
+/*LRU
+ *
+ *  time mas viejo = tiempo actual
  *  for(cant segmentos){
  *  	obtengo segmento
  * 	 	for(cantidad paginas de segmento obtenido){
@@ -90,8 +176,6 @@ int aplicarLRU(){
  *		//devuelvo el marco de la pagina
  *		return pagina_mas_vieja.marco
  *	}
- *
- *
  *
  */
 
