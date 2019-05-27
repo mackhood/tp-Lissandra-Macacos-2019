@@ -33,7 +33,6 @@ void setearValoresCompactador(t_config* archivoConfig)
 	tiempoDump = config_get_int_value(archivoConfig, "TIEMPO_DUMP");
 	tablasEnEjecucion = list_create();
 	slowestCompactationInterval = 0;
-	deathProtocol = 0;
 	lastDumpSituation = 0;
 }
 
@@ -123,17 +122,15 @@ void gestionarMemtable()
 	{
 		usleep(tiempoDump * 1000);
 		int a = 0;
+		pthread_mutex_lock(&dumpEnCurso);
 		while(NULL != list_get(tablasEnEjecucion, a))
 		{
 			t_TablaEnEjecucion* tablaTomada = list_get(tablasEnEjecucion, a);
 			crearTemporal(tablaTomada->tabla);
 			a++;
 		}
-		if(deathProtocol){}
-		else
-		{
-			list_clean(memtable);
-		}
+		list_clean(memtable);
+		pthread_mutex_unlock(&dumpEnCurso);
 	}
 }
 
@@ -300,7 +297,6 @@ void ejecutarCompactacion(char* tabla)
 
 void killProtocolCompactador()
 {
-	deathProtocol = 1;
 	lastDumpSituation = 1;
 	list_clean(tablasEnEjecucion);
 	logInfo("Compactador: Desconectando todas las tablas.");

@@ -32,6 +32,7 @@ void iniciar()
 {
 	selectActivo = 0;
 	pthread_mutex_init(&compactacionActiva, NULL);
+	pthread_mutex_init(&dumpEnCurso, NULL);
 	iniciarLissandra();
 	iniciarCompactador();
 	iniciarFileSistem();

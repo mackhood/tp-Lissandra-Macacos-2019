@@ -330,6 +330,14 @@ void escucharMemoria(int* socket_memoria)
 
 int insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibido, double timestampRecibido)
 {
+	while(1)
+	{
+		if(0 == pthread_mutex_trylock(&dumpEnCurso))
+		{
+			pthread_mutex_unlock(&dumpEnCurso);
+			break;
+		}
+	}
 	tamanio_memtable = memtable->elements_count;
 	t_Memtablekeys* auxiliar = malloc(sizeof(t_Memtablekeys) + 4);
 	t_keysetter* auxiliarprima = malloc(sizeof(t_keysetter) + 3);

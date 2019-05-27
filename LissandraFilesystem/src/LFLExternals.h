@@ -54,6 +54,7 @@ char* punto_montaje;
 t_list* tablasEnEjecucion;
 int selectActivo;
 pthread_mutex_t compactacionActiva;
+pthread_mutex_t dumpEnCurso;
 
 /* FUNCIONES GLOBALES */
 int chequearTimestamps(t_Memtablekeys* key1, t_Memtablekeys* key2);
