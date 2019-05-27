@@ -120,10 +120,6 @@ void gestionarMemtable()
 	{
 		usleep(tiempoDump * 1000);
 		int a = 0;
-		if(NULL != list_get(memtable, 0))
-		{
-			logInfo("Compactador: Se procede a realizar un dump");
-		}
 		pthread_mutex_lock(&dumpEnCurso);
 		while(NULL != list_get(tablasEnEjecucion, a))
 		{

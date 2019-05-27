@@ -75,23 +75,29 @@ void escucharMemoria(int* socket_memoria)
 		{
 			case HANDSHAKE:
 			{
-				logInfo( "Lissandra: me llegó un handshake de una Memoria, procedo a enviar los Metadatas");
-				bool solicitadoPorMemoria = true;
-				char* buffer = string_new();
-				if(0 == describirTablas("", solicitadoPorMemoria, buffer))
-				{
-					size_t tamanioBuffer = strlen(buffer);
-					void* messageBuffer = malloc(tamanioBuffer + 1);
-					memcpy(messageBuffer, buffer, strlen(buffer));
-					prot_enviar_mensaje(socket, FULL_DESCRIBE, tamanioBuffer, messageBuffer);
-					logInfo( "Lissandra: Se ha enviado la metadata de todas las tablas a Memoria.");
-				}
-				else
-				{
-					prot_enviar_mensaje(socket, FAILED_DESCRIBE, 0, NULL);
-					logError( "Lissandra: falló al leer todas las tablas");
-				}
-				free(buffer);
+				logInfo( "Lissandra: me llegó un handshake de una Memoria, procedo a enviar los datos necesarios");
+//				bool solicitadoPorMemoria = true;
+//				char* buffer = string_new();
+//				if(0 == describirTablas("", solicitadoPorMemoria, buffer))
+//				{
+//					size_t tamanioBuffer = strlen(buffer);
+//					void* messageBuffer = malloc(tamanioBuffer + 1);
+//					memcpy(messageBuffer, buffer, strlen(buffer));
+//					prot_enviar_mensaje(socket, FULL_DESCRIBE, tamanioBuffer, messageBuffer);
+//					logInfo("Lissandra: Se ha enviado la metadata de todas las tablas a Memoria.");
+//				}
+//				else
+//				{
+//					prot_enviar_mensaje(socket, FAILED_DESCRIBE, 0, NULL);
+//					logError("Lissandra: falló al leer todas las tablas");
+//				}
+//				free(buffer);
+
+				size_t tamanioBuffer = sizeof(int);
+				void* messageBuffer = malloc(tamanioBuffer + 1);
+				memcpy(messageBuffer, tamanio_value, sizeof(int));
+				prot_enviar_mensaje(socket, HANDSHAKE, tamanioBuffer, messageBuffer);
+				logInfo("Lissandra: Se ha enviado la información de saludo a la Memoria.");
 				break;
 			}
 			case SOLICITUD_TABLA:
