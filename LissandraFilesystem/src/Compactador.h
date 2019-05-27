@@ -11,7 +11,7 @@
 /* VARIABLES GLOBALES*/
 
 int tiempoDump;
-int slowestCompactionInterval;
+int slowestCompactationInterval;
 int lastDumpSituation;
 
 
