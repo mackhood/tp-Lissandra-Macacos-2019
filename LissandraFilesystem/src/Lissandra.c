@@ -119,7 +119,7 @@ void escucharMemoria(int* socket_memoria)
 //
 //				prot_enviar_mensaje(socket, VALUE_SOLICITADO_OK, tamanio_buffer, buffer);
 
-				 t_keysetter* helpinghand = selectKey(tabla, auxkey);
+				 t_keysetter* helpingHand = selectKey(tabla, auxkey);
 				 if(helpingHand != NULL)
 				 {
 					double tiempo_pag = helpinghand->timestamp;
