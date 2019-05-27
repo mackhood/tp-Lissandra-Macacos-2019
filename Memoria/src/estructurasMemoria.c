@@ -72,6 +72,7 @@ int aplicarLRU(){
 	double time_mas_viejo = getCurrentTime();
 	t_segmento* seg_con_pag_mas_vieja;
 	int pos_pag_en_tp_seg;
+	bool hay_pag_a_liberar = false;
 
 	int cant_segmentos = list_size(lista_segmentos);
 
@@ -90,12 +91,13 @@ int aplicarLRU(){
 				//pag_mas_vieja = pagina_a_evaluar;
 				seg_con_pag_mas_vieja = segmento_a_evaluar;
 				pos_pag_en_tp_seg = j;
+				hay_pag_a_liberar = true;
 			}
 		}
 	}
 
-	//si salgo del for y mi time sigue en 0 significa que todas las paginas de todos los segmentos se encuentran modificados (FULL) o que algo raro pasó
-	if(time_mas_viejo == 0){
+	//si salgo del for y no hay pagina a liberar significa que todas las paginas de todos los segmentos se encuentran modificados (FULL) o que algo raro pasó
+	if(hay_pag_a_liberar){
 		printf("Aplico Journal debido a que mi memoria se encuentra FULL\n");
 		journal();
 		return 0;
@@ -124,12 +126,12 @@ void eliminar_segmentos(){
 
 		//creo que usando free libero todas las posiciones
 		t_list* paginas_segmento = segmento->tabla_paginas.paginas;
-		//list_clean_and_destroy_elements(paginas_segmento, &free);
-		list_destroy(paginas_segmento); //--> asi funcionaba
+		list_destroy_and_destroy_elements(paginas_segmento, &free);
+		//list_destroy(paginas_segmento); //--> asi funcionaba
 	}
 
-	//list_clean_and_destroy_elements(lista_segmentos, &free);
-	list_clean(lista_segmentos); //asi funcionaba pero tengo que liquidar lo de adentro tambien
+	list_clean_and_destroy_elements(lista_segmentos, &free);
+	//list_clean(lista_segmentos); //asi funcionaba pero tengo que liquidar lo de adentro tambien
 }
 
 void liberar_marcos(){
@@ -142,16 +144,6 @@ void liberar_marcos(){
 			}
 }
 
-void freePaginas(void* pagina){
-	t_est_pag* pag_a_liberar = (t_est_pag*)pagina;
-	free(pag_a_liberar);
-}
-
-void freeSegmentos(void* segmento){
-	t_segmento* segmento_a_liberar = (t_segmento*)segmento;
-	free(segmento_a_liberar->tabla_paginas.paginas);
-	free(segmento_a_liberar);
-}
 
 /*LRU
  *

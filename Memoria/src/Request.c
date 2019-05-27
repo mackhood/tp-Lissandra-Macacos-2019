@@ -180,7 +180,11 @@ double insertReq (char* nombre_tabla, uint16_t key, char* value) {
 
 		t_segmento* segmento_nuevo = malloc(sizeof(t_segmento));
 		segmento_nuevo->nombre_tabla = strdup(nombre_tabla);
+		//printf("la tabla de paginas no existia\n");
+		//if(segmento_nuevo->tabla_paginas.paginas == NULL){
+		//printf("la tabla de paginas no existia\n");
 		segmento_nuevo->tabla_paginas.paginas = list_create();
+
 		list_add(lista_segmentos, segmento_nuevo);
 
 		double nuevo_time = getCurrentTime();
@@ -349,7 +353,7 @@ void journal () {
 						prot_destruir_mensaje(mensaje_fs);
 
 						free(buffer);
-						free(pag_a_enviar);
+						//free(pag_a_enviar);
 					}
 
 			}

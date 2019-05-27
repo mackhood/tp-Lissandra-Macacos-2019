@@ -81,7 +81,5 @@ int buscarPaginaLibre(); //ahora devuelvo un marco
 void journal (); //Si bien es una request la pongo aca dentro debido a que el LRU debe utilizarla
 void eliminar_segmentos();
 void liberar_marcos();
-void freePaginas(void* pagina);
-void freeSegmentos(void* segmento);
 
 #endif /* ESTRUCTURASMEMORIA_H_ */
