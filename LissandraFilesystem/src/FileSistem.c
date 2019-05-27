@@ -547,7 +547,7 @@ int contarTablasExistentes()
 	struct dirent* dr;
 	if(NULL == (auxdir = opendir(puntodemontaje)))
 	{
-		logError( "FileSystem: No se pudo acceder al directorio de tablas.");
+		logError("FileSystem: No se pudo acceder al directorio de tablas.");
 		printf("Error al querer contar las tablas existentes");
 		return (0);
 	}
@@ -563,7 +563,7 @@ int contarTablasExistentes()
 			else
 				contadorDirectorios++;
 		}
-		logInfo( "FileSystem: La cantidad de directorios existente es: %i", contadorDirectorios);
+		logInfo("FileSystem: La cantidad de directorios existente es: %i", contadorDirectorios);
 		return contadorDirectorios;
 	}
 }
@@ -583,6 +583,8 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 			break;
 		}
 	}
+	logInfo("FileSystem: Se empieza a revisar el contenido de los bloques asignados a la %s para encontrar la clave %i."
+			, tabla, keyRecibida);
 	selectActivo = 1;
 	char* particionARevisar;
 	t_list* clavesDentroDeLosBloques = list_create();
@@ -664,11 +666,14 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 		list_add(clavesDentroDeLosBloques, clavesLeidas);
 		free(bloques);
 	}
+	free(particionARevisar);
 	free(direccionParticion);
 
 	// Fin de primera parte del select que setea todos los arrays y listas necesarios para reevisar y comparar las claves
 
 	// Parte 2 parser de lista de claves sacada de cada tmp.
+	logInfo("FileSystem: Se procede a parsear los contenidos de los bloques de los .tmp y de la particion pertenecientes a la %s."
+			, tabla);
 	int parserListPointer = 0;
 	char* keyHandler;
 	while((keyHandler = list_get(clavesDentroDeLosBloques, parserListPointer)) != NULL)
@@ -762,9 +767,13 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 	{
 		list_sort(keysettersDeClave, (void*)chequearTimeKey);
 		claveMasActualizada = list_get(keysettersDeClave, 0);
+		logInfo("FileSystem: Se ha obtenido el valor más reciente de la key %i.", keyRecibida);
 	}
 	else
+	{
 		claveMasActualizada = NULL;
+		logInfo("FileSystem: La key %i no fue impactada todavía en el File System.", keyRecibida);
+	}
 
 	list_destroy(keysettersDeClave);
 	list_destroy(clavesPostParseo);
@@ -846,10 +855,10 @@ void escribirBloque(int* usedBlocks, int* seizedSize, int usedSize, char* block,
 	int fd2 = open(blockDirection, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
     ftruncate(fd2, mmapsize);
     if (fd2 == -1)
-        {
-        	logError("FileSystem: error al abrir el bloque %s, abortando sistema", block);
-        	signalExit = true;
-        }
+    {
+       	logError("FileSystem: error al abrir el bloque %s, abortando sistema", block);
+       	signalExit = true;
+    }
     else
     {
     	char* mmaplocator = mmap(NULL, mmapsize + 1, PROT_READ | PROT_WRITE, MAP_SHARED, fd2, 0);
@@ -939,6 +948,7 @@ char* leerBloque(char* bloque)
 		fread(contenidoBloque, partlength, 1, partpointer);
 		fclose(partpointer);
 		free(direccionBloque);
+		logInfo("FileSystem: Se ha leído el contenido del bloque %s.bin.", bloque);
 		return contenidoBloque;
 	}
 }
@@ -960,5 +970,6 @@ void killProtocolFileSystem()
 	close(bitarrayfd);
 	free(globalBitmapPath);
 	free(direccionFileSystemBlocks);
+	logInfo("FileSystem: El bitmap fue destruido y las direcciones globales del FileSystem destruidas.");
 }
 

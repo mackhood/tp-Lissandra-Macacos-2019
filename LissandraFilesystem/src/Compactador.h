@@ -13,7 +13,9 @@
 int tiempoDump;
 int slowestCompactationInterval;
 int lastDumpSituation;
-
+char* direccionDeLasTablas;
+struct dirent* TableEntry;
+DIR* directorioDeTablas;
 
 /* FUNCIONES */
 

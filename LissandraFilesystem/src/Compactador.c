@@ -3,26 +3,24 @@
 void mainCompactador()
 {
 	//acceso a las tablas
-	DIR* directorioDeTablas;
-	struct dirent* tdp;
-	char* auxdir = malloc(strlen(punto_montaje) + 8);//le sumo 8 por tables/ y 1 por las dudas(siempre asignar uno de mas)
-	strcpy(auxdir, punto_montaje);
-	strcat(auxdir, "Tables/");
-	if(NULL == (directorioDeTablas = opendir(auxdir)))
+	direccionDeLasTablas = malloc(strlen(punto_montaje) + 8);//le sumo 8 por tables/ y 1 por las dudas(siempre asignar uno de mas)
+	strcpy(direccionDeLasTablas, punto_montaje);
+	strcat(direccionDeLasTablas, "Tables/");
+	if(NULL == (directorioDeTablas = opendir(direccionDeLasTablas)))
 	{
 		logError( "FileSystem: error al acceder al directorio de tablas, abortando");
-		free(auxdir);
+		free(direccionDeLasTablas);
 		closedir(directorioDeTablas);
 	}
 	else
 	{
 		gestionarDumps();
-		while(NULL != (tdp = readdir(directorioDeTablas)))//primero: while para asignar direcciones para funcion que crea hilos.
+		while(NULL != (TableEntry = readdir(directorioDeTablas)))//primero: while para asignar direcciones para funcion que crea hilos.
 		{
-			if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, ".."))	{}
+			if(!strcmp(TableEntry->d_name, ".") || !strcmp(TableEntry->d_name, ".."))	{}
 			else
 			{
-				gestionarTabla(tdp->d_name);
+				gestionarTabla(TableEntry->d_name);
 			}
 		}
 	}
@@ -122,6 +120,10 @@ void gestionarMemtable()
 	{
 		usleep(tiempoDump * 1000);
 		int a = 0;
+		if(NULL != list_get(memtable, 0))
+		{
+			logInfo("Compactador: Se procede a realizar un dump");
+		}
 		pthread_mutex_lock(&dumpEnCurso);
 		while(NULL != list_get(tablasEnEjecucion, a))
 		{
@@ -129,7 +131,7 @@ void gestionarMemtable()
 			crearTemporal(tablaTomada->tabla);
 			a++;
 		}
-		list_clean(memtable);
+		list_clean_and_destroy_elements(memtable, &free);
 		pthread_mutex_unlock(&dumpEnCurso);
 	}
 }
@@ -232,7 +234,7 @@ void crearTemporal(char* tabla)
 	}
 	free(container);
 	free(tempDirection);
-	list_destroy(keysTableSpecific);
+	list_destroy_and_destroy_elements(keysTableSpecific, &free);
 }
 
 void ejecutarCompactacion(char* tabla)
@@ -301,5 +303,8 @@ void killProtocolCompactador()
 	list_clean(tablasEnEjecucion);
 	logInfo("Compactador: Desconectando todas las tablas.");
 	usleep(slowestCompactationInterval * 1000); //Esto está para que el compactador tenga tiempo a matar todas las tablas de su sistema.
+	free(TableEntry);
+	closedir(directorioDeTablas);
+	free(direccionDeLasTablas);
 }
 

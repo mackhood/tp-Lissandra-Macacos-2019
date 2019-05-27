@@ -102,9 +102,9 @@ void escucharMemoria(int* socket_memoria)
 				int tamanioNombre;
 				memcpy(&auxkey, mensaje_memoria->payload, sizeof(uint16_t));
 				memcpy(&tamanioNombre, mensaje_memoria->payload + sizeof(uint16_t), sizeof(int));
-				tabla = malloc(tamanioNombre);
+				tabla = malloc(tamanioNombre + 1);
 				memcpy(tabla, mensaje_memoria->payload + sizeof(uint16_t) + sizeof(int), tamanioNombre);
-
+				tabla[tamanioNombre] = '\0';
 
 //				double tiempo_pag = getCurrentTime();
 //				char* value = "Ejemplo";
@@ -446,6 +446,7 @@ int llamadoACrearTabla(char* nombre, char* consistencia, int particiones, int ti
 	{
 		case 0:
 		{
+			logInfo("Lissandra: se ha pedido al Compactador que inicie un hilo para gestionar la %s", nombre);
 			gestionarTabla(nombre);
 			return 0;
 			break;
@@ -482,14 +483,23 @@ int llamarEliminarTabla(char* tablaPorEliminar)
 		return result;
 	}
 	int result = dropTable(tablaPorEliminar);
-	list_remove_by_condition(tablasEnEjecucion, (void*) estaTabla);
+	switch(result)
+	{
+	case 0:
+	{
+		list_remove_by_condition(tablasEnEjecucion, (void*) estaTabla);
+		logInfo("Lissandra: Se ha removido a la %s de la lista de tablas en ejecución", tablaPorEliminar);
+		break;
+	}
+	default:
+		break;
+	}
 	return result;
 }
 
 int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, char* buffer)
 {
-	char* tabla = string_new();
-	tabla = malloc(strlen(tablaSolicitada) + 1);
+	char* tabla = malloc(strlen(tablaSolicitada) + 1);
 	strcpy(tabla, tablaSolicitada);
 	char* auxbuffer = string_new();
 	if(0 == strcmp(tabla, ""))

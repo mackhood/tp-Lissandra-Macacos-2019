@@ -4,6 +4,7 @@ int main(void)
 {
 	char* lissandraFL_log_ruta = strdup("/home/utnso/workspace/tp-2019-1c-Macacos/LissandraFilesystem/LissandraFileSystem.log");
 	logger = crearLogger(lissandraFL_log_ruta, "LissandraFileSystem");
+	logInfo("Main: Atra estherni ono thelduin, ai fricai.");
 	char* lissandraFL_config_ruta = strdup("/home/utnso/workspace/tp-2019-1c-Macacos/LissandraFilesystem/src/Lissandra.cfg");
 	leerConfig(lissandraFL_config_ruta,logger);
 	hilosLFL = list_create();
@@ -73,6 +74,7 @@ void iniciarFileSistem()
 
 void terminationProtocol()
 {
+	logInfo("Main: El termination protocol ha sido inicializado, apagando sistema.");
 	list_destroy(hilosLFL);
 	killProtocolLissandra();
 	killProtocolCompactador();
@@ -80,6 +82,6 @@ void terminationProtocol()
 	free(punto_montaje);
 	list_destroy(memtable);
 	list_destroy(tablasEnEjecucion);
-	logInfo("Main: Desconectando sistema");
+	logInfo("Main: Waise neiat.");
 	log_destroy(logger);
 }
