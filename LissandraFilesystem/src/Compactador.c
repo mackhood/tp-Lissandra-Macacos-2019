@@ -98,6 +98,7 @@ void compactarTablas(char*tabla)
 			logInfo("Compactador: La %s, al haber sido previamente desalojada dejará de ser buscada en el compactador", tabla);
 			break;
 		}
+		else if(tablaAAgregar->cantTemps == 0){}
 		else
 		{
 			//ejecutarCompactacion(tabla);
@@ -130,7 +131,7 @@ void gestionarMemtable()
 				crearTemporal(tablaTomada->tabla);
 				a++;
 			}
-			list_clean_and_destroy_elements(memtable, &free);
+			list_clean(memtable);
 			pthread_mutex_unlock(&dumpEnCurso);
 		}
 	}
@@ -234,7 +235,7 @@ void crearTemporal(char* tabla)
 	}
 	free(container);
 	free(tempDirection);
-	list_destroy_and_destroy_elements(keysTableSpecific, &free);
+	list_destroy(keysTableSpecific);
 }
 
 void ejecutarCompactacion(char* tabla)
@@ -263,7 +264,6 @@ void ejecutarCompactacion(char* tabla)
 				int fullTempSize = obtenerTamanioArchivoConfig(direccionTemp);
 				char** blocks = obtenerBloques(direccionTemp);
 				int counter = 0;
-				int alreadyCountedSize = 0;
 				char* keysToParse = malloc(fullTempSize + 1);
 				while(blocks[counter] != NULL)
 				{
@@ -281,6 +281,7 @@ void ejecutarCompactacion(char* tabla)
 			}
 		}
 	}
+	keysPostParsing = parsearKeys(keysToManage);
 	pthread_mutex_unlock(&compactacionActiva);
 }
 
