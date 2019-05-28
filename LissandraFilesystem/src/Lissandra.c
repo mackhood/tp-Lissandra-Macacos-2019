@@ -95,7 +95,7 @@ void escucharMemoria(int* socket_memoria)
 
 				size_t tamanioBuffer = sizeof(int);
 				void* messageBuffer = malloc(tamanioBuffer + 1);
-				memcpy(messageBuffer, tamanio_value, sizeof(int));
+				memcpy(messageBuffer, &tamanio_value, sizeof(int));
 				prot_enviar_mensaje(socket, HANDSHAKE, tamanioBuffer, messageBuffer);
 				logInfo("Lissandra: Se ha enviado la información de saludo a la Memoria.");
 				break;

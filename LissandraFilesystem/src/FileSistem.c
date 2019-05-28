@@ -585,7 +585,6 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 	}
 	logInfo("FileSystem: Se empieza a revisar el contenido de los bloques asignados a la %s para encontrar la clave %i."
 			, tabla, keyRecibida);
-	selectActivo = 1;
 	char* particionARevisar;
 	t_list* clavesDentroDeLosBloques = list_create();
 	t_list* clavesPostParseo = list_create();
@@ -674,91 +673,8 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 	// Parte 2 parser de lista de claves sacada de cada tmp.
 	logInfo("FileSystem: Se procede a parsear los contenidos de los bloques de los .tmp y de la particion pertenecientes a la %s."
 			, tabla);
-	int parserListPointer = 0;
-	char* keyHandler;
-	while((keyHandler = list_get(clavesDentroDeLosBloques, parserListPointer)) != NULL)
-	{
-		t_keysetter* helpingHand = malloc(sizeof(t_keysetter) + 3);
-		int parserPointer = 0;
-		int handlerSize = strlen(keyHandler);
-		char* key = malloc(24);
-		char* value = malloc(tamanio_value + 1);
-		char* timestamp = malloc(14);
-		int status = 0;
-		int k = 1;
-		int v = 1;
-		int t = 1;
-		while(parserPointer < handlerSize)
-		{
-			switch(keyHandler[parserPointer])
-			{
-			case ';':
-			{
-				parserPointer++;
-				status++;
-				break;
-			}
-			case '\n':
-			{
-				helpingHand = construirKeysetter(timestamp, key, value);
-				list_add(clavesPostParseo, helpingHand);
-				parserPointer++;
-				status = 0;
-				k = 1;
-				v = 1;
-				t = 1;
-				break;
-			}
-			default:
-			{
-				char* aux = malloc(2);
-				aux[0] = keyHandler[parserPointer];
-				aux[1] = '\0';
-				switch(status)
-				{
-				case 0:
-				{
-					if(t)
-					{
-						strcpy(timestamp, aux);
-						t = 0;
-					}
-					else
-						strcat(timestamp, aux);
-					break;
-				}
-				case 1:
-				{
-					if(k)
-					{
-						strcpy(key, aux);
-						k = 0;
-					}
-					else
-						strcat(key, aux);
-					break;
-				}
-				case 2:
-				{
-					if(v)
-					{
-						strcpy(value, aux);
-						v = 0;
-					}
-					else
-						strcat(value, aux);
-					break;
-				}
-				}
-				free(aux);
-				parserPointer++;
-				break;
-			}
-			}
-		}
-		parserListPointer++;
-	}
-	free(keyHandler);
+	clavesPostParseo = parsearKeys(clavesDentroDeLosBloques);
+
 	//Paso 3 Correr select
 	t_list* keysettersDeClave = list_create();
 	keysettersDeClave = list_filter(clavesPostParseo, (void*)esDeTalKey);
@@ -779,7 +695,6 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 	list_destroy(clavesPostParseo);
 	list_destroy(clavesDentroDeLosBloques);
 	free(direccionTabla);
-	selectActivo = 0;
 	return claveMasActualizada;
 }
 

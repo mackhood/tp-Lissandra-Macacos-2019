@@ -120,15 +120,19 @@ void gestionarMemtable()
 	{
 		usleep(tiempoDump * 1000);
 		int a = 0;
-		pthread_mutex_lock(&dumpEnCurso);
-		while(NULL != list_get(tablasEnEjecucion, a))
+		if(!list_is_empty(memtable))
 		{
-			t_TablaEnEjecucion* tablaTomada = list_get(tablasEnEjecucion, a);
-			crearTemporal(tablaTomada->tabla);
-			a++;
+			logInfo("Compactador: Se procede a realizar un dump de la memtable.");
+			pthread_mutex_lock(&dumpEnCurso);
+			while(NULL != list_get(tablasEnEjecucion, a))
+			{
+				t_TablaEnEjecucion* tablaTomada = list_get(tablasEnEjecucion, a);
+				crearTemporal(tablaTomada->tabla);
+				a++;
+			}
+			list_clean_and_destroy_elements(memtable, &free);
+			pthread_mutex_unlock(&dumpEnCurso);
 		}
-		list_clean_and_destroy_elements(memtable, &free);
-		pthread_mutex_unlock(&dumpEnCurso);
 	}
 }
 
@@ -235,7 +239,6 @@ void crearTemporal(char* tabla)
 
 void ejecutarCompactacion(char* tabla)
 {
-	while(selectActivo){}
 	pthread_mutex_lock(&compactacionActiva);
 	char* direccionTabla = malloc(strlen(tabla) + strlen(punto_montaje) + 9);
 	strcpy(direccionTabla, punto_montaje);
@@ -244,9 +247,10 @@ void ejecutarCompactacion(char* tabla)
 	strcat(direccionTabla, "/");
 	struct dirent* tdp;
 	DIR* tableDirectory = opendir(direccionTabla);
+	t_list* keysToManage = list_create();
+	t_list* keysPostParsing = list_create();
 	while(NULL != (tdp = readdir(tableDirectory)))
 	{
-		t_list* keysToManage = list_create();
 		if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, "..")){}
 		else
 		{
@@ -263,18 +267,7 @@ void ejecutarCompactacion(char* tabla)
 				char* keysToParse = malloc(fullTempSize + 1);
 				while(blocks[counter] != NULL)
 				{
-					char* blockDirection = malloc(strlen(direccionFileSystemBlocks) + strlen(blocks[counter]) + 5);
-					strcpy(blockDirection, direccionFileSystemBlocks);
-					strcat(blockDirection, blocks[counter]);
-					strcat(blockDirection, ".bin");
-					FILE* blockPointer = fopen(blockDirection, "r+");
-					int sizeToRead;
-					if((fullTempSize - alreadyCountedSize) > tamanio_bloques)
-						sizeToRead = tamanio_bloques;
-					else
-						sizeToRead = fullTempSize - alreadyCountedSize;
-					char* blockContents = malloc(sizeToRead + 1);
-					fread(blockContents, sizeToRead, 1, blockPointer);
+					char* blockContents = leerBloque(blocks[counter]);
 					if(firstRead)
 					{
 						strcpy(keysToParse, blockContents);
@@ -282,11 +275,9 @@ void ejecutarCompactacion(char* tabla)
 					}
 					else
 						strcat(keysToParse, blockContents);
-					fclose(blockPointer);
 					free(blockContents);
-					free(blockDirection);
 				}
-
+				list_add(keysToManage, keysToParse);
 			}
 		}
 	}

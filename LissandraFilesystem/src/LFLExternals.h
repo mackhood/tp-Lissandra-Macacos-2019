@@ -52,7 +52,6 @@ bool signalExit;
 t_list * memtable;
 char* punto_montaje;
 t_list* tablasEnEjecucion;
-int selectActivo;
 pthread_mutex_t compactacionActiva;
 pthread_mutex_t dumpEnCurso;
 
@@ -62,5 +61,6 @@ int chequearTimeKey(t_keysetter* key1, t_keysetter* key2);
 int obtenerTamanioArchivoConfig(char* direccionArchivo);
 t_keysetter* construirKeysetter(char* timestamp, char* key, char* value);
 unsigned long obtenerTamanioArchivo(char* direccionArchivo);
+t_list* parsearKeys(t_list* clavesAParsear);
 
 #endif /* LFLEXTERNALS_H_ */
