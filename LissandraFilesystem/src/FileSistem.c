@@ -575,14 +575,8 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 		return chequeada->key == keyRecibida;
 	}
 
-	while(1)
-	{
-		if(0 == pthread_mutex_trylock(&compactacionActiva))
-		{
-			pthread_mutex_unlock(&compactacionActiva);
-			break;
-		}
-	}
+	pthread_mutex_lock(&compactacionActiva);
+	pthread_mutex_unlock(&compactacionActiva);
 	logInfo("FileSystem: Se empieza a revisar el contenido de los bloques asignados a la %s para encontrar la clave %i."
 			, tabla, keyRecibida);
 	char* particionARevisar;

@@ -240,6 +240,10 @@ void crearTemporal(char* tabla)
 
 void ejecutarCompactacion(char* tabla)
 {
+	bool esDeTalParticion(t_keysetter* key)
+	{
+
+	}
 	pthread_mutex_lock(&compactacionActiva);
 	char* direccionTabla = malloc(strlen(tabla) + strlen(punto_montaje) + 9);
 	strcpy(direccionTabla, punto_montaje);

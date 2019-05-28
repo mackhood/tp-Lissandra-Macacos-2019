@@ -29,7 +29,7 @@ void consola()
 			free(linea);
 			puts("EXIT.");
 			clear_history();
-			signalExit = true;
+			pthread_mutex_unlock(&deathProtocol);
 			break;
 		}
 		if(!strcmp(linea, ""))

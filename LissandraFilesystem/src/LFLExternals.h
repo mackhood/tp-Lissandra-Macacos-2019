@@ -52,6 +52,7 @@ bool signalExit;
 t_list * memtable;
 char* punto_montaje;
 t_list* tablasEnEjecucion;
+pthread_mutex_t deathProtocol;
 pthread_mutex_t compactacionActiva;
 pthread_mutex_t dumpEnCurso;
 

@@ -9,14 +9,8 @@ int main(void)
 	leerConfig(lissandraFL_config_ruta,logger);
 	hilosLFL = list_create();
 	iniciar();
-	for(;;)
-	{
-		if(signalExit == true)
-		{
-			terminationProtocol();
-			break;
-		}
-	}
+	pthread_mutex_lock(&deathProtocol);
+	terminationProtocol();
 	free(lissandraFL_log_ruta);
 	free(lissandraFL_config_ruta);
 	return EXIT_SUCCESS;
@@ -33,6 +27,8 @@ void iniciar()
 {
 	pthread_mutex_init(&compactacionActiva, NULL);
 	pthread_mutex_init(&dumpEnCurso, NULL);
+	pthread_mutex_init(&deathProtocol, NULL);
+	pthread_mutex_lock(&deathProtocol);
 	iniciarLissandra();
 	iniciarCompactador();
 	iniciarFileSistem();
