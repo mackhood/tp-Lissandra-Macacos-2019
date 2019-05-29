@@ -240,6 +240,7 @@ int crearParticiones(char* direccionFinal, int particiones)
 				fwrite(size, strlen(size), 1, particion);
 				char* blocks = malloc(sizeof(int) + 13);
 				char* auxBlock = obtenerBloqueLibre();
+				escribirBloque(0, 0, 1, auxBlock, " ");
 				strcpy(blocks, "BLOCKS=[");
 				strcat(blocks, auxBlock);
 				strcat(blocks, "]\n");

@@ -133,3 +133,25 @@ t_list* parsearKeys(t_list* clavesAParsear)
 	free(keyHandler);
 	return clavesPostParseo;
 }
+
+t_list* inversaParsearKeys(t_list* clavesADesparsear)
+{
+	t_list* clavesParseadas = list_create();
+	int a = 0;
+	while(NULL != list_get(clavesADesparsear, a))
+	{
+		t_keysetter* keyAuxiliar = list_get(clavesADesparsear, a);
+		char* keyConvertida = malloc(strlen(string_itoa(keyAuxiliar->key))
+				+ strlen(string_from_format("%lf", keyAuxiliar->timestamp)) + strlen(keyAuxiliar->clave) + 3);
+		strcpy(keyConvertida, string_itoa(keyAuxiliar->key));
+		strcat(keyConvertida, ";");
+		char* aux = string_from_format("%lf", keyAuxiliar->timestamp);
+		strcat(keyConvertida, string_substring_until(aux, strlen(aux) - 7));
+		strcat(keyConvertida, ";");
+		strcat(keyConvertida, keyAuxiliar->clave);
+		strcat(keyConvertida, "\n");
+		list_add(clavesParseadas, keyConvertida);
+		a++;
+	}
+	return clavesParseadas;
+}

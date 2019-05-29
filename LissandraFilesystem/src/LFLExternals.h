@@ -63,5 +63,6 @@ int obtenerTamanioArchivoConfig(char* direccionArchivo);
 t_keysetter* construirKeysetter(char* timestamp, char* key, char* value);
 unsigned long obtenerTamanioArchivo(char* direccionArchivo);
 t_list* parsearKeys(t_list* clavesAParsear);
+t_list* inversaParsearKeys(t_list* clavesADesparsear);
 
 #endif /* LFLEXTERNALS_H_ */

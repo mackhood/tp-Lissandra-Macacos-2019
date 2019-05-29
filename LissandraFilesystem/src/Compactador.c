@@ -240,9 +240,18 @@ void crearTemporal(char* tabla)
 
 void ejecutarCompactacion(char* tabla)
 {
-	bool esDeTalParticion(t_keysetter* key)
+	bool estaTabla(t_TablaEnEjecucion* tablaDeLista)
 	{
-
+		char* tablaAux = malloc(strlen(tabla) + 1);
+		strcpy(tablaAux, tabla);
+		int cantCarac = strlen(tablaDeLista->tabla);
+		//char* tablaDeListaAux = string_new();
+		char* tablaDeListaAux = malloc(cantCarac + 1);
+		strcpy(tablaDeListaAux, tablaDeLista->tabla);
+		bool result = (0 == strcmp(tablaDeListaAux, tablaAux));
+		free(tablaDeListaAux);
+		free(tablaAux);
+		return result;
 	}
 	pthread_mutex_lock(&compactacionActiva);
 	char* direccionTabla = malloc(strlen(tabla) + strlen(punto_montaje) + 9);
@@ -250,17 +259,33 @@ void ejecutarCompactacion(char* tabla)
 	strcat(direccionTabla, "Tables/");
 	strcat(direccionTabla, tabla);
 	strcat(direccionTabla, "/");
+	t_TablaEnEjecucion* tablaEspecifica = list_find(tablasEnEjecucion, (void*) estaTabla);
 	struct dirent* tdp;
 	DIR* tableDirectory = opendir(direccionTabla);
 	t_list* keysToManage = list_create();
 	t_list* keysPostParsing = list_create();
+	int i = 0;
+	for(i = 0; i < tablaEspecifica->cantTemps; i++)
+	{
+		char* direccionARenombrar = malloc(strlen(direccionTabla) + strlen(string_itoa(i)) + 5);
+		char* direccionFinal = malloc(strlen(direccionTabla) + strlen(string_itoa(i)) + 6);
+		strcpy(direccionARenombrar, direccionTabla);
+		strcat(direccionARenombrar, string_itoa(i));
+		strcpy(direccionARenombrar, ".tmp");
+		strcpy(direccionFinal, direccionTabla);
+		strcat(direccionFinal, string_itoa(i));
+		strcpy(direccionFinal, ".tmpc");
+		rename(direccionARenombrar, direccionFinal);
+		free(direccionARenombrar);
+		free(direccionFinal);
+	}
 	while(NULL != (tdp = readdir(tableDirectory)))
 	{
 		if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, "..")){}
 		else
 		{
 			bool firstRead = true;
-			if(string_ends_with(tdp->d_name, ".tmp"))
+			if(string_ends_with(tdp->d_name, ".tmpc"))
 			{
 				char* direccionTemp = malloc(strlen(direccionTabla) + strlen(tdp->d_name) + 1);
 				strcpy(direccionTemp, direccionTabla);
@@ -283,10 +308,68 @@ void ejecutarCompactacion(char* tabla)
 				}
 				list_add(keysToManage, keysToParse);
 			}
+			else
+			{
+				char* direccionPart = malloc(strlen(direccionTabla) + strlen(tdp->d_name) + 1);
+				strcpy(direccionPart, direccionTabla);
+				strcat(direccionPart, tdp->d_name);
+				int fullTempSize = obtenerTamanioArchivoConfig(direccionPart);
+				if(!fullTempSize){}
+				else
+				{
+					char** blocks = obtenerBloques(direccionPart);
+					int counter = 0;
+					char* keysToParse = malloc(fullTempSize + 1);
+					while(blocks[counter] != NULL)
+					{
+						char* blockContents = leerBloque(blocks[counter]);
+						if(firstRead)
+						{
+							strcpy(keysToParse, blockContents);
+							firstRead = false;
+						}
+						else
+							strcat(keysToParse, blockContents);
+						free(blockContents);
+					}
+					list_add(keysToManage, keysToParse);
+				}
+			}
 		}
 	}
 	keysPostParsing = parsearKeys(keysToManage);
+
+	char* direccionMetadata = malloc (strlen(direccionTabla) + 14);
+	strcpy(direccionMetadata, direccionTabla);
+	strcat(direccionMetadata, "Metadata.cfg");
+	t_config* MetadataTabla = config_create(direccionMetadata);
+	int particiones = config_get_int_value(MetadataTabla, "PARTICIONES");
+	int g = 0;
+	t_list* keysDeParticion = list_create();
+	for(g = 0; g < particiones; g++)
+	{
+		t_list* auxList = list_create();
+
+		keysDeParticion = obtenerKeysAPlasmar(keysPostParsing, i);
+		list_clean(keysDeParticion);
+	}
+	list_destroy(keysPostParsing);
+	list_destroy(keysToManage);
+	list_destroy(keysDeParticion);
 	pthread_mutex_unlock(&compactacionActiva);
+}
+
+t_list* obtenerKeysAPlasmar(t_list* keysPostParsing, int numeroDeParticion)
+{
+	bool esDeTalParticion(t_keysetter* key)
+	{
+		bool result = (0 == key->key%numeroDeParticion);
+		return result;
+	}
+	t_list* keysAPlasmar = list_create();
+	keysAPlasmar = list_filter(keysPostParsing, (void*)esDeTalParticion);
+	return keysAPlasmar;
+
 }
 
 void killProtocolCompactador()
