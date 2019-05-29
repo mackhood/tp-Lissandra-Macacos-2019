@@ -18,6 +18,7 @@ int ejecutar_linea (char * linea);
 void selectt(char** args);
 void insert(char** args);
 void create(char** args);
+void drop(char** args);
 
 #endif /* CONSOLA_H_ */
 

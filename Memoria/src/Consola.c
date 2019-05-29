@@ -173,3 +173,19 @@ void create(char** args){
 	free(nombre_tabla);
 	free(tipo_consistencia);
 }
+
+void drop(char** args){
+	char* nombre_tabla = strdup(args[1]);
+	int largo_nombre_tabla = strlen(nombre_tabla);
+
+	dropReq(nombre_tabla);
+
+	int tamanio_buffer = sizeof(int) + largo_nombre_tabla;
+	void* buffer = malloc(tamanio_buffer);
+
+
+
+	//prot_enviar_mensaje(socket_fs, TABLE_DROP, tamanio_buffer, buffer);
+
+
+}
