@@ -65,11 +65,10 @@ void iniciarServidor()
 void escucharMemoria(int* socket_memoria)
 {
 	int socket = *socket_memoria;
-
+	bool memoriaDesconectada = false;
 	while(!killthreads)
 	{
 		t_prot_mensaje* mensaje_memoria = prot_recibir_mensaje(socket);
-		bool memoriaDesconectada = false;
 
 		switch(mensaje_memoria->head)
 		{
@@ -331,7 +330,10 @@ void escucharMemoria(int* socket_memoria)
 		}
 		usleep(retardo * 1000);
 	}
-	prot_enviar_mensaje(socket, GOODBYE, 0, NULL);
+	if(!memoriaDesconectada)
+	{
+		prot_enviar_mensaje(socket, GOODBYE, 0, NULL);
+	}
 }
 
 int insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibido, double timestampRecibido)

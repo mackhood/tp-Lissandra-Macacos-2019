@@ -240,7 +240,9 @@ int crearParticiones(char* direccionFinal, int particiones)
 				fwrite(size, strlen(size), 1, particion);
 				char* blocks = malloc(sizeof(int) + 13);
 				char* auxBlock = obtenerBloqueLibre();
-				escribirBloque(0, 0, 1, auxBlock, " ");
+				int blocksUsed = 0;
+				int seizedSize = 0;
+				escribirBloque(&blocksUsed, &seizedSize, 1, auxBlock, " ");
 				strcpy(blocks, "BLOCKS=[");
 				strcat(blocks, auxBlock);
 				strcat(blocks, "]\n");
@@ -811,29 +813,34 @@ void limpiadorDeBloques(char* direccion)
 				strcpy(direccionPart, direccion);
 				strcat(direccionPart, "/");
 				strcat(direccionPart, tdp->d_name);
-				int i = 0;
-				char** bloques = obtenerBloques(direccionPart);
-				while(bloques[i] != NULL)
-				{
-					char* direccionBloqueALiberar = malloc(strlen(direccionFileSystemBlocks) + strlen(bloques[i]) + 5);
-					strcpy(direccionBloqueALiberar, direccionFileSystemBlocks);
-					strcat(direccionBloqueALiberar, bloques[i]);
-					strcat(direccionBloqueALiberar, ".bin");
-					FILE* fd = fopen(direccionBloqueALiberar, "w");
-					fclose(fd);
-					int indexBit = atoi(bloques[i]);
-					bitarray_clean_bit(bitarray, indexBit);
-					free(direccionBloqueALiberar);
-					i++;
-				}
-				free(bloques);
+				limpiarBloque(direccionPart);
 				free(direccionPart);
-				msync(bitarraycontent, bitarrayfd, MS_SYNC);
 			}
 		}
 	}
 	closedir(tabla);
 	logInfo("File System: todos los bloques fueron limpiados satisfactoriamente");
+}
+
+void limpiarBloque(char* direccionPart)
+{
+	int i = 0;
+	char** bloques = obtenerBloques(direccionPart);
+	while(bloques[i] != NULL)
+	{
+		char* direccionBloqueALiberar = malloc(strlen(direccionFileSystemBlocks) + strlen(bloques[i]) + 5);
+		strcpy(direccionBloqueALiberar, direccionFileSystemBlocks);
+		strcat(direccionBloqueALiberar, bloques[i]);
+		strcat(direccionBloqueALiberar, ".bin");
+		FILE* fd = fopen(direccionBloqueALiberar, "w");
+		fclose(fd);
+		int indexBit = atoi(bloques[i]);
+		bitarray_clean_bit(bitarray, indexBit);
+		free(direccionBloqueALiberar);
+		i++;
+	}
+	free(bloques);
+	msync(bitarraycontent, bitarrayfd, MS_SYNC);
 }
 
 char* leerBloque(char* bloque)

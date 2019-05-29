@@ -47,6 +47,11 @@ typedef struct {
 
 /* VARIABLES GLOBALES */
 int tamanio_value;
+char* direccionFileSystemBlocks;
+char* globalBitmapPath;
+char* bitarraycontent;
+int bitarrayfd;
+t_bitarray* bitarray;
 t_log * logger;
 bool signalExit;
 t_list * memtable;
@@ -64,5 +69,6 @@ t_keysetter* construirKeysetter(char* timestamp, char* key, char* value);
 unsigned long obtenerTamanioArchivo(char* direccionArchivo);
 t_list* parsearKeys(t_list* clavesAParsear);
 t_list* inversaParsearKeys(t_list* clavesADesparsear);
+
 
 #endif /* LFLEXTERNALS_H_ */

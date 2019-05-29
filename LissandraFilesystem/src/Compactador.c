@@ -101,7 +101,7 @@ void compactarTablas(char*tabla)
 		else if(tablaAAgregar->cantTemps == 0){}
 		else
 		{
-			//ejecutarCompactacion(tabla);
+			ejecutarCompactacion(tabla);
 		}
 	}
 	free(direccionMetadataTabla);
@@ -271,27 +271,28 @@ void ejecutarCompactacion(char* tabla)
 		char* direccionFinal = malloc(strlen(direccionTabla) + strlen(string_itoa(i)) + 6);
 		strcpy(direccionARenombrar, direccionTabla);
 		strcat(direccionARenombrar, string_itoa(i));
-		strcpy(direccionARenombrar, ".tmp");
+		strcat(direccionARenombrar, ".tmp");
 		strcpy(direccionFinal, direccionTabla);
 		strcat(direccionFinal, string_itoa(i));
-		strcpy(direccionFinal, ".tmpc");
+		strcat(direccionFinal, ".tmpc");
 		rename(direccionARenombrar, direccionFinal);
 		free(direccionARenombrar);
 		free(direccionFinal);
 	}
+	tablaEspecifica->cantTemps = 0;
 	while(NULL != (tdp = readdir(tableDirectory)))
 	{
-		if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, "..")){}
+		if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, "..") || string_ends_with(tdp->d_name, ".cfg")){}
 		else
 		{
 			bool firstRead = true;
 			if(string_ends_with(tdp->d_name, ".tmpc"))
 			{
-				char* direccionTemp = malloc(strlen(direccionTabla) + strlen(tdp->d_name) + 1);
-				strcpy(direccionTemp, direccionTabla);
-				strcat(direccionTemp, tdp->d_name);
-				int fullTempSize = obtenerTamanioArchivoConfig(direccionTemp);
-				char** blocks = obtenerBloques(direccionTemp);
+				char* direccionTempC = malloc(strlen(direccionTabla) + strlen(tdp->d_name) + 1);
+				strcpy(direccionTempC, direccionTabla);
+				strcat(direccionTempC, tdp->d_name);
+				int fullTempSize = obtenerTamanioArchivoConfig(direccionTempC);
+				char** blocks = obtenerBloques(direccionTempC);
 				int counter = 0;
 				char* keysToParse = malloc(fullTempSize + 1);
 				while(blocks[counter] != NULL)
@@ -305,8 +306,12 @@ void ejecutarCompactacion(char* tabla)
 					else
 						strcat(keysToParse, blockContents);
 					free(blockContents);
+					counter++;
 				}
+				limpiarBloque(direccionTempC);
 				list_add(keysToManage, keysToParse);
+				remove(direccionTempC);
+				free(direccionTempC);
 			}
 			else
 			{
@@ -331,45 +336,114 @@ void ejecutarCompactacion(char* tabla)
 						else
 							strcat(keysToParse, blockContents);
 						free(blockContents);
+						counter++;
 					}
 					list_add(keysToManage, keysToParse);
+					limpiarBloque(direccionPart);
 				}
+				free(direccionPart);
 			}
 		}
 	}
 	keysPostParsing = parsearKeys(keysToManage);
-
 	char* direccionMetadata = malloc (strlen(direccionTabla) + 14);
 	strcpy(direccionMetadata, direccionTabla);
 	strcat(direccionMetadata, "Metadata.cfg");
 	t_config* MetadataTabla = config_create(direccionMetadata);
 	int particiones = config_get_int_value(MetadataTabla, "PARTICIONES");
 	int g = 0;
-	t_list* keysDeParticion = list_create();
+	char* keysDeParticion;
 	for(g = 0; g < particiones; g++)
 	{
-		t_list* auxList = list_create();
-
-		keysDeParticion = obtenerKeysAPlasmar(keysPostParsing, i);
-		list_clean(keysDeParticion);
+		keysDeParticion = obtenerKeysAPlasmar(keysPostParsing, g, particiones);
+		if(NULL != keysDeParticion)
+		{
+			char* direccionParticion = malloc(strlen(direccionTabla) + strlen(string_itoa(g)) + 6);
+			strcpy(direccionParticion, direccionTabla);
+			strcat(direccionParticion, string_itoa(g));
+			strcat(direccionParticion, ".bin");
+			limpiarBloque(direccionParticion);
+			t_config* particion = config_create(direccionParticion);
+			char* sizedUse = string_itoa(strlen(keysDeParticion));
+			config_set_value(particion, "SIZE", sizedUse);
+			char* bloquesAsignados = escribirBloquesDeFs(keysDeParticion, strlen(keysDeParticion), tabla);
+			config_set_value(particion, "BLOCKS", bloquesAsignados);
+			config_save(particion);
+			config_destroy(particion);
+			free(direccionParticion);
+		}
+		free(keysDeParticion);
 	}
+	logInfo("Compactador: la %s ha sido compactada.", tabla);
 	list_destroy(keysPostParsing);
 	list_destroy(keysToManage);
-	list_destroy(keysDeParticion);
+	free(direccionTabla);
 	pthread_mutex_unlock(&compactacionActiva);
 }
 
-t_list* obtenerKeysAPlasmar(t_list* keysPostParsing, int numeroDeParticion)
+char* obtenerKeysAPlasmar(t_list* keysPostParsing, int numeroDeParticion, int particiones)
 {
 	bool esDeTalParticion(t_keysetter* key)
 	{
-		bool result = (0 == key->key%numeroDeParticion);
+		bool result = (numeroDeParticion == key->key%particiones);
 		return result;
 	}
-	t_list* keysAPlasmar = list_create();
-	keysAPlasmar = list_filter(keysPostParsing, (void*)esDeTalParticion);
-	return keysAPlasmar;
 
+	t_list* keysAPlasmar = list_create();
+	t_list* keysDeTalParticion = list_create();
+	keysDeTalParticion = list_filter(keysPostParsing, (void*)esDeTalParticion);
+	list_sort(keysDeTalParticion, (void*)chequearTimeKey);
+	int a = 0;
+	while(NULL != list_get(keysDeTalParticion, a))
+	{
+		bool perteneceALista(t_keysetter* key)
+		{
+			if(NULL != list_get(keysAPlasmar, 0))
+			{
+				t_keysetter* auxiliary = list_get(keysDeTalParticion, a);
+				if(auxiliary->key == key->key)
+					return auxiliary->key == key->key;
+			}
+			return false;
+		}
+		if(!list_find(keysAPlasmar, (void*)perteneceALista))
+		{
+			list_add(keysAPlasmar, list_get(keysDeTalParticion, a));
+		}
+		a++;
+	}
+	if(a != 0)
+	{
+		t_list* keysReParseadas = list_create();
+		keysReParseadas = inversaParsearKeys(keysAPlasmar);
+		int listIterator = 0;
+		int sizeOfList = 0;
+		while(NULL != list_get(keysReParseadas, listIterator))
+		{
+			sizeOfList += strlen(list_get(keysReParseadas, listIterator));
+			listIterator ++;
+		}
+		listIterator = 0;
+		char* allKeys = malloc(sizeOfList + 2);
+		bool firstRead = true;
+		while(NULL != list_get(keysReParseadas, listIterator))
+		{
+			if(firstRead)
+			{
+				strcpy(allKeys, list_get(keysReParseadas, listIterator));
+				firstRead = false;
+			}
+			else
+				strcat(allKeys, list_get(keysReParseadas, listIterator));
+			listIterator++;
+		}
+		list_destroy(keysReParseadas);
+		list_destroy(keysAPlasmar);
+		list_destroy(keysDeTalParticion);
+		return allKeys;
+	}
+	else
+		return NULL;
 }
 
 void killProtocolCompactador()

@@ -21,11 +21,7 @@
 int tamanio_bloques;
 int blocks;
 int creatingFL;
-char* direccionFileSystemBlocks;
-char* globalBitmapPath;
-char* bitarraycontent;
-int bitarrayfd;
-t_bitarray* bitarray;
+
 
 /* FUNCIONES */
 
@@ -47,6 +43,7 @@ char* escribirBloquesDeFs(char* todasLasClavesAImpactar, int tamanioUsado, char*
 char* obtenerBloqueLibre();
 void escribirBloque(int* usedBlocks, int* seizedSize, int usedSize, char* block, char* clavesAImpactar);
 void limpiadorDeBloques(char* direccion);
+void limpiarBloque(char* direccionPart);
 char* leerBloque(char* bloque);
 char** obtenerBloques(char* direccion);
 void killProtocolFileSystem();

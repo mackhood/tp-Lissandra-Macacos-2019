@@ -143,10 +143,10 @@ t_list* inversaParsearKeys(t_list* clavesADesparsear)
 		t_keysetter* keyAuxiliar = list_get(clavesADesparsear, a);
 		char* keyConvertida = malloc(strlen(string_itoa(keyAuxiliar->key))
 				+ strlen(string_from_format("%lf", keyAuxiliar->timestamp)) + strlen(keyAuxiliar->clave) + 3);
-		strcpy(keyConvertida, string_itoa(keyAuxiliar->key));
-		strcat(keyConvertida, ";");
 		char* aux = string_from_format("%lf", keyAuxiliar->timestamp);
-		strcat(keyConvertida, string_substring_until(aux, strlen(aux) - 7));
+		strcpy(keyConvertida, string_substring_until(aux, strlen(aux) - 7));
+		strcat(keyConvertida, ";");
+		strcat(keyConvertida, string_itoa(keyAuxiliar->key));
 		strcat(keyConvertida, ";");
 		strcat(keyConvertida, keyAuxiliar->clave);
 		strcat(keyConvertida, "\n");
@@ -155,3 +155,6 @@ t_list* inversaParsearKeys(t_list* clavesADesparsear)
 	}
 	return clavesParseadas;
 }
+
+
+

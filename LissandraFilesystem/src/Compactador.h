@@ -28,7 +28,7 @@ void gestionarMemtable();
 void crearTemporal(char* tabla);
 int perteneceATabla(t_Memtablekeys* key);
 void ejecutarCompactacion(char* tabla);
-t_list* obtenerKeysAPlasmar(t_list* keysPostParsing, int numeroDeParticion);
+char* obtenerKeysAPlasmar(t_list* keysPostParsing, int numeroDeParticion, int particiones);
 void killProtocolCompactador();
 
 #endif /* COMPACTADOR_H_ */
