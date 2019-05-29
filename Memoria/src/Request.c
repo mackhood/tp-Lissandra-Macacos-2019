@@ -249,17 +249,50 @@ void describe (char** args) {
 
 }
 
-void drop (char** args) {
-/*	char* nombre_tabla = strdup(args[1]);
-	int largo_nombre_tabla = strlen(nombre_tabla);
+void dropReq (char* nombre_tabla) {
+	t_segmento* segmento_buscado = buscarSegmento(nombre_tabla);
+	int cant_segmentos = list_size(lista_segmentos);
+	int posicion_del_segmento_en_lista;
 
-	int tamanio_buffer = sizeof(int) + largo_nombre_tabla;
-	void* buffer = malloc(tamanio_buffer);
+	/* itero para saber la posicion del segmento en la lista de segmentos para luego realizar el list_remove
+	 * en base a la posicion del mismo
+	 */
+	if(cant_segmentos == 0){
+		printf("que haces flaco no te das cuenta que la lista de segmentos esta vacia\n");
+	}
+	else{
+		for(int i=0; i<cant_segmentos; i++){
+					if(strcmp(nombre_tabla, segmento_buscado->nombre_tabla)==0){
+						posicion_del_segmento_en_lista = i;
+					}
+		}
+	}
 
-	prot_enviar_mensaje(socket_fs, TABLE_DROP, tamanio_buffer, buffer);
+	/*	Segmento a remover deberia dar el mismo segmento que segmento buscado pero lo necesito declarar de nuevo
+	 * 	por el list_remove.
+	 */
+	t_segmento* segmento_a_remover = list_remove(lista_segmentos, posicion_del_segmento_en_lista);
+	int cant_pags_seg = list_size(segmento_a_remover->tabla_paginas.paginas);
 
-*/
+	/*	Itero y voy removiendo a medida de que tenga paginas en la tabla de paginas del segmento al mismo tiempo que marco dichas posiciones
+	 * 	como LIBRES en memoria_principal
+	 */
 
+	if(cant_pags_seg==0){
+		printf("el segmento no tiene paginas asi que solo removi el segmento\n");
+	}
+	else{
+		for(int j=0; j<cant_pags_seg; j++){
+			t_est_pag* pagina_a_remover = list_remove(segmento_a_remover->tabla_paginas.paginas, j);
+			estados_memoria[pagina_a_remover->offset] = LIBRE;
+			printf("remuevo la pagina que se encuentra en el marco %d\n", pagina_a_remover->offset);
+			free(pagina_a_remover);
+		}
+	}
+
+	//destruyo la TP(t_list*) del segmento a remover y luego libero la memoria asignada al segmento en cuestion
+	list_destroy(segmento_a_remover->tabla_paginas.paginas);
+	free(segmento_a_remover);
 }
 
 void journal () {
