@@ -97,7 +97,7 @@ int aplicarLRU(){
 	}
 
 	//si salgo del for y no hay pagina a liberar significa que todas las paginas de todos los segmentos se encuentran modificados (FULL) o que algo raro pasó
-	if(hay_pag_a_liberar){
+	if(!hay_pag_a_liberar){
 		printf("Aplico Journal debido a que mi memoria se encuentra FULL\n");
 		journal();
 		return 0;

@@ -2,7 +2,7 @@
 
 void levantar_config(){
 
-	conf_mapeada = config_create("memoria.config");
+	conf_mapeada = config_create("../memoria.config");
 
 	info_memoria.puerto = config_get_int_value(conf_mapeada, "PUERTO");
 	info_memoria.ip_fs = (char*)malloc(IP_SIZE);

@@ -42,6 +42,10 @@ void levantarConexion(){
 
 	//me conecto al fs primero
 	socket_fs = conectar_a_servidor(info_memoria.ip_fs, info_memoria.puerto_fs, "Memoria");
+	prot_enviar_mensaje(socket_fs, HANDSHAKE, 0, NULL);
+	t_prot_mensaje* handshake = prot_recibir_mensaje(socket_fs);
+	tamanio_value = *((int*)handshake->payload);
+	prot_destruir_mensaje(handshake);
 
 	//levanto servidor para Kernel
 /*	socket_escucha = levantar_servidor(info_memoria.puerto);
@@ -80,7 +84,7 @@ void levantarEstrMemorias(){
 	//el double ocupa 8 bytes
 
 	//variables iniciales
-	tamanio_value = 4; //copio la del config del fs por ahora
+	//tamanio_value = 4; //copio la del config del fs por ahora
 	tamanio_pag = sizeof(uint16_t) + tamanio_value + sizeof(double);
 	cant_paginas = info_memoria.tamanio_mem/tamanio_pag;
 

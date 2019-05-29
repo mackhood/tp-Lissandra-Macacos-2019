@@ -77,7 +77,6 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 		t_segmento* segmento_nuevo = malloc(sizeof(t_segmento));
 		segmento_nuevo->nombre_tabla = strdup(nombre_tabla);
 		segmento_nuevo->tabla_paginas.paginas = list_create();
-		list_add(lista_segmentos, segmento_nuevo);
 
 		//se lo pido al fs porque no esta
 		int largo_nombre_tabla = strlen(nombre_tabla);
@@ -106,6 +105,11 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 		prot_destruir_mensaje(mensaje_con_tabla);
 
 		buscarEinsertarEnMem(segmento_nuevo, key, tiempo_a_insertar, value);
+
+		/*	agrego al segmento despues de insertar la pagina en memoria debido a que dentro de la funcion esa uso al LRU y puedo estar usando
+		*	el journaling el cual me elimina al segmento en cuestion
+		*/
+		list_add(lista_segmentos, segmento_nuevo);
 
 		//prueba
 		printf("el nombre del segmento es: %s\n", segmento_nuevo->nombre_tabla);
@@ -185,12 +189,15 @@ double insertReq (char* nombre_tabla, uint16_t key, char* value) {
 		//printf("la tabla de paginas no existia\n");
 		segmento_nuevo->tabla_paginas.paginas = list_create();
 
-		list_add(lista_segmentos, segmento_nuevo);
-
 		double nuevo_time = getCurrentTime();
 
 		buscarEinsertarEnMem(segmento_nuevo, key, nuevo_time, value);
 		//preguntar si tiene que tener el 1 o puede ser 0 (es la primera vez que aparece en memoria)
+
+		/*	agrego al segmento despues de insertar la pagina en memoria debido a que dentro de la funcion esa uso al LRU y puedo estar usando
+		*	el journaling el cual me elimina al segmento en cuestion
+		*/
+		list_add(lista_segmentos, segmento_nuevo);
 
 		//prueba y ademas marco el flag en 1
 		t_est_pag* pagina_buscada = buscarEstPagBuscada(key, segmento_nuevo);
@@ -202,6 +209,8 @@ double insertReq (char* nombre_tabla, uint16_t key, char* value) {
 		memcpy(&key_buscada, memoria_principal+(pagina_buscada->offset*tamanio_pag)+sizeof(double), sizeof(uint16_t));
 		char* value_asignado = malloc(tamanio_value);
 		memcpy(value_asignado, memoria_principal+(pagina_buscada->offset*tamanio_pag)+sizeof(double)+sizeof(uint16_t), tamanio_value);
+
+
 
 		printf("el time de la pagina es %lf\n", time_buscado);
 		printf("la key de la pagina es %d\n", key_buscada);
