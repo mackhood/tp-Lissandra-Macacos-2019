@@ -788,6 +788,7 @@ void escribirBloque(int* usedBlocks, int* seizedSize, int usedSize, char* block,
     			break;
     		}
     	}
+    	*usedBlocks = *usedBlocks + 1;
     	msync(mmaplocator, fd2, MS_SYNC);
     	munmap(mmaplocator, mmapsize);
     	close(fd2);
