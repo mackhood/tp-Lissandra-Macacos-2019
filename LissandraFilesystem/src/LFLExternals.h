@@ -60,6 +60,7 @@ t_list* tablasEnEjecucion;
 pthread_mutex_t deathProtocol;
 pthread_mutex_t compactacionActiva;
 pthread_mutex_t dumpEnCurso;
+pthread_mutex_t renombreEnCurso;
 
 /* FUNCIONES GLOBALES */
 int chequearTimestamps(t_Memtablekeys* key1, t_Memtablekeys* key2);
