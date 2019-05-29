@@ -670,6 +670,8 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 			list_add(clavesDentroDeLosBloques, auxSend);
 			recount++;
 		}
+		free(clavesLeidas);
+		free(keyHandlerBeta);
 		free(bloques);
 	}
 	free(particionARevisar);
@@ -868,6 +870,7 @@ char* leerBloque(char* bloque)
 	{
 		fclose(partpointer);
 		logError("FileSystem: error al usar calloc para abrir el contenido del bloque %s.bin", bloque);
+		free(direccionBloque);
 		return "error";
 	}
 	else

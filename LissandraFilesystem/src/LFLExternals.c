@@ -7,6 +7,19 @@
 
 #include "LFLExternals.h"
 
+char* timeForLogs()
+{
+	time_t now;
+	struct tm ts;
+	char* buf = malloc(80);
+
+	time(&now);
+
+	ts = *localtime(&now);
+	strftime(buf, 80, "%d-%m %H:%M:%S", &ts);
+	return buf;
+}
+
 int chequearTimestamps(t_Memtablekeys* key1, t_Memtablekeys* key2)
 {
 	return (key1->data->timestamp > key2->data->timestamp);
