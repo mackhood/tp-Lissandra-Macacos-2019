@@ -659,7 +659,17 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 				strcat(clavesLeidas, leerBloque(bloques[a]));
 			a++;
 		}
-		list_add(clavesDentroDeLosBloques, clavesLeidas);
+		char** keyHandlerBeta = malloc(tamanioParticion + 1);
+		keyHandlerBeta = string_split(clavesLeidas, "\n");
+		int recount = 0;
+		while(keyHandlerBeta[recount] != NULL)
+		{
+			char* auxSend = malloc(strlen(keyHandlerBeta[recount]) + 3);
+			strcpy(auxSend, keyHandlerBeta[recount]);
+			strcat(auxSend, "\n");
+			list_add(clavesDentroDeLosBloques, auxSend);
+			recount++;
+		}
 		free(bloques);
 	}
 	free(particionARevisar);
