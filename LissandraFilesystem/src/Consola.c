@@ -11,27 +11,33 @@ COMANDO comandos[] = {
 
 void consola()
 {
-	puts("-_____________________________________________________");
-	puts("CONSOLA");
-	puts("------ Escriba un comando ------");
+	printf("\033[1;33m");
+	puts("°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°");
+	puts("----------------------------------------Lissandra FileSystem--------------------------------------------");
+	puts("---------------------------------------- Escriba un comando --------------------------------------------");
+	printf("\033[0;33m");
 	puts("1. - SELECT <Table> <Key>");
 	puts("2. - INSERT|<Table>|<Key>|<Value>|<Timestamp> (last one optional)");
 	puts("3. - CREATE <Table> <Consistency> <Amount of partitions> <Time until next compaction>");
 	puts("4. - DESCRIBE <Table> (Table is optional, if you want all tables to be shown, leave this parameter empty");
 	puts("5. - DROP <Table>");
+	printf("\033[1;31m");
 	puts("Detalle amistoso: Para los insert usar pipes o '|' no usar pipes en ninguna otra función ni nombre por consola, gracias.");
 	char* linea;
 //ejecutar prueba.txt
 	while (1) {
+		printf("\033[1;36m");
 		linea = readline("\nIngrese el comando a ejecutar con los parametros necesarios:\n ");
 
 		if (strcmp(linea, "exit")==0){
 			free(linea);
 			puts("EXIT.");
+			printf("\033[0m");
 			clear_history();
 			pthread_mutex_unlock(&deathProtocol);
 			break;
 		}
+		printf("\033[1;34m");
 		if(!strcmp(linea, ""))
 			continue;
 		else if (ejecutar_linea(linea)){

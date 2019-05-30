@@ -347,7 +347,7 @@ int insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibi
 	auxiliar->tabla = tablaRecibida;
 	auxiliar->data = auxiliarprima;
 
-
+	printf("\033[1;34m");
 	printf("%i, %s,", auxiliar->data->key, auxiliar->tabla);
 	printf(" %s, %lf\n", auxiliar->data->clave, auxiliar->data->timestamp);
 	if(0 == existeTabla(tablaRecibida))
