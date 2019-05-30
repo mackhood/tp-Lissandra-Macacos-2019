@@ -82,6 +82,25 @@ void terminationProtocol()
 	free(punto_montaje);
 	list_destroy(memtable);
 	list_destroy(tablasEnEjecucion);
+	printf("\033[1;31m");
+	puts("    	     /           /");
+	puts("          /' .,,,,  ./");
+	puts("         /';'     ,/");
+	puts("        / /   ,,//,'`'`");
+	puts("      ( ,, '_,  ,,,' ``");
+	puts("      |    /@  ,,, ; `");
+	puts("      /    .   ,''/' `,``");
+	puts("     /   .     ./, `,, ` ;");
+	puts("  ,./  .   ,-,',` ,,/'','");
+	puts(" |   /; ./,,'`,,'' |   |");
+	puts(" |     /   ','    /    |");
+	puts(" l___/'   '     |     |");
+	puts(" `,,'  |      /      `( ");
+	puts("      (      |        ~) ");
+	puts("     '       (");
+	puts("    :");
+	puts("   ; .         l--");
+	puts(" :   (         ;");
 	logInfo("Main: Waise neiat.");
 	log_destroy(logger);
 }
