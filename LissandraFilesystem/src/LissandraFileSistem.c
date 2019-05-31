@@ -15,6 +15,7 @@ int main(void)
 	iniciar();
 	pthread_mutex_lock(&deathProtocol);
 	terminationProtocol();
+	free(dateForLogger);
 	free(lissandraFL_log_ruta);
 	free(lissandraFL_config_ruta);
 	return EXIT_SUCCESS;
@@ -81,7 +82,7 @@ void terminationProtocol()
 	killProtocolFileSystem();
 	free(punto_montaje);
 	list_destroy(memtable);
-	list_destroy(tablasEnEjecucion);
+	list_destroy_and_destroy_elements(tablasEnEjecucion, &free);
 	printf("\033[1;31m");
 	puts("    	     /           /");
 	puts("          /' .,,,,  ./");

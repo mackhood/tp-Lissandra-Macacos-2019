@@ -7,5 +7,6 @@
 #include <unistd.h>
 
 double getCurrentTime() ;
+void liberadorDeArrays(char** array);
 
 #endif /* AUXILIARYFUNCTIONS_H_ */

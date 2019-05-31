@@ -631,7 +631,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 					i++;
 				}
 				list_add(clavesDentroDeLosBloques, clavesLeidas);
-				free(bloques);
+				liberadorDeArrays(bloques);
 				free(direccionTemp);
 			}
 		}
@@ -654,13 +654,20 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 		while(bloques[a] != NULL)
 		{
 			if(a == 0)
-				strcpy(clavesLeidas, leerBloque(bloques[a]));
+			{
+				char* aux = leerBloque(bloques[a]);
+				strcpy(clavesLeidas, aux);
+				free(aux);
+			}
 			else
-				strcat(clavesLeidas, leerBloque(bloques[a]));
+			{
+				char* aux = leerBloque(bloques[a]);
+				strcat(clavesLeidas, aux);
+				free(aux);
+			}
 			a++;
 		}
-		char** keyHandlerBeta = malloc(tamanioParticion + 1);
-		keyHandlerBeta = string_split(clavesLeidas, "\n");
+		char** keyHandlerBeta = string_split(clavesLeidas, "\n");
 		int recount = 0;
 		while(keyHandlerBeta[recount] != NULL)
 		{
@@ -670,9 +677,9 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 			list_add(clavesDentroDeLosBloques, auxSend);
 			recount++;
 		}
+		liberadorDeArrays(keyHandlerBeta);
 		free(clavesLeidas);
-		free(keyHandlerBeta);
-		free(bloques);
+		liberadorDeArrays(bloques);
 	}
 	free(particionARevisar);
 	free(direccionParticion);
@@ -702,7 +709,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 
 	list_destroy(keysettersDeClave);
 	list_destroy(clavesPostParseo);
-	list_destroy(clavesDentroDeLosBloques);
+	list_destroy_and_destroy_elements(clavesDentroDeLosBloques, &free);
 	free(direccionTabla);
 	return claveMasActualizada;
 }
@@ -738,7 +745,7 @@ char* escribirBloquesDeFs(char* todasLasClavesAImpactar, int tamanioUsado, char*
 		}
 	}
 	strcat(bloquesAsignados, "]");
-
+	free(direccionTabla);
 	return bloquesAsignados;
 }
 

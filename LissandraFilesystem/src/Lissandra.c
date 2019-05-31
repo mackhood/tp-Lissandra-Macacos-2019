@@ -403,9 +403,9 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 		{
 			t_list* keysDeTablaPedida = list_create();
 			t_list* keyEspecifica = list_create();
-			t_Memtablekeys* auxMemtable = malloc(sizeof(t_Memtablekeys) + 4);
+			t_Memtablekeys* auxMemtable;
 			t_keysetter* keyTemps = selectKeyFS(tabla, receivedKey);
-			t_keysetter* key = malloc(sizeof(t_keysetter) + 3);
+			t_keysetter* key;
 			keysDeTablaPedida = list_filter(memtable, (void*)perteneceATabla);
 			keyEspecifica = list_filter(keysDeTablaPedida, (void*)esDeTalKey);
 			if(!list_is_empty(keysDeTablaPedida))
@@ -430,7 +430,8 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 					key = NULL;
 			}
 
-			list_destroy(keysDeTablaPedida);
+			list_destroy_and_destroy_elements(keysDeTablaPedida, &free);
+			list_destroy(keyEspecifica);
 			logInfo( "Lissandra: se ha obtenido la clave más actualizada en el proceso.");
 			return key;
 		}

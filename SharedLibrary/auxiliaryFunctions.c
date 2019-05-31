@@ -16,4 +16,14 @@ double getCurrentTime()
 	return a;
 }
 
+void liberadorDeArrays(char** array)
+{
+	int count = 0;
+	while(array[count] != NULL)
+	{
+		free(array[count]);
+		count++;
+	}
+	free(array);
+}
 

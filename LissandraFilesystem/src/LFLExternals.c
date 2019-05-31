@@ -163,6 +163,7 @@ t_list* inversaParsearKeys(t_list* clavesADesparsear)
 		strcat(keyConvertida, ";");
 		strcat(keyConvertida, keyAuxiliar->clave);
 		strcat(keyConvertida, "\n");
+		free(aux);
 		list_add(clavesParseadas, keyConvertida);
 		a++;
 	}

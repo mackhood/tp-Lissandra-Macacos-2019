@@ -322,6 +322,7 @@ void ejecutarCompactacion(char* tabla)
 					list_add(keysToManage, auxSend);
 					recount++;
 				}
+				liberadorDeArrays(keyHandlerBeta);
 				limpiarBloque(direccionTempC);
 				remove(direccionTempC);
 				free(direccionTempC);
@@ -351,6 +352,7 @@ void ejecutarCompactacion(char* tabla)
 						free(blockContents);
 						counter++;
 					}
+					liberadorDeArrays(blocks);
 					char** keyHandlerBeta = malloc(fullTempSize + 1);
 					keyHandlerBeta = string_split(keysToParse, "\n");
 					int recount = 0;
@@ -363,6 +365,7 @@ void ejecutarCompactacion(char* tabla)
 						recount++;
 					}
 					limpiarBloque(direccionPart);
+					liberadorDeArrays(keyHandlerBeta);
 				}
 				free(direccionPart);
 			}
@@ -401,7 +404,7 @@ void ejecutarCompactacion(char* tabla)
 	logInfo("Compactador: la %s ha sido compactada.", tabla);
 	free(direccionMetadata);
 	list_destroy(keysPostParsing);
-	list_destroy(keysToManage);
+	list_destroy_and_destroy_elements(keysToManage, &free);
 	free(tdp);
 	closedir(tableDirectory);
 	free(direccionTabla);

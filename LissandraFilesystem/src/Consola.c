@@ -113,10 +113,7 @@ int ejecutar_linea (char * linea){
 	free(linea_aux);
 	//Llamo a la función
 	(*(comando->funcion)) (args);
-	free(args[0]);
-	free(args[1]);
-
-	free(args);
+	liberadorDeArrays(args);
 	usleep(retardo * 1000);
 	return 1;
 }
