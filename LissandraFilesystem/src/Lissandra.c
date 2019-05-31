@@ -511,11 +511,12 @@ int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, char* buff
 		int tablasExistentes = contarTablasExistentes();
 		if(tablasExistentes == 0)
 		{
-			logError( "Lissandra: No existe ningún directorio en le FileSystem");
-			printf("Error al acceder a todos los directorios");
+			logError( "Lissandra: No existe ningún directorio en el FileSystem");
+			printf("No existe ninguna tabla.");
 			char* errormarker = "error";
 			buffer = realloc(buffer, 6);
 			memcpy(buffer, errormarker, strlen(errormarker));
+			free(tabla);
 			return 1;
 		}
 		else
