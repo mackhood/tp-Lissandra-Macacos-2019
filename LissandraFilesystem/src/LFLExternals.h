@@ -63,6 +63,7 @@ pthread_mutex_t dumpEnCurso;
 pthread_mutex_t renombreEnCurso;
 
 /* FUNCIONES GLOBALES */
+char* timeForLogs();
 int chequearTimestamps(t_Memtablekeys* key1, t_Memtablekeys* key2);
 int chequearTimeKey(t_keysetter* key1, t_keysetter* key2);
 int obtenerTamanioArchivoConfig(char* direccionArchivo);

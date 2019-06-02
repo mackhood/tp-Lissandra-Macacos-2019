@@ -331,11 +331,11 @@ int limpiadorDeArchivos(char* direccion, char* tabla)
 		char* tablaAux = malloc(strlen(tabla) + 1);
 		strcpy(tablaAux, tabla);
 		int cantCarac = strlen(tablaDeLista->tabla);
-		char* tablaDeListaAux = string_new();
-		//char* tablaDeListaAux = string_new();
-		tablaDeListaAux = malloc(cantCarac + 1);
+		char* tablaDeListaAux = malloc(cantCarac + 1);
 		strcpy(tablaDeListaAux, tablaDeLista->tabla);
 		bool result = (0 == strcmp(tablaDeListaAux, tablaAux));
+		free(tablaAux);
+		free(tablaDeListaAux);
 		return result;
 	}
 	limpiadorDeBloques(direccion);
@@ -490,8 +490,7 @@ void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer)
 {
 	DIR* directorioDeTablas;
 	struct dirent* tdp;
-	char* auxdir = string_new();
-	auxdir = malloc(strlen(punto_montaje) + 8);
+	char* auxdir = malloc(strlen(punto_montaje) + 8);
 	strcpy(auxdir, punto_montaje);
 	strcat(auxdir, "Tables/");
 	if(NULL == (directorioDeTablas = opendir(auxdir)))
@@ -506,7 +505,7 @@ void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer)
 		if(solicitadoPorMemoria)
 		{
 			int tamanio_buffer_metadatas = 0;
-			logInfo( "FileSystem: se procede a construir el paquete a enviar a Memoria.");
+			logInfo("FileSystem: se procede a construir el paquete a enviar a Memoria.");
 			while(NULL != (tdp = readdir(directorioDeTablas)))
 			{
 				if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, "..")){}
@@ -524,7 +523,7 @@ void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer)
 		else
 		{
 			int tamanio_buffer_metadatas = 0;
-			logInfo( "FileSystem: se procede a mostrar el contenido de las tablas del File System.");
+			logInfo("FileSystem: se procede a mostrar el contenido de las tablas del File System.");
 			while(NULL != (tdp = readdir(directorioDeTablas)))
 			{
 				if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, ".."))	{}
@@ -538,13 +537,15 @@ void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer)
 			}
 		}
 	}
+	free(tdp);
+	closedir(directorioDeTablas);
+	free(auxdir);
 }
 
 int contarTablasExistentes()
 {
 	DIR* auxdir;
-	char* puntodemontaje = string_new();
-	puntodemontaje = malloc(strlen(punto_montaje) + 9);
+	char* puntodemontaje = malloc(strlen(punto_montaje) + 9);
 	strcpy(puntodemontaje, punto_montaje);
 	strcat(puntodemontaje, "Tables/");
 	struct dirent* dr;
@@ -552,6 +553,8 @@ int contarTablasExistentes()
 	{
 		logError("FileSystem: No se pudo acceder al directorio de tablas.");
 		printf("Error al querer contar las tablas existentes");
+		free(puntodemontaje);
+		closedir(auxdir);
 		return (0);
 	}
 	else
@@ -567,6 +570,9 @@ int contarTablasExistentes()
 				contadorDirectorios++;
 		}
 		logInfo("FileSystem: La cantidad de directorios existente es: %i", contadorDirectorios);
+		free(puntodemontaje);
+		free(dr);
+		closedir(auxdir);
 		return contadorDirectorios;
 	}
 }
@@ -631,7 +637,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 					i++;
 				}
 				list_add(clavesDentroDeLosBloques, clavesLeidas);
-				free(bloques);
+				liberadorDeArrays(bloques);
 				free(direccionTemp);
 			}
 		}
@@ -654,13 +660,20 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 		while(bloques[a] != NULL)
 		{
 			if(a == 0)
-				strcpy(clavesLeidas, leerBloque(bloques[a]));
+			{
+				char* aux = leerBloque(bloques[a]);
+				strcpy(clavesLeidas, aux);
+				free(aux);
+			}
 			else
-				strcat(clavesLeidas, leerBloque(bloques[a]));
+			{
+				char* aux = leerBloque(bloques[a]);
+				strcat(clavesLeidas, aux);
+				free(aux);
+			}
 			a++;
 		}
-		char** keyHandlerBeta = malloc(tamanioParticion + 1);
-		keyHandlerBeta = string_split(clavesLeidas, "\n");
+		char** keyHandlerBeta = string_split(clavesLeidas, "\n");
 		int recount = 0;
 		while(keyHandlerBeta[recount] != NULL)
 		{
@@ -670,7 +683,9 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 			list_add(clavesDentroDeLosBloques, auxSend);
 			recount++;
 		}
-		free(bloques);
+		liberadorDeArrays(keyHandlerBeta);
+		free(clavesLeidas);
+		liberadorDeArrays(bloques);
 	}
 	free(particionARevisar);
 	free(direccionParticion);
@@ -700,7 +715,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 
 	list_destroy(keysettersDeClave);
 	list_destroy(clavesPostParseo);
-	list_destroy(clavesDentroDeLosBloques);
+	list_destroy_and_destroy_elements(clavesDentroDeLosBloques, &free);
 	free(direccionTabla);
 	return claveMasActualizada;
 }
@@ -734,24 +749,28 @@ char* escribirBloquesDeFs(char* todasLasClavesAImpactar, int tamanioUsado, char*
 			strcat(bloquesAsignados, ",");
 			strcat(bloquesAsignados, bloque);
 		}
+		free(bloque);
 	}
 	strcat(bloquesAsignados, "]");
-
+	free(direccionTabla);
 	return bloquesAsignados;
 }
 
 char* obtenerBloqueLibre()
 {
 	int a = 0;
-	char* bloqueAEnviar = string_new();
+	char* bloqueAEnviar = malloc(5);
+	bloqueAEnviar = "";
 	while(!strcmp(bloqueAEnviar, ""))
 	{
 		//Hago que consulte al bitmap por el primer bloque libre//
 		if(!bitarray_test_bit(bitarray, a))
 		{
-			bloqueAEnviar = malloc(strlen(string_itoa(a)) + 1);
+			char* uaxb = string_itoa(a);
+			bloqueAEnviar = malloc(strlen(uaxb) + 1);
 			bitarray_set_bit(bitarray, a);
-			strcpy(bloqueAEnviar, string_itoa(a));
+			strcpy(bloqueAEnviar, uaxb);
+			free(uaxb);
 		}
 		else
 		{
@@ -850,7 +869,7 @@ void limpiarBloque(char* direccionPart)
 		free(direccionBloqueALiberar);
 		i++;
 	}
-	free(bloques);
+	liberadorDeArrays(bloques);
 	msync(bitarraycontent, bitarrayfd, MS_SYNC);
 }
 
@@ -868,6 +887,7 @@ char* leerBloque(char* bloque)
 	{
 		fclose(partpointer);
 		logError("FileSystem: error al usar calloc para abrir el contenido del bloque %s.bin", bloque);
+		free(direccionBloque);
 		return "error";
 	}
 	else

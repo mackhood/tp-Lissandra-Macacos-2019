@@ -7,6 +7,19 @@
 
 #include "LFLExternals.h"
 
+char* timeForLogs()
+{
+	time_t now;
+	struct tm ts;
+	char* buf = malloc(80);
+
+	time(&now);
+
+	ts = *localtime(&now);
+	strftime(buf, 80, "%d-%m %H:%M:%S", &ts);
+	return buf;
+}
+
 int chequearTimestamps(t_Memtablekeys* key1, t_Memtablekeys* key2)
 {
 	return (key1->data->timestamp > key2->data->timestamp);
@@ -50,7 +63,6 @@ t_list* parsearKeys(t_list* clavesAParsear)
 	char* keyHandler;
 	while((keyHandler = list_get(clavesAParsear, parserListPointer)) != NULL)
 	{
-		t_keysetter* helpingHand = malloc(sizeof(t_keysetter) + 3);
 		int parserPointer = 0;
 		int handlerSize = strlen(keyHandler);
 		char* key = malloc(24);
@@ -72,7 +84,7 @@ t_list* parsearKeys(t_list* clavesAParsear)
 			}
 			case '\n':
 			{
-				helpingHand = construirKeysetter(timestamp, key, value);
+				t_keysetter* helpingHand = construirKeysetter(timestamp, key, value);
 				list_add(clavesPostParseo, helpingHand);
 				parserPointer++;
 				status = 0;
@@ -141,15 +153,19 @@ t_list* inversaParsearKeys(t_list* clavesADesparsear)
 	while(NULL != list_get(clavesADesparsear, a))
 	{
 		t_keysetter* keyAuxiliar = list_get(clavesADesparsear, a);
-		char* keyConvertida = malloc(strlen(string_itoa(keyAuxiliar->key))
-				+ strlen(string_from_format("%lf", keyAuxiliar->timestamp)) + strlen(keyAuxiliar->clave) + 3);
 		char* aux = string_from_format("%lf", keyAuxiliar->timestamp);
-		strcpy(keyConvertida, string_substring_until(aux, strlen(aux) - 7));
+		char* auxk = string_itoa(keyAuxiliar->key);
+		char* keyConvertida = malloc(strlen(auxk) + strlen(aux) + strlen(keyAuxiliar->clave) + 3);
+		char* auxb = string_substring_until(aux, strlen(aux) - 7);
+		strcpy(keyConvertida, auxb);
 		strcat(keyConvertida, ";");
-		strcat(keyConvertida, string_itoa(keyAuxiliar->key));
+		strcat(keyConvertida, auxk);
 		strcat(keyConvertida, ";");
 		strcat(keyConvertida, keyAuxiliar->clave);
 		strcat(keyConvertida, "\n");
+		free(aux);
+		free(auxb);
+		free(auxk);
 		list_add(clavesParseadas, keyConvertida);
 		a++;
 	}

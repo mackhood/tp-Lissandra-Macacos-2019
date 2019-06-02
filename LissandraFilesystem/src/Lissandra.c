@@ -2,9 +2,6 @@
 
 void inicializar()
 {
-	hilos = list_create();
-	memorias = list_create();
-	compactadores = list_create();
 	memtable = list_create();
 	killthreads = false;
 	iniciarServidor();
@@ -273,8 +270,8 @@ void escucharMemoria(int* socket_memoria)
 			}
 			case JOURNALING_INSERT:
 			{
-				char* tablaRecibida = string_new();
-				char* valueRecibido = string_new();
+				char* tablaRecibida;
+				char* valueRecibido;
 				uint16_t keyRecibida;
 				double timestampRecibido;
 				int tamanioNombreTabla;
@@ -347,7 +344,7 @@ int insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibi
 	auxiliar->tabla = tablaRecibida;
 	auxiliar->data = auxiliarprima;
 
-
+	printf("\033[1;34m");
 	printf("%i, %s,", auxiliar->data->key, auxiliar->tabla);
 	printf(" %s, %lf\n", auxiliar->data->clave, auxiliar->data->timestamp);
 	if(0 == existeTabla(tablaRecibida))
@@ -403,9 +400,9 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 		{
 			t_list* keysDeTablaPedida = list_create();
 			t_list* keyEspecifica = list_create();
-			t_Memtablekeys* auxMemtable = malloc(sizeof(t_Memtablekeys) + 4);
+			t_Memtablekeys* auxMemtable;
 			t_keysetter* keyTemps = selectKeyFS(tabla, receivedKey);
-			t_keysetter* key = malloc(sizeof(t_keysetter) + 3);
+			t_keysetter* key;
 			keysDeTablaPedida = list_filter(memtable, (void*)perteneceATabla);
 			keyEspecifica = list_filter(keysDeTablaPedida, (void*)esDeTalKey);
 			if(!list_is_empty(keysDeTablaPedida))
@@ -427,15 +424,24 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 				if(keyTemps != NULL)
 					key = keyTemps;
 				else
+				{
+					puts("La key que usted solicitó no existe en el File System.");
+					logError("Lissandra: Clave inexistente en el FS.");
 					key = NULL;
+					return key;
+				}
 			}
 
-			list_destroy(keysDeTablaPedida);
-			logInfo( "Lissandra: se ha obtenido la clave más actualizada en el proceso.");
+			list_destroy_and_destroy_elements(keysDeTablaPedida, &free);
+			list_destroy(keyEspecifica);
+			logInfo("Lissandra: se ha obtenido la clave más actualizada en el proceso.");
 			return key;
 		}
 		else
 		{
+
+			printf("La tabla que usted quiso acceder no existe dentro del File System.\n");
+			logError("Lissandra: Tabla inexistente en el FS.");
 			t_keysetter* key = NULL;
 			return key;
 		}
@@ -510,11 +516,12 @@ int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, char* buff
 		int tablasExistentes = contarTablasExistentes();
 		if(tablasExistentes == 0)
 		{
-			logError( "Lissandra: No existe ningún directorio en le FileSystem");
-			printf("Error al acceder a todos los directorios");
+			logError( "Lissandra: No existe ningún directorio en el FileSystem");
+			printf("No existe ninguna tabla.");
 			char* errormarker = "error";
 			buffer = realloc(buffer, 6);
 			memcpy(buffer, errormarker, strlen(errormarker));
+			free(tabla);
 			return 1;
 		}
 		else
@@ -559,9 +566,6 @@ int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, char* buff
 void killProtocolLissandra()
 {
 	killthreads = true;
-	list_destroy(hilos);
-	list_destroy(memorias);
-	list_destroy(compactadores);
 	free(server_ip);
 	logInfo("Lissandra: Todas las memorias han sido desalojadas.");
 }

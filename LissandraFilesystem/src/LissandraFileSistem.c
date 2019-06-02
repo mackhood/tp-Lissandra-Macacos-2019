@@ -2,7 +2,11 @@
 
 int main(void)
 {
-	char* lissandraFL_log_ruta = strdup("/home/utnso/workspace/tp-2019-1c-Macacos/LissandraFilesystem/LissandraFileSystem.log");
+	char* dateForLogger = timeForLogs();
+	char* lissandraFL_log_ruta = malloc(strlen(dateForLogger) + 130);
+	strcpy(lissandraFL_log_ruta, "/home/utnso/workspace/tp-2019-1c-Macacos/LissandraFilesystem/LissandraFileSystem");
+	strcat(lissandraFL_log_ruta, dateForLogger);
+	strcat(lissandraFL_log_ruta, ".log");
 	logger = crearLogger(lissandraFL_log_ruta, "LissandraFileSystem");
 	logInfo("Main: Atra estherni ono thelduin, ai fricai.");
 	char* lissandraFL_config_ruta = strdup("/home/utnso/workspace/tp-2019-1c-Macacos/LissandraFilesystem/src/Lissandra.cfg");
@@ -11,6 +15,7 @@ int main(void)
 	iniciar();
 	pthread_mutex_lock(&deathProtocol);
 	terminationProtocol();
+	free(dateForLogger);
 	free(lissandraFL_log_ruta);
 	free(lissandraFL_config_ruta);
 	return EXIT_SUCCESS;
@@ -77,7 +82,26 @@ void terminationProtocol()
 	killProtocolFileSystem();
 	free(punto_montaje);
 	list_destroy(memtable);
-	list_destroy(tablasEnEjecucion);
+	list_destroy_and_destroy_elements(tablasEnEjecucion, &free);
+	printf("\033[1;31m");
+	puts("___________/           /__________________");
+	puts("__________/' .,,,,  ./____________________");
+	puts("_________/';'     ,/______________________");
+	puts("________/ /   ,,//,'`'`___________________");
+	puts("______( ,, '_,  ,,,' ``___________________");
+	puts("______|    /O  ,,, ; `____________________");
+	puts("______/    .   ,''/' `,``_________________");
+	puts("_____/   .     ./, `,, ` ;________________");
+	puts("__,./  .   ,-,',` ,,/'','_________________");
+	puts("_|   /; ./,,'`,,'' |   |__________________");
+	puts("_|     /   ','    /    |__________________");
+	puts("_l____/'   '     /     |__________________");
+	puts("__l  ,'_| '    /     `(___________________");
+	puts("___l/___(      |       ~)_________________");
+	puts("______'       (         __________________");
+	puts("_____:                ____________________");
+	puts("___; .         l--  ______________________");
+	puts("_:   (         ; _________________________");
 	logInfo("Main: Waise neiat.");
 	log_destroy(logger);
 }

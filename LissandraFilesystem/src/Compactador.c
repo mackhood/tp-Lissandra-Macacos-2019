@@ -8,7 +8,7 @@ void mainCompactador()
 	strcat(direccionDeLasTablas, "Tables/");
 	if(NULL == (directorioDeTablas = opendir(direccionDeLasTablas)))
 	{
-		logError( "FileSystem: error al acceder al directorio de tablas, abortando");
+		logError("Compactador: error al acceder al directorio de tablas, abortando");
 		free(direccionDeLasTablas);
 		closedir(directorioDeTablas);
 	}
@@ -131,7 +131,7 @@ void gestionarMemtable()
 				crearTemporal(tablaTomada->tabla);
 				a++;
 			}
-			list_clean(memtable);
+			list_clean_and_destroy_elements(memtable, &free);
 			pthread_mutex_unlock(&dumpEnCurso);
 		}
 	}
@@ -185,31 +185,35 @@ void crearTemporal(char* tabla)
 		if(firstRun)
 		{
 			tempPointer = fopen(tempDirection, "w+");
-			char* size = string_new();
-			size = malloc(7);
+			char* size = malloc(7);
 			strcpy(size, "SIZE=");
 			strcat(size, "\n");
 			fwrite(size, strlen(size), 1, tempPointer);
-			char* blocks = string_new();
-			blocks = malloc (9);
+			char* blocks = malloc (9);
 			strcpy(blocks, "BLOCKS=");
 			strcat(blocks, "\n");
 			fwrite(blocks, strlen(blocks), 1, tempPointer);
 			fclose(tempPointer);
+			free(blocks);
+			free(size);
 			tablaEjecutada->cantTemps++;
 		}
-		auxiliaryKey = malloc(sizeof(t_Memtablekeys) + 4);
 		auxiliaryKey = list_get(keysTableSpecific, a);
-		int sizeOfKey = strlen(string_itoa(auxiliaryKey->data->key)) + strlen(auxiliaryKey->data->clave)
-				+ strlen(string_from_format("%lf", auxiliaryKey->data->timestamp)) + 3;
-		char* claveParaTemp = malloc(sizeOfKey + 1);
 		char* auxTimestamp = string_from_format("%lf", auxiliaryKey->data->timestamp);
-		strcpy(claveParaTemp, string_substring_until(auxTimestamp, strlen(auxTimestamp) - 7));
+		char* auxc = string_itoa(auxiliaryKey->data->key);
+		int sizeOfKey = strlen(auxc) + strlen(auxiliaryKey->data->clave)
+				+ strlen(auxTimestamp) + 3;
+		char* claveParaTemp = malloc(sizeOfKey + 1);
+		char* auxb = string_substring_until(auxTimestamp, strlen(auxTimestamp) - 7);
+		strcpy(claveParaTemp, auxb);
 		strcat(claveParaTemp, ";");
-		strcat(claveParaTemp, string_itoa(auxiliaryKey->data->key));
+		strcat(claveParaTemp, auxc);
 		strcat(claveParaTemp, ";");
 		strcat(claveParaTemp, auxiliaryKey->data->clave);
 		strcat(claveParaTemp, "\n");
+		free(auxb);
+		free(auxc);
+		free(auxTimestamp);
 		if(firstRun)
 		{
 			strcpy(container, claveParaTemp);
@@ -232,6 +236,8 @@ void crearTemporal(char* tabla)
 		config_save(tempArchConf);
 		logInfo("Compactador: temporal creado");
 		config_destroy(tempArchConf);
+		free(sizedUse);
+		free(bloquesAsignados);
 	}
 	pthread_mutex_unlock(&renombreEnCurso);
 	free(container);
@@ -255,6 +261,7 @@ void ejecutarCompactacion(char* tabla)
 		return result;
 	}
 	pthread_mutex_lock(&compactacionActiva);
+	logInfo("Compactador: se procede a realizar la compactación de la %s", tabla);
 	char* direccionTabla = malloc(strlen(tabla) + strlen(punto_montaje) + 9);
 	strcpy(direccionTabla, punto_montaje);
 	strcat(direccionTabla, "Tables/");
@@ -269,15 +276,17 @@ void ejecutarCompactacion(char* tabla)
 	pthread_mutex_lock(&renombreEnCurso);
 	for(i = 0; i < tablaEspecifica->cantTemps; i++)
 	{
-		char* direccionARenombrar = malloc(strlen(direccionTabla) + strlen(string_itoa(i)) + 5);
-		char* direccionFinal = malloc(strlen(direccionTabla) + strlen(string_itoa(i)) + 6);
+		char* aux = string_itoa(i);
+		char* direccionARenombrar = malloc(strlen(direccionTabla) + strlen(aux) + 5);
+		char* direccionFinal = malloc(strlen(direccionTabla) + strlen(aux) + 6);
 		strcpy(direccionARenombrar, direccionTabla);
-		strcat(direccionARenombrar, string_itoa(i));
+		strcat(direccionARenombrar, aux);
 		strcat(direccionARenombrar, ".tmp");
 		strcpy(direccionFinal, direccionTabla);
-		strcat(direccionFinal, string_itoa(i));
+		strcat(direccionFinal, aux);
 		strcat(direccionFinal, ".tmpc");
 		rename(direccionARenombrar, direccionFinal);
+		free(aux);
 		free(direccionARenombrar);
 		free(direccionFinal);
 	}
@@ -311,8 +320,8 @@ void ejecutarCompactacion(char* tabla)
 					free(blockContents);
 					counter++;
 				}
-				char** keyHandlerBeta = malloc(fullTempSize + 1);
-				keyHandlerBeta = string_split(keysToParse, "\n");
+				liberadorDeArrays(blocks);
+				char** keyHandlerBeta = string_split(keysToParse, "\n");
 				int recount = 0;
 				while(keyHandlerBeta[recount] != NULL)
 				{
@@ -322,6 +331,8 @@ void ejecutarCompactacion(char* tabla)
 					list_add(keysToManage, auxSend);
 					recount++;
 				}
+				free(keysToParse);
+				liberadorDeArrays(keyHandlerBeta);
 				limpiarBloque(direccionTempC);
 				remove(direccionTempC);
 				free(direccionTempC);
@@ -351,8 +362,8 @@ void ejecutarCompactacion(char* tabla)
 						free(blockContents);
 						counter++;
 					}
-					char** keyHandlerBeta = malloc(fullTempSize + 1);
-					keyHandlerBeta = string_split(keysToParse, "\n");
+					liberadorDeArrays(blocks);
+					char** keyHandlerBeta = string_split(keysToParse, "\n");
 					int recount = 0;
 					while(keyHandlerBeta[recount] != NULL)
 					{
@@ -362,7 +373,9 @@ void ejecutarCompactacion(char* tabla)
 						list_add(keysToManage, auxSend);
 						recount++;
 					}
+					free(keysToParse);
 					limpiarBloque(direccionPart);
+					liberadorDeArrays(keyHandlerBeta);
 				}
 				free(direccionPart);
 			}
@@ -382,9 +395,10 @@ void ejecutarCompactacion(char* tabla)
 		keysDeParticion = obtenerKeysAPlasmar(keysPostParsing, g, particiones);
 		if(NULL != keysDeParticion)
 		{
-			char* direccionParticion = malloc(strlen(direccionTabla) + strlen(string_itoa(g)) + 6);
+			char* auxg = string_itoa(g);
+			char* direccionParticion = malloc(strlen(direccionTabla) + strlen(auxg) + 6);
 			strcpy(direccionParticion, direccionTabla);
-			strcat(direccionParticion, string_itoa(g));
+			strcat(direccionParticion, auxg);
 			strcat(direccionParticion, ".bin");
 			limpiarBloque(direccionParticion);
 			t_config* particion = config_create(direccionParticion);
@@ -393,6 +407,9 @@ void ejecutarCompactacion(char* tabla)
 			char* bloquesAsignados = escribirBloquesDeFs(keysDeParticion, strlen(keysDeParticion), tabla);
 			config_set_value(particion, "BLOCKS", bloquesAsignados);
 			config_save(particion);
+			free(auxg);
+			free(sizedUse);
+			free(bloquesAsignados);
 			config_destroy(particion);
 			free(direccionParticion);
 		}
@@ -400,8 +417,8 @@ void ejecutarCompactacion(char* tabla)
 	}
 	logInfo("Compactador: la %s ha sido compactada.", tabla);
 	free(direccionMetadata);
-	list_destroy(keysPostParsing);
-	list_destroy(keysToManage);
+	list_destroy_and_destroy_elements(keysPostParsing, &free);
+	list_destroy_and_destroy_elements(keysToManage, &free);
 	free(tdp);
 	closedir(tableDirectory);
 	free(direccionTabla);
@@ -464,7 +481,7 @@ char* obtenerKeysAPlasmar(t_list* keysPostParsing, int numeroDeParticion, int pa
 				strcat(allKeys, list_get(keysReParseadas, listIterator));
 			listIterator++;
 		}
-		list_destroy(keysReParseadas);
+		list_destroy_and_destroy_elements(keysReParseadas, &free);
 		list_destroy(keysAPlasmar);
 		list_destroy(keysDeTalParticion);
 		return allKeys;
@@ -476,7 +493,7 @@ char* obtenerKeysAPlasmar(t_list* keysPostParsing, int numeroDeParticion, int pa
 void killProtocolCompactador()
 {
 	lastDumpSituation = 1;
-	list_clean(tablasEnEjecucion);
+	list_clean_and_destroy_elements(tablasEnEjecucion, &free);
 	logInfo("Compactador: Desconectando todas las tablas.");
 	usleep(slowestCompactationInterval * 1000); //Esto está para que el compactador tenga tiempo a matar todas las tablas de su sistema.
 	free(TableEntry);
