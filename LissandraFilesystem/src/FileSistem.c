@@ -749,6 +749,7 @@ char* escribirBloquesDeFs(char* todasLasClavesAImpactar, int tamanioUsado, char*
 			strcat(bloquesAsignados, ",");
 			strcat(bloquesAsignados, bloque);
 		}
+		free(bloque);
 	}
 	strcat(bloquesAsignados, "]");
 	free(direccionTabla);
@@ -758,15 +759,18 @@ char* escribirBloquesDeFs(char* todasLasClavesAImpactar, int tamanioUsado, char*
 char* obtenerBloqueLibre()
 {
 	int a = 0;
-	char* bloqueAEnviar = string_new();
+	char* bloqueAEnviar = malloc(5);
+	bloqueAEnviar = "";
 	while(!strcmp(bloqueAEnviar, ""))
 	{
 		//Hago que consulte al bitmap por el primer bloque libre//
 		if(!bitarray_test_bit(bitarray, a))
 		{
-			bloqueAEnviar = malloc(strlen(string_itoa(a)) + 1);
+			char* uaxb = string_itoa(a);
+			bloqueAEnviar = malloc(strlen(uaxb) + 1);
 			bitarray_set_bit(bitarray, a);
-			strcpy(bloqueAEnviar, string_itoa(a));
+			strcpy(bloqueAEnviar, uaxb);
+			free(uaxb);
 		}
 		else
 		{
@@ -865,7 +869,7 @@ void limpiarBloque(char* direccionPart)
 		free(direccionBloqueALiberar);
 		i++;
 	}
-	free(bloques);
+	liberadorDeArrays(bloques);
 	msync(bitarraycontent, bitarrayfd, MS_SYNC);
 }
 

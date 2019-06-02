@@ -7,10 +7,6 @@
 
 /* ESTRUCTURAS */
 
-t_list * hilos;
-t_list * compactadores;
-t_list * memorias;
-
 
 /*VARIABLES GLOBALES*/
 

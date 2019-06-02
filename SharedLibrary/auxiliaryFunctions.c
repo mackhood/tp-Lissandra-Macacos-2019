@@ -27,3 +27,39 @@ void liberadorDeArrays(char** array)
 	free(array);
 }
 
+int itsANumber(char* check)
+{
+	int recount = 0;
+	while(check[recount] != NULL)
+	{
+		if(!isdigit(check[recount]))
+		{
+			return 0;
+		}
+		recount++;
+	}
+	return 1;
+}
+
+int doesNotContainNumber(char* check)
+{
+	int recount = strlen(check);
+	int i = 0;
+	for(i = 0; i < recount; i++)
+	{
+		if(isdigit(check[recount]))
+		{
+			return 0;
+		}
+	}
+	return 1;
+}
+
+int criterioInvalido(char* check)
+{
+	if(!strcmp(check, "SC") || !strcmp(check, "EC") || !strcmp(check, "SH"))
+		return 0;
+	else
+		return 1;
+}
+
