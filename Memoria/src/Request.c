@@ -47,7 +47,7 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 
 			prot_destruir_mensaje(mensaje_con_tabla);
 
-			buscarEinsertarEnMem(segmento_buscado, key, tiempo_a_insertar, value);
+			segmento_buscado = buscarEinsertarEnMem(segmento_buscado, key, tiempo_a_insertar, value);
 
 			//prueba
 			printf("el nombre del segmento es: %s\n", segmento_buscado->nombre_tabla);
@@ -104,7 +104,7 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 
 		prot_destruir_mensaje(mensaje_con_tabla);
 
-		buscarEinsertarEnMem(segmento_nuevo, key, tiempo_a_insertar, value);
+		segmento_nuevo = buscarEinsertarEnMem(segmento_nuevo, key, tiempo_a_insertar, value);
 
 		/*	agrego al segmento despues de insertar la pagina en memoria debido a que dentro de la funcion esa uso al LRU y puedo estar usando
 		*	el journaling el cual me elimina al segmento en cuestion
@@ -157,7 +157,7 @@ double insertReq (char* nombre_tabla, uint16_t key, char* value) {
 
 			double nuevo_time = getCurrentTime();
 
-			buscarEinsertarEnMem(segmento_buscado, key, nuevo_time, value);
+			segmento_buscado = buscarEinsertarEnMem(segmento_buscado, key, nuevo_time, value);
 			//preguntar si tiene que tener el 1 o puede ser 0 (es la primera vez que aparece en memoria)
 
 			//prueba y ademas marco el flag en 1
@@ -191,7 +191,7 @@ double insertReq (char* nombre_tabla, uint16_t key, char* value) {
 
 		double nuevo_time = getCurrentTime();
 
-		buscarEinsertarEnMem(segmento_nuevo, key, nuevo_time, value);
+		segmento_nuevo = buscarEinsertarEnMem(segmento_nuevo, key, nuevo_time, value);
 		//preguntar si tiene que tener el 1 o puede ser 0 (es la primera vez que aparece en memoria)
 
 		/*	agrego al segmento despues de insertar la pagina en memoria debido a que dentro de la funcion esa uso al LRU y puedo estar usando
@@ -209,8 +209,6 @@ double insertReq (char* nombre_tabla, uint16_t key, char* value) {
 		memcpy(&key_buscada, memoria_principal+(pagina_buscada->offset*tamanio_pag)+sizeof(double), sizeof(uint16_t));
 		char* value_asignado = malloc(tamanio_value);
 		memcpy(value_asignado, memoria_principal+(pagina_buscada->offset*tamanio_pag)+sizeof(double)+sizeof(uint16_t), tamanio_value);
-
-
 
 		printf("el time de la pagina es %lf\n", time_buscado);
 		printf("la key de la pagina es %d\n", key_buscada);
@@ -251,48 +249,40 @@ void describe (char** args) {
 
 void dropReq (char* nombre_tabla) {
 	t_segmento* segmento_buscado = buscarSegmento(nombre_tabla);
-	int cant_segmentos = list_size(lista_segmentos);
 	int posicion_del_segmento_en_lista;
 
-	/* itero para saber la posicion del segmento en la lista de segmentos para luego realizar el list_remove
-	 * en base a la posicion del mismo
-	 */
-	if(cant_segmentos == 0){
-		printf("que haces flaco no te das cuenta que la lista de segmentos esta vacia\n");
-	}
-	else{
-		for(int i=0; i<cant_segmentos; i++){
-					if(strcmp(nombre_tabla, segmento_buscado->nombre_tabla)==0){
-						posicion_del_segmento_en_lista = i;
-					}
-		}
-	}
+	if(segmento_buscado){
+		/* itero para saber la posicion del segmento en la lista de segmentos para luego realizar el list_remove
+		 * en base a la posicion del mismo
+		 */
 
-	/*	Segmento a remover deberia dar el mismo segmento que segmento buscado pero lo necesito declarar de nuevo
-	 * 	por el list_remove.
-	 */
-	t_segmento* segmento_a_remover = list_remove(lista_segmentos, posicion_del_segmento_en_lista);
-	int cant_pags_seg = list_size(segmento_a_remover->tabla_paginas.paginas);
+		posicion_del_segmento_en_lista = buscarPosSeg(nombre_tabla);
 
-	/*	Itero y voy removiendo a medida de que tenga paginas en la tabla de paginas del segmento al mismo tiempo que marco dichas posiciones
-	 * 	como LIBRES en memoria_principal
-	 */
+		/*	Segmento a remover deberia dar el mismo segmento que segmento buscado pero lo necesito declarar de nuevo
+		 * 	por el list_remove.
+		 */
+		t_segmento* segmento_a_remover = list_remove(lista_segmentos, posicion_del_segmento_en_lista);
 
-	if(cant_pags_seg==0){
-		printf("el segmento no tiene paginas asi que solo removi el segmento\n");
-	}
-	else{
-		for(int j=0; j<cant_pags_seg; j++){
-			t_est_pag* pagina_a_remover = list_remove(segmento_a_remover->tabla_paginas.paginas, j);
+//--
+		int cant_paginas_seg = list_size(segmento_a_remover->tabla_paginas.paginas);
+
+		printf("Libero los marcos asignados al segmento %s\n", segmento_a_remover->nombre_tabla);
+		for(int i=0; i<cant_paginas_seg; i++){
+			//Marco como libre todos los marcos ocupados por las paginas del segmento a liberar
+			t_est_pag* pagina_a_remover = list_get(segmento_a_remover->tabla_paginas.paginas, i);
 			estados_memoria[pagina_a_remover->offset] = LIBRE;
-			printf("remuevo la pagina que se encuentra en el marco %d\n", pagina_a_remover->offset);
-			free(pagina_a_remover);
+			printf("libero el marco %d asignado a la pagina %d\n", pagina_a_remover->offset, i);
 		}
-	}
 
-	//destruyo la TP(t_list*) del segmento a remover y luego libero la memoria asignada al segmento en cuestion
-	list_destroy(segmento_a_remover->tabla_paginas.paginas);
-	free(segmento_a_remover);
+//--
+		//destruyo la TP(t_list*) del segmento a remover y sus paginas. Luego libero la memoria asignada al segmento en cuestion
+		list_destroy_and_destroy_elements(segmento_a_remover->tabla_paginas.paginas, &free);
+		free(segmento_a_remover->nombre_tabla);
+		free(segmento_a_remover);
+	}
+	else{
+		printf("Que haces flaco no te das cuenta que no esta el segmento en memoria\n");
+	}
 }
 
 void journal () {

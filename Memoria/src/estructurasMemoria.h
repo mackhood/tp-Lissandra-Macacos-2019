@@ -51,6 +51,7 @@ size_t tamanio_value; //nos lo pasa el fs
 size_t cant_paginas;
 void* memoria_principal;
 t_estado* estados_memoria;
+bool se_hizo_journal;
 
 //sockets
 int socket_escucha;
@@ -76,10 +77,11 @@ void escucharKernel();
 t_segmento* buscarSegmento(char* tabla_a_buscar);
 t_est_pag* buscarEstPagBuscada(uint16_t key, t_segmento* segmento_buscado);
 int aplicarLRU();
-void buscarEinsertarEnMem(t_segmento* segmento, uint16_t key, double time_a_insertar, char* value);
+t_segmento* buscarEinsertarEnMem(t_segmento* segmento, uint16_t key, double time_a_insertar, char* value);
 int buscarPaginaLibre(); //ahora devuelvo un marco
 void journal (); //Si bien es una request la pongo aca dentro debido a que el LRU debe utilizarla
 void eliminar_segmentos();
 void liberar_marcos();
+int buscarPosSeg(char* nombre_segmento);
 
 #endif /* ESTRUCTURASMEMORIA_H_ */
