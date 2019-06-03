@@ -26,8 +26,21 @@ t_est_pag* buscarEstPagBuscada(uint16_t key, t_segmento* segmento_buscado){
 }
 
 
-void buscarEinsertarEnMem(t_segmento* segmento, uint16_t key, double time_a_insertar, char* value_con_barraCero){
+t_segmento* buscarEinsertarEnMem(t_segmento* segmento, uint16_t key, double time_a_insertar, char* value_con_barraCero){
+	char* nombre_tabla = strdup(segmento->nombre_tabla);
+
 	int marco_disponible = buscarPaginaLibre();
+
+	//PREGUNTAR
+	if(se_hizo_journal){
+		segmento = malloc(sizeof(t_segmento));
+		segmento->nombre_tabla = nombre_tabla;
+		segmento->tabla_paginas.paginas = list_create();
+		list_add(lista_segmentos, segmento);
+
+		se_hizo_journal = false;
+	}
+
 	t_est_pag* nueva_est_pagina = malloc(sizeof(t_est_pag));
 
 	nueva_est_pagina->offset = marco_disponible;
@@ -45,6 +58,7 @@ void buscarEinsertarEnMem(t_segmento* segmento, uint16_t key, double time_a_inse
 	//agrego la estructura a la tabla de paginas del segmento en cuestion
 	list_add(segmento->tabla_paginas.paginas, (t_est_pag*)nueva_est_pagina);
 
+	return segmento;
 }
 
 int buscarPaginaLibre(){
@@ -100,6 +114,8 @@ int aplicarLRU(){
 	if(!hay_pag_a_liberar){
 		printf("Aplico Journal debido a que mi memoria se encuentra FULL\n");
 		journal();
+		se_hizo_journal = true;
+
 		return 0;
 	}
 	else{
@@ -142,6 +158,20 @@ void liberar_marcos(){
 					estados_memoria[marco_ocupado] = LIBRE;
 				}
 			}
+}
+
+int buscarPosSeg(char* nombre_segmento){
+	int cant_segmentos = list_size(lista_segmentos);
+	int posicion;
+
+	for(int i=0; i<cant_segmentos; i++){
+		t_segmento* segmento_a_chequear = list_get(lista_segmentos, i);
+		if(strcmp(nombre_segmento, segmento_a_chequear->nombre_tabla)==0){
+			posicion = i;
+			break;
+		}
+	}
+	return posicion;
 }
 
 
