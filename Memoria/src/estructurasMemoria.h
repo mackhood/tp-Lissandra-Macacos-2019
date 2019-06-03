@@ -52,6 +52,7 @@ size_t cant_paginas;
 void* memoria_principal;
 t_estado* estados_memoria;
 bool se_hizo_journal;
+bool se_inserta_segmento;
 
 //sockets
 int socket_escucha;

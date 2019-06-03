@@ -109,10 +109,10 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 		/*	agrego al segmento despues de insertar la pagina en memoria debido a que dentro de la funcion esa uso al LRU y puedo estar usando
 		*	el journaling el cual me elimina al segmento en cuestion
 		*/
-		if(se_hizo_journal){
+		if(se_inserta_segmento){
 			list_add(lista_segmentos, segmento_nuevo);
-			se_hizo_journal = false;
 		}
+		se_inserta_segmento = true;
 
 		//prueba
 		printf("el nombre del segmento es: %s\n", segmento_nuevo->nombre_tabla);
@@ -199,12 +199,13 @@ double insertReq (char* nombre_tabla, uint16_t key, char* value) {
 
 		/*	agrego al segmento despues de insertar la pagina en memoria debido a que dentro de la funcion esa uso al LRU y puedo estar usando
 		*	el journaling el cual me elimina al segmento en cuestion
+		*	esta variable global se utiliza en caso de que se haya insertado una pagina nueva de un segmento que existia y la mismo tiro el LRU
 		*/
-
-		if(se_hizo_journal){
+		if(se_inserta_segmento){
 			list_add(lista_segmentos, segmento_nuevo);
-			se_hizo_journal = false;
 		}
+		se_inserta_segmento = true;
+
 
 		//prueba y ademas marco el flag en 1
 		t_est_pag* pagina_buscada = buscarEstPagBuscada(key, segmento_nuevo);

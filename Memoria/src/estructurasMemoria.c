@@ -31,14 +31,16 @@ t_segmento* buscarEinsertarEnMem(t_segmento* segmento, uint16_t key, double time
 
 	int marco_disponible = buscarPaginaLibre();
 
+	se_inserta_segmento = true;
 	//PREGUNTAR
 	if(se_hizo_journal){
 		segmento = malloc(sizeof(t_segmento));
 		segmento->nombre_tabla = nombre_tabla;
 		segmento->tabla_paginas.paginas = list_create();
-		//list_add(lista_segmentos, segmento);
+		list_add(lista_segmentos, segmento);
 
-		//se_hizo_journal = false;
+		se_inserta_segmento = false;
+		se_hizo_journal = false;
 	}
 
 	t_est_pag* nueva_est_pagina = malloc(sizeof(t_est_pag));
