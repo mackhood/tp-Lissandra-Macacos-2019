@@ -86,7 +86,7 @@ int conectar_a_servidor(char* ip, int puerto, char* nombre_cliente){
 
 	printf("soy %s y me estoy conectando a mi servidor\n", nombre_cliente);
 
-	uint16_t key = 16;
+/*	uint16_t key = 16;
 	double tiempo_pag = getCurrentTime();
 	int largo_value = strlen(nombre_cliente);
 
@@ -102,6 +102,7 @@ int conectar_a_servidor(char* ip, int puerto, char* nombre_cliente){
 
 	//free(nombre_cliente); ni idea porque no me permite hacer el free
 	free(buffer);
+*/
 
 	return socket_cliente;
 }

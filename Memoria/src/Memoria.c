@@ -74,6 +74,7 @@ void levantarConexion(){
 
 	prot_destruir_mensaje(mensaje);
 */
+
 }
 
 void levantarEstrMemorias(){

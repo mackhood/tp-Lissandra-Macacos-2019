@@ -36,9 +36,9 @@ t_segmento* buscarEinsertarEnMem(t_segmento* segmento, uint16_t key, double time
 		segmento = malloc(sizeof(t_segmento));
 		segmento->nombre_tabla = nombre_tabla;
 		segmento->tabla_paginas.paginas = list_create();
-		list_add(lista_segmentos, segmento);
+		//list_add(lista_segmentos, segmento);
 
-		se_hizo_journal = false;
+		//se_hizo_journal = false;
 	}
 
 	t_est_pag* nueva_est_pagina = malloc(sizeof(t_est_pag));
