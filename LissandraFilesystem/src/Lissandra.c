@@ -99,6 +99,7 @@ void escucharMemoria(int* socket_memoria)
 			case SOLICITUD_TABLA:
 			{
 				logInfo( "Lissandra: Nos llega un pedido de Select de parte de la Memoria");
+				puts("Llegó un select desde memoria.");
 				uint16_t auxkey;
 				char* tabla;
 				int tamanioNombre;
@@ -146,6 +147,7 @@ void escucharMemoria(int* socket_memoria)
 			case CREATE_TABLA:
 			{
 				logInfo( "Lissandra: Llega un pedido de Create de parte de Memoria");
+				puts("Llegó un Create desde memoria.");
 				char* tablaRecibida = string_new();
 				char* consistenciaRecibida = string_new();
 				int cantParticionesRecibida;
@@ -190,6 +192,7 @@ void escucharMemoria(int* socket_memoria)
 			}
 			case TABLE_DROP:
 			{
+				puts("Llegó un Drop desde memoria.");
 				char* tablaRecibida = string_new();
 				int tamanioNombreTabla;
 				memcpy(&tamanioNombreTabla, mensaje_memoria->payload, sizeof(int));
@@ -222,6 +225,7 @@ void escucharMemoria(int* socket_memoria)
 			}
 			case DESCRIBE:
 			{
+				puts("Llegó un Describe desde memoria.");
 				bool solicitadoPorMemoria = true;
 				if(mensaje_memoria->payload != NULL)
 				{
@@ -270,6 +274,7 @@ void escucharMemoria(int* socket_memoria)
 			}
 			case JOURNALING_INSERT:
 			{
+				puts("Llegó un Insert desde memoria.");
 				char* tablaRecibida;
 				char* valueRecibido;
 				uint16_t keyRecibida;
@@ -312,6 +317,7 @@ void escucharMemoria(int* socket_memoria)
 			}
 			case DESCONEXION:
 			{
+				puts("Una memoria ha sido desconectada.");
 				memoriaDesconectada = true;
 				break;
 			}

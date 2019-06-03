@@ -7,6 +7,7 @@ COMANDO comandos[] = {
 		{"DESCRIBE",describe},
 		{"DROP",drop},
 		{"DETAILS", details},
+		{"SHOW_MENU", show_menu},
 		{(char *) NULL, (Funcion *) NULL}
 };
 
@@ -23,8 +24,11 @@ void consola()
 	puts("4. - DESCRIBE <Table> (Table is optional, if you want all tables to be shown, leave this parameter empty)");
 	puts("5. - DROP <Table>");
 	puts("6. - DETAILS (Explains how to use the File System's Interface.).");
-	puts("7. - EXIT");
-
+	Puts("7. - SHOW_MENU");
+	puts("8. - EXIT");
+	printf("\033[1;31m");
+	puts("\nAdvertencia: los pipes solo deben ser usados para separar los parámetros del Insert, en otras instrucciones"
+			" no son considerados.");
 	char* linea;
 //ejecutar prueba.txt
 	while (1) {
@@ -535,14 +539,40 @@ void details(char** args)
 		puts("3. - CREATE <Table> <Consistency: EC/SC/SHC> <Amount of partitions> <Time until next compaction>");
 		puts("4. - DESCRIBE <Table> (Table is optional, if you want all tables to be shown, leave this parameter empty)");
 		puts("5. - DROP <Table>");
-		puts("6. - EXIT");
-		puts("7. - DETAILS (Explains how to use the File System's Interface.).");
+		puts("6. - DETAILS (Explains how to use the File System's Interface.).");
+		puts("7. - SHOW_MENU");
+		puts("8. - EXIT");
 
 		printf("\033[1;31m");
 		puts("Detalle amistoso: Para los insert usar pipes o '|' no usar pipes en ninguna otra función ni nombre por consola, gracias.");
 	}
 }
 
+void show_menu(char** args)
+{
+	int chequeo = chequearParametros(args, 1);
+	if(chequeo)
+	{
+		printf("La instrucción SHOW_MENU no lleva parámetros.\n");
+		logError( "Consola: solicitud posee cantidad errónea de parámetros");
+	}
+	else
+	{
+		printf("\033[1;33m");
+		puts("°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`");
+		puts("----------------------------------------Lissandra FileSystem---------------------------------------------");
+		puts("---------------------------------------- Escriba un comando ---------------------------------------------");
+		printf("\033[0;33m");
+		puts("1. - SELECT <Table> <Key>");
+		puts("2. - INSERT <Table>|<Key>|<Value>|<Timestamp[milliseconds]> (last one is optional)");
+		puts("3. - CREATE <Table> <Consistency: EC/SC/SHC> <Amount of partitions> <Time until next compaction>");
+		puts("4. - DESCRIBE <Table> (Table is optional, if you want all tables to be shown, leave this parameter empty)");
+		puts("5. - DROP <Table>");
+		puts("6. - DETAILS (Explains how to use the File System's Interface.).");
+		puts("7. - SHOW_MENU");
+		puts("8. - EXIT");
+	}
+}
 
 int chequearParametros(char** args, int cantParametros)
 {

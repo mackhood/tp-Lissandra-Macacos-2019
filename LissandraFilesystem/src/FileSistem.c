@@ -436,6 +436,7 @@ int mostrarMetadataEspecificada(char* tabla, int tamanio_buffer_metadatas, bool 
 	if(0 == existeTabla(tabla))
 	{
 		logInfo( "FileSystem: La tabla a la que quiere acceder no existe");
+		puts("La tabla a la que usted quiere acceder no existe.");
 		return 0;
 	}
 	else
