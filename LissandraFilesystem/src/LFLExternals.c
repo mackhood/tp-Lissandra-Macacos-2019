@@ -7,6 +7,18 @@
 
 #include "LFLExternals.h"
 
+int cantidadDeBloquesLibres()
+{
+	int i = 0;
+	int contador = 0;
+	for(i = 0; i < blocks; i++)
+	{
+		if(!bitarray_test_bit(bitarray, i))
+			contador++;
+	}
+	return contador;
+}
+
 char* timeForLogs()
 {
 	time_t now;

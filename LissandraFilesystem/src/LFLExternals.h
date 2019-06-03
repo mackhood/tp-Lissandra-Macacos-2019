@@ -50,6 +50,7 @@ int tamanio_value;
 char* direccionFileSystemBlocks;
 char* globalBitmapPath;
 char* bitarraycontent;
+int blocks;
 int bitarrayfd;
 t_bitarray* bitarray;
 t_log * logger;
@@ -63,6 +64,7 @@ pthread_mutex_t dumpEnCurso;
 pthread_mutex_t renombreEnCurso;
 
 /* FUNCIONES GLOBALES */
+int cantidadDeBloquesLibres();
 char* timeForLogs();
 int chequearTimestamps(t_Memtablekeys* key1, t_Memtablekeys* key2);
 int chequearTimeKey(t_keysetter* key1, t_keysetter* key2);

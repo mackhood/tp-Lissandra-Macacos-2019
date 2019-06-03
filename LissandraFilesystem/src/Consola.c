@@ -19,18 +19,18 @@ void consola()
 	printf("\033[0;33m");
 	puts("1. - SELECT <Table> <Key>");
 	puts("2. - INSERT <Table>|<Key>|<Value>|<Timestamp[milliseconds]> (last one is optional)");
-	puts("3. - CREATE <Table> <Consistency: EC/SC/SH> <Amount of partitions> <Time until next compaction>");
+	puts("3. - CREATE <Table> <Consistency: EC/SC/SHC> <Amount of partitions> <Time until next compaction>");
 	puts("4. - DESCRIBE <Table> (Table is optional, if you want all tables to be shown, leave this parameter empty)");
 	puts("5. - DROP <Table>");
-	puts("6. - EXIT");
-	printf("\033[1;31m");
-	puts("Detalle amistoso: Para los insert usar pipes o '|' no usar pipes en ninguna otra función ni nombre por consola, gracias.");
+	puts("6. - DETAILS (Explains how to use the File System's Interface.).");
+	puts("7. - EXIT");
+
 	char* linea;
 //ejecutar prueba.txt
 	while (1) {
 		printf("\033[1;36m");
-		linea = readline("\nIngrese el comando a ejecutar con los parametros necesarios:\n ");
-		char* aux = malloc(strlen(linea));
+		linea = readline("\nIngrese el comando a ejecutar con los parámetros necesarios:\n ");
+		char* aux = malloc(strlen(linea) + 1);
 		strcpy(aux, linea);
 		string_to_lower(aux);
 		if (!strcmp(aux, "exit"))
@@ -50,6 +50,7 @@ void consola()
 		{
 			add_history(linea);
 		}
+		free(aux);
 		free(linea);
 	}
 }
@@ -96,7 +97,7 @@ int ejecutar_linea (char * linea){
 
 	if(!(comando != NULL))
 	{
-		puts("El comando que quiere ejecutar no coincide con ningun comando conocido.");
+		puts("El comando que quiere ejecutar no coincide con ningún comando conocido.");
 		free(funcion);
 		free(linea_aux);
 	}
@@ -162,7 +163,7 @@ void selectt (char** args)
 	{
 		if(!itsANumber(args[2]))
 		{
-			puts("La key que ingreso posee caracteres invalidos.");
+			puts("La key que ingresó posee caracteres invalidos.");
 		}
 		else
 		{
@@ -197,7 +198,7 @@ void insert (char** args)
 	{
 		if(!itsANumber(args[2]))
 		{
-			puts("La key que ingreso posee caracteres invalidos.");
+			puts("La key que ingresó posee caracteres inválidos.");
 			logError( "Consola: la key a Insertar es inválida.");
 		}
 		else
@@ -218,7 +219,7 @@ void insert (char** args)
 			if(string_contains(args[3], ";"))
 			{
 				printf("Por favor, ingrese un value que no tenga ';' dentro.");
-				logError("Consola: se ingreso un value invalido");
+				logError("Consola: se ingresó un value inválido");
 			}
 			else
 			{
@@ -235,7 +236,7 @@ void insert (char** args)
 				{
 					if(!itsANumber(args[4]))
 					{
-						puts("El timestamp ingresado contiene caracteres invalidos.");
+						puts("El timestamp ingresado contiene caracteres inválidos.");
 						logError( "Consola: el timestamp a Insertar es inválido.");
 						free(value);
 						free(claveaux);
@@ -335,36 +336,46 @@ void create (char** args)
 			char* particionesaux = malloc(strlen(args[3]) + 1);
 			strcpy(particionesaux, args[3]);
 			int particiones = atoi(particionesaux);
-			char* intervaloCompactacionaux = malloc(strlen(args[4]) + 1);
-			strcpy(intervaloCompactacionaux, args[4]);
-			int intervaloCompactacion = atoi(intervaloCompactacionaux);
-			switch(llamadoACrearTabla(tabla, consistencia, particiones, intervaloCompactacion))
+			if(particiones > cantidadDeBloquesLibres())
 			{
-				case 0:
-				{
-					printf("Operación exitosa\n");
-					logInfo( "Consola: Tabla creada satisfactoriamente");
-					break;
-				}
-				case 2:
-				{
-					printf("La tabla solicitada ya existe\n");
-					logInfo( "Consola: Tabla ya existía");
-					break;
-				}
-				default:
-				{
-					printf("Error al crear la tabla\n");
-					logError( "Consola: La tabla o alguna de sus partes no pudo ser creada");
-					break;
-				}
+				puts("No hay suficientes bloques disponibles en el FS para crear esta tabla");
+				logError("Consola: Se solicitaron más bloques de los disponibles actualmente en el FS.");
+				free(consistencia);
+				free(tabla);
+				free(particionesaux);
 			}
-			free(consistencia);
-			free(particionesaux);
-			free(intervaloCompactacionaux);
+			else
+			{
+				char* intervaloCompactacionaux = malloc(strlen(args[4]) + 1);
+				strcpy(intervaloCompactacionaux, args[4]);
+				int intervaloCompactacion = atoi(intervaloCompactacionaux);
+				switch(llamadoACrearTabla(tabla, consistencia, particiones, intervaloCompactacion))
+				{
+					case 0:
+					{
+						printf("Operación exitosa\n");
+						logInfo( "Consola: Tabla creada satisfactoriamente");
+						break;
+					}
+					case 2:
+					{
+						printf("La tabla solicitada ya existe\n");
+						logInfo( "Consola: Tabla ya existía");
+						break;
+					}
+					default:
+					{
+						printf("Error al crear la tabla\n");
+						logError( "Consola: La tabla o alguna de sus partes no pudo ser creada");
+						break;
+					}
+				}
+				free(consistencia);
+				free(particionesaux);
+				free(intervaloCompactacionaux);
+			}
 		}
 	}
-
 }
 
 void describe (char** args)
@@ -431,7 +442,7 @@ void drop (char** args)
 		}
 		default:
 		{
-			printf("Ocurrio un error al intentar eliminar la tabla deseada\n");
+			printf("Ocurrió un error al intentar eliminar la tabla deseada\n");
 			logError( "Consola: operacion no terminada");
 		}
 		}
@@ -439,10 +450,99 @@ void drop (char** args)
 	}
 }
 
-void details()
+void details(char** args)
 {
-	puts("");
+	logInfo("Consola: se ha solicitado información sobre le uso del FileSystem.");
+	int chequeo = chequearParametros(args, 1);
+	if(chequeo)
+	{
+		printf("La instrucción details no lleva parámetros.\n");
+		logError( "Consola: solicitud posee cantidad errónea de parámetros");
+	}
+	else
+	{
+		puts("¤ Bienvenido a Lissandra File System. ¤");
+		puts("  ¤¤ Instrucciones para el uso correcto y eficiente del FS, especificado por cada instrucción.");
+		puts("  ¤¤ Instrucciones generales:");
+		puts("Los parámetros de las instrucciones son bastante sencillos. Tanto los nombres de las tablas como "
+				"los comandos pueden ser escritos con mayusculas y minúsculas como se desee, ya que el mismo es case sensitive.");
+		puts("Se sugiere no modificar los contenidos de las carpetas donde el FS trabaja durante la ejecución del mismo,"
+				" semejante acción podría llevar a que sucedan errores inesperados.");
+		puts("  ¤¤ Manejo de Comandos:");
+		puts("   1¤¤¤ Select:");
+		puts("El comando Select buscará el valor de la clave más actualizado que se encuentre en este momento dentro del FS."
+				"Posee dos parámetros:");
+		puts("      Nombre de tabla, el cual puede tener cualquier caracter menos espacios.");
+		puts("      Key, un int que es el patrón de referencia que usará el resto de las operaciones para ubicar la key en el FS.");
+		puts("Para funcionar, la tabla deberá existir en el sistema y la clave debe haber sido impactada en ella, o"
+				" existir en la memtable.");
+		puts("El nombre de la tabla puede contener cualquier caracter menos espacios, sin embargo, la key debe ser únicamente "
+				"numérica, caso contrario será notificado para que la corrija.");
+		puts("   2¤¤¤ Insert:");
+		puts("El comando Insert crea una nueva key a insertar dentro del File System. Para ello, se debe pasar los parámetros"
+				" solicitados en el orden como se indica en el menú de la consola, y siendo separados por un pipe '|'.");
+		puts("Los parámetros de éste comando son:");
+		puts("      Nombre de tabla, el cual puede tener cualquier caracter menos espacios.");
+		puts("      Key, un int que es el patrón de referencia que usará el resto de las operaciones para ubicar la key en el FS.");
+		puts("      Value, un string que puede poseer una cantidad limitada de caracteres y representa el valor de la Key en el FS.");
+		puts("      Timestamp, un double que corresponde a la hora en que fue creada ésta key. Timestamp es un parámetro opcional"
+				", con lo cual en caso de no serle otorgado uno manualmente, el FS le asignará el Timestamp actual.");
+		puts("Insert tomará la clave y la llevará a la memtable, donde la misma estará una cantidad de tiempo determinada por"
+				" el archivo de configuración. Una vez transcurrido ese lapso, la clave será impactada en un archivo temporal, "
+				"para luego ser compactada y comparada en caso de que la key ya exista en el FS.");
+		puts("   3¤¤¤ Create:");
+		puts("El comando Create es el encargado de crear las tablas en el FS. Encargándose de asignarle un bloque libre "
+				"del FS a cada partición de la tabla en el momento de su creación, además de ponerla en la lista de tablas"
+				" en ejecución y prepararla para las posibles compactaciones a ocurrir. El comando Create tiene 4 parámetros:");
+		puts("      Nombre de la tabla, puede contener cualquier caractér (salvo espacios), es el nombre que tendrá el "
+				"directorio donde resida la información de la tabla de ahora en adelante.");
+		puts("      Consistencia: La consistencia tiene 3 tipos. Cada tipo de consistencia especificará el nivel de renovación"
+				" de los datos al momento de hacerle una solicitud al FS. SC es aquella en la cual las solicitudes siempre obtienen"
+				" los resultados más actualizados, sin embargo, tiene un único origen. EC obtiene una mayor cantidad de orígenes"
+				" para revisar la información, pero suele ser menos preciso en cuanto a que tan nuevos son esos datos. SHC funciona"
+				"de manera similar a SC, solo que toma la ventaja de usar múltiples memorias. Para ésto se usara una función"
+				" 'HASH' para determinar a que memoria irá la key."
+				" ");
+		puts("      Cantidad de particiones, un int que determina cuántas particiones tendrá la tabla en el FS.");
+		puts("      Tiempo entre compactaciones, este valor, un int, determina cuánto tiempo pasará entre compactación y compac"
+				"tación. Cada compactación ayudará a eliminar los archivos temporales y a actualizar las keys ya existentes en el"
+				" FS");
+		puts("Como único requisito, la tabla que uno desee crear no debe existir previamente en el FS, en caso contrario, será"
+				" notificado para sobre la situación.");
+		puts("   4¤¤¤ Describe:");
+		puts("El comando Describe tiene como funcionalidad mostrar la metadata de una tabla específica, o de todas las tablas"
+				" que actualmente se encuentren en el FS. Posee un único parámetro, que es opcional:");
+		puts("      Nombre de la tabla, el nombre de la tabla puede tener cualquier caracter menos espacios. En caso de dejar"
+				" este campo en blanco. El FS devolverá la información de la metadata de todas las tablas existentes");
+		puts("Como único requisito, se tiene el de que en caso de pedir el de una tabla específica, que esa tabla exista en el FS");
+		puts("   5¤¤¤ Drop:");
+		puts("El comando Drop se encarga de eliminar las tablas de adentro del FS, destruyendo toda la información que la misma"
+				" haya almacenado en los bloques del FS. Drop posee un solo parámetro:");
+		puts("      Nombre de la tabla a eliminar, el nombre de la tabla puede tener cualquier caracter menos espacios.");
+		puts("El único requisito de Drop es que la tabla a eliminar exista en el FS, caso contrario, se notificará sobre su inexi"
+				"stencia.");
+		puts("   6¤¤¤ Exit:");
+		puts("El comando Exit inicia el procedimiento de fin del FS, destruyendo estructuras temporales, desalojando las memorias"
+				" y realizando los pasos necesarios para afianzar los datos que hayan quedado sin impactar.");
+		puts("Se agradece que tome en cuenta las información dada sobre el funcionamiento del FS");
+		printf("\033[1;33m");
+		puts("°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`");
+		puts("----------------------------------------Lissandra FileSystem---------------------------------------------");
+		puts("---------------------------------------- Escriba un comando ---------------------------------------------");
+		printf("\033[0;33m");
+		puts("1. - SELECT <Table> <Key>");
+		puts("2. - INSERT <Table>|<Key>|<Value>|<Timestamp[milliseconds]> (last one is optional)");
+		puts("3. - CREATE <Table> <Consistency: EC/SC/SHC> <Amount of partitions> <Time until next compaction>");
+		puts("4. - DESCRIBE <Table> (Table is optional, if you want all tables to be shown, leave this parameter empty)");
+		puts("5. - DROP <Table>");
+		puts("6. - EXIT");
+		puts("7. - DETAILS (Explains how to use the File System's Interface.).");
+
+		printf("\033[1;31m");
+		puts("Detalle amistoso: Para los insert usar pipes o '|' no usar pipes en ninguna otra función ni nombre por consola, gracias.");
+	}
 }
+
 
 int chequearParametros(char** args, int cantParametros)
 {
