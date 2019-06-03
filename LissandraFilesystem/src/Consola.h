@@ -24,6 +24,7 @@ void create (char** args);
 void describe (char** args);
 void drop (char** args);
 void details(char** args);
+void show_menu();
 int chequearParametros(char** args, int cantParametros);
 
 #endif /* CONSOLA_H_ */

@@ -24,7 +24,7 @@ void consola()
 	puts("4. - DESCRIBE <Table> (Table is optional, if you want all tables to be shown, leave this parameter empty)");
 	puts("5. - DROP <Table>");
 	puts("6. - DETAILS (Explains how to use the File System's Interface.).");
-	Puts("7. - SHOW_MENU");
+	puts("7. - SHOW_MENU");
 	puts("8. - EXIT");
 	printf("\033[1;31m");
 	puts("\nAdvertencia: los pipes solo deben ser usados para separar los parámetros del Insert, en otras instrucciones"
@@ -340,47 +340,44 @@ void create (char** args)
 			char* particionesaux = malloc(strlen(args[3]) + 1);
 			strcpy(particionesaux, args[3]);
 			int particiones = atoi(particionesaux);
-			if(particiones > cantidadDeBloquesLibres())
+
+			char* intervaloCompactacionaux = malloc(strlen(args[4]) + 1);
+			strcpy(intervaloCompactacionaux, args[4]);
+			int intervaloCompactacion = atoi(intervaloCompactacionaux);
+			switch(llamadoACrearTabla(tabla, consistencia, particiones, intervaloCompactacion))
 			{
-				puts("No hay suficientes bloques disponibles en el FS para crear esta tabla");
-				logError("Consola: Se solicitaron más bloques de los disponibles actualmente en el FS.");
-				free(consistencia);
-				free(tabla);
-				free(particionesaux);
-			}
-			else
-			{
-				char* intervaloCompactacionaux = malloc(strlen(args[4]) + 1);
-				strcpy(intervaloCompactacionaux, args[4]);
-				int intervaloCompactacion = atoi(intervaloCompactacionaux);
-				switch(llamadoACrearTabla(tabla, consistencia, particiones, intervaloCompactacion))
+				case 0:
 				{
-					case 0:
-					{
-						printf("Operación exitosa\n");
-						logInfo( "Consola: Tabla creada satisfactoriamente");
-						break;
-					}
-					case 2:
-					{
-						printf("La tabla solicitada ya existe\n");
-						logInfo( "Consola: Tabla ya existía");
-						break;
-					}
-					default:
-					{
-						printf("Error al crear la tabla\n");
-						logError( "Consola: La tabla o alguna de sus partes no pudo ser creada");
-						break;
-					}
+					printf("Operación exitosa\n");
+					logInfo( "Consola: Tabla creada satisfactoriamente");
+					break;
 				}
-				free(consistencia);
-				free(particionesaux);
-				free(intervaloCompactacionaux);
+				case 2:
+				{
+					printf("La tabla solicitada ya existe\n");
+					logInfo( "Consola: Tabla ya existía");
+					break;
+				}
+				case 5:
+				{
+					puts("No hay suficientes bloques disponibles en el FS para crear esta tabla");
+					logError("Consola: Se solicitaron más bloques de los disponibles actualmente en el FS.");
+					break;
+				}
+				default:
+				{
+					printf("Error al crear la tabla\n");
+					logError( "Consola: La tabla o alguna de sus partes no pudo ser creada");
+					break;
+				}
 			}
+			free(consistencia);
+			free(particionesaux);
+			free(intervaloCompactacionaux);
 		}
 	}
 }
+
 
 void describe (char** args)
 {

@@ -80,6 +80,7 @@ void levantarBitmap(char* direccion)
 
 void setearValoresFileSistem(t_config * archivoConfig)
 {
+	fileSystemFull = false;
 	punto_montaje = strdup(config_get_string_value(archivoConfig, "PUNTO_MONTAJE"));
 	char* direccionMetadataFileSystem = malloc(strlen(punto_montaje) + 23);
 	strcpy(direccionMetadataFileSystem, punto_montaje);
@@ -94,6 +95,11 @@ void setearValoresFileSistem(t_config * archivoConfig)
 
 int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoCompactacion)
 {
+	if(particiones > cantidadDeBloquesLibres())
+	{
+		logError("FileSystem: No hay suficientes bloques para asignar a la tabla.");
+		return 5;
+	}
 	creatingFL = 0;
 	DIR* newdir;
 	char buff[128];

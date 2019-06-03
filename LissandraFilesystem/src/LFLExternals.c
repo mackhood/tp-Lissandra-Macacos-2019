@@ -19,6 +19,44 @@ int cantidadDeBloquesLibres()
 	return contador;
 }
 
+int cantidadDeBloquesAOcupar()
+{
+	int totalBlocks = 0;
+	int counterTables = 0;
+	while(NULL != list_get(tablasEnEjecucion, counterTables))
+	{
+		t_TablaEnEjecucion* tabla = list_get(tablasEnEjecucion, counterTables);
+		t_list* auxMemtable = list_create();
+		bool esDeTabla(t_Memtablekeys* key)
+		{
+			return (key->tabla == tabla->tabla);
+		}
+		int counterKeys = 0;
+		int blocksForTable = 0;
+		int sizeOfKeys = 0;
+		auxMemtable = list_filter(memtable, (void*)esDeTabla);
+		while(NULL != list_get(auxMemtable, counterKeys))
+		{
+			t_Memtablekeys* keyAux = list_get(auxMemtable, counterKeys);
+			char* auxbT = string_from_format("%lf", keyAux->data->timestamp);
+			char* auxT = string_substring_until(auxbT, strlen(auxbT) - 7);
+			char* auxK = string_itoa(keyAux->data->key);
+			int sizeOfKey = strlen(auxT) + strlen(auxK) + strlen(keyAux->data->clave);
+			sizeOfKeys += sizeOfKey;
+			counterKeys++;
+			free(auxbT);
+			free(auxT);
+			free(auxK);
+			free(keyAux);
+		}
+		list_destroy(auxMemtable);
+		blocksForTable = (sizeOfKeys/8) + 1;
+		totalBlocks += blocksForTable;
+		counterTables++;
+	}
+	return totalBlocks;
+}
+
 char* timeForLogs()
 {
 	time_t now;

@@ -181,6 +181,11 @@ void escucharMemoria(int* socket_memoria)
 						prot_enviar_mensaje(socket, TABLA_CREADA_YA_EXISTENTE, 0, NULL);
 						break;
 					}
+					case 5:
+					{
+						logInfo("Lissandra: se informa a memoria de que el FS no tiene más espacio");
+						prot_enviar_mensaje(socket, FILE_SYSTEM_FULL, 0, NULL);
+					}
 					default:
 					{
 						logError( "Lissandra: La tabla o alguna de sus partes no pudo ser creada, informo a Memoria");
@@ -473,6 +478,12 @@ int llamadoACrearTabla(char* nombre, char* consistencia, int particiones, int ti
 		case 2:
 		{
 			return 2;
+			break;
+		}
+		case 5:
+		{
+			logError("Lissandra: Se solicitaron más bloques de los disponibles actualmente en el FS.");
+			return 5;
 			break;
 		}
 		default:

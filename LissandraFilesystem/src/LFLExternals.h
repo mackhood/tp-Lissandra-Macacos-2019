@@ -46,6 +46,7 @@ typedef struct {
 }__attribute__((packed)) t_TablaEnEjecucion;
 
 /* VARIABLES GLOBALES */
+bool fileSystemFull;
 int tamanio_value;
 char* direccionFileSystemBlocks;
 char* globalBitmapPath;
@@ -65,6 +66,7 @@ pthread_mutex_t renombreEnCurso;
 
 /* FUNCIONES GLOBALES */
 int cantidadDeBloquesLibres();
+int cantidadDeBloquesAOcupar();
 char* timeForLogs();
 int chequearTimestamps(t_Memtablekeys* key1, t_Memtablekeys* key2);
 int chequearTimeKey(t_keysetter* key1, t_keysetter* key2);

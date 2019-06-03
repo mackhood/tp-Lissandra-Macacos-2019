@@ -123,16 +123,30 @@ void gestionarMemtable()
 		int a = 0;
 		if(!list_is_empty(memtable))
 		{
-			logInfo("Compactador: Se procede a realizar un dump de la memtable.");
-			pthread_mutex_lock(&dumpEnCurso);
-			while(NULL != list_get(tablasEnEjecucion, a))
+			int cantBlocksLibre = cantidadDeBloquesLibres();
+			int cantBlocksNecesarios = cantidadDeBloquesAOcupar();
+			if(cantBlocksNecesarios > cantBlocksLibre)
+				fileSystemFull = true;
+			else
+				fileSystemFull = false;
+			if(!fileSystemFull)
 			{
-				t_TablaEnEjecucion* tablaTomada = list_get(tablasEnEjecucion, a);
-				crearTemporal(tablaTomada->tabla);
-				a++;
+				logInfo("Compactador: Se procede a realizar un dump de la memtable.");
+				pthread_mutex_lock(&dumpEnCurso);
+				while(NULL != list_get(tablasEnEjecucion, a))
+				{
+					t_TablaEnEjecucion* tablaTomada = list_get(tablasEnEjecucion, a);
+					crearTemporal(tablaTomada->tabla);
+					a++;
+				}
+				list_clean_and_destroy_elements(memtable, &free);
+				pthread_mutex_unlock(&dumpEnCurso);
 			}
-			list_clean_and_destroy_elements(memtable, &free);
-			pthread_mutex_unlock(&dumpEnCurso);
+			else
+			{
+				logInfo("Compactador: no hay suficiente espacio en el FS para realizar un Dump. Se reintentará luego.");
+				puts("FileSystem se encuentra sin espacio suficiente para dumpear");
+			}
 		}
 	}
 }
