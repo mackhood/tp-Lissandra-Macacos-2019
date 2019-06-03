@@ -57,7 +57,7 @@ int doesNotContainNumber(char* check)
 
 int criterioInvalido(char* check)
 {
-	if(!strcmp(check, "SC") || !strcmp(check, "EC") || !strcmp(check, "SH"))
+	if(!strcmp(check, "SC") || !strcmp(check, "EC") || !strcmp(check, "SHC"))
 		return 0;
 	else
 		return 1;

@@ -19,7 +19,6 @@
 /* VARIABLES GLOBALES */
 
 int tamanio_bloques;
-int blocks;
 int creatingFL;
 
 

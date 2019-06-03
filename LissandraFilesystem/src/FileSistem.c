@@ -185,27 +185,22 @@ int crearMetadata (char* direccion, char* consistencia, int particiones, int tie
 	}
 	else
 	{
-		char* Linea = string_new();
-		Linea = malloc(17);
+		char* Linea = malloc(18);
 		strcpy(Linea, "CONSISTENCIA=");
 		strcat(Linea, consistencia);
 		strcat(Linea,"\n");
 		fwrite(Linea, strlen(Linea), 1, metadata);
 		free(Linea);
-		char* Linea2 = string_new();
-		char* cantparticiones = string_new();
-		Linea2 = malloc(sizeof(particiones) + 14);
+		char* Linea2 = malloc(sizeof(particiones) + 14);
+		char* cantparticiones = string_itoa(particiones);
 		strcpy(Linea2, "PARTICIONES=");
-		cantparticiones = string_itoa(particiones);
 		strcat(Linea2, cantparticiones);
 		strcat(Linea2, "\n");
 		fwrite(Linea2, strlen(Linea2), 1, metadata);
 		free(Linea2);
-		char* Linea3 = string_new();
-		char* tiempoEntreCompactaciones = string_new();
-		Linea3 = malloc(strlen(string_itoa(tiempoCompactacion)) + 28);
+		char* Linea3 = malloc(strlen(string_itoa(tiempoCompactacion)) + 28);
+		char* tiempoEntreCompactaciones = string_itoa(tiempoCompactacion);
 		strcpy(Linea3, "TIEMPOENTRECOMPACTACIONES=");
-		tiempoEntreCompactaciones = string_itoa(tiempoCompactacion);
 		strcat(Linea3, tiempoEntreCompactaciones);
 		strcat(Linea3, "\n");
 		fwrite(Linea3, strlen(Linea3), 1, metadata);
@@ -918,6 +913,6 @@ void killProtocolFileSystem()
 	close(bitarrayfd);
 	free(globalBitmapPath);
 	free(direccionFileSystemBlocks);
-	logInfo("FileSystem: El bitmap fue destruido y las direcciones globales del FileSystem destruidas.");
+	logInfo("FileSystem: El bitmap fue destruido y las direcciones globales del FileSystem fueron destruidas.");
 }
 

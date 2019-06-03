@@ -23,7 +23,7 @@ void insert (char** args);
 void create (char** args);
 void describe (char** args);
 void drop (char** args);
-void details();
+void details(char** args);
 int chequearParametros(char** args, int cantParametros);
 
 #endif /* CONSOLA_H_ */
