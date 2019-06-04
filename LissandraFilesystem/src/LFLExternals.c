@@ -117,7 +117,7 @@ t_list* parsearKeys(t_list* clavesAParsear)
 		int handlerSize = strlen(keyHandler);
 		char* key = malloc(24);
 		char* value = malloc(tamanio_value + 1);
-		char* timestamp = malloc(14);
+		char* timestamp = malloc(15);
 		int status = 0;
 		int k = 1;
 		int v = 1;

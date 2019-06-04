@@ -30,33 +30,16 @@ void iniciarServidor()
 
 	//Se aceptan clientes cuando los haya
 	// accept es una funcion bloqueante, si no hay ningun cliente esperando ser atendido, se queda esperando a que venga uno.
-	while(  (socket_memoria = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion)) > 0){
-		//la memoria nos enviara un mensaje inicial que diga quien es
-		t_prot_mensaje* mensaje = prot_recibir_mensaje(socket_memoria);
-
-		uint16_t key_recibida;
-		double hora_actual;
-		int tamanio_value;
-
-		memcpy(&key_recibida, mensaje->payload, sizeof(uint16_t));
-		memcpy(&hora_actual, mensaje->payload + sizeof(uint16_t), sizeof(double));
-		memcpy(&tamanio_value, mensaje->payload + sizeof(uint16_t) + sizeof(double), sizeof(int));
-
-		char* value = malloc(tamanio_value + 1);
-		memcpy(value, mensaje->payload + sizeof(uint16_t) + sizeof(double) + sizeof(int), tamanio_value);
-		value[tamanio_value] = '\0';
-
-		printf("el CLIENTE es %s y nos manda de prueba la key %d y la hora %lf\n\n", value, key_recibida, hora_actual);
-
-		prot_destruir_mensaje(mensaje);
+	while(  (socket_memoria = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion)) > 0)
+	{
+		puts("Se ha conectado una memoria");
 		logInfo( "[Lissandra]: Se conecto una Memoria");
 		pthread_t RecibirMensajesMemoria;
 		/*Duplico la variable que tiene el valor del socket del cliente*/
 		int* memoria = (int*) malloc (sizeof(int));
 		*memoria = socket_memoria;
 		pthread_create(&RecibirMensajesMemoria,NULL, (void*)escucharMemoria, memoria);
-
-		}
+	}
 }
 
 void escucharMemoria(int* socket_memoria)

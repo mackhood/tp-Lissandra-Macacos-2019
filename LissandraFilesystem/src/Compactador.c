@@ -388,7 +388,6 @@ void ejecutarCompactacion(char* tabla)
 						recount++;
 					}
 					free(keysToParse);
-					limpiarBloque(direccionPart);
 					liberadorDeArrays(keyHandlerBeta);
 				}
 				free(direccionPart);

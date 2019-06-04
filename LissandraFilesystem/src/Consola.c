@@ -251,7 +251,7 @@ void insert (char** args)
 					{
 						char* timestampaux = malloc(strlen(args[4]) + 1);
 						strcpy(timestampaux, args[4]);
-						if(strlen(timestampaux) > 14)
+						if(strlen(timestampaux) > 15)
 						{
 							puts("Ha insertado un timestamp demasiado grande. Por favor, ingrese uno más pequeño.");
 							logError( "Consola: el timestamp a Insertar es inválido.");
@@ -377,7 +377,6 @@ void create (char** args)
 		}
 	}
 }
-
 
 void describe (char** args)
 {
