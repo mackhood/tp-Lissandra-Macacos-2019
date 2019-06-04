@@ -142,13 +142,42 @@ int ejecutar_linea (char * linea){
 }
 
 
-void selectt (char** args) {
+
+void selectt(char** args){
+	char* nombre_tabla = string_duplicate(args[1]);
+	uint16_t key = atoi(args[2]);
+	//char* key = string_duplicate(args[2]);
+
+	params* parametros = malloc( sizeof(params) );
+	parametros->enteros[0]= key;
+	parametros->palabras[0] = nombre_tabla;
+
+
+
+	DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,parametros);
+
+	if(estaEnMetadata(nombre_tabla)){
+
+		enviarANew(dtb_nuevo);
+		logInfo("Se envio a new el proceso");
+
+	} else{
+
+		enviarAEXIT(dtb_nuevo);
+		logInfo("La tabla no se encuentra en metadata");
+
+	}
 
 
 
 
+
+	free(nombre_tabla);
 
 }
+
+
+
 
 void insert (char** args) {
 

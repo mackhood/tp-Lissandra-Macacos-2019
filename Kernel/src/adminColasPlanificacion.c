@@ -14,7 +14,7 @@ void initConfigAdminColas(){
 
 	tKernelEstados = malloc(sizeof(t_kernel_estado));
 	tKernelEstados->new = queue_create();
-	tKernelEstados->pendReady = list_create();
+//	tKernelEstados->pendReady = list_create();
 	tKernelEstados->ready = queue_create();
 //	tKernelEstados->colaPrioridad = queue_create();
 	tKernelEstados->exec = list_create();
@@ -93,14 +93,14 @@ DTB_KERNEL*  getDTBNew(){
 /**
  * Envio a la cola PEND_READY
  */
-void enviarAPendReady(DTB_KERNEL* dtb){
-
-	pthread_mutex_lock(&mutexListPendReady);
-	list_add(tKernelEstados->pendReady,dtb);
-	pthread_mutex_unlock(&mutexListPendReady);
-
-	logInfo("Ingreso el proceso a la cola pendiente de ready :%d", dtb->idGDT);
-}
+//void enviarAPendReady(DTB_KERNEL* dtb){
+//
+//	pthread_mutex_lock(&mutexListPendReady);
+//	list_add(tKernelEstados->pendReady,dtb);
+//	pthread_mutex_unlock(&mutexListPendReady);
+//
+//	logInfo("Ingreso el proceso a la cola pendiente de ready :%d", dtb->idGDT);
+//}
 
 void enviarAReady(DTB_KERNEL* dtb){
 	pthread_mutex_lock(&mutexListListo);
@@ -198,22 +198,22 @@ DTB_KERNEL* get_elem_new_by_id(int id){
 
 }
 
-DTB_KERNEL* get_elem_penready_by_id(int id){
-	bool encontrar(void* element) {
-		DTB_KERNEL* dtbTemp = element;
-		return dtbTemp->idGDT == id;
-	}
-
-	if(list_any_satisfy(tKernelEstados->pendReady, encontrar)){
-		pthread_mutex_lock( &mutexListPendReady );
-		DTB_KERNEL*  dtb = list_find(tKernelEstados->pendReady, encontrar);
-		pthread_mutex_unlock( &mutexListPendReady );
-		return dtb;
-
-	}else
-		return NULL;
-
-}
+//DTB_KERNEL* get_elem_penready_by_id(int id){
+//	bool encontrar(void* element) {
+//		DTB_KERNEL* dtbTemp = element;
+//		return dtbTemp->idGDT == id;
+//	}
+//
+//	if(list_any_satisfy(tKernelEstados->pendReady, encontrar)){
+//		pthread_mutex_lock( &mutexListPendReady );
+//		DTB_KERNEL*  dtb = list_find(tKernelEstados->pendReady, encontrar);
+//		pthread_mutex_unlock( &mutexListPendReady );
+//		return dtb;
+//
+//	}else
+//		return NULL;
+//
+//}
 
 void enviarAEXIT(DTB_KERNEL* dtb) {
 	pthread_mutex_lock(&mutexListFinalizado);
@@ -269,14 +269,14 @@ void removerDeBLOCK(DTB_KERNEL* dtb) {
 	logTrace("El DTB:%d se removio de la cola de bloqueados", dtb->idGDT);
 }
 
-void removerDePenReady(DTB_KERNEL* dtb) {
-
-	bool condicionDTB(DTB_KERNEL* dtbTemp) {;
-		return dtbTemp->idGDT == dtb->idGDT;
-	}
-	list_remove_by_condition(tKernelEstados->pendReady,(void*)condicionDTB);
-	logTrace("El DTB:%d se removio de la cola de pendiente de ready", dtb->idGDT);
-}
+//void removerDePenReady(DTB_KERNEL* dtb) {
+//
+//	bool condicionDTB(DTB_KERNEL* dtbTemp) {;
+//		return dtbTemp->idGDT == dtb->idGDT;
+//	}
+//	list_remove_by_condition(tKernelEstados->pendReady,(void*)condicionDTB);
+//	logTrace("El DTB:%d se removio de la cola de pendiente de ready", dtb->idGDT);
+//}
 
 void removerDeReady(DTB_KERNEL* dtb) {
 
@@ -365,10 +365,10 @@ void moverBlockToReady(DTB_KERNEL* dtb){
 	enviarAReady(dtb);
 }
 
-void moverPenReadyToExit(DTB_KERNEL* dtb){
-	removerDePenReady(dtb);
-	enviarAEXIT(dtb);
-}
+//void moverPenReadyToExit(DTB_KERNEL* dtb){
+//	removerDePenReady(dtb);
+//	enviarAEXIT(dtb);
+//}
 
 void moverNewToExit(DTB_KERNEL* dtb){
 	removerDeNuevo(dtb);
@@ -380,10 +380,10 @@ void moverNewToReady(DTB_KERNEL* dtb){
 	enviarAReady(dtb);
 }
 
-void moverPendienteReadyToReady(DTB_KERNEL* dtb){
-	removerDePenReady( dtb );
-	enviarAReady(dtb);
-}
+//void moverPendienteReadyToReady(DTB_KERNEL* dtb){
+//	removerDePenReady( dtb );
+//	enviarAReady(dtb);
+//}
 
 void moverReadyToExit(DTB_KERNEL* dtb){
 	removerDeReady(dtb);
@@ -396,7 +396,7 @@ void moverReadyToExec(DTB_KERNEL* dtb){
 }
 
 
-DTB_KERNEL* crearDTBSAFA(int gdtId, char* path, int quantum){
+DTB_KERNEL* crearDTBKernel(int gdtId, char* path, int quantum, params parametros){
 	DTB_KERNEL* dtb = malloc( sizeof(DTB_KERNEL) );
 	dtb->idGDT = gdtId;
 	dtb->flag = 1;
@@ -409,6 +409,8 @@ DTB_KERNEL* crearDTBSAFA(int gdtId, char* path, int quantum){
 	strcpy(dtb->path, path);
 //	dtb->tablaDeArchivosAbiertos = list_create();
 //	dtb->prox_io = queue_create();
+	dtb->parametros = parametros;
+
 	return dtb;
 }
 

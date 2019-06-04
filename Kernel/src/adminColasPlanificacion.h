@@ -31,7 +31,7 @@ DTB_KERNEL* crearDTBSAFA(int gdtId, char* path, int quantum);
 
 typedef struct {
 	t_queue* new;			  //aca van los DTB asociado al programa cundo el usuario ejecuta un script
-	t_list* pendReady ;	  //Aca paso los dtb que envie a cargar en memoria y esta pendiente de pasar a ready
+	//t_list* pendReady ;	  //Aca paso los dtb que envie a cargar en memoria y esta pendiente de pasar a ready
 	t_queue* ready;
     t_list* exec;
 	t_queue* exit;

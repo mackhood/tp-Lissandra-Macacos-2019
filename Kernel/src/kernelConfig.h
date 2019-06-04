@@ -12,11 +12,25 @@
 #include <commons/collections/queue.h>
 #include <commons/config.h>
 #include <time.h>
-
 #include <pthread.h>
 #include <semaphore.h>
+#include "../SharedLibrary/conexiones.h"
+
+
 pthread_mutex_t mutexIdGDT;
 pthread_mutex_t mutexIdMemoria;
+
+
+typedef struct {
+
+
+	t_list* tablas;
+
+
+}metadata;
+
+
+
 
 typedef struct{
 	int	puerto_memoria;
@@ -25,6 +39,7 @@ typedef struct{
 	char* ip_memoria;
 	int metadata_refresh;
 	int sleep_ejecucion;
+	metadata* metadata;
 }kernel_config;
 
 typedef struct {
@@ -40,7 +55,12 @@ typedef struct {
 t_kernel* tKernel;
 
 
+typedef struct {
 
+	int enteros [5];
+	char** palabras;
+
+}params;
 
 
 
@@ -55,9 +75,12 @@ typedef struct{
 
 	int total_sentencias;
 	char* sentencias;
+
 	bool se_ejecuto;
 	double tiempo_repuesta;
 	time_t horacreacion;  //se usa para calcular el tiempo de repuesta
+	t_header instruccion_actual;
+	params  parametros;
 
 }DTB_KERNEL;
 
@@ -70,6 +93,7 @@ typedef struct {
 
 
 
+bool  estaEnMetadata(char *);
 
 
 GDT* buscar_gdt_by_id(int pid);
