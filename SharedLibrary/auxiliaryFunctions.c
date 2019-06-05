@@ -30,13 +30,12 @@ void liberadorDeArrays(char** array)
 int itsANumber(char* check)
 {
 	int recount = 0;
-	while(check[recount] != NULL)
+	for(recount = 0; recount < strlen(check); recount ++)
 	{
 		if(!isdigit(check[recount]))
 		{
 			return 0;
 		}
-		recount++;
 	}
 	return 1;
 }
