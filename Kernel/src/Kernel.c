@@ -44,6 +44,8 @@ void initConfiguracion(){
 	kernelConfig->multiprocesamiento= config_get_int_value(config,"MULTIPROCESAMIENTO");
 	char* ip_memoria = config_get_string_value(config,"IP_MEMORIA");
 	kernelConfig->ip_memoria = malloc( string_length(ip_memoria) + 1 );
+	kernelConfig->metadata->tablas = list_create();
+
 	strcpy(kernelConfig->ip_memoria, ip_memoria);
 	config_destroy(config);
 
