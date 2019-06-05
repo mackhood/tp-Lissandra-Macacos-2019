@@ -1,12 +1,8 @@
 #ifndef COMPACTADOR_H_
 #define COMPACTADOR_H_
 
-#include <dirent.h>
 #include "LFLExternals.h"
 #include "FileSistem.h"
-#include <sys/wait.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 
 /* VARIABLES GLOBALES*/
 

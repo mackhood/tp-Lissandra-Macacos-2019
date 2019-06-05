@@ -205,6 +205,11 @@ void insert (char** args)
 			puts("La key que ingresó posee caracteres inválidos.");
 			logError( "Consola: la key a Insertar es inválida.");
 		}
+		else if(strlen(args[2]) > 24)
+		{
+			puts("La key que ingresó es demasiado grande.");
+			logError( "Consola: la key a Insertar es demasiado grande.");
+		}
 		else
 		{
 			char* tabla = malloc(strlen(args[1]) + 1);

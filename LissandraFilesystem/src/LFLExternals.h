@@ -7,7 +7,6 @@
 #include <commons/config.h>
 #include <commons/log.h>
 #include <pthread.h>
-#include <loggers.h>
 #include <string.h>
 #include <netdb.h>
 #include <unistd.h>
@@ -15,7 +14,6 @@
 #include <arpa/inet.h>
 #include <sys/wait.h>
 #include <commons/collections/list.h>
-#include <conexiones.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <commons/string.h>
@@ -23,10 +21,13 @@
 #include <ftw.h>
 #include <fts.h>
 #include <auxiliaryFunctions.h>
+#include <loggers.h>
+#include <conexiones.h>
 #include <commons/bitarray.h>
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 
 /* ESTRUCTURAS */
 typedef struct {

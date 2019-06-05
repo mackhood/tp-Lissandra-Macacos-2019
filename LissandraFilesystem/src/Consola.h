@@ -1,8 +1,6 @@
 #ifndef CONSOLA_H_
 #define CONSOLA_H_
 
-#include "stddef.h"
-#include "stdlib.h"
 #include "Lissandra.h"
 #include "LFLExternals.h"
 
