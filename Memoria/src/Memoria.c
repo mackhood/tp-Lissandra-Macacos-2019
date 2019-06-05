@@ -3,7 +3,7 @@
 int main() {
 
 	levantar_config();
-	levantar_logs();
+	levantarLogs();
 	levantarConexion();
 	levantarEstrMemorias();
 	initThread();
@@ -19,12 +19,12 @@ void setearValores(){
 	return;
 }
 
-void levantar_logs(){
+void levantarLogs(){
 
 	char* memoria_log_ruta = strdup("/home/utnso/workspace/tp-2019-1c-Macacos/Memoria/Memoria.log");
 	loggerMem = crearLogger(memoria_log_ruta, "Memoria");
 
-	log_info(loggerMem, "Prueba de log");
+	log_info(loggerMem, "Se han levantado los logs");
 
 	//Logeo si se levantan correctamente las configs
 	char*memoria_config_ruta = strdup("/home/utnso/workspace/tp-2019-1c-Macacos/Memoria/memoria.config");
@@ -46,6 +46,7 @@ void levantarConexion(){
 	t_prot_mensaje* handshake = prot_recibir_mensaje(socket_fs);
 	tamanio_value = *((int*)handshake->payload);
 	prot_destruir_mensaje(handshake);
+	log_info(loggerMem, "Se ha conectado la memoria con el File System");
 
 	//levanto servidor para Kernel
 /*	socket_escucha = levantar_servidor(info_memoria.puerto);

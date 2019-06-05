@@ -69,10 +69,12 @@ int buscarPaginaLibre(){
 		if(estados_memoria[marco_disponible]==LIBRE)
 			{
 			printf("el marco a asignar es %d\n", marco_disponible);
+			log_info(loggerMem, "Se ha asignado un marco libre");
 			return marco_disponible;
 			}
 	}
 	//sali del for por ende estan todos los marcos ocupados
+	log_info(loggerMem, "Se aplicará LRU debido a que todos los marcos están ocupados");
 	printf("aplico LRU debido a que estan todos los marcos ocupados\n");
 	int marco_disponible = aplicarLRU();
 	return marco_disponible;
@@ -108,12 +110,14 @@ int aplicarLRU(){
 				seg_con_pag_mas_vieja = segmento_a_evaluar;
 				pos_pag_en_tp_seg = j;
 				hay_pag_a_liberar = true;
+
 			}
 		}
 	}
 
 	//si salgo del for y no hay pagina a liberar significa que todas las paginas de todos los segmentos se encuentran modificados (FULL) o que algo raro pasó
 	if(!hay_pag_a_liberar){
+		log_info(loggerMem, "La memoria se encuentra FULL: se aplicará el Journal");
 		printf("Aplico Journal debido a que mi memoria se encuentra FULL\n");
 		journal();
 		se_hizo_journal = true;
@@ -127,6 +131,7 @@ int aplicarLRU(){
 		t_est_pag* pagina_a_remover = (t_est_pag*)list_remove(seg_con_pag_mas_vieja->tabla_paginas.paginas, pos_pag_en_tp_seg);
 		estados_memoria[pagina_a_remover->offset] = LIBRE;
 		int marco_libre = pagina_a_remover->offset;
+		log_info(loggerMem, "Se ha reemplazado la página con más tiempo sin ser utilizada");
 		printf("Encontre la pag mas vieja con flag en 0 y nos habilitara el marco %d\n", marco_libre);
 		free(pagina_a_remover);
 
