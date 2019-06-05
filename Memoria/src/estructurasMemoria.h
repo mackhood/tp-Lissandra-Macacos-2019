@@ -13,6 +13,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <string.h>
+#include <loggers.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <commons/log.h>
@@ -70,6 +71,7 @@ void setearValores();
 void initThread();
 void levantarEstrMemorias();
 void levantarConexion();
+void levantarLogs();
 
 //funciones dentro de hilos
 void escucharKernel();
