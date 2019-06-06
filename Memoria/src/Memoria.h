@@ -4,6 +4,7 @@
 #include "estructurasMemoria.h"
 #include "config_memoria.h"
 #include "Consola.h"
+#include "conexion_kernel.h"
 
 
 #endif /* MEMORIA_H_ */

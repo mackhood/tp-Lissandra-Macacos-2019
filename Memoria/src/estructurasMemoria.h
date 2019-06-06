@@ -73,9 +73,6 @@ void levantarEstrMemorias();
 void levantarConexion();
 void levantarLogs();
 
-//funciones dentro de hilos
-void escucharKernel();
-
 //funciones para la administracion de memoria
 t_segmento* buscarSegmento(char* tabla_a_buscar);
 t_est_pag* buscarEstPagBuscada(uint16_t key, t_segmento* segmento_buscado);

@@ -15,7 +15,7 @@ COMANDO comandos[] = {
 		{"DESCRIBE",describe},
 		{"drop",drop},
 		{"journal",journal},
-		//{(char *) NULL, (Function *) NULL}
+		{(char *) NULL, (Funcion *) NULL}
 }; // para generalizar las funciones reciben un string.
 
 
@@ -113,6 +113,7 @@ int ejecutar_linea (char * linea){
 
 	free(funcion);
 	free(linea_aux);
+
 	//Llamo a la función
 	(*(comando->funcion)) (args);
 	free(args[0]);
@@ -205,4 +206,6 @@ void drop(char** args){
 		}
 	}
 
+	free(nombre_tabla);
+	prot_destruir_mensaje(respuesta);
 }

@@ -30,12 +30,17 @@ void levantarLogs(){
 	char*memoria_config_ruta = strdup("/home/utnso/workspace/tp-2019-1c-Macacos/Memoria/memoria.config");
 	leerConfig(memoria_config_ruta, loggerMem);
 }
+
 void initThread(){
 
 	pthread_create(&threadConsola, NULL, (void*)handleConsola, NULL);
-	//pthread_create(&threadReqKernel, NULL, (void*)escucharKernel, NULL);
+
+	int* kernel = (int*) malloc (sizeof(int));
+	*kernel = socket_kernel;
+	pthread_create(&threadReqKernel, NULL, (void*)escucharKernel, kernel);
 
 	pthread_join(threadConsola ,NULL);
+	pthread_join(threadReqKernel, NULL);
 }
 
 void levantarConexion(){
@@ -49,32 +54,13 @@ void levantarConexion(){
 	log_info(loggerMem, "Se ha conectado la memoria con el File System");
 
 	//levanto servidor para Kernel
-/*	socket_escucha = levantar_servidor(info_memoria.puerto);
+	socket_escucha = levantar_servidor(info_memoria.puerto);
 
 	struct sockaddr_in direccion_cliente;
 	unsigned int tamanio_direccion = sizeof(direccion_cliente);
 
 	socket_kernel = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion);
-
-	//el kernel nos enviara un mensaje inicial que diga quien es
-	t_prot_mensaje* mensaje = prot_recibir_mensaje(socket_kernel);
-
-	uint16_t key_recibida;
-	time_t hora_actual;
-	int tamanio_value;
-
-	memcpy(&key_recibida, mensaje->payload, sizeof(uint16_t));
-	memcpy(&hora_actual, mensaje->payload+sizeof(uint16_t), sizeof(time_t));
-	memcpy(&tamanio_value, mensaje->payload+sizeof(uint16_t)+sizeof(time_t), sizeof(int));
-
-	char* value = malloc(tamanio_value+1);
-	memcpy(value, mensaje->payload+sizeof(uint16_t)+sizeof(time_t)+sizeof(int), tamanio_value);
-	value[tamanio_value] = '\0';
-
-	printf("el CLIENTE es %s y nos manda de prueba la key %d y la hora %ld\n\n", value, key_recibida, hora_actual);
-
-	prot_destruir_mensaje(mensaje);
-*/
+	printf("se ha conectado el kernel\n");
 
 }
 
