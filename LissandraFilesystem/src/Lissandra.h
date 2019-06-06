@@ -13,7 +13,6 @@
 int tamanio_memtable;
 int socket_escucha;
 int socketFD;
-int retardo;
 char* server_ip;
 int server_puerto;
 bool killthreads;
@@ -22,6 +21,7 @@ bool killthreads;
 
 void mainLissandra();
 void iniciarServidor();
+void initNotifier();
 void escucharMemoria();
 void setearValoresLissandra(t_config * archivoConfig);
 int insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibido, double timestampRecibido);
@@ -31,6 +31,7 @@ int llamarEliminarTabla(char* tablaPorEliminar);
 int perteneceATabla(t_Memtablekeys* key);
 int esDeTalKey(t_Memtablekeys* chequeada);
 int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, char* buffer);
+void notifier();
 void killProtocolLissandra();
 
 #endif /* LISSANDRA_H_ */

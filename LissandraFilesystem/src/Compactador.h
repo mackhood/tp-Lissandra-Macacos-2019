@@ -6,7 +6,6 @@
 
 /* VARIABLES GLOBALES*/
 
-int tiempoDump;
 int slowestCompactationInterval;
 int lastDumpSituation;
 char* direccionDeLasTablas;

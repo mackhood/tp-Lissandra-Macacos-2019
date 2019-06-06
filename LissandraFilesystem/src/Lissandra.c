@@ -1,10 +1,22 @@
 #include "Lissandra.h"
 
+#define EVENT_SIZE (sizeof(struct inotify_event))
+#define BUF_LEN (1024* (EVENT_SIZE + 16))
+
 void inicializar()
 {
 	memtable = list_create();
 	killthreads = false;
+	initNotifier();
 	iniciarServidor();
+}
+
+void initNotifier()
+{
+	pthread_t notifierHandler;
+	logInfo("MAIN: Se inicio un hilo para manejar el notifier.");
+	pthread_create(&notifierHandler, NULL, (void *) notifier, NULL);
+	pthread_detach(notifierHandler);
 }
 
 void setearValoresLissandra(t_config * archivoConfig)
@@ -561,6 +573,64 @@ int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, char* buff
 		}
 	}
 	free(tabla);
+}
+
+void notifier()
+{
+	int length;
+	int i = 0;
+	int fd;
+	int wd;
+	char buffer[BUF_LEN];
+
+	fd = inotify_init();
+	if( fd < 0)
+	{
+		logError("Lissandra: Error al iniciar el notifier.");
+		pthread_mutex_unlock(&deathProtocol);
+		return;
+	}
+
+	wd = inotify_add_watch(fd, lissandraFL_config_ruta, IN_CREATE | IN_MODIFY | IN_DELETE);
+	length = read(fd, buffer, BUF_LEN);
+
+	if(length < 0)
+	{
+		logError("Lissandra: Error al tratar de acceder al archivo a vigilar.");
+		pthread_mutex_unlock(&deathProtocol);
+		return;
+	}
+
+	while(i < length)
+	{
+		struct inotify_event* event = (struct inotify_event*) &buffer[i];
+		if(event->mask & IN_MODIFY)
+		{
+			sleep(2);
+			logInfo("Lissandra: se ha modificado el archivo de configuración, actualizando valores.");
+			t_config* ConfigMain = config_create(lissandraFL_config_ruta);
+			tiempoDump = config_get_int_value(ConfigMain, "TIEMPO_DUMP");
+			retardo = config_get_int_value(ConfigMain, "RETARDO");
+			config_destroy(ConfigMain);
+			logInfo("Lissandra: valores actualizados.");
+			printf("\033[1;34m");
+			puts("Al detectarse un cambio en el archivo de configuración, se actualizaron los valores del FS.");
+		}
+		else if(event->mask & IN_DELETE)
+		{
+			logInfo("Lissandra: Se ha detectado que el archivo de configuración fue eliminado. Terminando sistema.");
+			puts("El archivo de configuración de Lissandra ha sido destruido. Abortando.");
+			pthread_mutex_unlock(&deathProtocol);
+			break;
+		}
+		else if(event->mask & IN_CREATE)
+		{
+			logInfo("Lissandra: Se ha detectado el archivo de configuración");
+		}
+		length = read(fd, buffer, BUF_LEN);
+	}
+	(void) inotify_rm_watch(fd, wd);
+	(void) close(fd);
 }
 
 void killProtocolLissandra()

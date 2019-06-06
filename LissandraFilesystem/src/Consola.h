@@ -23,5 +23,7 @@ void describe (char** args);
 void drop (char** args);
 void details(char** args);
 void show_menu();
+void modifyDumpTime(char** args);
+void modifyRetardo(char** args);
 
 #endif /* CONSOLA_H_ */
