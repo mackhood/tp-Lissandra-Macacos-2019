@@ -13,5 +13,6 @@ void liberadorDeArrays(char** array);
 int itsANumber(char* check);
 int doesNotContainNumber(char* check);
 int criterioInvalido(char* check);
+int chequearParametros(char** args, int cantParametros);
 
 #endif /* AUXILIARYFUNCTIONS_H_ */

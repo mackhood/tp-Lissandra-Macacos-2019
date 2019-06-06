@@ -575,24 +575,3 @@ void show_menu(char** args)
 	}
 }
 
-int chequearParametros(char** args, int cantParametros)
-{
-	int i;
-	int parametroinvalido = 0;
-	for(i = 1 ; i < cantParametros; i++)
-	{
-		if(args[i] == NULL)
-		{
-			parametroinvalido = 1;
-			return parametroinvalido;
-		}
-		else
-			parametroinvalido = 0;
-	}
-	if(args[cantParametros] != NULL)
-	{
-		parametroinvalido = 1;
-	}
-	return parametroinvalido;
-}
-
