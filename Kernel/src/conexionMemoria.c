@@ -11,8 +11,8 @@ void handler_conexion_memoria(t_kernel* tKernel) {
 
 while(1){
 
-	if(primerConexion()){
-	int conexion=conectar_a_servidor(tKernel->config->ip_memoria,tKernel->config->puerto_memoria,"Memoria");
+
+	int conexion=conectar_a_servidor(tKernel->config->ip_memoria,tKernel->config->puerto_memoria,"Memoria1");
 
 	if (!conexion){
 
@@ -41,17 +41,15 @@ while(1){
 	}
 
 	//PRIMERO DEBO PERDIR LA CANTIDAD DE MEMORIASCONECTADAS AL POOL DE MEMORIA
-	prot_enviar_mensaje(conexion,POOL_MEMORIA,0,NULL);
+	prot_enviar_mensaje(conexion,DESCRIBE,0,NULL);
 
 	t_prot_mensaje* mensaje_recibido = prot_recibir_mensaje(conexion);
 
+	//mensaje_recibido
+	actualizarMetadata();
 
 
-
-	prot_enviar_mensaje(conexion,DESCRIBE,0,NULL);
-	}
-
-
+	sleep(tKernel->config->metadata_refresh);
 
 
 
@@ -60,7 +58,12 @@ while(1){
 }
 
 
+void actualizarMetadata(){
 
+
+
+
+}
 
 
 int primerConexion() {

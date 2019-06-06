@@ -149,7 +149,7 @@ bool  estaEnMetadata(char *nombre_tabla) {
 
 
 
-return	list_any_satisfy(tKernel->config->metadata->tablas,(void*)estaEnMetadata);
+return	list_any_satisfy(tMetadata->tablas,(void*)estaEnMetadata);
 
 
 

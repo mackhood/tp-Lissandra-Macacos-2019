@@ -44,7 +44,12 @@ void initConfiguracion(){
 	kernelConfig->multiprocesamiento= config_get_int_value(config,"MULTIPROCESAMIENTO");
 	char* ip_memoria = config_get_string_value(config,"IP_MEMORIA");
 	kernelConfig->ip_memoria = malloc( string_length(ip_memoria) + 1 );
-	kernelConfig->metadata->tablas = list_create();
+
+
+	metadata* m_etadata = malloc(sizeof(metadata));
+	m_etadata->tablas = list_create();
+
+	tMetadata = m_etadata;
 
 	strcpy(kernelConfig->ip_memoria, ip_memoria);
 	config_destroy(config);
@@ -61,12 +66,12 @@ void initConfiguracion(){
 				kernelConfig->quantum,
 				kernelConfig->sleep_ejecucion
 	);
-
+	t_list* criterioss = list_create();
 	tKernel = malloc(sizeof(t_kernel));
 	tKernel->config = kernelConfig;
-	tKernel->memoriasSincriterio = list_create();
+	tKernel->memoriasSincriterio = criterioss;
 	initConfigAdminColas();
-
+	crearPrimerMemoria();
 }
 
 
@@ -74,9 +79,9 @@ void initConfiguracion(){
 void initThread(){
 
 	logInfo("Creando thread para atender las conexiones de memoria");
-	pthread_create(&threadConexionMemoria, NULL, (void*) handler_conexion_memoria, tKernel);
+	//pthread_create(&threadConexionMemoria, NULL, (void*) handler_conexion_memoria, tKernel);
 	logInfo("Creando thread para el funcionamiento de la consola");
-	pthread_create(&threadConsola, NULL, (void*)handleConsola, tKernel);
+	pthread_create(&threadConsola, NULL, (void*)handleConsola,NULL);
 
 
 
@@ -84,11 +89,52 @@ void initThread(){
 
 
 	pthread_join(threadConsola ,NULL);
-	pthread_join(threadPlanificador ,NULL);
-	pthread_join(threadConexionMemoria, NULL);
+	//pthread_join(threadPlanificador ,NULL);
+	//pthread_join(threadConexionMemoria, NULL);
 
 }
 
+
+
+void crearPrimerMemoria(){
+
+
+	memoria* memoriaNueva = malloc(sizeof(memoria));
+
+	memoriaNueva = (memoria*)crearMemoria(tKernel->config->puerto_memoria,tKernel->config->ip_memoria);
+
+	t_Criterios = malloc(sizeof(criterios));
+	t_Criterios->strongConsistency = (memoria*)crearMemoria(tKernel->config->puerto_memoria,tKernel->config->ip_memoria);
+
+	configuracion = memoriaNueva;
+
+
+
+}
+
+
+
+int actualIdMemoria = 0 ;
+
+	int getIdMemoria(){
+			int id;
+			pthread_mutex_lock(&mutexIdMemoria);
+			id = actualIdMemoria++;
+			pthread_mutex_unlock(&mutexIdMemoria);
+			return id;
+		}
+
+
+memoria* crearMemoria(int puerto,char* ip){
+
+	memoria* nuevaMemoria = malloc(sizeof(memoria));
+	nuevaMemoria->puerto = puerto;
+	nuevaMemoria->numeroMemoria = getIdMemoria();
+	nuevaMemoria->estaEjecutando =0;
+	nuevaMemoria->ip = ip;
+
+	return nuevaMemoria;
+}
 
 
 

@@ -16,6 +16,8 @@
 #include "kernelConfig.h"
 #include "Consola.h"
 #include "conexionMemoria.h"
+#include <../SharedLibrary/loggers.h>
+
 const char* path_configs ="/home/utnso/workspace/tp-2019-1c-Macacos/Kernel/kernel.properties";
 #define KERNEL_LOG_PATH "./kernel.log"
 
@@ -24,12 +26,15 @@ const char* path_configs ="/home/utnso/workspace/tp-2019-1c-Macacos/Kernel/kerne
 #define PROGRAM_NAME "KERNEL"
 
 #define ACTIVE_CONSOLE 1
-
+void crearPrimerMemoria();
+memoria *crearMemoria(int,char*);
 void initConfiguracion();
 void initThreadAPI ();
 void setearValores(t_config * archivoConfig);
 
-int socket_memoria;
+
+
+
 pthread_t threadConexionMemoria;
 pthread_t threadConsola;
 pthread_t threadPlanificador;

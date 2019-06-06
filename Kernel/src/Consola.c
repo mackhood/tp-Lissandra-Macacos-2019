@@ -35,7 +35,7 @@ COMANDO comandos[] = {
 
 
 
-void handleConsola(t_kernel* tKernel){
+void handleConsola(){
 
 
 	puts("-_____________________________________________________");
@@ -149,8 +149,9 @@ void selectt(char** args){
 	//char* key = string_duplicate(args[2]);
 
 	params* parametros = malloc( sizeof(params) );
+	inicializarParametros(parametros);
 	parametros->enteros[0]= key;
-	parametros->palabras[0] = nombre_tabla;
+	parametros->arreglo[0] = nombre_tabla;
 
 
 
@@ -170,19 +171,62 @@ void selectt(char** args){
 
 
 
-
-
 	free(nombre_tabla);
 
 }
 
+void inicializarParametros(params* params){
 
+
+	params->enteros[0]=0;
+	params->enteros[1]=0;
+	params->enteros[2]=0;
+	params->enteros[3]=0;
+	params->enteros[4]=0;
+	int i;
+	for(i=0; i<10; i++){
+
+	 params->arreglo[i] = string_new();
+	    }
+
+
+}
 
 
 void insert (char** args) {
 
 
+	char* nombre_tabla = string_duplicate(args[1]);
+		uint16_t key = atoi(args[2]);
+		char* value = string_duplicate(args[1]);
 
+		//char* key = string_duplicate(args[2]);
+
+		params* parametros = malloc( sizeof(params) );
+		inicializarParametros(parametros);
+
+		parametros->enteros[0]= key;
+		parametros->arreglo[0] = nombre_tabla;
+		parametros->arreglo[1] = value;
+
+
+		DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,parametros);
+
+		if(estaEnMetadata(nombre_tabla)){
+
+			enviarANew(dtb_nuevo);
+			logInfo("Se envio a new el proceso");
+
+		} else{
+
+			enviarAEXIT(dtb_nuevo);
+			logInfo("La tabla no se encuentra en metadata");
+
+		}
+
+
+
+		free(nombre_tabla);
 
 
 }
@@ -202,6 +246,34 @@ void describe (char** args) {
 }
 void drop (char** args) {
 
+
+	char* nombre_tabla = string_duplicate(args[1]);
+
+			//char* key = string_duplicate(args[2]);
+
+			params* parametros = malloc( sizeof(params) );
+			inicializarParametros(parametros);
+
+			parametros->arreglo[0] = nombre_tabla;
+
+
+			DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,parametros);
+
+			if(estaEnMetadata(nombre_tabla)){
+
+				enviarANew(dtb_nuevo);
+				logInfo("Se envio a new el proceso");
+
+			} else{
+
+				enviarAEXIT(dtb_nuevo);
+				logInfo("La tabla no se encuentra en metadata");
+
+			}
+
+
+
+			free(nombre_tabla);
 
 
 

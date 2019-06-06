@@ -164,11 +164,11 @@ void enviarABLOCK(DTB_KERNEL* dtb) {
 	logTrace(" Se envio a cola de BLoqueados el DTB :%d", dtb->idGDT);
 }
 
-DTB_KERNEL* get_elem_block_by_id(int id){
-	bool encontrar(void* element) {
-		DTB_KERNEL* dtbTemp = element;
-		return dtbTemp->idGDT == id;
-	}
+//DTB_KERNEL* get_elem_block_by_id(int id){
+//	bool encontrar(void* element) {
+//		DTB_KERNEL* dtbTemp = element;
+//		return dtbTemp->idGDT == id;
+//	}
 
 //	if(list_any_satisfy(tKernelEstados->block, encontrar)){
 //		pthread_mutex_lock(&mutexListBloqueado);
@@ -179,7 +179,7 @@ DTB_KERNEL* get_elem_block_by_id(int id){
 //	}else
 //		return NULL;
 
-}
+//}
 
 DTB_KERNEL* get_elem_new_by_id(int id){
 	bool encontrar(void* element) {
@@ -396,7 +396,7 @@ void moverReadyToExec(DTB_KERNEL* dtb){
 }
 
 
-DTB_KERNEL* crearDTBKernel(int gdtId, char* path, int quantum, params parametros){
+DTB_KERNEL* crearDTBKernel(int gdtId, char* path, int quantum, params * parametros){
 	DTB_KERNEL* dtb = malloc( sizeof(DTB_KERNEL) );
 	dtb->idGDT = gdtId;
 	dtb->flag = 1;
@@ -405,8 +405,8 @@ DTB_KERNEL* crearDTBKernel(int gdtId, char* path, int quantum, params parametros
 	dtb->se_ejecuto = false;
 	dtb->horacreacion = time(0);
 	dtb->quantum = quantum;
-	dtb->path = malloc( (sizeof(char)* string_length(path)) + 1 );
-	strcpy(dtb->path, path);
+//	dtb->path = malloc( (sizeof(char)* string_length(path)) + 1 );
+//	strcpy(dtb->path, path);
 //	dtb->tablaDeArchivosAbiertos = list_create();
 //	dtb->prox_io = queue_create();
 	dtb->parametros = parametros;
@@ -425,16 +425,16 @@ void liberarMemoriaDTB_SAFA(DTB_KERNEL* dtb ){
 
 }
 
-void desbloquear_esperando_recurso( t_recurso* rec ){
-
-	if(!queue_is_empty(rec->en_espera)){
-		for(int i=rec->valor; i>0;i--){
-			GDT* gdt = queue_pop(rec->en_espera);
-			DTB_KERNEL* dtb = get_elem_block_by_id( gdt->idGDT );
-			moverBlockToReady(dtb);
-		}
-	}
-}
+//void desbloquear_esperando_recurso( t_recurso* rec ){
+//
+//	if(!queue_is_empty(rec->en_espera)){
+//		for(int i=rec->valor; i>0;i--){
+//			GDT* gdt = queue_pop(rec->en_espera);
+//			DTB_KERNEL* dtb = get_elem_block_by_id( gdt->idGDT );
+//			moverBlockToReady(dtb);
+//		}
+//	}
+//}
 
 
 

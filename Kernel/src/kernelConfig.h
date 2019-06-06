@@ -16,7 +16,6 @@
 #include <semaphore.h>
 #include "../SharedLibrary/conexiones.h"
 
-
 pthread_mutex_t mutexIdGDT;
 pthread_mutex_t mutexIdMemoria;
 
@@ -26,10 +25,33 @@ typedef struct {
 
 	t_list* tablas;
 
-
 }metadata;
 
 
+typedef struct  {
+
+//int conexion;
+int numeroMemoria;
+int estaEjecutando;
+int puerto;
+char * ip;
+
+}memoria;
+
+
+
+memoria* configuracion;
+
+
+typedef struct {
+
+
+	memoria* strongConsistency;
+	t_list* StrongHash;
+	t_queue* eventualConsistency;
+
+
+}criterios;
 
 
 typedef struct{
@@ -39,7 +61,7 @@ typedef struct{
 	char* ip_memoria;
 	int metadata_refresh;
 	int sleep_ejecucion;
-	metadata* metadata;
+
 }kernel_config;
 
 typedef struct {
@@ -50,6 +72,9 @@ typedef struct {
 	t_list* memoriasSincriterio;
 }t_kernel;
 
+criterios* t_Criterios;
+
+metadata* tMetadata;
 
 
 t_kernel* tKernel;
@@ -58,8 +83,7 @@ t_kernel* tKernel;
 typedef struct {
 
 	int enteros [5];
-	char** palabras;
-
+	char *arreglo[10];
 }params;
 
 
@@ -80,7 +104,7 @@ typedef struct{
 	double tiempo_repuesta;
 	time_t horacreacion;  //se usa para calcular el tiempo de repuesta
 	t_header instruccion_actual;
-	params  parametros;
+	params * parametros;
 
 }DTB_KERNEL;
 

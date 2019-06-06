@@ -16,9 +16,11 @@
 #include <readline/history.h>
 #include <stdio.h>
 #include "kernelConfig.h"
+
 #include "InicializacionPcb.h"
 #include "adminColasPlanificacion.h"
 #include <commons/log.h>
+
 
 typedef void Funcion ();
 
@@ -28,7 +30,7 @@ typedef struct {
 } COMANDO;
 
 
-void handleConsola(t_kernel* tKernel);
+void handleConsola();
 void selectt (char** args);
 void insert (char** args);
 void create (char** args);
