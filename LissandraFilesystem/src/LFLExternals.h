@@ -28,6 +28,7 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/inotify.h>
 
 /* ESTRUCTURAS */
 typedef struct {
@@ -47,11 +48,14 @@ typedef struct {
 }__attribute__((packed)) t_TablaEnEjecucion;
 
 /* VARIABLES GLOBALES */
+int tiempoDump;
+char* lissandraFL_config_ruta;
 bool fileSystemFull;
 int tamanio_value;
 char* direccionFileSystemBlocks;
 char* globalBitmapPath;
 char* bitarraycontent;
+int retardo;
 int blocks;
 int bitarrayfd;
 t_bitarray* bitarray;
