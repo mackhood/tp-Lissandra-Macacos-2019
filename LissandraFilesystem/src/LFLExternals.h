@@ -7,7 +7,6 @@
 #include <commons/config.h>
 #include <commons/log.h>
 #include <pthread.h>
-#include <loggers.h>
 #include <string.h>
 #include <netdb.h>
 #include <unistd.h>
@@ -15,7 +14,6 @@
 #include <arpa/inet.h>
 #include <sys/wait.h>
 #include <commons/collections/list.h>
-#include <conexiones.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <commons/string.h>
@@ -23,10 +21,14 @@
 #include <ftw.h>
 #include <fts.h>
 #include <auxiliaryFunctions.h>
+#include <loggers.h>
+#include <conexiones.h>
 #include <commons/bitarray.h>
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/inotify.h>
 
 /* ESTRUCTURAS */
 typedef struct {
@@ -46,11 +48,14 @@ typedef struct {
 }__attribute__((packed)) t_TablaEnEjecucion;
 
 /* VARIABLES GLOBALES */
+int tiempoDump;
+char* lissandraFL_config_ruta;
 bool fileSystemFull;
 int tamanio_value;
 char* direccionFileSystemBlocks;
 char* globalBitmapPath;
 char* bitarraycontent;
+int retardo;
 int blocks;
 int bitarrayfd;
 t_bitarray* bitarray;

@@ -4,11 +4,6 @@ cd
 mv tp-2019-1c-Macacos/ workspace/
 cd
 
-git clone https://github.com/sisoputnfrba/so-commons-library.git
-cd so-commons-library/
-sudo make install
-cd
-
 cd /home/utnso/workspace/tp-2019-1c-Macacos/SharedLibrary/Debug/
 sudo make
 sudo cp libSharedLibrary.so /usr/lib

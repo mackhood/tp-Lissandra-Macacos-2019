@@ -7,7 +7,9 @@ COMANDO comandos[] = {
 		{"DESCRIBE",describe},
 		{"DROP",drop},
 		{"DETAILS", details},
-		{"SHOW_MENU", show_menu},
+		{"SHOWMENU", show_menu},
+		{"MODIFYDUMP", modifyDumpTime},
+		{"MODIFYDELAY", modifyRetardo},
 		{(char *) NULL, (Funcion *) NULL}
 };
 
@@ -24,8 +26,10 @@ void consola()
 	puts("4. - DESCRIBE <Table> (Table is optional, if you want all tables to be shown, leave this parameter empty)");
 	puts("5. - DROP <Table>");
 	puts("6. - DETAILS (Explains how to use the File System's Interface.).");
-	puts("7. - SHOW_MENU");
-	puts("8. - EXIT");
+	puts("7. - SHOWMENU");
+	puts("8. - MODIFYDUMP <NewDumpTime>");
+	puts("9. - MODIFYDELAY <NewDelayTime>");
+	puts("10. - EXIT");
 	printf("\033[1;31m");
 	puts("\nAdvertencia: los pipes solo deben ser usados para separar los parámetros del Insert, en otras instrucciones"
 			" no son considerados.");
@@ -204,6 +208,11 @@ void insert (char** args)
 		{
 			puts("La key que ingresó posee caracteres inválidos.");
 			logError( "Consola: la key a Insertar es inválida.");
+		}
+		else if(strlen(args[2]) > 24)
+		{
+			puts("La key que ingresó es demasiado grande.");
+			logError( "Consola: la key a Insertar es demasiado grande.");
 		}
 		else
 		{
@@ -536,8 +545,10 @@ void details(char** args)
 		puts("4. - DESCRIBE <Table> (Table is optional, if you want all tables to be shown, leave this parameter empty)");
 		puts("5. - DROP <Table>");
 		puts("6. - DETAILS (Explains how to use the File System's Interface.).");
-		puts("7. - SHOW_MENU");
-		puts("8. - EXIT");
+		puts("7. - SHOWMENU");
+		puts("8. - MODIFYDUMP <NewDumpTime>");
+		puts("9. - MODIFYDELAY <NewDelayTime>");
+		puts("10. - EXIT");
 
 		printf("\033[1;31m");
 		puts("Detalle amistoso: Para los insert usar pipes o '|' no usar pipes en ninguna otra función ni nombre por consola, gracias.");
@@ -565,29 +576,55 @@ void show_menu(char** args)
 		puts("4. - DESCRIBE <Table> (Table is optional, if you want all tables to be shown, leave this parameter empty)");
 		puts("5. - DROP <Table>");
 		puts("6. - DETAILS (Explains how to use the File System's Interface.).");
-		puts("7. - SHOW_MENU");
-		puts("8. - EXIT");
+		puts("7. - SHOWMENU");
+		puts("8. - MODIFYDUMP <NewDumpTime>");
+		puts("9. - MODIFYDELAY <NewDelayTime>");
+		puts("10. - EXIT");
 	}
 }
 
-int chequearParametros(char** args, int cantParametros)
+void modifyDumpTime(char** args)
 {
-	int i;
-	int parametroinvalido = 0;
-	for(i = 1 ; i < cantParametros; i++)
+	logInfo("Consola: Ha llegado un pedido para modificar el tiempoDeDump.");
+	int chequeo = chequearParametros(args, 2);
+	if(chequeo)
 	{
-		if(args[i] == NULL)
-		{
-			parametroinvalido = 1;
-			return parametroinvalido;
-		}
-		else
-			parametroinvalido = 0;
+		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
+		logError("Consola: solicitud posee cantidad errónea de parámetros");
 	}
-	if(args[cantParametros] != NULL)
+	else
 	{
-		parametroinvalido = 1;
+		t_config* ConfigMain = config_create(lissandraFL_config_ruta);
+		char* dumpTime = malloc(strlen(args[1]) + 1);
+		strcpy(dumpTime, args[1]);
+		config_set_value(ConfigMain, "TIEMPO_DUMP", dumpTime);
+		config_save(ConfigMain);
+		config_destroy(ConfigMain);
+		free(dumpTime);
+		logInfo("Consola: se ha modificado el tiempo de dumpeo.");
+		puts("Se ha modificado el tiempo entre Dumps");
 	}
-	return parametroinvalido;
 }
 
+void modifyRetardo(char** args)
+{
+	logInfo("Consola: Ha llegado un pedido para modificar el retardo entre instrucciones.");
+	int chequeo = chequearParametros(args, 2);
+	if(chequeo)
+	{
+		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
+		logError("Consola: solicitud posee cantidad errónea de parámetros");
+	}
+	else
+	{
+		t_config* ConfigMain = config_create(lissandraFL_config_ruta);
+		char* delay = malloc(strlen(args[1]) + 1);
+		strcpy(delay, args[1]);
+		config_set_value(ConfigMain, "RETARDO", delay);
+		config_save(ConfigMain);
+		config_destroy(ConfigMain);
+		free(delay);
+		logInfo("Consola: se ha modificado el tiempo de delay.");
+		puts("Se ha modificado el delay entre instrucciones");
+	}
+}

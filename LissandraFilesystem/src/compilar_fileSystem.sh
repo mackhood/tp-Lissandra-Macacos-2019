@@ -1,7 +1,7 @@
 #!/bin/bash
 archivosBibliotecaCompartida=$(cd ../../SharedLibrary; ls $PWD/*.c)
-referencias="-lcommons -lpthread"
+referencias="-lcommons -lpthread -lreadline -lm  -lcrypto"
 
 echo "Compilando proyecto FileSystem";
-gcc *.c ${archivosBibliotecaCompartida} -o FileSystem.o ${referencias};
+gcc -I archivosBibliotecaCompartida *.c ${archivosBibliotecaCompartida} -o FileSystem.o ${referencias};
 

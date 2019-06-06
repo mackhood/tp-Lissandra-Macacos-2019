@@ -3,6 +3,7 @@
 
 char* selectReq (char* nombre_tabla, uint16_t key) {
 
+	log_info(loggerMem, "Se ha recibido una solicitud de SELECT");
 	t_segmento* segmento_buscado = buscarSegmento(nombre_tabla);
 
 	if(segmento_buscado /*!= NULL*/){
@@ -15,8 +16,8 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 			memcpy(value_solicitado, memoria_principal+tamanio_pag*(est_pagina_buscada->offset)+sizeof(double)+sizeof(uint16_t), tamanio_value);
 			printf("el value solicitado es %s\n", value_solicitado);
 			return value_solicitado;
-			//prot_enviar_mensaje(socket_kernel, KEY_SOLICITADA_SELECT, strlen(value_solicitado), value_solicitado);
 		}
+
 		//no se encuentra la pagina en memoria
 		else{
 			free(est_pagina_buscada);
@@ -65,6 +66,7 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 			printf("la key de la pagina es %d\n", key_buscada);
 			printf("el value de la pagina es %s\n", value_buscado);
 
+			log_info(loggerMem, "Se ha creado la página en Memoria");
 			free(buffer);
 			return value;
 		}
@@ -73,6 +75,7 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 	else{
 		free(segmento_buscado);
 		printf("llegue hasta aca\n");
+
 		//creo segmento
 		t_segmento* segmento_nuevo = malloc(sizeof(t_segmento));
 		segmento_nuevo->nombre_tabla = strdup(nombre_tabla);
@@ -111,6 +114,7 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 		*/
 		if(se_inserta_segmento){
 			list_add(lista_segmentos, segmento_nuevo);
+
 		}
 		se_inserta_segmento = true;
 
@@ -152,7 +156,6 @@ double insertReq (char* nombre_tabla, uint16_t key, char* value) {
 			char* value_actualizado = malloc(tamanio_value);
 			memcpy(value_actualizado, memoria_principal+(est_pagina_buscada->offset*tamanio_pag)+sizeof(double)+sizeof(uint16_t), tamanio_value);
 			printf("el value actualizado es %s\n", value_actualizado);
-
 			return nuevo_time;
 		}
 		else{
@@ -206,7 +209,6 @@ double insertReq (char* nombre_tabla, uint16_t key, char* value) {
 		}
 		se_inserta_segmento = true;
 
-
 		//prueba y ademas marco el flag en 1
 		t_est_pag* pagina_buscada = buscarEstPagBuscada(key, segmento_nuevo);
 		pagina_buscada->flag = 1;
@@ -247,19 +249,30 @@ t_prot_mensaje* createReq (char* nombre_tabla, int largo_nombre_tabla, char* tip
 	return mensaje_fs;
 }
 
-void describe (char** args) {
+void describe (char* nombre_tabla) {
 
+	if(nombre_tabla){
+		int largo_nombre_tabla = strlen(nombre_tabla);
 
+		int tamanio_buffer = sizeof(int) + largo_nombre_tabla;
+		void* buffer = malloc(tamanio_buffer);
 
+		prot_enviar_mensaje(socket_fs, DESCRIBE, tamanio_buffer, buffer);
+		t_prot_mensaje* data_del_fs = prot_recibir_mensaje(socket_fs);
 
+		if(data_del_fs->head == POINT_DESCRIBE){
 
+		}
+	}
 }
 
 void dropReq (char* nombre_tabla) {
+
 	t_segmento* segmento_buscado = buscarSegmento(nombre_tabla);
 	int posicion_del_segmento_en_lista;
 
 	if(segmento_buscado){
+
 		/* itero para saber la posicion del segmento en la lista de segmentos para luego realizar el list_remove
 		 * en base a la posicion del mismo
 		 */
@@ -295,7 +308,7 @@ void dropReq (char* nombre_tabla) {
 
 void journal () {
 
-//Encontrar paginas con el flag de modificado
+	//Encontrar paginas con el flag de modificado
 
 	//Si bien no necesito ninguna otra variable como en los casos anterior, al utilizar funciones de orden superior, la meto dentro del
 	//journaling para una mejor abstraccion
@@ -368,6 +381,8 @@ void journal () {
 
 						prot_enviar_mensaje(socket_fs, JOURNALING_INSERT, tamanio_buffer, buffer);
 
+						log_info(loggerMem, "Se ha enviado la información actualizada al File System");
+
 						//posibles respuestas: INSERT_SUCCESSFUL, INSERT_FAILED_ON_MEMTABLE, INSERT_FAILURE
 
 						t_prot_mensaje* mensaje_fs = prot_recibir_mensaje(socket_fs);
@@ -376,14 +391,20 @@ void journal () {
 
 						case INSERT_SUCCESSFUL:{
 								printf("Los datos de la tabla fueron actualizados\n");
+								log_info(loggerMem, "Se han actualizado los datos de la tabla en el File System");
+
 							}break;
 
 						case INSERT_FAILED_ON_MEMTABLE:{
 								printf("El insert falló en la memtable\n");
+								log_info(loggerMem, "No se actualizaron los datos de la tabla en el File System debido a un fallo en la Memtable");
+
 							}break;
 
 						case INSERT_FAILURE:{
 								printf("Hubo un error al insertar la tabla\n");
+								log_info(loggerMem, "Hubo un error al insertar los tados de la tabla en el File System");
+
 							}break;
 							default:{
 								break;
@@ -412,6 +433,7 @@ void journal () {
 	printf("Segmentos que quedaron: %d \n", cant_seg_ahora);
 
 	liberar_marcos();
+	log_info(loggerMem, "Se ha realizado el Journal. La Memoria quedó vacía.");
 }
 
 

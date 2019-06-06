@@ -1,8 +1,6 @@
 #ifndef CONSOLA_H_
 #define CONSOLA_H_
 
-#include "stddef.h"
-#include "stdlib.h"
 #include "Lissandra.h"
 #include "LFLExternals.h"
 
@@ -25,6 +23,7 @@ void describe (char** args);
 void drop (char** args);
 void details(char** args);
 void show_menu();
-int chequearParametros(char** args, int cantParametros);
+void modifyDumpTime(char** args);
+void modifyRetardo(char** args);
 
 #endif /* CONSOLA_H_ */

@@ -13,6 +13,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <string.h>
+#include <loggers.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <commons/log.h>
@@ -70,9 +71,7 @@ void setearValores();
 void initThread();
 void levantarEstrMemorias();
 void levantarConexion();
-
-//funciones dentro de hilos
-void escucharKernel();
+void levantarLogs();
 
 //funciones para la administracion de memoria
 t_segmento* buscarSegmento(char* tabla_a_buscar);

@@ -30,13 +30,12 @@ void liberadorDeArrays(char** array)
 int itsANumber(char* check)
 {
 	int recount = 0;
-	while(check[recount] != NULL)
+	for(recount = 0; recount < strlen(check); recount ++)
 	{
 		if(!isdigit(check[recount]))
 		{
 			return 0;
 		}
-		recount++;
 	}
 	return 1;
 }
@@ -61,5 +60,26 @@ int criterioInvalido(char* check)
 		return 0;
 	else
 		return 1;
+}
+
+int chequearParametros(char** args, int cantParametros)
+{
+	int i;
+	int parametroinvalido = 0;
+	for(i = 1 ; i < cantParametros; i++)
+	{
+		if(args[i] == NULL)
+		{
+			parametroinvalido = 1;
+			return parametroinvalido;
+		}
+		else
+			parametroinvalido = 0;
+	}
+	if(args[cantParametros] != NULL)
+	{
+		parametroinvalido = 1;
+	}
+	return parametroinvalido;
 }
 
