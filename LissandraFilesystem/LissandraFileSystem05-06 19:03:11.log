@@ -1,0 +1,11 @@
+[INFO] 19:03:11:9 LissandraFileSystem/(9819:9819): Main: Atra estherni ono thelduin, ai fricai.
+[INFO] 19:03:11:9 LissandraFileSystem/(9819:9819): Archivo de configuracion leido correctamente
+[INFO] 19:03:11:9 LissandraFileSystem/(9819:9819): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 19:03:11:9 LissandraFileSystem/(9819:9819): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 19:03:11:9 LissandraFileSystem/(9819:9819): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 19:03:11:9 LissandraFileSystem/(9819:9819): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 19:03:11:10 LissandraFileSystem/(9819:9822): FileSystem: Se procede a crear el bitmap
+[INFO] 19:03:11:11 LissandraFileSystem/(9819:9821): Compactador: Se inicio un hilo para manejar a la memtable
+[INFO] 19:03:11:11 LissandraFileSystem/(9819:9821): Compactador: Se inicio un hilo para manejar a TablaA.
+[INFO] 19:03:11:11 LissandraFileSystem/(9819:9821): Compactador: Se inicio un hilo para manejar a TablaC.
+[INFO] 19:03:11:11 LissandraFileSystem/(9819:9821): Compactador: Se inicio un hilo para manejar a TablaB.

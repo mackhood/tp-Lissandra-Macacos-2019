@@ -1,0 +1,14 @@
+[INFO] 18:59:50:399 LissandraFileSystem/(9486:9486): Main: Atra estherni ono thelduin, ai fricai.
+[INFO] 18:59:50:404 LissandraFileSystem/(9486:9486): Archivo de configuracion leido correctamente
+[INFO] 18:59:50:404 LissandraFileSystem/(9486:9486): MAIN: Se inicio un hilo para manejar a Lissandra.
+[INFO] 18:59:50:404 LissandraFileSystem/(9486:9486): MAIN: Se inicio un hilo para manejar el Compactador.
+[INFO] 18:59:50:404 LissandraFileSystem/(9486:9486): MAIN: Se inicio un hilo para manejar el FileSistem.
+[INFO] 18:59:50:404 LissandraFileSystem/(9486:9486): MAIN: Se inicio un hilo para manejar la consola.
+[INFO] 18:59:50:408 LissandraFileSystem/(9486:9495): FileSystem: Se procede a crear el bitmap
+[INFO] 18:59:50:409 LissandraFileSystem/(9486:9494): Compactador: Se inicio un hilo para manejar a la memtable
+[INFO] 18:59:50:409 LissandraFileSystem/(9486:9494): Compactador: Se inicio un hilo para manejar a TablaA.
+[INFO] 18:59:50:409 LissandraFileSystem/(9486:9494): Compactador: Se inicio un hilo para manejar a TablaC.
+[INFO] 18:59:50:410 LissandraFileSystem/(9486:9494): Compactador: Se inicio un hilo para manejar a TablaB.
+[INFO] 19:00:01:563 LissandraFileSystem/(9486:9493): [Lissandra]: Se conecto una Memoria
+[INFO] 19:00:01:563 LissandraFileSystem/(9486:9504): Lissandra: me llegó un handshake de una Memoria, procedo a enviar los datos necesarios
+[INFO] 19:00:01:563 LissandraFileSystem/(9486:9504): Lissandra: Se ha enviado la información de saludo a la Memoria.
