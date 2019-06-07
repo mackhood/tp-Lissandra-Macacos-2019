@@ -25,7 +25,11 @@ void escucharKernel(int* kernel){
 
 				char* value_solicitado = selectReq(nombre_tabla, key);
 
-				prot_enviar_mensaje(socket_kernel, KEY_SOLICITADA_SELECT, strlen(value_solicitado), value_solicitado);
+				int largo_value = strlen(value_solicitado);
+				int tamanio_buffer = sizeof(int) + largo_value;
+				void* buffer = malloc(tamanio_buffer);
+
+				prot_enviar_mensaje(socket_kernel, KEY_SOLICITADA_SELECT, tamanio_buffer, buffer);
 
 				usleep(info_memoria.retardo_mp);
 
