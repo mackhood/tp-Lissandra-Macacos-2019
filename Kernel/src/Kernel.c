@@ -82,7 +82,7 @@ void initThread(){
 	//pthread_create(&threadConexionMemoria, NULL, (void*) handler_conexion_memoria, tKernel);
 	logInfo("Creando thread para el funcionamiento de la consola");
 	pthread_create(&threadConsola, NULL, (void*)handleConsola,NULL);
-
+	pthread_create(&threadInterPlanificador,NULL,(void*)interPlanificador,NULL);
 
 
 	pthread_create(&threadPlanificador, NULL, (void*)pasarArunnign(),NULL);
@@ -92,6 +92,19 @@ void initThread(){
 	//pthread_join(threadConexionMemoria, NULL);
 
 }
+
+
+void interPlanificador(){
+
+
+
+
+	DTB_KERNEL* dtb=(DTB_KERNEL*)getDTBNew();
+				enviarAReady(dtb);
+
+}
+
+
 
 
 

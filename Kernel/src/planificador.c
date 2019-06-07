@@ -15,18 +15,19 @@ void pasarArunnign() {
 	while(1){
 
 
-		if(!queue_is_empty(tKernelEstados->new)){
+//		if(!queue_is_empty(tKernelEstados->new)){
+//
+//
+//			DTB_KERNEL* dtb=(DTB_KERNEL*)getDTBNew();
+//			enviarAReady(dtb);
+//
+//		}
 
 
-			DTB_KERNEL* dtb=(DTB_KERNEL*)getDTBNew();
-			enviarAReady(dtb);
 
-		}
-
-
-		if(tKernel->config->multiprocesamiento > 0 && !queue_is_empty(tKernelEstados->ready) ){
 
 			DTB_KERNEL* dtb=(DTB_KERNEL*)getDTBReady();
+			if(tKernel->config->multiprocesamiento > 0  ){
 			dtb->quantum = tKernel->config->quantum;
 			enviarAEjecutar(dtb);
 			tKernel->config->multiprocesamiento --;
@@ -47,6 +48,8 @@ void pasarArunnign() {
 
 
 }
+
+
 
 
 
