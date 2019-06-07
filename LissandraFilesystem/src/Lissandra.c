@@ -616,7 +616,7 @@ void notifier()
 			printf("\033[1;34m");
 			puts("Al detectarse un cambio en el archivo de configuración, se actualizaron los valores del FS.");
 		}
-		else if(event->mask & IN_DELETE)
+		else if(event->mask & IN_IGNORED)
 		{
 			logInfo("Lissandra: Se ha detectado que el archivo de configuración fue eliminado. Terminando sistema.");
 			puts("El archivo de configuración de Lissandra ha sido destruido. Abortando.");
