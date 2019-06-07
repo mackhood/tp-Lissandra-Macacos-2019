@@ -31,14 +31,14 @@ memoria *crearMemoria(int,char*);
 void initConfiguracion();
 void initThreadAPI ();
 void setearValores(t_config * archivoConfig);
-
+void interPlanificador();
 
 
 
 pthread_t threadConexionMemoria;
 pthread_t threadConsola;
 pthread_t threadPlanificador;
-
+pthread_t	threadInterPlanificador;
 
 
 #endif /* KERNEL_H_ */
