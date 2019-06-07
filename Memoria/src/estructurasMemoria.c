@@ -119,7 +119,7 @@ int aplicarLRU(){
 	if(!hay_pag_a_liberar){
 		log_info(loggerMem, "La memoria se encuentra FULL: se aplicará el Journal");
 		printf("Aplico Journal debido a que mi memoria se encuentra FULL\n");
-		journal();
+		journalReq();
 		se_hizo_journal = true;
 
 		return 0;

@@ -3,6 +3,7 @@
 
 char* selectReq (char* nombre_tabla, uint16_t key) {
 
+	pthread_mutex_lock(&mutex_estructuras_memoria);
 	log_info(loggerMem, "Se ha recibido una solicitud de SELECT");
 	t_segmento* segmento_buscado = buscarSegmento(nombre_tabla);
 
@@ -11,13 +12,13 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 		t_est_pag* est_pagina_buscada = buscarEstPagBuscada(key, segmento_buscado);
 
 		if(est_pagina_buscada /*!= NULL*/){
-			//se lo mando al Kernel si esta
 			char* value_solicitado = malloc(tamanio_value);
 			memcpy(value_solicitado, memoria_principal+tamanio_pag*(est_pagina_buscada->offset)+sizeof(double)+sizeof(uint16_t), tamanio_value);
 			printf("el value solicitado es %s\n", value_solicitado);
+
+			pthread_mutex_unlock(&mutex_estructuras_memoria);
 			return value_solicitado;
 		}
-
 		//no se encuentra la pagina en memoria
 		else{
 			free(est_pagina_buscada);
@@ -68,7 +69,9 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 
 			log_info(loggerMem, "Se ha creado la página en Memoria");
 			free(buffer);
-			return value;
+
+			pthread_mutex_unlock(&mutex_estructuras_memoria);
+			return value_buscado;
 		}
 	}
 	//no se encuentra el segmento
@@ -135,12 +138,15 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 		printf("el value de la pagina es %s\n", value_buscado);
 
 		free(buffer);
-		return value;
+
+		pthread_mutex_unlock(&mutex_estructuras_memoria);
+		return value_buscado;
 	}
 }
 
-double insertReq (char* nombre_tabla, uint16_t key, char* value) {
+void insertReq (char* nombre_tabla, uint16_t key, char* value) {
 
+	pthread_mutex_lock(&mutex_estructuras_memoria);
 	t_segmento* segmento_buscado = buscarSegmento(nombre_tabla);
 
 	if(segmento_buscado){
@@ -155,8 +161,9 @@ double insertReq (char* nombre_tabla, uint16_t key, char* value) {
 			//prueba
 			char* value_actualizado = malloc(tamanio_value);
 			memcpy(value_actualizado, memoria_principal+(est_pagina_buscada->offset*tamanio_pag)+sizeof(double)+sizeof(uint16_t), tamanio_value);
-			printf("el value actualizado es %s\n", value_actualizado);
-			return nuevo_time;
+			printf("el value actualizado es %s y su nuevo time es %lf\n", value_actualizado, nuevo_time);
+
+			pthread_mutex_unlock(&mutex_estructuras_memoria);
 		}
 		else{
 			free(est_pagina_buscada);
@@ -181,7 +188,7 @@ double insertReq (char* nombre_tabla, uint16_t key, char* value) {
 			printf("la key de la pagina es %d\n", key_buscada);
 			printf("el value de la pagina es %s\n", value_actualizado);
 
-			return nuevo_time;
+			pthread_mutex_unlock(&mutex_estructuras_memoria);
 		}
 	}
 	else{
@@ -224,7 +231,7 @@ double insertReq (char* nombre_tabla, uint16_t key, char* value) {
 		printf("la key de la pagina es %d\n", key_buscada);
 		printf("el value de la pagina es %s\n", value_asignado);
 
-		return nuevo_time;
+		pthread_mutex_unlock(&mutex_estructuras_memoria);
 	}
 
 }
@@ -266,8 +273,9 @@ void describe (char* nombre_tabla) {
 	}
 }
 
-void dropReq (char* nombre_tabla) {
+t_prot_mensaje* dropReq (char* nombre_tabla) {
 
+	pthread_mutex_lock(&mutex_estructuras_memoria);
 	t_segmento* segmento_buscado = buscarSegmento(nombre_tabla);
 	int posicion_del_segmento_en_lista;
 
@@ -304,9 +312,22 @@ void dropReq (char* nombre_tabla) {
 	else{
 		printf("Que haces flaco no te das cuenta que no esta el segmento en memoria\n");
 	}
+
+	int largo_nombre_tabla = strlen(nombre_tabla);
+	int tamanio_buffer = sizeof(int) + largo_nombre_tabla;
+	void* buffer = malloc(tamanio_buffer);
+	memcpy(buffer, &largo_nombre_tabla, sizeof(int));
+	memcpy(buffer + sizeof(int), nombre_tabla, largo_nombre_tabla);
+
+	//mando solicitud de drop de tabla al FS
+	prot_enviar_mensaje(socket_fs, TABLE_DROP, tamanio_buffer, buffer);
+	t_prot_mensaje* respuesta = prot_recibir_mensaje(socket_fs);
+
+	pthread_mutex_unlock(&mutex_estructuras_memoria);
+	return respuesta;
 }
 
-void journal () {
+void journalReq () {
 
 	//Encontrar paginas con el flag de modificado
 
@@ -415,6 +436,8 @@ void journal () {
 
 						free(buffer);
 						//free(pag_a_enviar);
+
+						usleep(info_memoria.retardo_fs);
 					}
 
 			}
