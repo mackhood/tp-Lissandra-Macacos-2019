@@ -495,6 +495,7 @@ void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer)
 	char* auxdir = malloc(strlen(punto_montaje) + 8);
 	strcpy(auxdir, punto_montaje);
 	strcat(auxdir, "Tables/");
+	bool firstTabla = true;
 	if(NULL == (directorioDeTablas = opendir(auxdir)))
 	{
 		logError( "FileSystem: error al acceder al directorio de tablas, abortando");
@@ -515,7 +516,10 @@ void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer)
 				{
 					tamanio_buffer_metadatas += strlen(tdp->d_name) + 2;
 					buffer = realloc(buffer, tamanio_buffer_metadatas);
-					strcat(buffer, tdp->d_name);
+					if(firstTabla)
+						strcpy(buffer, tdp->d_name);
+					else
+						strcat(buffer, tdp->d_name);
 					strcat(buffer, ",");
 					int new_tamanio_buffer_metadatas = mostrarMetadataEspecificada(tdp->d_name, tamanio_buffer_metadatas, solicitadoPorMemoria, buffer);
 					tamanio_buffer_metadatas = new_tamanio_buffer_metadatas;
