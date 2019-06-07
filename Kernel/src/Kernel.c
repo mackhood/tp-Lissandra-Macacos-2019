@@ -85,11 +85,10 @@ void initThread(){
 
 
 
-	//pthread_create(&threadPlanificador, NULL, (void*)handlePlanificadorLP, tKernel);
+	pthread_create(&threadPlanificador, NULL, (void*)pasarArunnign(),NULL);
+	pthread_detach(threadPlanificador );
 
-
-	pthread_join(threadConsola ,NULL);
-	//pthread_join(threadPlanificador ,NULL);
+	pthread_detach(threadConsola );
 	//pthread_join(threadConexionMemoria, NULL);
 
 }

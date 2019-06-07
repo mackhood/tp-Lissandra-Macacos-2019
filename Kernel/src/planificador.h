@@ -11,5 +11,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "adminColasPlanificacion.h"
+#include <../SharedLibrary/protocolo.h>
+void ejecutarProceso(DTB_KERNEL *);
+void pasarArunnign();
 
 #endif /* PLANIFICADOR_H_ */

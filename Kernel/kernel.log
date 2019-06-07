@@ -133,3 +133,286 @@
 [INFO] 20:46:57:413 KERNEL/(11873:11873): Incializando colas de planificacion
 [INFO] 20:46:59:566 KERNEL/(11873:11873): Creando thread para atender las conexiones de memoria
 [INFO] 20:46:59:566 KERNEL/(11873:11873): Creando thread para el funcionamiento de la consola
+[INFO] 00:22:00:126 KERNEL/(4339:4339): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 00:22:00:127 KERNEL/(4339:4339): Incializando colas de planificacion
+[INFO] 00:22:00:127 KERNEL/(4339:4339): Creando thread para atender las conexiones de memoria
+[INFO] 00:22:00:128 KERNEL/(4339:4339): Creando thread para el funcionamiento de la consola
+[INFO] 18:51:35:780 KERNEL/(10754:10754): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 18:51:39:916 KERNEL/(10754:10754): Incializando colas de planificacion
+[INFO] 18:52:04:830 KERNEL/(10754:10754): Creando thread para atender las conexiones de memoria
+[INFO] 18:52:07:390 KERNEL/(10754:10754): Creando thread para el funcionamiento de la consola
+[INFO] 19:14:12:311 KERNEL/(3466:3466): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 19:14:12:313 KERNEL/(3466:3466): Incializando colas de planificacion
+[INFO] 19:14:13:798 KERNEL/(3466:3466): Creando thread para atender las conexiones de memoria
+[INFO] 19:14:13:798 KERNEL/(3466:3466): Creando thread para el funcionamiento de la consola
+[INFO] 19:49:57:543 KERNEL/(4146:4146): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 19:49:57:544 KERNEL/(4146:4146): Incializando colas de planificacion
+[INFO] 19:49:59:431 KERNEL/(4146:4146): Creando thread para atender las conexiones de memoria
+[INFO] 19:49:59:431 KERNEL/(4146:4146): Creando thread para el funcionamiento de la consola
+[INFO] 19:51:38:962 KERNEL/(4265:4265): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 19:51:38:962 KERNEL/(4265:4265): Incializando colas de planificacion
+[INFO] 19:51:40:172 KERNEL/(4265:4265): Creando thread para atender las conexiones de memoria
+[INFO] 19:51:40:172 KERNEL/(4265:4265): Creando thread para el funcionamiento de la consola
+[INFO] 19:55:46:662 KERNEL/(4464:4464): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 19:55:46:662 KERNEL/(4464:4464): Incializando colas de planificacion
+[INFO] 19:55:48:341 KERNEL/(4464:4464): Creando thread para atender las conexiones de memoria
+[INFO] 19:55:48:341 KERNEL/(4464:4464): Creando thread para el funcionamiento de la consola
+[INFO] 20:40:13:890 KERNEL/(5762:5762): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 20:40:13:891 KERNEL/(5762:5762): Incializando colas de planificacion
+[INFO] 20:40:15:829 KERNEL/(5762:5762): Creando thread para atender las conexiones de memoria
+[INFO] 20:40:15:829 KERNEL/(5762:5762): Creando thread para el funcionamiento de la consola
+[INFO] 20:43:22:597 KERNEL/(5936:5936): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 20:43:22:597 KERNEL/(5936:5936): Incializando colas de planificacion
+[INFO] 20:43:24:283 KERNEL/(5936:5936): Creando thread para atender las conexiones de memoria
+[INFO] 20:43:24:283 KERNEL/(5936:5936): Creando thread para el funcionamiento de la consola
+[INFO] 20:53:29:586 KERNEL/(6194:6194): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 20:53:29:586 KERNEL/(6194:6194): Incializando colas de planificacion
+[INFO] 20:53:30:851 KERNEL/(6194:6194): Creando thread para atender las conexiones de memoria
+[INFO] 20:53:30:851 KERNEL/(6194:6194): Creando thread para el funcionamiento de la consola
+[INFO] 20:55:51:465 KERNEL/(6390:6390): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 20:55:51:465 KERNEL/(6390:6390): Incializando colas de planificacion
+[INFO] 20:55:52:512 KERNEL/(6390:6390): Creando thread para atender las conexiones de memoria
+[INFO] 20:55:52:512 KERNEL/(6390:6390): Creando thread para el funcionamiento de la consola
+[INFO] 20:56:36:867 KERNEL/(6463:6463): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 20:56:36:867 KERNEL/(6463:6463): Incializando colas de planificacion
+[INFO] 20:56:37:905 KERNEL/(6463:6463): Creando thread para atender las conexiones de memoria
+[INFO] 20:56:37:905 KERNEL/(6463:6463): Creando thread para el funcionamiento de la consola
+[INFO] 21:19:18:550 KERNEL/(6937:6937): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 21:19:18:550 KERNEL/(6937:6937): Incializando colas de planificacion
+[INFO] 21:19:20:273 KERNEL/(6937:6937): Creando thread para atender las conexiones de memoria
+[INFO] 21:19:20:273 KERNEL/(6937:6937): Creando thread para el funcionamiento de la consola
+[INFO] 21:19:35:254 KERNEL/(6997:6997): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 21:19:35:254 KERNEL/(6997:6997): Incializando colas de planificacion
+[INFO] 21:19:36:228 KERNEL/(6997:6997): Creando thread para atender las conexiones de memoria
+[INFO] 21:19:36:228 KERNEL/(6997:6997): Creando thread para el funcionamiento de la consola
+[INFO] 23:40:17:698 KERNEL/(7990:7990): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 23:40:19:696 KERNEL/(7990:7990): Incializando colas de planificacion
+[INFO] 23:40:33:595 KERNEL/(7990:7990): Creando thread para atender las conexiones de memoria
+[INFO] 23:40:34:97 KERNEL/(7990:7990): Creando thread para el funcionamiento de la consola
+[INFO] 23:43:28:464 KERNEL/(8220:8220): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 23:43:30:775 KERNEL/(8220:8220): Incializando colas de planificacion
+[INFO] 23:43:44:484 KERNEL/(8220:8220): Creando thread para atender las conexiones de memoria
+[INFO] 23:43:44:947 KERNEL/(8220:8220): Creando thread para el funcionamiento de la consola
+[INFO] 23:48:48:172 KERNEL/(8490:8490): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 23:48:48:172 KERNEL/(8490:8490): Incializando colas de planificacion
+[INFO] 23:48:49:253 KERNEL/(8490:8490): Creando thread para atender las conexiones de memoria
+[INFO] 23:48:49:253 KERNEL/(8490:8490): Creando thread para el funcionamiento de la consola
+[INFO] 23:49:56:622 KERNEL/(8602:8602): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 23:49:56:622 KERNEL/(8602:8602): Incializando colas de planificacion
+[INFO] 23:49:57:111 KERNEL/(8602:8602): Creando thread para atender las conexiones de memoria
+[INFO] 23:49:57:111 KERNEL/(8602:8602): Creando thread para el funcionamiento de la consola
+[INFO] 23:52:02:726 KERNEL/(8723:8723): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 23:52:02:726 KERNEL/(8723:8723): Incializando colas de planificacion
+[INFO] 23:52:04:743 KERNEL/(8723:8723): Creando thread para atender las conexiones de memoria
+[INFO] 23:52:04:743 KERNEL/(8723:8723): Creando thread para el funcionamiento de la consola
+[INFO] 23:56:18:429 KERNEL/(8898:8898): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 23:56:18:429 KERNEL/(8898:8898): Incializando colas de planificacion
+[INFO] 23:56:19:30 KERNEL/(8898:8898): Creando thread para atender las conexiones de memoria
+[INFO] 23:56:19:30 KERNEL/(8898:8898): Creando thread para el funcionamiento de la consola
+[INFO] 23:57:48:285 KERNEL/(9053:9053): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 23:57:48:285 KERNEL/(9053:9053): Incializando colas de planificacion
+[INFO] 23:57:48:968 KERNEL/(9053:9053): Creando thread para atender las conexiones de memoria
+[INFO] 23:57:48:968 KERNEL/(9053:9053): Creando thread para el funcionamiento de la consola
+[INFO] 00:03:31:430 KERNEL/(9259:9259): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 00:03:31:430 KERNEL/(9259:9259): Incializando colas de planificacion
+[INFO] 00:03:32:111 KERNEL/(9259:9259): Creando thread para atender las conexiones de memoria
+[INFO] 00:03:32:111 KERNEL/(9259:9259): Creando thread para el funcionamiento de la consola
+[INFO] 00:05:41:424 KERNEL/(9443:9443): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 00:05:41:424 KERNEL/(9443:9443): Incializando colas de planificacion
+[INFO] 00:05:43:568 KERNEL/(9443:9443): Creando thread para atender las conexiones de memoria
+[INFO] 00:05:43:568 KERNEL/(9443:9443): Creando thread para el funcionamiento de la consola
+[INFO] 00:07:04:630 KERNEL/(9574:9574): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 00:07:04:630 KERNEL/(9574:9574): Incializando colas de planificacion
+[INFO] 00:07:05:121 KERNEL/(9574:9574): Creando thread para atender las conexiones de memoria
+[INFO] 00:07:05:122 KERNEL/(9574:9574): Creando thread para el funcionamiento de la consola
+[INFO] 00:07:23:659 KERNEL/(9647:9647): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 00:07:23:659 KERNEL/(9647:9647): Incializando colas de planificacion
+[INFO] 00:07:24:6 KERNEL/(9647:9647): Creando thread para atender las conexiones de memoria
+[INFO] 00:07:24:6 KERNEL/(9647:9647): Creando thread para el funcionamiento de la consola
+[INFO] 00:07:36:168 KERNEL/(9647:9664): El DTB id 100 y path (null) ingreso a la cola de NEW
+[INFO] 00:07:36:168 KERNEL/(9647:9664): Se envio a new el proceso
+[INFO] 00:08:47:536 KERNEL/(9774:9774): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 00:08:47:536 KERNEL/(9774:9774): Incializando colas de planificacion
+[INFO] 00:08:50:29 KERNEL/(9774:9774): Creando thread para atender las conexiones de memoria
+[INFO] 00:08:50:29 KERNEL/(9774:9774): Creando thread para el funcionamiento de la consola
+[INFO] 00:09:16:874 KERNEL/(9845:9845): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 00:09:16:875 KERNEL/(9845:9845): Incializando colas de planificacion
+[INFO] 00:09:17:413 KERNEL/(9845:9845): Creando thread para atender las conexiones de memoria
+[INFO] 00:09:17:413 KERNEL/(9845:9845): Creando thread para el funcionamiento de la consola
+[INFO] 00:09:41:382 KERNEL/(9845:9863): El DTB id 100 y path (null) ingreso a la cola de NEW
+[INFO] 00:09:41:382 KERNEL/(9845:9863): Se envio a new el proceso
+[INFO] 00:10:48:575 KERNEL/(9845:9863): El DTB id 101 y path (null) ingreso a la cola de NEW
+[INFO] 00:10:58:896 KERNEL/(9845:9863): Se envio a new el proceso
+[INFO] 00:13:29:850 KERNEL/(10086:10086): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 00:13:29:850 KERNEL/(10086:10086): Incializando colas de planificacion
+[INFO] 00:13:31:513 KERNEL/(10086:10086): Creando thread para atender las conexiones de memoria
+[INFO] 00:13:31:513 KERNEL/(10086:10086): Creando thread para el funcionamiento de la consola
+[INFO] 00:13:55:699 KERNEL/(10086:10105): El DTB id 100 y path (null) ingreso a la cola de NEW
+[INFO] 00:13:55:699 KERNEL/(10086:10105): Se envio a new el proceso
+[INFO] 00:15:06:663 KERNEL/(10213:10213): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 00:15:06:663 KERNEL/(10213:10213): Incializando colas de planificacion
+[INFO] 00:15:08:607 KERNEL/(10213:10213): Creando thread para atender las conexiones de memoria
+[INFO] 00:15:08:607 KERNEL/(10213:10213): Creando thread para el funcionamiento de la consola
+[INFO] 00:15:28:771 KERNEL/(10213:10231): El DTB id 100 y path (null) ingreso a la cola de NEW
+[INFO] 00:15:28:771 KERNEL/(10213:10231): Se envio a new el proceso
+[INFO] 00:15:49:778 KERNEL/(10284:10284): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 00:15:49:779 KERNEL/(10284:10284): Incializando colas de planificacion
+[INFO] 00:15:49:779 KERNEL/(10284:10284): Creando thread para atender las conexiones de memoria
+[INFO] 00:15:49:779 KERNEL/(10284:10284): Creando thread para el funcionamiento de la consola
+[INFO] 00:15:54:88 KERNEL/(10284:10289): El DTB id 100 y path (null) ingreso a la cola de NEW
+[INFO] 00:15:54:88 KERNEL/(10284:10289): Se envio a new el proceso
+[INFO] 00:17:35:116 KERNEL/(10349:10349): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 00:17:36:534 KERNEL/(10349:10349): Incializando colas de planificacion
+[INFO] 00:17:45:80 KERNEL/(10349:10349): Creando thread para atender las conexiones de memoria
+[INFO] 00:17:45:785 KERNEL/(10349:10349): Creando thread para el funcionamiento de la consola
+[INFO] 00:28:55:457 KERNEL/(10558:10558): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 00:28:55:457 KERNEL/(10558:10558): Incializando colas de planificacion
+[INFO] 00:28:58:750 KERNEL/(10558:10558): Creando thread para atender las conexiones de memoria
+[INFO] 00:28:58:750 KERNEL/(10558:10558): Creando thread para el funcionamiento de la consola
+[INFO] 00:29:24:279 KERNEL/(10653:10653): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 00:29:24:279 KERNEL/(10653:10653): Incializando colas de planificacion
+[INFO] 00:29:25:831 KERNEL/(10653:10653): Creando thread para atender las conexiones de memoria
+[INFO] 00:29:25:832 KERNEL/(10653:10653): Creando thread para el funcionamiento de la consola
+[INFO] 00:31:56:465 KERNEL/(10765:10765): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 00:31:57:371 KERNEL/(10765:10765): Incializando colas de planificacion
+[INFO] 00:32:00:445 KERNEL/(10765:10765): Creando thread para atender las conexiones de memoria
+[INFO] 00:32:00:445 KERNEL/(10765:10765): Creando thread para el funcionamiento de la consola
+[INFO] 00:32:32:464 KERNEL/(10765:10807): El DTB id 100 y path (null) ingreso a la cola de NEW
+[TRACE] 00:32:32:592 KERNEL/(10765:10765): programa-dtb :-1073746060 seleccionado de la lista de new 
+[TRACE] 00:32:32:592 KERNEL/(10765:10765): programa-dtb :-1073746060 seleccionado de la lista de ready 
+[INFO] 00:32:32:592 KERNEL/(10765:10765): Se envio el proceso a ejecutar :100
+[INFO] 00:34:02:712 KERNEL/(10960:10960): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 00:34:02:712 KERNEL/(10960:10960): Incializando colas de planificacion
+[INFO] 00:34:03:974 KERNEL/(10960:10960): Creando thread para atender las conexiones de memoria
+[INFO] 00:34:03:974 KERNEL/(10960:10960): Creando thread para el funcionamiento de la consola
+[INFO] 00:34:25:184 KERNEL/(10960:10978): El DTB id 100 y path (null) ingreso a la cola de NEW
+[TRACE] 00:34:25:186 KERNEL/(10960:10960): programa-dtb :-1073746060 seleccionado de la lista de new 
+[TRACE] 00:34:25:186 KERNEL/(10960:10960): programa-dtb :-1073746060 seleccionado de la lista de ready 
+[INFO] 00:34:25:186 KERNEL/(10960:10960): Se envio el proceso a ejecutar :100
+[INFO] 00:36:13:989 KERNEL/(11108:11108): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 00:36:13:990 KERNEL/(11108:11108): Incializando colas de planificacion
+[INFO] 00:36:15:722 KERNEL/(11108:11108): Creando thread para atender las conexiones de memoria
+[INFO] 00:36:15:722 KERNEL/(11108:11108): Creando thread para el funcionamiento de la consola
+[INFO] 00:36:29:211 KERNEL/(11108:11127): El DTB id 100 y path (null) ingreso a la cola de NEW
+[TRACE] 00:36:29:212 KERNEL/(11108:11108): programa-dtb :-1073746284 seleccionado de la lista de new 
+[TRACE] 00:36:29:212 KERNEL/(11108:11108): programa-dtb :-1073746284 seleccionado de la lista de ready 
+[INFO] 00:36:29:212 KERNEL/(11108:11108): Se envio el proceso a ejecutar :100
+[INFO] 01:09:17:828 KERNEL/(12496:12496): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 01:09:17:828 KERNEL/(12496:12496): Incializando colas de planificacion
+[INFO] 01:09:18:982 KERNEL/(12496:12496): Creando thread para atender las conexiones de memoria
+[INFO] 01:09:18:982 KERNEL/(12496:12496): Creando thread para el funcionamiento de la consola
+[INFO] 01:09:45:160 KERNEL/(12496:12517): El DTB id 100 y path (null) ingreso a la cola de NEW
+[TRACE] 01:09:45:160 KERNEL/(12496:12496): programa-dtb :-1073746284 seleccionado de la lista de new 
+[TRACE] 01:09:45:160 KERNEL/(12496:12496): programa-dtb :-1073746284 seleccionado de la lista de ready 
+[INFO] 01:09:45:160 KERNEL/(12496:12496): Se envio el proceso a ejecutar :100
+[INFO] 01:15:23:778 KERNEL/(12842:12842): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 01:15:23:779 KERNEL/(12842:12842): Incializando colas de planificacion
+[INFO] 01:15:24:916 KERNEL/(12842:12842): Creando thread para atender las conexiones de memoria
+[INFO] 01:15:24:916 KERNEL/(12842:12842): Creando thread para el funcionamiento de la consola
+[INFO] 01:16:01:8 KERNEL/(12842:12869): El DTB id 100 y path (null) ingreso a la cola de NEW
+[TRACE] 01:16:01:187 KERNEL/(12842:12842): programa-dtb :-1073746284 seleccionado de la lista de new 
+[INFO] 01:16:27:350 KERNEL/(12951:12951): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 01:16:27:350 KERNEL/(12951:12951): Incializando colas de planificacion
+[INFO] 01:16:28:221 KERNEL/(12951:12951): Creando thread para atender las conexiones de memoria
+[INFO] 01:16:28:221 KERNEL/(12951:12951): Creando thread para el funcionamiento de la consola
+[INFO] 01:16:57:238 KERNEL/(12951:12970): El DTB id 100 y path (null) ingreso a la cola de NEW
+[TRACE] 01:16:57:246 KERNEL/(12951:12951): programa-dtb :-1073746252 seleccionado de la lista de new 
+[TRACE] 01:16:57:256 KERNEL/(12951:12951): programa-dtb :-1073746252 seleccionado de la lista de ready 
+[INFO] 01:16:57:256 KERNEL/(12951:12951): Se envio el proceso a ejecutar :100
+[INFO] 01:17:42:783 KERNEL/(13061:13061): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 01:17:42:783 KERNEL/(13061:13061): Incializando colas de planificacion
+[INFO] 01:17:43:313 KERNEL/(13061:13061): Creando thread para atender las conexiones de memoria
+[INFO] 01:17:43:313 KERNEL/(13061:13061): Creando thread para el funcionamiento de la consola
+[INFO] 01:18:00:26 KERNEL/(13061:13082): El DTB id 100 y path (null) ingreso a la cola de NEW
+[TRACE] 01:18:00:26 KERNEL/(13061:13061): programa-dtb :-1073746060 seleccionado de la lista de new 
+[TRACE] 01:18:00:26 KERNEL/(13061:13061): programa-dtb :-1073746060 seleccionado de la lista de ready 
+[INFO] 01:18:00:26 KERNEL/(13061:13061): Se envio el proceso a ejecutar :100
+[INFO] 01:18:25:241 KERNEL/(13180:13180): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 01:18:25:242 KERNEL/(13180:13180): Incializando colas de planificacion
+[INFO] 01:18:26:86 KERNEL/(13180:13180): Creando thread para atender las conexiones de memoria
+[INFO] 01:18:26:87 KERNEL/(13180:13180): Creando thread para el funcionamiento de la consola
+[INFO] 01:18:53:102 KERNEL/(13180:13198): El DTB id 100 y path (null) ingreso a la cola de NEW
+[TRACE] 01:18:53:105 KERNEL/(13180:13180): programa-dtb :-1073746060 seleccionado de la lista de new 
+[TRACE] 01:18:53:105 KERNEL/(13180:13180): programa-dtb :-1073746060 seleccionado de la lista de ready 
+[INFO] 01:18:53:105 KERNEL/(13180:13180): Se envio el proceso a ejecutar :100
+[INFO] 01:19:32:806 KERNEL/(13312:13312): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 01:19:32:809 KERNEL/(13312:13312): Incializando colas de planificacion
+[INFO] 01:19:33:667 KERNEL/(13312:13312): Creando thread para atender las conexiones de memoria
+[INFO] 01:19:33:667 KERNEL/(13312:13312): Creando thread para el funcionamiento de la consola
+[INFO] 01:19:56:801 KERNEL/(13312:13330): El DTB id 100 y path (null) ingreso a la cola de NEW
+[TRACE] 01:19:56:801 KERNEL/(13312:13312): programa-dtb :-1073746060 seleccionado de la lista de new 
+[TRACE] 01:19:56:801 KERNEL/(13312:13312): programa-dtb :-1073746060 seleccionado de la lista de ready 
+[INFO] 01:19:56:801 KERNEL/(13312:13312): Se envio el proceso a ejecutar :100
+[INFO] 01:20:29:721 KERNEL/(13429:13429): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 01:20:29:721 KERNEL/(13429:13429): Incializando colas de planificacion
+[INFO] 01:20:30:471 KERNEL/(13429:13429): Creando thread para atender las conexiones de memoria
+[INFO] 01:20:30:471 KERNEL/(13429:13429): Creando thread para el funcionamiento de la consola
+[INFO] 01:20:45:117 KERNEL/(13429:13447): El DTB id 100 y path (null) ingreso a la cola de NEW
+[TRACE] 01:20:45:121 KERNEL/(13429:13429): programa-dtb :-1073746060 seleccionado de la lista de new 
+[TRACE] 01:20:45:121 KERNEL/(13429:13429): programa-dtb :-1073746060 seleccionado de la lista de ready 
+[INFO] 01:20:45:121 KERNEL/(13429:13429): Se envio el proceso a ejecutar :100
+[INFO] 01:21:40:938 KERNEL/(13526:13526): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 01:21:40:938 KERNEL/(13526:13526): Incializando colas de planificacion
+[INFO] 01:21:41:644 KERNEL/(13526:13526): Creando thread para atender las conexiones de memoria
+[INFO] 01:21:41:644 KERNEL/(13526:13526): Creando thread para el funcionamiento de la consola
+[INFO] 01:21:57:28 KERNEL/(13526:13543): El DTB id 100 y path (null) ingreso a la cola de NEW
+[TRACE] 01:21:57:28 KERNEL/(13526:13526): programa-dtb :-1073746284 seleccionado de la lista de new 
+[TRACE] 01:21:57:28 KERNEL/(13526:13526): programa-dtb :-1073746284 seleccionado de la lista de ready 
+[INFO] 01:21:57:28 KERNEL/(13526:13526): Se envio el proceso a ejecutar :100
+[INFO] 01:23:47:699 KERNEL/(13714:13714): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 01:23:47:699 KERNEL/(13714:13714): Incializando colas de planificacion
+[INFO] 01:23:48:775 KERNEL/(13714:13714): Creando thread para atender las conexiones de memoria
+[INFO] 01:23:48:775 KERNEL/(13714:13714): Creando thread para el funcionamiento de la consola
+[INFO] 01:24:17:287 KERNEL/(13778:13778): IP de memoria :127.0.0.1 -Metadata refresh: 10000 -Multiprocesamiento: 3 -Puerto Memoria: 8001 -Quantum: 4  -Sleep ejecucion: 5000
+
+[INFO] 01:24:17:287 KERNEL/(13778:13778): Incializando colas de planificacion
+[INFO] 01:24:18:659 KERNEL/(13778:13778): Creando thread para atender las conexiones de memoria
+[INFO] 01:24:18:659 KERNEL/(13778:13778): Creando thread para el funcionamiento de la consola
+[INFO] 01:24:49:147 KERNEL/(13778:13798): El DTB id 100 y path (null) ingreso a la cola de NEW
+[TRACE] 01:24:49:148 KERNEL/(13778:13778): programa-dtb :-1073746060 seleccionado de la lista de new 
+[TRACE] 01:24:49:148 KERNEL/(13778:13778): programa-dtb :-1073746060 seleccionado de la lista de ready 
+[INFO] 01:24:49:148 KERNEL/(13778:13778): Se envio el proceso a ejecutar :100

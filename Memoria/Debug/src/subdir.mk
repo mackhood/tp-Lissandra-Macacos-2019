@@ -7,6 +7,7 @@ C_SRCS += \
 ../src/Consola.c \
 ../src/Memoria.c \
 ../src/Request.c \
+../src/conexion_kernel.c \
 ../src/config_memoria.c \
 ../src/estructurasMemoria.c 
 
@@ -14,6 +15,7 @@ OBJS += \
 ./src/Consola.o \
 ./src/Memoria.o \
 ./src/Request.o \
+./src/conexion_kernel.o \
 ./src/config_memoria.o \
 ./src/estructurasMemoria.o 
 
@@ -21,6 +23,7 @@ C_DEPS += \
 ./src/Consola.d \
 ./src/Memoria.d \
 ./src/Request.d \
+./src/conexion_kernel.d \
 ./src/config_memoria.d \
 ./src/estructurasMemoria.d 
 

@@ -105,7 +105,9 @@ typedef struct{
 	time_t horacreacion;  //se usa para calcular el tiempo de repuesta
 	t_header instruccion_actual;
 	params * parametros;
-
+	t_header operacionActual;
+	char* tablaSentencias [100];
+	int sentenciaActual;
 }DTB_KERNEL;
 
 

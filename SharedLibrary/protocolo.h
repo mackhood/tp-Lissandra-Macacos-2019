@@ -38,6 +38,7 @@ typedef enum{
 	CREATE_REQ,
 	INSERT_REALIZADO,
 	DROP_REQ,
+	DESCRIBE_REQ,
 
 
 	//Memoria-FileSystem

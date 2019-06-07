@@ -156,7 +156,9 @@ void selectt(char** args){
 
 
 	DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,parametros);
-
+	dtb_nuevo->total_sentencias =1;
+	dtb_nuevo->quantum= tKernel->config->quantum;
+	dtb_nuevo->total_sentencias=1;
 	if(estaEnMetadata(nombre_tabla)){
 
 		enviarANew(dtb_nuevo);
@@ -211,6 +213,7 @@ void insert (char** args) {
 
 
 		DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,parametros);
+		dtb_nuevo->total_sentencias=1;
 
 		if(estaEnMetadata(nombre_tabla)){
 
@@ -223,6 +226,7 @@ void insert (char** args) {
 			logInfo("La tabla no se encuentra en metadata");
 
 		}
+		char* tabla [100];
 
 
 
@@ -258,6 +262,7 @@ void drop (char** args) {
 
 
 			DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,parametros);
+			dtb_nuevo->total_sentencias=1;
 
 			if(estaEnMetadata(nombre_tabla)){
 
@@ -295,11 +300,93 @@ void add (char** args) {
 }
 void run (char** args) {
 
+char* path = string_duplicate(args[1]);
+
+params* parametros = malloc( sizeof(params) );
+			inicializarParametros(parametros);
+
+			parametros->arreglo[0] = path;
+
+DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,parametros);
+
+
+
+//char linea[1024];
+//    FILE *fich;
+//
+//    fich = fopen(path, "r");
+//    while(fgets(linea, 1024, (FILE*) fich)) {
+//        printf("LINEA: %s FIN_DE_LINEA\n", linea);
+//    }
+//    fclose(fich);
+//}
+
+
+char* tabla [100];
+int i;
+int x=0;
+int a =0;
+	for(i=0; i<100; i++){
+
+	tabla[i] = string_new();
+
+
+	}
+//t_queue* colaPedidos = queue_create();
+
+char * ch = string_new();
+   FILE *fp;
+
+   //printf("Enter name of a file you wish to see\n");
+
+
+   fp = fopen(path, "r"); // read mode
+
+   if (fp == NULL)
+   {
+      perror("Error while opening the file.\n");
+      exit(EXIT_FAILURE);
+   }
+
+   //printf("The contents of %s file are:\n", path);
+
+   while(fgets(ch,100,fp)){
+      printf("%s", ch);
+      char** argus = string_split(ch,"\n");
+      tabla[x]= string_duplicate(argus[0]);
+      x++;
+      a++;
+      //free(ch);
+      //ch= string_new();
+   }
+  // fclose(fp);
+   //free(ch);
+
+   int b;
+   for(b=0;b<=a;b++){
+
+
+	 dtb_nuevo->tablaSentencias[b]=tabla[b];
+
+   }
+   dtb_nuevo->total_sentencias = x;
+   dtb_nuevo->sentenciaActual=a;
+
+
+   enviarANew(dtb_nuevo);
+  // logInfo("Se envio a new el proceso");
+   printf("se envio a new el proceso");
+   }
 
 
 
 
-}
+
+
+
+
+
+
 void readLatency (char** args) {
 
 

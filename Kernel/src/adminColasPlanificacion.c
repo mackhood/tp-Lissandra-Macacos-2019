@@ -399,7 +399,7 @@ void moverReadyToExec(DTB_KERNEL* dtb){
 DTB_KERNEL* crearDTBKernel(int gdtId, char* path, int quantum, params * parametros){
 	DTB_KERNEL* dtb = malloc( sizeof(DTB_KERNEL) );
 	dtb->idGDT = gdtId;
-	dtb->flag = 1;
+	dtb->flag = 0;
 	dtb->pc = 0;
 //	dtb->cant_usaron_diego = 0;
 	dtb->se_ejecuto = false;
@@ -410,7 +410,7 @@ DTB_KERNEL* crearDTBKernel(int gdtId, char* path, int quantum, params * parametr
 //	dtb->tablaDeArchivosAbiertos = list_create();
 //	dtb->prox_io = queue_create();
 	dtb->parametros = parametros;
-
+	dtb->tablaSentencias;
 	return dtb;
 }
 
