@@ -28,6 +28,10 @@ typedef struct {
 }metadata;
 
 
+
+
+
+
 typedef struct  {
 
 //int conexion;

@@ -92,29 +92,38 @@ switch(dtb->operacionActual) {
 
 	case SELECT_REQ :
 
-		if(estaEnMetadata(dtb->parametros->arreglo[0])){
+	//	if(estaEnMetadata(dtb->parametros->arreglo[0])){
 		socket_memoria = conectar_a_servidor(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Memoria");
 
 		int largo_nombre_tabla = strlen(dtb->parametros->arreglo[0]);
 		size_t tamanio_buffer = sizeof(uint16_t) + sizeof(int) + largo_nombre_tabla;
 		void* buffer = malloc(tamanio_buffer);
 		uint16_t key  = (uint16_t)dtb->parametros->enteros[0];
-		memcpy(buffer,&key , sizeof(uint16_t));
-		memcpy(buffer+sizeof(uint16_t), &largo_nombre_tabla, sizeof(int));
-		memcpy(buffer+sizeof(uint16_t)+sizeof(int), dtb->parametros->arreglo[0], largo_nombre_tabla);
+		memcpy(buffer,&largo_nombre_tabla , sizeof(int));
+		memcpy(buffer+sizeof(int), dtb->parametros->arreglo[0], largo_nombre_tabla);
+		memcpy(buffer+sizeof(int)+largo_nombre_tabla, &key, sizeof(u_int16_t));
 
 		prot_enviar_mensaje(socket_memoria, SELECT_REQ, tamanio_buffer, buffer);
 
-
-
 		t_prot_mensaje* req_recibida = prot_recibir_mensaje(socket_memoria);
-		printf(req_recibida->payload);
+		int largoValue;
+		char * prueba;
+		memcpy(&largoValue,req_recibida->payload,sizeof(int));
+		prueba = malloc(largoValue + 1);
+		memcpy(prueba,req_recibida->payload+sizeof(int),largoValue);
+		prueba[largoValue]=	'/0';
 
-		}else{
+		printf("el value solicitado es %s /n",prueba);
 
-		logInfo("no esta en metadata tabla");
-		dtb->flag=1;
-		}
+
+
+
+
+//		}else{
+//
+//		logInfo("no esta en metadata tabla");
+//		dtb->flag=1;
+//		}
 
 //		char* nombre_tabla = string_duplicate(args[1]);
 //		uint16_t key = atoi(args[2]);
@@ -152,7 +161,7 @@ switch(dtb->operacionActual) {
 
 	case CREATE_REQ :
 
-//		int largo_nombre_tabla;
+//						int largo_nombre_tabla;
 //						char* nombre_tabla;
 //						int largo_tipo_consistencia;
 //						char* tipo_consistencia;

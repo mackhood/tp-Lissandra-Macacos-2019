@@ -198,9 +198,9 @@ void inicializarParametros(params* params){
 void insert (char** args) {
 
 
-	char* nombre_tabla = string_duplicate(args[1]);
-		uint16_t key = atoi(args[2]);
-		char* value = string_duplicate(args[1]);
+	char* nombre_tabla = string_duplicate(args[0]);
+		uint16_t key = atoi(args[1]);
+		char* value = string_duplicate(args[2]);
 
 		//char* key = string_duplicate(args[2]);
 
@@ -235,13 +235,50 @@ void insert (char** args) {
 
 }
 void create (char** args) {
+//				0		1					2					3
+//	CREATE [TABLA] [TIPO_CONSISTENCIA] [NUMERO_PARTICIONES] [COMPACTION_TIME]
+//	Ej:
+//	CREATE TABLA1 SC 4 60000
+
+	char* nombre_tabla = string_duplicate(args[0]);
+			int numeroParticiones = atoi(args[2]);
+			char* tipoConsistencia = string_duplicate(args[1]);
+			int tiempoCompactacion = atoi(args[3]);
+			//char* key = string_duplicate(args[2]);
+
+			params* parametros = malloc( sizeof(params) );
+			inicializarParametros(parametros);
+			parametros->enteros[0]= numeroParticiones;
+			parametros->enteros[1]=tiempoCompactacion;
+			parametros->arreglo[0] = nombre_tabla;
+			parametros->arreglo[1] = tipoConsistencia;
 
 
 
+			DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,parametros);
+					dtb_nuevo->total_sentencias=1;
 
+					if(estaEnMetadata(nombre_tabla)){
+
+						enviarANew(dtb_nuevo);
+						logInfo("Se envio a new el proceso");
+
+					} else{
+
+						enviarAEXIT(dtb_nuevo);
+						logInfo("La tabla no se encuentra en metadata");
+
+					}
 
 }
+
+
 void describe (char** args) {
+
+
+
+
+
 
 
 
