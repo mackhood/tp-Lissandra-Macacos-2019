@@ -20,10 +20,12 @@
 #include <commons/collections/list.h>
 #include <commons/string.h>
 #include <commons/config.h>
+
 //Las unicas biblios nuestras que podemos tener en el include para no generar dependencia circular
 #include "../../SharedLibrary/protocolo.h"
 #include "../../SharedLibrary/conexiones.h"
 #include "../../SharedLibrary/auxiliaryFunctions.h"
+#include "config_memoria.h"
 
 typedef struct{
 	int nro_pag;
@@ -66,6 +68,10 @@ pthread_t threadReqKernel;
 
 //logs
 t_log* loggerMem;
+
+//mutex
+pthread_mutex_t mutex_estructuras_memoria;
+
 //funciones iniciales
 void setearValores();
 void initThread();
@@ -79,7 +85,7 @@ t_est_pag* buscarEstPagBuscada(uint16_t key, t_segmento* segmento_buscado);
 int aplicarLRU();
 t_segmento* buscarEinsertarEnMem(t_segmento* segmento, uint16_t key, double time_a_insertar, char* value);
 int buscarPaginaLibre(); //ahora devuelvo un marco
-void journal (); //Si bien es una request la pongo aca dentro debido a que el LRU debe utilizarla
+void journalReq (); //Si bien es una request la pongo aca dentro debido a que el LRU debe utilizarla
 void eliminar_segmentos();
 void liberar_marcos();
 int buscarPosSeg(char* nombre_segmento);

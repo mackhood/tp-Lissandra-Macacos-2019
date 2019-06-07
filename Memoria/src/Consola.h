@@ -18,6 +18,7 @@ void selectt(char** args);
 void insert(char** args);
 void create(char** args);
 void drop(char** args);
+void journal(char** args);
 
 #endif /* CONSOLA_H_ */
 

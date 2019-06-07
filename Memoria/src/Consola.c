@@ -130,6 +130,9 @@ void selectt(char** args){
 	char* value_buscado = selectReq(nombre_tabla, key);
 
 	printf("el value buscado es %s\n", value_buscado);
+
+	usleep(info_memoria.retardo_mp);
+
 	free(nombre_tabla);
 	free(value_buscado);
 }
@@ -139,9 +142,10 @@ void insert(char** args){
 	uint16_t key = atoi(args[2]);
 	char* value = string_duplicate(args[3]);
 
-	double time_actualizado = insertReq(nombre_tabla, key, value);
+	insertReq(nombre_tabla, key, value);
 
-	printf("el nuevo time para la key %d es %f\n", key, time_actualizado);
+	//info_memoria.retardo_mp
+
 	free(nombre_tabla);
 	free(value);
 }
@@ -170,6 +174,9 @@ void create(char** args){
 			}
 		}
 
+	usleep(info_memoria.retardo_fs);
+	usleep(info_memoria.retardo_mp);
+
 	prot_destruir_mensaje(mensaje_fs);
 	free(nombre_tabla);
 	free(tipo_consistencia);
@@ -177,21 +184,11 @@ void create(char** args){
 
 void drop(char** args){
 	char* nombre_tabla = strdup(args[1]);
-	int largo_nombre_tabla = strlen(nombre_tabla);
 
-	dropReq(nombre_tabla);
-
-	int tamanio_buffer = sizeof(int) + largo_nombre_tabla;
-	void* buffer = malloc(tamanio_buffer);
-	memcpy(buffer, &largo_nombre_tabla, sizeof(int));
-	memcpy(buffer + sizeof(int), nombre_tabla, largo_nombre_tabla);
-
-	//mando solicitud de drop de tabla al FS
-	prot_enviar_mensaje(socket_fs, TABLE_DROP, tamanio_buffer, buffer);
-	t_prot_mensaje* respuesta = prot_recibir_mensaje(socket_fs);
+	t_prot_mensaje* respuesta_fs = dropReq(nombre_tabla);
 
 	//posibles respuestas
-	switch(respuesta->head){
+	switch(respuesta_fs->head){
 		case TABLE_DROP_OK:{
 			printf("La tabla fue borrada\n");
 		}break;
@@ -206,6 +203,18 @@ void drop(char** args){
 		}
 	}
 
+	usleep(info_memoria.retardo_fs);
+	usleep(info_memoria.retardo_mp);
+
+	prot_destruir_mensaje(respuesta_fs);
 	free(nombre_tabla);
-	prot_destruir_mensaje(respuesta);
+}
+
+void journal(char** args){
+
+	printf("Se procedera a realizar el journal\n");
+	pthread_mutex_lock(&mutex_estructuras_memoria);
+	journalReq();
+	pthread_mutex_unlock(&mutex_estructuras_memoria);
+
 }

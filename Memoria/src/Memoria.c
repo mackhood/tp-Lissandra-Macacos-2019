@@ -15,10 +15,6 @@ int main() {
 
 //________________________________FUNCIONES DE INICIALIZACION DE HILOS Y DEMAS________________________________________________//
 
-void setearValores(){
-	return;
-}
-
 void levantarLogs(){
 
 	char* memoria_log_ruta = strdup("/home/utnso/workspace/tp-2019-1c-Macacos/Memoria/Memoria.log");
@@ -45,7 +41,7 @@ void initThread(){
 
 void levantarConexion(){
 
-	//me conecto al fs primero
+	//me conecto al fs primero y me manda el tamanio_value
 	socket_fs = conectar_a_servidor(info_memoria.ip_fs, info_memoria.puerto_fs, "Memoria");
 	prot_enviar_mensaje(socket_fs, HANDSHAKE, 0, NULL);
 	t_prot_mensaje* handshake = prot_recibir_mensaje(socket_fs);
@@ -66,9 +62,9 @@ void levantarConexion(){
 
 void levantarEstrMemorias(){
 
-	//nos lo pasa el file system el tamanio del value, pero por ahora es 4 por el ejemplo
+	//el tamanio_value nos lo pasa el fs por el handshake
 	//la key es un uint16_t, tiene 16 bits por ende 2 bytes y no abarca numeros negativos (un int 4 bytes por ende 32 bits y si abarca negativos)
-	//el time_t es en segundos (ya no lo usamos en la estructura pero esta bueno saberlo)
+	//el time_t es en segundos (utilizado dentro de getCurrentTime)
 	//el double ocupa 8 bytes
 
 	//variables iniciales
@@ -86,7 +82,11 @@ void levantarEstrMemorias(){
 		estados_memoria[i] = LIBRE;
 	}
 
+	//creo la lista de segmentos
 	lista_segmentos = list_create();
+
+	//creo el mutex
+	pthread_mutex_init(&mutex_estructuras_memoria, NULL);
 
 	//_____________________________PRUEBA________________________________//
 	/*double timestamp = 1876;
@@ -105,68 +105,7 @@ void levantarEstrMemorias(){
 	//______________________________PRUEBA_______________________________//
 }
 
-
-
-
-
-
-
-
-/*	//_____________________PRUEBA________________________________________//
-	esto lo usabamos en el esquema anterior y ESTA MAL, pero era para probar que las otras funciones funcionen entonces podemos sacar
-	algun que otro modo de prueba (creo)
-
-	//creo la memoria el cual va a tener cant_paginas posiciones
-	memoria_principal = list_create();
-
-	for(int i=0; i<cant_paginas; i++){
-		t_pagina* pagina = malloc(sizeof(t_pagina));
-		pagina->value = malloc(tamanio_value);
-		list_add(memoria_principal, (t_pagina*)pagina);
-	}
-
-	//creo lista de segmentos
-	lista_segmentos = list_create();
-
-	//creo segmento
-	t_segmento* segmento_prueba = malloc(sizeof(t_segmento));
-	segmento_prueba->nombre_tabla = "tabla1";
-	segmento_prueba->tabla_paginas.paginas = list_create();
-
-	//creo registro para la tabla
-	t_est_pag* est_pagina = malloc(sizeof(t_est_pag));
-	//est_pagina->nro_pag = 4;
-	est_pagina->flag = 0;
-	est_pagina->pagina = list_get(memoria_principal, 0);
-
-	//creo la pagina a la cual apunta mi registro anterior
-	est_pagina->pagina->key = 32;
-	est_pagina->pagina->timestamp = getCurrentTime();
-	est_pagina->pagina->value = "hol"; //incluye \0
-
-	list_add(lista_segmentos, (t_segmento*)segmento_prueba);
-	list_add((segmento_prueba->tabla_paginas.paginas), (t_est_pag*)est_pagina);
-
-	t_segmento* segmento_definitivo = (t_segmento*)list_get(lista_segmentos, 0);
-	t_list* tabla = segmento_definitivo->tabla_paginas.paginas;
-	t_est_pag* est_pagina_def = (t_est_pag*)list_get(tabla, 0);
-
-	printf("prueba para el levantamiento de memoria\n");
-	printf("el flag es %d\n", est_pagina_def->flag);
-	printf("la key de la pagina es %d\n", est_pagina_def->pagina->key);
-	printf("el value de la pagina es %s\n", est_pagina_def->pagina->value);
-	printf("el timestamp de la pagina es %lf\n", est_pagina_def->pagina->timestamp);
-	printf("finalizo la prueba de levantar memoria\n\n");
-
-	//busco key 32
-	t_pagina* pagina_buscada = estaTablaYkeyEnMemoria("tabla1", 32);
-
-	uint16_t key_buscado = pagina_buscada->key;
-	printf("la key buscada es %d\n", key_buscado);
-
-
-	//__________________________FIN DE PRUEBA___________________________//
-
-*/
-
+void setearValores(){
+	return;
+}
 
