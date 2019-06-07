@@ -517,7 +517,10 @@ void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer)
 					tamanio_buffer_metadatas += strlen(tdp->d_name) + 2;
 					buffer = realloc(buffer, tamanio_buffer_metadatas);
 					if(firstTabla)
+					{
 						strcpy(buffer, tdp->d_name);
+						firstTabla = false;
+					}
 					else
 						strcat(buffer, tdp->d_name);
 					strcat(buffer, ",");
