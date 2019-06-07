@@ -4,7 +4,9 @@ void escucharKernel(int* kernel){
 	int s_kernel = *kernel;
 	free(kernel);
 
-	while(1){
+	bool connected = true;
+
+	while(connected){
 
 		t_prot_mensaje* req_recibida = prot_recibir_mensaje(s_kernel);
 
@@ -25,6 +27,8 @@ void escucharKernel(int* kernel){
 
 				prot_enviar_mensaje(socket_kernel, KEY_SOLICITADA_SELECT, strlen(value_solicitado), value_solicitado);
 
+				usleep(info_memoria.retardo_mp);
+
 				free(nombre_tabla);
 
 			} break;
@@ -34,7 +38,7 @@ void escucharKernel(int* kernel){
 				int tamanio_nombre_tabla;
 				char* nombre_tabla;
 				uint16_t key;
-				int tamanio_value;
+				int largo_value;
 				char* value;
 
 				memcpy(&tamanio_nombre_tabla, req_recibida->payload, sizeof(int));
@@ -42,13 +46,15 @@ void escucharKernel(int* kernel){
 				memcpy(nombre_tabla, req_recibida->payload + sizeof(int), tamanio_nombre_tabla);
 				nombre_tabla[tamanio_nombre_tabla] = '\0';
 				memcpy(&key, req_recibida->payload + sizeof(int) + tamanio_nombre_tabla, sizeof(uint16_t));
-				memcpy(&tamanio_value, req_recibida->payload +sizeof(int)+tamanio_nombre_tabla+sizeof(uint16_t), sizeof(int));
-				value = malloc(tamanio_value+1);
-				memcpy(value, req_recibida->payload+sizeof(int)+tamanio_nombre_tabla+sizeof(uint16_t), tamanio_value);
-				value[tamanio_value] = '\0';
+				memcpy(&largo_value, req_recibida->payload +sizeof(int)+tamanio_nombre_tabla+sizeof(uint16_t), sizeof(int));
+				value = malloc(largo_value+1);
+				memcpy(value, req_recibida->payload+sizeof(int)+tamanio_nombre_tabla+sizeof(uint16_t), largo_value);
+				value[largo_value] = '\0';
 
-				double time_insertado = insertReq(nombre_tabla, key, value);
+				insertReq(nombre_tabla, key, value);
 				prot_enviar_mensaje(socket_kernel, INSERT_REALIZADO, 0, NULL);
+
+				usleep(info_memoria.retardo_mp);
 
 				free(nombre_tabla);
 				free(value);
@@ -91,6 +97,9 @@ void escucharKernel(int* kernel){
 							}
 						}
 
+				usleep(info_memoria.retardo_fs);
+				usleep(info_memoria.retardo_mp);
+
 				prot_destruir_mensaje(mensaje_fs);
 				free(nombre_tabla);
 				free(tipo_consistencia);
@@ -107,18 +116,10 @@ void escucharKernel(int* kernel){
 				memcpy(nombre_tabla, req_recibida->payload+sizeof(int), largo_nombre_tabla);
 				nombre_tabla[largo_nombre_tabla] = '\0';
 
-				dropReq(nombre_tabla);
+				t_prot_mensaje* respuesta_fs = dropReq(nombre_tabla);
 
-				int tamanio_buffer = sizeof(int)+largo_nombre_tabla;
-				void* buffer = malloc(tamanio_buffer);
-				memcpy(buffer, &largo_nombre_tabla, sizeof(int));
-				memcpy(buffer + sizeof(int), nombre_tabla, largo_nombre_tabla);
 
-				//mando solicitud de drop de tabla al FS
-				prot_enviar_mensaje(socket_fs, TABLE_DROP, tamanio_buffer, buffer);
-				t_prot_mensaje* respuesta = prot_recibir_mensaje(socket_fs);
-
-				switch(respuesta->head){
+				switch(respuesta_fs->head){
 					case TABLE_DROP_OK:{
 						prot_enviar_mensaje(socket_kernel, TABLE_DROP_OK, 0, NULL);
 					}break;
@@ -133,14 +134,18 @@ void escucharKernel(int* kernel){
 					}
 				}
 
+				usleep(info_memoria.retardo_fs);
+				usleep(info_memoria.retardo_mp);
+
+				prot_destruir_mensaje(respuesta_fs);
 				free(nombre_tabla);
-				prot_destruir_mensaje(respuesta);
 
 			} break;
 
 			default:
 			{
 				printf("HEADER DESCONOCIDO\n");
+				connected = false;
 			}break;
 
 		}
