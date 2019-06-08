@@ -248,17 +248,55 @@ switch(dtb->operacionActual) {
 		break;
 
 	case DESCRIBE_REQ :
-
-
-
-
-
-
-						dtb->sentenciaActual++;
-
+	{
+		char* tablename = string_new();
+		if(args[1] != NULL)
+		{
+			tablename = malloc(strlen(args[1]));
+			strcpy(tablename, args[1]);
+			int tamanio_tabla = strlen(tablename);
+			size_t sizeOfBuffer = tamanio_tabla + sizeof(int);
+			void* buffer = malloc(sizeOfBuffer);
+			memcpy(buffer, &tamanio_tabla, sizeof(int));
+			memcpy(buffer + sizeof(int), tablename, tamanio_tabla);
+			prot_enviar_mensaje(socket_memoria, DESCRIBE_REQ, sizeOfBuffer, buffer);
+		}
+		else
+		{
+			prot_enviar_mensaje(socket_memoria, DESCRIBE_REQ, 0, NULL);
+		}
+		t_prot_mensaje* mensaje_memoria = prot_recibir_mensaje(socket_memoria);
+		switch(mensaje_memoria->head)
+		{
+		case POINT_DESCRIBE:
+		{
+			int tamanio_mensaje;
+			char* metadataTabla;
+			memcpy(&tamanio_mensaje, mensaje_memoria->payload, sizeof(int));
+			metadataTabla = malloc(tamanio_mensaje + 1);
+			memcpy(metadataTabla, mensaje_memoria->payload + sizeof(int), tamanio_mensaje);
+			break;
+		}
+		case FULL_DESCRIBE:
+		{
+			int tamanio_mensaje;
+			char* metadataTablas;
+			memcpy(&tamanio_mensaje, mensaje_memoria->payload, sizeof(int));
+			metadataTablas = malloc(tamanio_mensaje + 1);
+			memcpy(metadataTablas, mensaje_memoria->payload + sizeof(int), tamanio_mensaje);
+			break;
+		}
+		case FAILED_DESCRIBE:
+		{
+			printf("No había tablas en el FS.\n");
+			break;
+		}
+		default:
+			break;
+		}
+		dtb->sentenciaActual++;
 		break;
-
-
+	}
 		default :
 
 		printf("Invalid operation\n" );

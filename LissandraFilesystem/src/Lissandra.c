@@ -104,19 +104,6 @@ void escucharMemoria(int* socket_memoria)
 				memcpy(tabla, mensaje_memoria->payload + sizeof(uint16_t) + sizeof(int), tamanioNombre);
 				tabla[tamanioNombre] = '\0';
 
-//				double tiempo_pag = getCurrentTime();
-//				char* value = "Ejemplo";
-//				int tamanio_value = strlen(value);
-//
-//				size_t tamanio_buffer = (sizeof(double)+tamanio_value+sizeof(int));
-//				void* buffer = malloc(tamanio_buffer);
-//
-//				memcpy(buffer, &tiempo_pag, sizeof(double));
-//				memcpy(buffer+sizeof(double), &tamanio_value, sizeof(int));
-//				memcpy(buffer+sizeof(double)+sizeof(int), value, tamanio_value);
-//
-//				prot_enviar_mensaje(socket, VALUE_SOLICITADO_OK, tamanio_buffer, buffer);
-
 				 t_keysetter* helpinghand = selectKey(tabla, auxkey);
 				 if(helpinghand != NULL)
 				 {
