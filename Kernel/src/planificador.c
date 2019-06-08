@@ -180,10 +180,10 @@ switch(dtb->operacionActual) {
 
 		//	CREATE [TABLA] [TIPO_CONSISTENCIA] [NUMERO_PARTICIONES] [COMPACTION_TIME]
 
-						char* nombre_tabla = string_duplicate(args[0]);
-						char* tipo_consistencia = string_duplicate(args[1]);
-						int numero_particiones = args[2];
-						int compaction_time= args[3];
+						char* nombre_tabla = string_duplicate(args[1]);
+						char* tipo_consistencia = string_duplicate(args[2]);
+						int numero_particiones = atoi(args[3]);
+						int compaction_time= atoi(args[4]);
 						int largo_nombre_tabla= strlen(nombre_tabla);
 						int largo_tipo_consistencia = strlen(tipo_consistencia);
 
