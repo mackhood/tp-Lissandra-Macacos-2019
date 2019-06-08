@@ -150,6 +150,86 @@ void escucharKernel(int* kernel){
 
 			} break;
 
+			case DESCRIBE_REQ:
+			{
+				if(req_recibida->payload){
+					int largo_nombre_tabla;
+					char* nombre_tabla;
+
+					memcpy(&largo_nombre_tabla, req_recibida->payload, sizeof(int));
+					nombre_tabla = malloc(largo_nombre_tabla+1);
+					memcpy(nombre_tabla, req_recibida->payload+sizeof(int), largo_nombre_tabla);
+					nombre_tabla[largo_nombre_tabla]='\0';
+
+					int tamanio_buffer = sizeof(int) + largo_nombre_tabla;
+					void* buffer = malloc(tamanio_buffer);
+
+					memcpy(buffer, &largo_nombre_tabla, sizeof(int));
+					memcpy(buffer+sizeof(int), nombre_tabla, largo_nombre_tabla);
+
+					prot_enviar_mensaje(socket_fs, DESCRIBE, tamanio_buffer, buffer);
+					t_prot_mensaje* data_del_fs = prot_recibir_mensaje(socket_fs);
+
+					if(data_del_fs->head == POINT_DESCRIBE){
+						int largo_descripcion;
+						char* descripcion_tabla;
+
+						memcpy(&largo_descripcion, data_del_fs->payload, sizeof(int));
+						descripcion_tabla = malloc(largo_descripcion+1);
+						memcpy(descripcion_tabla, data_del_fs->payload+sizeof(int), largo_descripcion);
+						descripcion_tabla[largo_descripcion]='\0';
+
+						int tamanio_buffer_kernel = sizeof(int)+largo_descripcion;
+						void* buffer_kernel = malloc(tamanio_buffer_kernel);
+
+						memcpy(buffer_kernel, &largo_descripcion, sizeof(int));
+						memcpy(buffer_kernel+sizeof(int), descripcion_tabla, largo_descripcion);
+
+						prot_enviar_mensaje(socket_kernel, POINT_DESCRIBE, tamanio_buffer_kernel, buffer_kernel);
+
+						free(buffer_kernel);
+						free(descripcion_tabla);
+					}
+					else if(data_del_fs->head == FAILED_DESCRIBE){
+						prot_enviar_mensaje(socket_kernel, FAILED_DESCRIBE, 0, NULL);
+					}
+
+					free(buffer);
+					prot_destruir_mensaje(data_del_fs);
+				}
+				else{
+					prot_enviar_mensaje(socket_fs, DESCRIBE, 0, NULL);
+					t_prot_mensaje* data_del_fs = prot_recibir_mensaje(socket_fs);
+
+					if(data_del_fs->head == FULL_DESCRIBE){
+						int largo_descripcion;
+						char* descripcion_tabla;
+
+						memcpy(&largo_descripcion, data_del_fs->payload, sizeof(int));
+						descripcion_tabla = malloc(largo_descripcion+1);
+						memcpy(descripcion_tabla, data_del_fs->payload+sizeof(int), largo_descripcion);
+						descripcion_tabla[largo_descripcion]='\0';
+
+						int tamanio_buffer_kernel = sizeof(int)+largo_descripcion;
+						void* buffer_kernel = malloc(tamanio_buffer_kernel);
+
+						memcpy(buffer_kernel, &largo_descripcion, sizeof(int));
+						memcpy(buffer_kernel+sizeof(int), descripcion_tabla, largo_descripcion);
+
+						prot_enviar_mensaje(socket_kernel, FULL_DESCRIBE, tamanio_buffer_kernel, buffer_kernel);
+
+						free(buffer_kernel);
+						free(descripcion_tabla);
+
+					}
+					else if(data_del_fs->head == FAILED_DESCRIBE){
+						prot_enviar_mensaje(socket_kernel, FAILED_DESCRIBE, 0, NULL);
+					}
+
+					prot_destruir_mensaje(data_del_fs);
+				}
+			} break;
+
 			default:
 			{
 				printf("HEADER DESCONOCIDO\n");

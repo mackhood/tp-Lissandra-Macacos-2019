@@ -256,29 +256,6 @@ t_prot_mensaje* createReq (char* nombre_tabla, int largo_nombre_tabla, char* tip
 	return mensaje_fs;
 }
 
-void describe (char* nombre_tabla) {
-
-	if(nombre_tabla){
-		int largo_nombre_tabla = strlen(nombre_tabla);
-
-		int tamanio_buffer = sizeof(int) + largo_nombre_tabla;
-		void* buffer = malloc(tamanio_buffer);
-
-		prot_enviar_mensaje(socket_fs, DESCRIBE, tamanio_buffer, buffer);
-		t_prot_mensaje* data_del_fs = prot_recibir_mensaje(socket_fs);
-
-		if(data_del_fs->head == POINT_DESCRIBE){
-			int largo_descripcion;
-			char* descripcion_tabla;
-
-			memcpy(&largo_descripcion, data_del_fs->payload, sizeof(int));
-			memcpy(descripcion_tabla, data_del_fs->payload+sizeof(int), largo_descripcion);
-			//,
-			//;
-		}
-	}
-}
-
 t_prot_mensaje* dropReq (char* nombre_tabla) {
 
 	pthread_mutex_lock(&mutex_estructuras_memoria);
