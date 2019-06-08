@@ -257,9 +257,11 @@ void escucharMemoria(int* socket_memoria)
 					char* buffer = string_new();
 					if(0 == describirTablas("", solicitadoPorMemoria, buffer))
 					{
-						size_t tamanioBuffer = strlen(buffer);
+						size_t tamanioBuffer = sizeof(int) + strlen(buffer);
 						void* messageBuffer = malloc(tamanioBuffer + 1);
-						memcpy(messageBuffer, buffer, strlen(buffer));
+						int tamanio_buffer = strlen(buffer);
+						memcpy(messageBuffer, &tamanio_buffer, sizeof(int));
+						memcpy(messageBuffer + sizeof(int), buffer, tamanio_buffer);
 						prot_enviar_mensaje(socket, FULL_DESCRIBE, tamanioBuffer, messageBuffer);
 						logInfo( "Lissandra: Se ha enviado la metadata de todas las tablas a Memoria.");
 					}
