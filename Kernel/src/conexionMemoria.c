@@ -32,10 +32,8 @@ while(1){
 
 
 	//PRIMERO DEBO PERDIR LA CANTIDAD DE MEMORIASCONECTADAS AL POOL DE MEMORIA
-	//prot_enviar_mensaje(conexion,DESCRIBE,0,NULL);
 
 	t_prot_mensaje* mensaje_recibido = prot_recibir_mensaje(conexion);
-
 
 
 	int tamanio ;
@@ -43,9 +41,9 @@ while(1){
 
 	char * mensaje = malloc(tamanio + 1);
 	memcpy(mensaje,mensaje_recibido->payload + sizeof(int), tamanio);
-	char* mensaje = string_new();
 
 	char ** tablaDescribe = string_split(mensaje, ";");
+
 
 	int a=0;
 	list_clean(tMetadata->tablas);
@@ -61,6 +59,9 @@ while(1){
 
 		if(!list_any_satisfy(tMetadata->tablas,(void*)estaEnMetadata))
 		list_add(tMetadata->tablas,tabla);
+
+
+
 
 
 	}

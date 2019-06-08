@@ -202,6 +202,15 @@ switch(dtb->operacionActual) {
 
 						switch(mensaje_recibido->head){
 						case TABLA_CREADA_OK:{
+
+							bool  estaEnMetadata(void* una_tabla) {
+										return  string_equals_ignore_case((char *) nombre_tabla,(char*)una_tabla);
+									}
+
+
+									if(!list_any_satisfy(tMetadata->tablas,(void*)estaEnMetadata))
+									list_add(tMetadata->tablas,nombre_tabla);
+
 							printf("la tabla fue creada\n");
 						}break;
 						case TABLA_CREADA_YA_EXISTENTE:{
@@ -235,6 +244,15 @@ switch(dtb->operacionActual) {
 		switch(respuesta->head){
 			case TABLE_DROP_OK:{
 				printf("La tabla fue borrada\n");
+
+
+			bool  estaEnMetadata(void* una_tabla) {
+			return  string_equals_ignore_case((char *) nombre_tabla,(char*)una_tabla);
+			}
+
+
+			list_remove_by_condition(tMetadata->tablas,(void*)estaEnMetadata);
+
 			}break;
 			case TABLE_DROP_NO_EXISTE:{
 				printf("La tabla no existe\n");
