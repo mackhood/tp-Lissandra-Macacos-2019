@@ -60,6 +60,9 @@ int quantum = dtb->quantum;
 dtb->sentenciaActual=0;
 int socket_memoria = 0;
 
+
+socket_memoria = conectar_a_servidor(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Memoria");
+
 while(quantum >0 && dtb->flag != 1  && dtb->total_sentencias > 0 ) {
 
 	params* parametros = malloc( sizeof(params) );
@@ -91,13 +94,13 @@ while(quantum >0 && dtb->flag != 1  && dtb->total_sentencias > 0 ) {
 
 
 		dtb->total_sentencias--;
+
 switch(dtb->operacionActual) {
 
 
 	case SELECT_REQ : {
 
 	//	if(estaEnMetadata(dtb->parametros->arreglo[0])){
-		socket_memoria = conectar_a_servidor(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Memoria");
 
 		int largo_nombre_tabla = strlen(args[1]);
 		size_t tamanio_buffer = sizeof(uint16_t) + sizeof(int) + largo_nombre_tabla;
@@ -149,7 +152,6 @@ switch(dtb->operacionActual) {
 		memcpy(buffer+sizeof(int)+largo_nombre_tabla,&key,sizeof(u_int16_t));
 		memcpy(buffer+sizeof(int)+largo_nombre_tabla+sizeof(u_int16_t),&largo_value,sizeof(int));
 		memcpy(buffer+sizeof(int)+largo_nombre_tabla+sizeof(u_int16_t)+sizeof(int),args[3],largo_value);
-		socket_memoria = conectar_a_servidor(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Memoria");
 
 
 
@@ -162,6 +164,7 @@ switch(dtb->operacionActual) {
 		printf("Insert realizado \n");
 
 
+		dtb->sentenciaActual++;
 
 
 
@@ -197,11 +200,11 @@ switch(dtb->operacionActual) {
 						memcpy(buffer+sizeof(int)+largo_nombre_tabla+sizeof(int)+largo_tipo_consistencia,&numero_particiones,sizeof(int));
 						memcpy(buffer+sizeof(int)+largo_nombre_tabla+sizeof(int)+largo_tipo_consistencia+sizeof(int),&compaction_time,sizeof(int));
 
-						socket_memoria = conectar_a_servidor(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Memoria");
 
 						prot_enviar_mensaje(socket_memoria, CREATE_REQ, tamanio_buffer, buffer);
 						t_prot_mensaje * mensaje_recibido = prot_recibir_mensaje(socket_memoria);
 						//printf("Insert realizado \n");
+						dtb->sentenciaActual++;
 
 						switch(mensaje_recibido->head){
 						case TABLA_CREADA_OK:{
@@ -239,6 +242,7 @@ switch(dtb->operacionActual) {
 //						//mando solicitud de drop de tabla al FS
 //						prot_enviar_mensaje(socket_fs, TABLE_DROP, tamanio_buffer, buffer);
 //						t_prot_mensaje* respuesta = prot_recibir_mensaje(socket_fs);
+						dtb->sentenciaActual++;
 
 
 		break;
@@ -250,6 +254,7 @@ switch(dtb->operacionActual) {
 
 
 
+						dtb->sentenciaActual++;
 
 		break;
 
