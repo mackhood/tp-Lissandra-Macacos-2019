@@ -29,6 +29,9 @@ void escucharKernel(int* kernel){
 				int tamanio_buffer = sizeof(int) + largo_value;
 				void* buffer = malloc(tamanio_buffer);
 
+				memcpy(buffer,&largo_value,sizeof(int));
+				memcpy(buffer+sizeof(int),value_solicitado,largo_value);
+
 				prot_enviar_mensaje(socket_kernel, KEY_SOLICITADA_SELECT, tamanio_buffer, buffer);
 
 				usleep(info_memoria.retardo_mp);
@@ -52,7 +55,7 @@ void escucharKernel(int* kernel){
 				memcpy(&key, req_recibida->payload + sizeof(int) + tamanio_nombre_tabla, sizeof(uint16_t));
 				memcpy(&largo_value, req_recibida->payload +sizeof(int)+tamanio_nombre_tabla+sizeof(uint16_t), sizeof(int));
 				value = malloc(largo_value+1);
-				memcpy(value, req_recibida->payload+sizeof(int)+tamanio_nombre_tabla+sizeof(uint16_t), largo_value);
+				memcpy(value, req_recibida->payload+sizeof(int)+tamanio_nombre_tabla+sizeof(uint16_t)+sizeof(int), largo_value);
 				value[largo_value] = '\0';
 
 				insertReq(nombre_tabla, key, value);
@@ -81,6 +84,7 @@ void escucharKernel(int* kernel){
 				memcpy(&largo_tipo_consistencia, req_recibida->payload+sizeof(int)+largo_nombre_tabla, sizeof(int));
 				tipo_consistencia = malloc(largo_tipo_consistencia+1);
 				memcpy(tipo_consistencia, req_recibida->payload+sizeof(int)+largo_nombre_tabla+sizeof(int), largo_tipo_consistencia);
+				tipo_consistencia[largo_tipo_consistencia]='\0';
 				memcpy(&numero_particiones, req_recibida->payload+sizeof(int)+largo_nombre_tabla+sizeof(int)+largo_tipo_consistencia, sizeof(int));
 				memcpy(&compaction_time, req_recibida->payload+sizeof(int)+largo_nombre_tabla+sizeof(int)+largo_tipo_consistencia+sizeof(int), sizeof(int));
 

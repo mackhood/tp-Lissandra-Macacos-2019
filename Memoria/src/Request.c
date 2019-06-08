@@ -268,7 +268,13 @@ void describe (char* nombre_tabla) {
 		t_prot_mensaje* data_del_fs = prot_recibir_mensaje(socket_fs);
 
 		if(data_del_fs->head == POINT_DESCRIBE){
+			int largo_descripcion;
+			char* descripcion_tabla;
 
+			memcpy(&largo_descripcion, data_del_fs->payload, sizeof(int));
+			memcpy(descripcion_tabla, data_del_fs->payload+sizeof(int), largo_descripcion);
+			//,
+			//;
 		}
 	}
 }

@@ -144,7 +144,7 @@ void insert(char** args){
 
 	insertReq(nombre_tabla, key, value);
 
-	//info_memoria.retardo_mp
+	usleep(info_memoria.retardo_mp);
 
 	free(nombre_tabla);
 	free(value);
