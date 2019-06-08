@@ -20,9 +20,9 @@
 #include <time.h>
 #include <ftw.h>
 #include <fts.h>
-#include <auxiliaryFunctions.h>
-#include <loggers.h>
-#include <conexiones.h>
+#include "../../SharedLibrary/auxiliaryFunctions.h"
+#include "../../SharedLibrary/loggers.h"
+#include "../../SharedLibrary/conexiones.h"
 #include <commons/bitarray.h>
 #include <sys/mman.h>
 #include <fcntl.h>
