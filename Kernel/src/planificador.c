@@ -275,6 +275,7 @@ switch(dtb->operacionActual) {
 			memcpy(&tamanio_mensaje, mensaje_memoria->payload, sizeof(int));
 			metadataTabla = malloc(tamanio_mensaje + 1);
 			memcpy(metadataTabla, mensaje_memoria->payload + sizeof(int), tamanio_mensaje);
+			metadataTabla[tamanio_mensaje] = '\0';
 			break;
 		}
 		case FULL_DESCRIBE:
@@ -284,6 +285,22 @@ switch(dtb->operacionActual) {
 			memcpy(&tamanio_mensaje, mensaje_memoria->payload, sizeof(int));
 			metadataTablas = malloc(tamanio_mensaje + 1);
 			memcpy(metadataTablas, mensaje_memoria->payload + sizeof(int), tamanio_mensaje);
+			metadataTablas[tamanio_mensaje] = '\0';
+
+			char ** tablas = string_split(metadataTablas,";");
+			int m =0;
+			while(tablas[m] != NULL ){
+
+				char** free = string_split(tablas[m],",");
+				if(list_any_satisfy(tMetadata->tablas,estaEnMetadata))
+				list_add(tMetadata->tablas,free[0]);
+
+				m++;
+
+			}
+
+
+
 			break;
 		}
 		case FAILED_DESCRIBE:

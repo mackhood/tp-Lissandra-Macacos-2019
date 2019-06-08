@@ -68,11 +68,14 @@ while(1){
 		char* tabla = strtok(tablaDescribe[a],",");
 		a++;
 
-
+		if(list_any_satisfy(tMetadata->tablas,estaEnMetadata))
 		list_add(tMetadata->tablas,tabla);
 
 
 	}
+
+
+
 
 
 
