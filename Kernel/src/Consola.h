@@ -20,7 +20,7 @@
 #include "InicializacionPcb.h"
 #include "adminColasPlanificacion.h"
 #include <commons/log.h>
-
+#include <sys/mman.h>
 
 typedef void Funcion ();
 

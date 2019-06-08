@@ -67,7 +67,11 @@ while(quantum >0 && dtb->flag != 1  && dtb->total_sentencias > 0 ) {
 
 
 		inicializarParametros(parametros);
+
 		char** args = string_split(dtb->tablaSentencias[dtb->sentenciaActual], " ");
+
+
+
 
 
 		if(strcmp(args[0], "SELECT")==0)
@@ -76,11 +80,11 @@ while(quantum >0 && dtb->flag != 1  && dtb->total_sentencias > 0 ) {
 		if(strcmp(args[0], "INSERT")==0)
 		dtb->operacionActual= INSERT_REQ;
 
-		if(strcmp(args[0], "CREATE_REQ")==0)
+		if(strcmp(args[0], "CREATE")==0)
 		dtb->operacionActual= CREATE_REQ;
 
-		if(strcmp(args[0], "DROP_REQ")==0)
-		dtb->operacionActual= INSERT_REQ;
+		if(strcmp(args[0], "DROP")==0)
+		dtb->operacionActual= DROP_REQ;
 
 		if(strcmp(args[0], "DESCRIBE_REQ")==0)
 		dtb->operacionActual= DESCRIBE_REQ;
@@ -90,17 +94,17 @@ while(quantum >0 && dtb->flag != 1  && dtb->total_sentencias > 0 ) {
 switch(dtb->operacionActual) {
 
 
-	case SELECT_REQ :
+	case SELECT_REQ : {
 
 	//	if(estaEnMetadata(dtb->parametros->arreglo[0])){
 		socket_memoria = conectar_a_servidor(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Memoria");
 
-		int largo_nombre_tabla = strlen(dtb->parametros->arreglo[0]);
+		int largo_nombre_tabla = strlen(args[1]);
 		size_t tamanio_buffer = sizeof(uint16_t) + sizeof(int) + largo_nombre_tabla;
 		void* buffer = malloc(tamanio_buffer);
-		uint16_t key  = (uint16_t)dtb->parametros->enteros[0];
+		uint16_t key  = atoi(args[2]);
 		memcpy(buffer,&largo_nombre_tabla , sizeof(int));
-		memcpy(buffer+sizeof(int), dtb->parametros->arreglo[0], largo_nombre_tabla);
+		memcpy(buffer+sizeof(int),args[1] , largo_nombre_tabla);
 		memcpy(buffer+sizeof(int)+largo_nombre_tabla, &key, sizeof(u_int16_t));
 
 		prot_enviar_mensaje(socket_memoria, SELECT_REQ, tamanio_buffer, buffer);
@@ -111,9 +115,9 @@ switch(dtb->operacionActual) {
 		memcpy(&largoValue,req_recibida->payload,sizeof(int));
 		prueba = malloc(largoValue + 1);
 		memcpy(prueba,req_recibida->payload+sizeof(int),largoValue);
-		prueba[largoValue]=	'/0';
+		prueba[largoValue]=	'\0';
 
-		printf("el value solicitado es %s /n",prueba);
+		printf("el value solicitado es %s \n",prueba);
 
 
 
@@ -131,56 +135,90 @@ switch(dtb->operacionActual) {
 		quantum--;
 		dtb->sentenciaActual++;
 	break;
-
-	case INSERT_REQ :
-
-
+	}
+	case INSERT_REQ :{
 
 
-//					int tamanio_nombre_tabla;
-//					char* nombre_tabla;
-//					uint16_t key;
-//					int tamanio_value;
-//					char* value;
+		int largo_value = strlen(args[3]);
+		int largo_nombre_tabla = strlen(args[1]);
+		u_int16_t key = atoi(args[2]);
+		size_t tamanio_buffer = sizeof(uint16_t) + sizeof(int) + largo_nombre_tabla + sizeof(int) + largo_value;
+		void* buffer = malloc(tamanio_buffer);
+		memcpy(buffer,&largo_nombre_tabla,sizeof(int));
+		memcpy(buffer + sizeof(int),args[1],largo_nombre_tabla);
+		memcpy(buffer+sizeof(int)+largo_nombre_tabla,&key,sizeof(u_int16_t));
+		memcpy(buffer+sizeof(int)+largo_nombre_tabla+sizeof(u_int16_t),&largo_value,sizeof(int));
+		memcpy(buffer+sizeof(int)+largo_nombre_tabla+sizeof(u_int16_t)+sizeof(int),args[3],largo_value);
+		socket_memoria = conectar_a_servidor(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Memoria");
+
+
+
+		prot_enviar_mensaje(socket_memoria, INSERT_REQ, tamanio_buffer, buffer);
+
+
+		t_prot_mensaje* mensaje_recibido = prot_recibir_mensaje(socket_memoria);
+
+
+		printf("Insert realizado \n");
+
+
+
+
+
+
+
 //
-//					memcpy(&tamanio_nombre_tabla, req_recibida->payload, sizeof(int));
-//					nombre_tabla = malloc(tamanio_nombre_tabla+1);
-//					memcpy(nombre_tabla, req_recibida->payload + sizeof(int), tamanio_nombre_tabla);
-//					nombre_tabla[tamanio_nombre_tabla] = '\0';
-//					memcpy(&key, req_recibida->payload + sizeof(int) + tamanio_nombre_tabla, sizeof(uint16_t));
-//					memcpy(&tamanio_value, req_recibida->payload +sizeof(int)+tamanio_nombre_tabla+sizeof(uint16_t), sizeof(int));
-//					value = malloc(tamanio_value+1);
-//					memcpy(value, req_recibida->payload+sizeof(int)+tamanio_nombre_tabla+sizeof(uint16_t), tamanio_value);
-//					value[tamanio_value] = '\0';
-
-
+//
 
 
 
 		break;
+	}
+	case CREATE_REQ :{
 
-	case CREATE_REQ :
 
-//						int largo_nombre_tabla;
-//						char* nombre_tabla;
-//						int largo_tipo_consistencia;
-//						char* tipo_consistencia;
-//						int numero_particiones;
-//						int compaction_time;
-//
-//						memcpy(&largo_nombre_tabla, req_recibida->payload, sizeof(int));
-//						nombre_tabla = malloc(largo_nombre_tabla+1);
-//						memcpy(nombre_tabla, req_recibida->payload+sizeof(int), largo_nombre_tabla);
-//						nombre_tabla[largo_nombre_tabla]='\0';
-//						memcpy(&largo_tipo_consistencia, req_recibida->payload+sizeof(int)+largo_nombre_tabla, sizeof(int));
-//						tipo_consistencia = malloc(largo_tipo_consistencia+1);
-//						memcpy(tipo_consistencia, req_recibida->payload+sizeof(int)+largo_nombre_tabla+sizeof(int), largo_tipo_consistencia);
-//						memcpy(&numero_particiones, req_recibida->payload+sizeof(int)+largo_nombre_tabla+sizeof(int)+largo_tipo_consistencia, sizeof(int));
-//						memcpy(&compaction_time, req_recibida->payload+sizeof(int)+largo_nombre_tabla+sizeof(int)+largo_tipo_consistencia+sizeof(int), sizeof(int));
 
+		//	CREATE [TABLA] [TIPO_CONSISTENCIA] [NUMERO_PARTICIONES] [COMPACTION_TIME]
+
+						char* nombre_tabla = string_duplicate(args[0]);
+						char* tipo_consistencia = string_duplicate(args[1]);
+						int numero_particiones = args[2];
+						int compaction_time= args[3];
+						int largo_nombre_tabla= strlen(nombre_tabla);
+						int largo_tipo_consistencia = strlen(tipo_consistencia);
+
+						size_t tamanio_buffer = sizeof(int)+ largo_nombre_tabla +sizeof(int)+largo_tipo_consistencia+sizeof(int)+sizeof(int);
+						void * buffer = malloc(tamanio_buffer);
+
+						memcpy(buffer,&largo_nombre_tabla,sizeof(int));
+						memcpy(buffer+sizeof(int),nombre_tabla,largo_nombre_tabla);
+						memcpy(buffer+sizeof(int)+largo_nombre_tabla,&largo_tipo_consistencia,sizeof(int));
+						memcpy(buffer+sizeof(int)+largo_nombre_tabla+sizeof(int),tipo_consistencia,largo_tipo_consistencia);
+						memcpy(buffer+sizeof(int)+largo_nombre_tabla+sizeof(int)+largo_tipo_consistencia,&numero_particiones,sizeof(int));
+						memcpy(buffer+sizeof(int)+largo_nombre_tabla+sizeof(int)+largo_tipo_consistencia+sizeof(int),&compaction_time,sizeof(int));
+
+						socket_memoria = conectar_a_servidor(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Memoria");
+
+						prot_enviar_mensaje(socket_memoria, CREATE_REQ, tamanio_buffer, buffer);
+						t_prot_mensaje * mensaje_recibido = prot_recibir_mensaje(socket_memoria);
+						//printf("Insert realizado \n");
+
+						switch(mensaje_recibido->head){
+						case TABLA_CREADA_OK:{
+							printf("la tabla fue creada\n");
+						}break;
+						case TABLA_CREADA_YA_EXISTENTE:{
+						printf("la tabla ya se encuentra existente\n");
+						}break;
+						case TABLA_CREADA_FALLO:{
+							printf("hubo un error al crear la tabla\n");
+						}break;
+						default:{
+							break;
+						} 		}
 
 		break;
-
+	}
 	case DROP_REQ :
 
 //		int largo_nombre_tabla;
@@ -206,6 +244,10 @@ switch(dtb->operacionActual) {
 		break;
 
 	case DESCRIBE_REQ :
+
+
+
+
 
 
 
