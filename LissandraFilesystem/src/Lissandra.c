@@ -257,9 +257,11 @@ void escucharMemoria(int* socket_memoria)
 					char* buffer = string_new();
 					if(0 == describirTablas("", solicitadoPorMemoria, buffer))
 					{
-						size_t tamanioBuffer = strlen(buffer);
+						size_t tamanioBuffer = sizeof(int) + strlen(buffer);
 						void* messageBuffer = malloc(tamanioBuffer + 1);
-						memcpy(messageBuffer, buffer, strlen(buffer));
+						int tamanio_buffer = strlen(buffer);
+						memcpy(messageBuffer, &tamanio_buffer, sizeof(int));
+						memcpy(messageBuffer + sizeof(int), buffer, tamanio_buffer);
 						prot_enviar_mensaje(socket, FULL_DESCRIBE, tamanioBuffer, messageBuffer);
 						logInfo( "Lissandra: Se ha enviado la metadata de todas las tablas a Memoria.");
 					}
@@ -616,7 +618,7 @@ void notifier()
 			printf("\033[1;34m");
 			puts("Al detectarse un cambio en el archivo de configuración, se actualizaron los valores del FS.");
 		}
-		else if(event->mask & IN_DELETE)
+		else if(event->mask & IN_IGNORED)
 		{
 			logInfo("Lissandra: Se ha detectado que el archivo de configuración fue eliminado. Terminando sistema.");
 			puts("El archivo de configuración de Lissandra ha sido destruido. Abortando.");

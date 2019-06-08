@@ -159,19 +159,20 @@ void selectt(char** args){
 	dtb_nuevo->total_sentencias =1;
 	dtb_nuevo->quantum= tKernel->config->quantum;
 	dtb_nuevo->total_sentencias=1;
-	if(estaEnMetadata(nombre_tabla)){
+//	if(estaEnMetadata(nombre_tabla)){
+//
+//		enviarANew(dtb_nuevo);
+//		logInfo("Se envio a new el proceso");
+//
+//	} else{
+//
+//		enviarAEXIT(dtb_nuevo);
+//		logInfo("La tabla no se encuentra en metadata");
+//
+//	}
 
-		enviarANew(dtb_nuevo);
-		logInfo("Se envio a new el proceso");
-
-	} else{
-
-		enviarAEXIT(dtb_nuevo);
-		logInfo("La tabla no se encuentra en metadata");
-
-	}
-
-
+	enviarANew(dtb_nuevo);
+	logInfo("Se envio a new el proceso");
 
 	free(nombre_tabla);
 
@@ -335,6 +336,19 @@ void add (char** args) {
 
 
 }
+
+
+unsigned long obtenerTamanioArchivo(char* direccionArchivo)
+{
+	FILE* FP = fopen(direccionArchivo, "r+");
+	fseek(FP, 0, SEEK_END);
+	unsigned long tamanio = (unsigned long)ftell(FP);
+	fclose(FP);
+	return tamanio;
+}
+
+
+
 void run (char** args) {
 
 char* path = string_duplicate(args[1]);
@@ -369,9 +383,8 @@ int a =0;
 
 
 	}
-//t_queue* colaPedidos = queue_create();
 
-char * ch = string_new();
+char * ch =string_new();
    FILE *fp;
 
    //printf("Enter name of a file you wish to see\n");
@@ -387,27 +400,74 @@ char * ch = string_new();
 
    //printf("The contents of %s file are:\n", path);
 
-   while(fgets(ch,100,fp)){
-      printf("%s", ch);
-      char** argus = string_split(ch,"\n");
-      tabla[x]= string_duplicate(argus[0]);
-      x++;
-      a++;
-      //free(ch);
-      //ch= string_new();
+
+
+
+
+//   char auxiliar [100];
+//   int f =0;
+//   char outs= fgetc(fp);
+//   while(!feof(fp)){
+//
+//	   switch(outs){
+//
+//	   case '\n':{
+//
+//		   memcpy(tabla[x], auxiliar,f);
+//		   x++;
+//		   f=0;
+//		   break;
+//	   }
+//	   default: {
+//
+//		   auxiliar[f]=outs;
+//		   f++;
+//
+//		   break;
+//	   }
+//	   }
+//
+//	   outs= fgetc(fp);
+//   }
+//   	   auxiliar[f] = '\0';
+//   	   f++;
+//   	   memcpy(tabla[x], auxiliar,f);
+//
+
+
+
+       int size = obtenerTamanioArchivo(path) ;
+
+
+
+
+       char* sentenciasParsear = (char *) mmap (0, size, PROT_READ, MAP_SHARED, fp->_fileno, 0);
+
+
+       char** argus = string_split(sentenciasParsear,"\n");
+
+
+
+   int b=0;
+
+   while( argus[b] !=NULL){
+
+
+
+	   dtb_nuevo->tablaSentencias[b]=argus[b];
+
+	   b++;
    }
-  // fclose(fp);
-   //free(ch);
 
-   int b;
-   for(b=0;b<=a;b++){
-
-
-	 dtb_nuevo->tablaSentencias[b]=tabla[b];
-
-   }
+   x=b;
+//   for(b=0;b<=x;b++){
+//
+//
+//	 dtb_nuevo->tablaSentencias[b]=tabla[b];
+//
+//   }
    dtb_nuevo->total_sentencias = x;
-   dtb_nuevo->sentenciaActual=a;
+ //  dtb_nuevo->sentenciaActual=a;
 
 
    enviarANew(dtb_nuevo);

@@ -85,7 +85,7 @@ DTB_KERNEL*  getDTBNew(){
 	pthread_mutex_lock(&mutexListNuevo);
 	dtb =  queue_pop(tKernelEstados->new);
 	pthread_mutex_unlock(&mutexListNuevo);
-	logTrace("programa-dtb :%d seleccionado de la lista de new ",dtb->idGDT) ;
+	logTrace("programa-dtb  seleccionado de la lista de new :  %d",dtb->idGDT) ;
 	return dtb;
 }
 
