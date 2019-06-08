@@ -223,9 +223,8 @@ void journal(char** args){
 
 void describe(char** args){
 
-	char* nombre_tabla = strdup(args[1]);
-
-	if(nombre_tabla){
+	if(args[1] != NULL){
+		char* nombre_tabla = strdup(args[1]);
 		int largo_nombre_tabla = strlen(nombre_tabla);
 
 		int tamanio_buffer = sizeof(int) + largo_nombre_tabla;
@@ -264,6 +263,7 @@ void describe(char** args){
 
 		free(buffer);
 		prot_destruir_mensaje(data_del_fs);
+		free(nombre_tabla);
 	}
 	else{
 		prot_enviar_mensaje(socket_fs, DESCRIBE, 0, NULL);
@@ -301,5 +301,4 @@ void describe(char** args){
 
 		prot_destruir_mensaje(data_del_fs);
 	}
-	free(nombre_tabla);
 }

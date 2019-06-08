@@ -508,11 +508,9 @@ int llamarEliminarTabla(char* tablaPorEliminar)
 
 int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, char* buffer)
 {
-	char* tabla = malloc(strlen(tablaSolicitada) + 1);
-	strcpy(tabla, tablaSolicitada);
-	char* auxbuffer = string_new();
-	if(0 == strcmp(tabla, ""))
+	if(0 == strcmp(tablaSolicitada, ""))
 	{
+		char* auxbuffer = string_new();
 		logInfo( "Lissandra: Me llega un pedido de describir todas las tablas");
 		int tablasExistentes = contarTablasExistentes();
 		if(tablasExistentes == 0)
@@ -520,9 +518,8 @@ int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, char* buff
 			logError( "Lissandra: No existe ningún directorio en el FileSystem");
 			printf("No existe ninguna tabla.");
 			char* errormarker = "error";
-			buffer = realloc(buffer, 6);
+			buffer = malloc(6);
 			memcpy(buffer, errormarker, strlen(errormarker));
-			free(tabla);
 			return 1;
 		}
 		else
@@ -537,7 +534,7 @@ int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, char* buff
 				char* massiveBufferMetadatas = string_new();
 				mostrarTodosLosMetadatas(solicitadoPorMemoria, massiveBufferMetadatas);
 				int largoMassiveBuffer = strlen(massiveBufferMetadatas);
-				buffer = realloc(buffer, largoMassiveBuffer + 1);
+				buffer = malloc(largoMassiveBuffer + 1);
 				strcpy(buffer, massiveBufferMetadatas);
 				return 0;
 			}
@@ -545,23 +542,24 @@ int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, char* buff
 	}
 	else
 	{
+		char* auxbuffer = malloc(strlen(tablaSolicitada) + 1);
 		int tamanio_buffer = 1;
-		logInfo( "Lissandra: Me llega un pedido de describir la tabla %s", tabla);
+		logInfo( "Lissandra: Me llega un pedido de describir la tabla %s", tablaSolicitada);
 		if(solicitadoPorMemoria)
 		{
-			tamanio_buffer = mostrarMetadataEspecificada(tabla, tamanio_buffer, solicitadoPorMemoria, auxbuffer);
+			strcpy(auxbuffer, tablaSolicitada);
+			auxbuffer = mostrarMetadataEspecificada(tablaSolicitada, &tamanio_buffer, solicitadoPorMemoria, auxbuffer);
 			int sizebuffer = strlen(auxbuffer);
-			buffer = realloc(buffer, sizebuffer + 1);
+			buffer = malloc(sizebuffer + 1);
 			strcpy(buffer, auxbuffer);
 			return 0;
 		}
 		else
 		{
-			mostrarMetadataEspecificada(tabla, tamanio_buffer, solicitadoPorMemoria, auxbuffer);
+			auxbuffer = mostrarMetadataEspecificada(tablaSolicitada, &tamanio_buffer, solicitadoPorMemoria, auxbuffer);
 			return 0;
 		}
 	}
-	free(tabla);
 }
 
 void notifier()

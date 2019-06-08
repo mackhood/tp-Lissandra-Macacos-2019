@@ -437,7 +437,7 @@ int existeTabla(char* tabla)
 	}
 }
 
-int mostrarMetadataEspecificada(char* tabla, int tamanio_buffer_metadatas, bool solicitadoPorMemoria, char* buffer)
+char* mostrarMetadataEspecificada(char* tabla, int* tamanio_buffer_metadatas, bool solicitadoPorMemoria, char* buffer)
 {
 	if(0 == existeTabla(tabla))
 	{
@@ -460,8 +460,14 @@ int mostrarMetadataEspecificada(char* tabla, int tamanio_buffer_metadatas, bool 
 		int tiempoEntreCompactaciones = config_get_int_value(temporalArchivoConfig, "TIEMPOENTRECOMPACTACIONES");
 		if(solicitadoPorMemoria)
 		{
-			tamanio_buffer_metadatas += strlen(consistencia) + sizeof(cantParticiones) + sizeof(tiempoEntreCompactaciones) + 3;
-			buffer = realloc(buffer, tamanio_buffer_metadatas + 1);
+			*tamanio_buffer_metadatas += strlen(buffer) + strlen(consistencia) + sizeof(cantParticiones) + sizeof(tiempoEntreCompactaciones) + 4;
+			char* aux = malloc(*tamanio_buffer_metadatas + 1);
+			strcpy(aux, buffer);
+			free(buffer);
+			buffer = malloc(*tamanio_buffer_metadatas + 1);
+			strcpy(buffer, aux);
+			free(aux);
+			strcat(buffer, ",");
 			strcat(buffer, consistencia);
 			strcat(buffer, ",");
 			strcat(buffer, string_itoa(cantParticiones));
@@ -472,7 +478,7 @@ int mostrarMetadataEspecificada(char* tabla, int tamanio_buffer_metadatas, bool 
 			free(direccionDeTableMetadata);
 			config_destroy(temporalArchivoConfig);
 			free(consistencia);
-			return tamanio_buffer_metadatas;
+			return buffer;
 		}
 		else
 		{
@@ -515,7 +521,12 @@ void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer)
 				else
 				{
 					tamanio_buffer_metadatas += strlen(tdp->d_name) + 2;
-					buffer = realloc(buffer, tamanio_buffer_metadatas);
+					char* aux = malloc(tamanio_buffer_metadatas + 1);
+					strcpy(aux, buffer);
+					free(buffer);
+					buffer = malloc(tamanio_buffer_metadatas + 1);
+					strcpy(buffer, aux);
+					free(aux);
 					if(firstTabla)
 					{
 						strcpy(buffer, tdp->d_name);
@@ -524,8 +535,9 @@ void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer)
 					else
 						strcat(buffer, tdp->d_name);
 					strcat(buffer, ",");
-					int new_tamanio_buffer_metadatas = mostrarMetadataEspecificada(tdp->d_name, tamanio_buffer_metadatas, solicitadoPorMemoria, buffer);
-					tamanio_buffer_metadatas = new_tamanio_buffer_metadatas;
+					char* superBuffer = mostrarMetadataEspecificada(tdp->d_name, &tamanio_buffer_metadatas, solicitadoPorMemoria, buffer);
+					tamanio_buffer_metadatas = strlen(superBuffer);
+					strcpy(buffer, superBuffer);
 				}
 			}
 		}
@@ -540,8 +552,9 @@ void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer)
 				{
 					tamanio_buffer_metadatas += strlen(tdp->d_name) + 2;
 					buffer = realloc(buffer, tamanio_buffer_metadatas);
-					int new_tamanio_buffer_metadatas = mostrarMetadataEspecificada(tdp->d_name, tamanio_buffer_metadatas, solicitadoPorMemoria, buffer);
-					tamanio_buffer_metadatas = new_tamanio_buffer_metadatas;
+					char* superBuffer = mostrarMetadataEspecificada(tdp->d_name, &tamanio_buffer_metadatas, solicitadoPorMemoria, buffer);
+					tamanio_buffer_metadatas = strlen(superBuffer);
+					strcpy(buffer, superBuffer);
 				}
 			}
 		}

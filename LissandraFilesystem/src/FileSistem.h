@@ -22,7 +22,7 @@ int crearParticiones(char* direccionFinal, int particiones);
 int dropTable(char* tablaPorEliminar);
 int limpiadorDeArchivos(char* direccion, char* tabla);
 int existeTabla(char* tabla);
-int mostrarMetadataEspecificada(char* tabla, int tamanio_buffer_metadatas, bool solicitadoPorMemoria, char* buffer);
+char* mostrarMetadataEspecificada(char* tabla, int* tamanio_buffer_metadatas, bool solicitadoPorMemoria, char* buffer);
 void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer);
 int contarTablasExistentes();
 t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida);
