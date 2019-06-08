@@ -79,18 +79,18 @@ void initConfiguracion(){
 void initThread(){
 
 	logInfo("Creando thread para atender las conexiones de memoria");
-//	pthread_create(&threadConexionMemoria, NULL, (void*) handler_conexion_memoria, tKernel);
+	pthread_create(&threadConexionMemoria, NULL, (void*) handler_conexion_memoria, tKernel);
 	logInfo("Creando thread para el funcionamiento de la consola");
-	pthread_create(&threadConsola, NULL, (void*)handleConsola,NULL);
-	pthread_create(&threadInterPlanificador,NULL,(void*)interPlanificador,NULL);
+	//pthread_create(&threadConsola, NULL, (void*)handleConsola,NULL);
+	//pthread_create(&threadInterPlanificador,NULL,(void*)interPlanificador,NULL);
 
 
-	pthread_create(&threadPlanificador, NULL, (void*)pasarArunnign(),NULL);
-	pthread_detach(threadPlanificador );
+	//pthread_create(&threadPlanificador, NULL, (void*)pasarArunnign(),NULL);
+	//pthread_detach(threadPlanificador );
 
-	pthread_detach(threadConsola );
-	pthread_detach(threadInterPlanificador);
-//	pthread_join(threadConexionMemoria, NULL);
+	//pthread_detach(threadConsola );
+	//pthread_detach(threadInterPlanificador);
+	pthread_join(threadConexionMemoria, NULL);
 
 }
 

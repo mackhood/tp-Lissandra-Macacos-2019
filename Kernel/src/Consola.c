@@ -160,17 +160,17 @@ void selectt(char** args){
 	dtb_nuevo->quantum= tKernel->config->quantum;
 	dtb_nuevo->total_sentencias=1;
 
-//	if(estaEnMetadata(nombre_tabla)){
-//
-//		enviarANew(dtb_nuevo);
-//		logInfo("Se envio a new el proceso");
-//
-//	} else{
-//
-//		enviarAEXIT(dtb_nuevo);
-//		logInfo("La tabla no se encuentra en metadata");
-//
-//	}
+	if(estaEnMetadata(nombre_tabla)){
+
+		enviarANew(dtb_nuevo);
+		logInfo("Se envio a new el proceso");
+
+	} else{
+
+		enviarAEXIT(dtb_nuevo);
+		logInfo("La tabla no se encuentra en metadata");
+
+	}
 
 
 	char* tabla [100];

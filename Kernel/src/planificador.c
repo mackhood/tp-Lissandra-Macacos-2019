@@ -15,13 +15,7 @@ void pasarArunnign() {
 	while(1){
 
 
-//		if(!queue_is_empty(tKernelEstados->new)){
-//
-//
-//			DTB_KERNEL* dtb=(DTB_KERNEL*)getDTBNew();
-//			enviarAReady(dtb);
-//
-//		}
+
 
 
 
@@ -296,17 +290,42 @@ switch(dtb->operacionActual) {
 			memcpy(metadataTablas, mensaje_memoria->payload + sizeof(int), tamanio_mensaje);
 			metadataTablas[tamanio_mensaje] = '\0';
 
-			char ** tablas = string_split(metadataTablas,";");
-			int m =0;
-			while(tablas[m] != NULL ){
 
-				char** free = string_split(tablas[m],",");
-				if(list_any_satisfy(tMetadata->tablas,estaEnMetadata))
-				list_add(tMetadata->tablas,free[0]);
 
-				m++;
+			char ** tablaDescribe = string_split(metadataTablas, ";");
 
-			}
+				int a=0;
+				list_clean(tMetadata->tablas);
+				while(tablaDescribe[a] != NULL  ){
+
+					char* tabla = strtok(tablaDescribe[a],",");
+					a++;
+
+					bool  estaEnMetadata(void* nombre_tabla) {
+						return  string_equals_ignore_case((char *) tabla,(char*)nombre_tabla);
+					}
+
+
+					if(!list_any_satisfy(tMetadata->tablas,(void*)estaEnMetadata))
+					list_add(tMetadata->tablas,tabla);
+
+
+				}
+
+
+
+//
+//			char ** tablas = string_split(metadataTablas,";");
+//			int m =0;
+//			while(tablas[m] != NULL ){
+//
+//				char** free = string_split(tablas[m],",");
+//				if(list_any_satisfy(tMetadata->tablas,estaEnMetadata))
+//				list_add(tMetadata->tablas,free[0]);
+//
+//				m++;
+//
+//			}
 
 
 

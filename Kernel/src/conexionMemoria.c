@@ -26,27 +26,13 @@ while(1){
 
 	prot_enviar_mensaje(conexion,DESCRIBE_REQ,0,NULL);
 
-	//prot_enviar_mensaje(conexion,HANDSHAKE_KERNEL_MEMORIA,0,NULL);
 	t_prot_mensaje* mensaje_recibido1 = prot_recibir_mensaje(conexion);
 
 
-//	t_prot_mensaje* mensaje_recibido = prot_recibir_mensaje(un_socket);
-//			 t_header header_recibido = mensaje_recibido->head;
-//		 t_algo payload = *(t_algo*) mensaje_recibido->payload;
-//
-//	if(mensaje_recibido1->head == HANDSHAKE_KERNEL_MEMORIA){
-//
-//		logInfo("Se realizo handshake");
-//
-//	} else {
-//
-//		logInfo("No se realizo handshake");
-//		break;
-//
-//	}
+
 
 	//PRIMERO DEBO PERDIR LA CANTIDAD DE MEMORIASCONECTADAS AL POOL DE MEMORIA
-	prot_enviar_mensaje(conexion,DESCRIBE,0,NULL);
+	//prot_enviar_mensaje(conexion,DESCRIBE,0,NULL);
 
 	t_prot_mensaje* mensaje_recibido = prot_recibir_mensaje(conexion);
 
@@ -57,7 +43,7 @@ while(1){
 
 	char * mensaje = malloc(tamanio + 1);
 	memcpy(mensaje,mensaje_recibido->payload + sizeof(int), tamanio);
-
+	char* mensaje = string_new();
 
 	char ** tablaDescribe = string_split(mensaje, ";");
 
@@ -68,12 +54,18 @@ while(1){
 		char* tabla = strtok(tablaDescribe[a],",");
 		a++;
 
-		if(list_any_satisfy(tMetadata->tablas,estaEnMetadata))
+		bool  estaEnMetadata(void* nombre_tabla) {
+			return  string_equals_ignore_case((char *) tabla,(char*)nombre_tabla);
+		}
+
+
+		if(!list_any_satisfy(tMetadata->tablas,(void*)estaEnMetadata))
 		list_add(tMetadata->tablas,tabla);
 
 
 	}
 
+	close(conexion);
 
 
 
