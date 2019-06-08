@@ -222,30 +222,39 @@ switch(dtb->operacionActual) {
 
 		break;
 	}
-	case DROP_REQ :
+	case DROP_REQ :{
 
-//		int largo_nombre_tabla;
-//						char* nombre_tabla;
-//
-//						memcpy(&largo_nombre_tabla, req_recibida->payload, sizeof(int));
-//						nombre_tabla = malloc(largo_nombre_tabla + 1);
-//						memcpy(nombre_tabla, req_recibida->payload+sizeof(int), largo_nombre_tabla);
-//						nombre_tabla[largo_nombre_tabla] = '\0';
-//
-//						dropReq(nombre_tabla);
-//
-//						int tamanio_buffer = sizeof(int)+largo_nombre_tabla;
-//						void* buffer = malloc(tamanio_buffer);
-//						memcpy(buffer, &largo_nombre_tabla, sizeof(int));
-//						memcpy(buffer + sizeof(int), nombre_tabla, largo_nombre_tabla);
-//
-//						//mando solicitud de drop de tabla al FS
-//						prot_enviar_mensaje(socket_fs, TABLE_DROP, tamanio_buffer, buffer);
-//						t_prot_mensaje* respuesta = prot_recibir_mensaje(socket_fs);
-						dtb->sentenciaActual++;
+		char* nombre_tabla = strdup(args[1]);
+		int largo_nombre_tabla = strlen(nombre_tabla);
 
+		int tamanio_buffer = sizeof(int)+largo_nombre_tabla;
+		void* buffer = malloc(tamanio_buffer);
+		memcpy(buffer, &largo_nombre_tabla, sizeof(int));
+		memcpy(buffer + sizeof(int), nombre_tabla, largo_nombre_tabla);
+
+		//mando solicitud de drop de tabla a Memoria
+		prot_enviar_mensaje(socket_memoria, TABLE_DROP, tamanio_buffer, buffer);
+		t_prot_mensaje* respuesta = prot_recibir_mensaje(socket_memoria);
+		dtb->sentenciaActual++;
+
+		//posibles respuestas
+		switch(respuesta->head){
+			case TABLE_DROP_OK:{
+				printf("La tabla fue borrada\n");
+			}break;
+			case TABLE_DROP_NO_EXISTE:{
+				printf("La tabla no existe\n");
+			}break;
+			case TABLE_DROP_FALLO:{
+				printf("hubo un error\n");
+			}break;
+			default:{
+				break;
+			}
+		}
 
 		break;
+	}
 
 	case DESCRIBE_REQ :
 	{

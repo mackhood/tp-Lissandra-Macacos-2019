@@ -27,14 +27,16 @@ void handleConsola(){
 	puts("-_____________________________________________________");
 	puts("CONSOLA");
 	puts("------ Escriba un comando ------");
-	puts("1. - Ejecutar  <ruta-al-escritorio>");
-	puts("2. - Status    <id_dtb>");
-	puts("3. - Finalizar <id_dtb>");
-	puts("4. - Metricas  <id_dtb>");
+	puts("1. - SELECT  <tabla> <key>");
+	puts("2. - INSERT <tabla> <key> <value>");
+	puts("3. - CREATE <tabla>");
+	puts("4. - DROP <tabla>");
+	puts("5. - DESCRIBE <tabla> (puede dejarse vacia)");
+	puts("4. - JOURNAL");
 	char* linea;
 //ejecutar prueba.txt
 	while (1) {
-		linea = readline("\nSharks: ");
+		linea = readline("\nA continuacion puede solicitar sus request independientemente de las solicitudes de memoria:\n ");
 
 		if (strcmp(linea, "exit")==0){
 			free(linea);
@@ -217,4 +219,87 @@ void journal(char** args){
 	journalReq();
 	pthread_mutex_unlock(&mutex_estructuras_memoria);
 
+}
+
+void describe(char** args){
+
+	char* nombre_tabla = strdup(args[1]);
+
+	if(nombre_tabla){
+		int largo_nombre_tabla = strlen(nombre_tabla);
+
+		int tamanio_buffer = sizeof(int) + largo_nombre_tabla;
+		void* buffer = malloc(tamanio_buffer);
+
+		memcpy(buffer, &largo_nombre_tabla, sizeof(int));
+		memcpy(buffer+sizeof(int), nombre_tabla, largo_nombre_tabla);
+
+		prot_enviar_mensaje(socket_fs, DESCRIBE, tamanio_buffer, buffer);
+		t_prot_mensaje* data_del_fs = prot_recibir_mensaje(socket_fs);
+
+		if(data_del_fs->head == POINT_DESCRIBE){
+			int largo_descripcion;
+			char* descripcion_tabla;
+
+			memcpy(&largo_descripcion, data_del_fs->payload, sizeof(int));
+			descripcion_tabla = malloc(largo_descripcion+1);
+			memcpy(descripcion_tabla, data_del_fs->payload+sizeof(int), largo_descripcion);
+			descripcion_tabla[largo_descripcion]='\0';
+
+			char* info_tabla = strtok(descripcion_tabla, ";");
+			char** valores_separados = string_split(info_tabla, ",");
+
+			printf("Nombre de la tabla:%s\n", valores_separados[0]);
+			printf("Consistencia:%s\n", valores_separados[1]);
+			printf("Cantidad de particiones:%s\n", valores_separados[2]);
+			printf("Tiempo entre compactaciones:%s\n", valores_separados[3]);
+
+			free(descripcion_tabla);
+			free(info_tabla);
+			liberadorDeArrays(valores_separados);
+		}
+		else if(data_del_fs->head == FAILED_DESCRIBE){
+			printf("La tabla NO existe para realizar el describe\n");
+		}
+
+		free(buffer);
+		prot_destruir_mensaje(data_del_fs);
+	}
+	else{
+		prot_enviar_mensaje(socket_fs, DESCRIBE, 0, NULL);
+		t_prot_mensaje* data_del_fs = prot_recibir_mensaje(socket_fs);
+
+		if(data_del_fs->head == FULL_DESCRIBE){
+			int largo_descripcion;
+			char* descripcion_tabla;
+
+			memcpy(&largo_descripcion, data_del_fs->payload, sizeof(int));
+			descripcion_tabla = malloc(largo_descripcion+1);
+			memcpy(descripcion_tabla, data_del_fs->payload+sizeof(int), largo_descripcion);
+			descripcion_tabla[largo_descripcion]='\0';
+
+			char** data_de_tablas_separadas = string_split(descripcion_tabla, ";");
+
+			int i = 0;
+			while(data_de_tablas_separadas[i]){
+				char** valores_separados = string_split(data_de_tablas_separadas[i], ",");
+				printf("Nombre de la tabla:%s\n", valores_separados[0]);
+				printf("Consistencia:%s\n", valores_separados[1]);
+				printf("Cantidad de particiones:%s\n", valores_separados[2]);
+				printf("Tiempo entre compactaciones:%s\n", valores_separados[3]);
+
+				liberadorDeArrays(valores_separados);
+				i++;
+			}
+
+			free(descripcion_tabla);
+			liberadorDeArrays(data_de_tablas_separadas);
+		}
+		else if(data_del_fs->head == FAILED_DESCRIBE){
+			printf("El fs NO tiene ninguna tabla\n");
+		}
+
+		prot_destruir_mensaje(data_del_fs);
+	}
+	free(nombre_tabla);
 }
