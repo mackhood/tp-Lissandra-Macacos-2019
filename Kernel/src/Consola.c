@@ -159,6 +159,7 @@ void selectt(char** args){
 	dtb_nuevo->total_sentencias =1;
 	dtb_nuevo->quantum= tKernel->config->quantum;
 	dtb_nuevo->total_sentencias=1;
+
 //	if(estaEnMetadata(nombre_tabla)){
 //
 //		enviarANew(dtb_nuevo);
@@ -170,6 +171,30 @@ void selectt(char** args){
 //		logInfo("La tabla no se encuentra en metadata");
 //
 //	}
+
+
+	char* tabla [100];
+	int i;
+	int b=0;
+		for(i=0; i<100; i++){
+
+		tabla[i] = string_new();
+
+
+		}
+
+
+
+		 char *unaPalabra = string_new();
+	 while( args[b] !=NULL){
+
+
+
+		 string_append(&unaPalabra, strcat(args[b], " "));
+		   b++;
+	   }
+
+	 dtb_nuevo->tablaSentencias[0]=unaPalabra;
 
 	enviarANew(dtb_nuevo);
 	logInfo("Se envio a new el proceso");
