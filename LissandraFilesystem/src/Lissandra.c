@@ -351,6 +351,7 @@ int insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibi
 	{
 		logError( "Lissandra: La tabla no existe, por lo que no puede insertarse una clave.");
 		printf("Tabla no existente.\n");
+		printf("\033[1;36m");
 		return 1;
 	}
 	else
@@ -359,6 +360,7 @@ int insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibi
 		{
 			logError("Lissandra: el value a agregar era demasiado grande");
 			printf("El value ingresado era demasiado grande, por favor, ingrese uno más pequeño.\n");
+			printf("\033[1;36m");
 			return 3;
 		}
 		pthread_mutex_lock(&dumpEnCurso);
@@ -369,12 +371,14 @@ int insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibi
 		{
 			logError( "Lissandra: La clave fracasó en su intento de insertarse correctamente.");
 			printf("Fallo al agregar a memtable.\n");
+			printf("\033[1;36m");
 			return 2;
 		}
 		else
 		{
 			logInfo( "Lissandra: La clave fue insertada correctamente.");
 			printf("Agregado correctamente.\n");
+			printf("\033[1;36m");
 			return 0;
 		}
 	}
@@ -633,11 +637,14 @@ void notifier()
 			logInfo("Lissandra: valores actualizados.");
 			printf("\033[1;34m");
 			puts("Al detectarse un cambio en el archivo de configuración, se actualizaron los valores del FS.");
+			printf("\033[1;36m");
 		}
 		else if(event->mask & IN_IGNORED)
 		{
 			logInfo("Lissandra: Se ha detectado que el archivo de configuración fue eliminado. Terminando sistema.");
+			printf("\033[1;34m");
 			puts("El archivo de configuración de Lissandra ha sido destruido. Abortando.");
+			printf("\033[1;36m");
 			pthread_mutex_unlock(&deathProtocol);
 			break;
 		}

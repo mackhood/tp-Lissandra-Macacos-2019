@@ -592,6 +592,11 @@ void modifyDumpTime(char** args)
 		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
 		logError("Consola: solicitud posee cantidad errónea de parámetros");
 	}
+	else if(!itsANumber(args[1]))
+	{
+		puts("El valor que ingresó tiene caracteres inválidos.");
+		logError( "Consola: el valor para modificar es inválido.");
+	}
 	else
 	{
 		t_config* ConfigMain = config_create(lissandraFL_config_ruta);
@@ -614,6 +619,11 @@ void modifyRetardo(char** args)
 	{
 		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
 		logError("Consola: solicitud posee cantidad errónea de parámetros");
+	}
+	else if(!itsANumber(args[1]))
+	{
+		puts("El valor que ingresó tiene caracteres inválidos.");
+		logError( "Consola: el valor para modificar es inválido.");
 	}
 	else
 	{
