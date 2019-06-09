@@ -437,13 +437,13 @@ int existeTabla(char* tabla)
 	}
 }
 
-char* mostrarMetadataEspecificada(char* tabla, int* tamanio_buffer_metadatas, bool solicitadoPorMemoria, char* buffer)
+char* mostrarMetadataEspecificada(char* tabla, bool solicitadoPorMemoria)
 {
 	if(0 == existeTabla(tabla))
 	{
 		logInfo( "FileSystem: La tabla a la que quiere acceder no existe");
 		puts("La tabla a la que usted quiere acceder no existe.");
-		return 0;
+		return NULL;
 	}
 	else
 	{
@@ -460,25 +460,25 @@ char* mostrarMetadataEspecificada(char* tabla, int* tamanio_buffer_metadatas, bo
 		int tiempoEntreCompactaciones = config_get_int_value(temporalArchivoConfig, "TIEMPOENTRECOMPACTACIONES");
 		if(solicitadoPorMemoria)
 		{
-			*tamanio_buffer_metadatas += strlen(buffer) + strlen(consistencia) + sizeof(cantParticiones) + sizeof(tiempoEntreCompactaciones) + 4;
-			char* aux = malloc(*tamanio_buffer_metadatas + 1);
-			strcpy(aux, buffer);
-			free(buffer);
-			buffer = malloc(*tamanio_buffer_metadatas + 1);
-			strcpy(buffer, aux);
-			free(aux);
-			strcat(buffer, ",");
-			strcat(buffer, consistencia);
-			strcat(buffer, ",");
-			strcat(buffer, string_itoa(cantParticiones));
-			strcat(buffer, ",");
-			strcat(buffer, string_itoa(tiempoEntreCompactaciones));
-			strcat(buffer, ";");
+			int tamanio_buffer_metadatas = strlen(tabla) + strlen(consistencia) + sizeof(cantParticiones) + sizeof(tiempoEntreCompactaciones) + 4;
+			char* auxbuffer = malloc(tamanio_buffer_metadatas + 1);
+			strcpy(auxbuffer, tabla);
+			strcat(auxbuffer, ",");
+			strcat(auxbuffer, consistencia);
+			strcat(auxbuffer, ",");
+			char* auxPart = string_itoa(cantParticiones);
+			strcat(auxbuffer, auxPart);
+			free(auxPart);
+			strcat(auxbuffer, ",");
+			char* auxtime = string_itoa(tiempoEntreCompactaciones);
+			strcat(auxbuffer, auxtime);
+			free(auxtime);
+			strcat(auxbuffer, ";");
 			free(auxdir);
 			free(direccionDeTableMetadata);
 			config_destroy(temporalArchivoConfig);
 			free(consistencia);
-			return buffer;
+			return auxbuffer;
 		}
 		else
 		{
@@ -489,72 +489,54 @@ char* mostrarMetadataEspecificada(char* tabla, int* tamanio_buffer_metadatas, bo
 			config_destroy(temporalArchivoConfig);
 			free(auxdir);
 			free(consistencia);
-			return 0;
+			return NULL;
 		}
 	}
 }
 
-void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer)
+t_list* mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* auxbuffer)
 {
 	DIR* directorioDeTablas;
 	struct dirent* tdp;
+	t_list* listTables = list_create();
 	char* auxdir = malloc(strlen(punto_montaje) + 8);
 	strcpy(auxdir, punto_montaje);
 	strcat(auxdir, "Tables/");
-	bool firstTabla = true;
 	if(NULL == (directorioDeTablas = opendir(auxdir)))
 	{
 		logError( "FileSystem: error al acceder al directorio de tablas, abortando");
-		buffer = malloc(6);
-		strcpy(buffer, "error");
+		auxbuffer = malloc(6);
+		strcpy(auxbuffer, "error");
 		closedir(directorioDeTablas);
 	}
 	else
 	{
 		if(solicitadoPorMemoria)
 		{
-			int tamanio_buffer_metadatas = 0;
 			logInfo("FileSystem: se procede a construir el paquete a enviar a Memoria.");
 			while(NULL != (tdp = readdir(directorioDeTablas)))
 			{
 				if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, "..")){}
 				else
 				{
-					tamanio_buffer_metadatas += strlen(tdp->d_name) + 2;
-					char* aux = malloc(tamanio_buffer_metadatas + 1);
-					strcpy(aux, buffer);
-					free(buffer);
-					buffer = malloc(tamanio_buffer_metadatas + 1);
-					strcpy(buffer, aux);
-					free(aux);
-					if(firstTabla)
-					{
-						strcpy(buffer, tdp->d_name);
-						firstTabla = false;
-					}
-					else
-						strcat(buffer, tdp->d_name);
-					strcat(buffer, ",");
-					char* superBuffer = mostrarMetadataEspecificada(tdp->d_name, &tamanio_buffer_metadatas, solicitadoPorMemoria, buffer);
-					tamanio_buffer_metadatas = strlen(superBuffer);
+					char* superBuffer = mostrarMetadataEspecificada(tdp->d_name, solicitadoPorMemoria);
+					char* buffer = malloc(strlen(superBuffer) + 1);
 					strcpy(buffer, superBuffer);
+					list_add(listTables, buffer);
+					free(superBuffer);
 				}
 			}
 		}
 		else
 		{
-			int tamanio_buffer_metadatas = 0;
 			logInfo("FileSystem: se procede a mostrar el contenido de las tablas del File System.");
 			while(NULL != (tdp = readdir(directorioDeTablas)))
 			{
 				if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, ".."))	{}
 				else
 				{
-					tamanio_buffer_metadatas += strlen(tdp->d_name) + 2;
-					buffer = realloc(buffer, tamanio_buffer_metadatas);
-					char* superBuffer = mostrarMetadataEspecificada(tdp->d_name, &tamanio_buffer_metadatas, solicitadoPorMemoria, buffer);
-					tamanio_buffer_metadatas = strlen(superBuffer);
-					strcpy(buffer, superBuffer);
+					char* superBuffer = mostrarMetadataEspecificada(tdp->d_name, solicitadoPorMemoria);
+					free(superBuffer);
 				}
 			}
 		}
@@ -562,6 +544,7 @@ void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer)
 	free(tdp);
 	closedir(directorioDeTablas);
 	free(auxdir);
+	return listTables;
 }
 
 int contarTablasExistentes()

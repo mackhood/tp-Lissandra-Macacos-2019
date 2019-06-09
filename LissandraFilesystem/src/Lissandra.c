@@ -89,6 +89,7 @@ void escucharMemoria(int* socket_memoria)
 				memcpy(messageBuffer, &tamanio_value, sizeof(int));
 				prot_enviar_mensaje(socket, HANDSHAKE, tamanioBuffer, messageBuffer);
 				logInfo("Lissandra: Se ha enviado la información de saludo a la Memoria.");
+				free(messageBuffer);
 				break;
 			}
 			case SOLICITUD_TABLA:
@@ -118,6 +119,8 @@ void escucharMemoria(int* socket_memoria)
 					memcpy(buffer+sizeof(double)+sizeof(int), value, tamanio_value);
 
 					prot_enviar_mensaje(socket, VALUE_SOLICITADO_OK, tamanio_buffer, buffer);
+					logInfo("Lissandra: se envía a Memoria el value de la key &i", helpinghand->key);
+					free(buffer);
 				 }
 				 else
 				 {
@@ -214,7 +217,7 @@ void escucharMemoria(int* socket_memoria)
 			{
 				puts("Llegó un Describe desde memoria.");
 				bool solicitadoPorMemoria = true;
-				if(mensaje_memoria->payload != NULL)
+				if(mensaje_memoria->tamanio_total > 8)
 				{
 					char* tablaRecibida = string_new();
 					int tamanioNombreTabla;
@@ -222,27 +225,33 @@ void escucharMemoria(int* socket_memoria)
 					tablaRecibida = malloc(tamanioNombreTabla + 2);
 					memcpy(tablaRecibida, mensaje_memoria->payload + sizeof(int), tamanioNombreTabla);
 					tablaRecibida[tamanioNombreTabla] = '\0';
-					char* buffer = string_new();
-					if(0 == describirTablas(tablaRecibida, solicitadoPorMemoria, buffer))
+					char* buffer;
+					if(!strcmp((buffer = describirTablas(tablaRecibida, solicitadoPorMemoria)), "1"))
+					{
+						prot_enviar_mensaje(socket, FAILED_DESCRIBE, 0, NULL);
+						logError( "Lissandra: fallo al leer la %s", tablaRecibida);
+					}
+					else
 					{
 						size_t tamanioBuffer = strlen(buffer);
 						void* messageBuffer = malloc(tamanioBuffer + 1);
 						memcpy(messageBuffer, buffer, strlen(buffer));
 						prot_enviar_mensaje(socket, POINT_DESCRIBE, tamanioBuffer, messageBuffer);
 						logInfo( "Lissandra: Se ha enviado la metadata de la %s a Memoria.", tablaRecibida);
-					}
-					else
-					{
-						prot_enviar_mensaje(socket, FAILED_DESCRIBE, 0, NULL);
-						logError( "Lissandra: fallo al leer la %s", tablaRecibida);
+						free(messageBuffer);
 					}
 					free(tablaRecibida);
 					free(buffer);
 				}
 				else
 				{
-					char* buffer = string_new();
-					if(0 == describirTablas("", solicitadoPorMemoria, buffer))
+					char* buffer;
+					if(!strcmp((buffer = describirTablas("", solicitadoPorMemoria)), "1"))
+					{
+						prot_enviar_mensaje(socket, FAILED_DESCRIBE, 0, NULL);
+						logError( "Lissandra: falló al leer todas las tablas");
+					}
+					else
 					{
 						size_t tamanioBuffer = sizeof(int) + strlen(buffer);
 						void* messageBuffer = malloc(tamanioBuffer + 1);
@@ -251,11 +260,7 @@ void escucharMemoria(int* socket_memoria)
 						memcpy(messageBuffer + sizeof(int), buffer, tamanio_buffer);
 						prot_enviar_mensaje(socket, FULL_DESCRIBE, tamanioBuffer, messageBuffer);
 						logInfo( "Lissandra: Se ha enviado la metadata de todas las tablas a Memoria.");
-					}
-					else
-					{
-						prot_enviar_mensaje(socket, FAILED_DESCRIBE, 0, NULL);
-						logError( "Lissandra: falló al leer todas las tablas");
+						free(messageBuffer);
 					}
 					free(buffer);
 				}
@@ -506,8 +511,9 @@ int llamarEliminarTabla(char* tablaPorEliminar)
 	return result;
 }
 
-int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, char* buffer)
+char* describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria)
 {
+	char* buffer;
 	if(0 == strcmp(tablaSolicitada, ""))
 	{
 		char* auxbuffer = string_new();
@@ -520,44 +526,69 @@ int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, char* buff
 			char* errormarker = "error";
 			buffer = malloc(6);
 			memcpy(buffer, errormarker, strlen(errormarker));
-			return 1;
+			return "1";
 		}
 		else
 		{
 			if(!solicitadoPorMemoria)
 			{
-				mostrarTodosLosMetadatas(solicitadoPorMemoria, auxbuffer);
-				return 0;
+				t_list* ignoredList = list_create();
+				ignoredList = mostrarTodosLosMetadatas(solicitadoPorMemoria, auxbuffer);
+				list_destroy_and_destroy_elements(ignoredList, &free);
+				return "0";
 			}
 			else
 			{
-				char* massiveBufferMetadatas = string_new();
-				mostrarTodosLosMetadatas(solicitadoPorMemoria, massiveBufferMetadatas);
-				int largoMassiveBuffer = strlen(massiveBufferMetadatas);
-				buffer = malloc(largoMassiveBuffer + 1);
-				strcpy(buffer, massiveBufferMetadatas);
-				return 0;
+				t_list* listedTables = list_create();
+				listedTables = mostrarTodosLosMetadatas(solicitadoPorMemoria, auxbuffer);
+				int parserList = 0;
+				int totalSize = 0;
+				if(list_is_empty(listedTables))
+				{
+					return "1";
+				}
+				while(NULL != list_get(listedTables, parserList))
+				{
+					char* table = list_get(listedTables, parserList);
+					totalSize += strlen(table);
+					parserList++;
+				}
+				parserList = 0;
+				buffer = malloc(totalSize + 1);
+				while(NULL != list_get(listedTables, parserList))
+				{
+					char* table = list_get(listedTables, parserList);
+					if(parserList == 0)
+						strcpy(buffer,table);
+					else
+						strcat(buffer, table);
+					parserList++;
+				}
+				list_destroy_and_destroy_elements(listedTables, &free);
+				return buffer;
 			}
 		}
 	}
 	else
 	{
-		char* auxbuffer = malloc(strlen(tablaSolicitada) + 1);
-		int tamanio_buffer = 1;
-		logInfo( "Lissandra: Me llega un pedido de describir la tabla %s", tablaSolicitada);
+		char* auxbuffer = malloc(strlen(tablaSolicitada) + 2);
+		logInfo("Lissandra: Me llega un pedido de describir la tabla %s", tablaSolicitada);
 		if(solicitadoPorMemoria)
 		{
 			strcpy(auxbuffer, tablaSolicitada);
-			auxbuffer = mostrarMetadataEspecificada(tablaSolicitada, &tamanio_buffer, solicitadoPorMemoria, auxbuffer);
+			strcat(auxbuffer, ",");
+			auxbuffer = mostrarMetadataEspecificada(tablaSolicitada, solicitadoPorMemoria);
 			int sizebuffer = strlen(auxbuffer);
 			buffer = malloc(sizebuffer + 1);
 			strcpy(buffer, auxbuffer);
-			return 0;
+			free(auxbuffer);
+			return buffer;
 		}
 		else
 		{
-			auxbuffer = mostrarMetadataEspecificada(tablaSolicitada, &tamanio_buffer, solicitadoPorMemoria, auxbuffer);
-			return 0;
+			auxbuffer = mostrarMetadataEspecificada(tablaSolicitada, solicitadoPorMemoria);
+			free(auxbuffer);
+			return "0";
 		}
 	}
 }

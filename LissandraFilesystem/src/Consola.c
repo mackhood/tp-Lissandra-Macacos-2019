@@ -409,14 +409,14 @@ void describe (char** args)
 			strcpy(tablaSolicitada, args[1]);
 		}
 		bool solicitadoPorMemoria = false;
-		int problem = 0;
-		if (0 == (problem = describirTablas(tablaSolicitada, solicitadoPorMemoria, NULL)))
+		char* problem = malloc(2);
+		if (!strcmp((problem = describirTablas(tablaSolicitada, solicitadoPorMemoria)), "0"))
 		{
 			logInfo( "Consola: Todas las tablas solicitadas fueron descritas correctamente");
 		}
 		else
 		{
-
+			logError("Consola: No pudieron ser mostradas las tablas solicitadas");
 		}
 		free(tablaSolicitada);
 	}

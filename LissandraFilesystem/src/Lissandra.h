@@ -30,7 +30,7 @@ int llamadoACrearTabla(char* nombre, char* consistencia, int particiones, int ti
 int llamarEliminarTabla(char* tablaPorEliminar);
 int perteneceATabla(t_Memtablekeys* key);
 int esDeTalKey(t_Memtablekeys* chequeada);
-int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, char* buffer);
+char* describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria);
 void notifier();
 void killProtocolLissandra();
 
