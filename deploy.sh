@@ -26,8 +26,8 @@ cd /home/utnso/workspace/tp-2019-1c-Macacos/Memoria/src/
 cd
 
 cd /home/utnso/workspace/tp-2019-1c-Macacos/Kernel/src/
-./compilar_kernel.shl
+./compilar_kernel.sh
 cd
 
-echo "This program is not runnable, please be careful in which your commands result to be!";
+echo "This program is now runnable, please be careful in which your commands result to be!";
 
