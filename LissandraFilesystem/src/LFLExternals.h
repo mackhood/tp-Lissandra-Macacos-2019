@@ -45,6 +45,8 @@ typedef struct {
 typedef struct {
 	char* tabla;
 	int cantTemps;
+	pthread_mutex_t compactacionActiva;
+	pthread_mutex_t renombreEnCurso;
 }__attribute__((packed)) t_TablaEnEjecucion;
 
 /* VARIABLES GLOBALES */
@@ -65,9 +67,7 @@ t_list * memtable;
 char* punto_montaje;
 t_list* tablasEnEjecucion;
 pthread_mutex_t deathProtocol;
-pthread_mutex_t compactacionActiva;
 pthread_mutex_t dumpEnCurso;
-pthread_mutex_t renombreEnCurso;
 
 /* FUNCIONES GLOBALES */
 int cantidadDeBloquesLibres();

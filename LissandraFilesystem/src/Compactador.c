@@ -59,6 +59,8 @@ void compactarTablas(char*tabla)
 	}
 	t_TablaEnEjecucion* tablaAAgregar = malloc(sizeof(t_TablaEnEjecucion) + 2);
 	tablaAAgregar->tabla = tabla;
+	pthread_mutex_init(&tablaAAgregar->compactacionActiva, NULL);
+	pthread_mutex_init(&tablaAAgregar->renombreEnCurso, NULL);
 	char* direccionTabla = malloc(strlen(punto_montaje) + strlen(tabla) + 10);//son 20 de tables/ y metadata.cfg +1 por las dudas
 	strcpy(direccionTabla, punto_montaje);
 	strcat(direccionTabla, "Tables/");
@@ -173,12 +175,11 @@ void crearTemporal(char* tabla)
 		free(tablaAux);
 		return result;
 	}
-	pthread_mutex_lock(&renombreEnCurso);
+	t_TablaEnEjecucion* tablaEjecutada = list_find(tablasEnEjecucion, (void*) estaTabla);
 	t_list* keysTableSpecific = list_create();
 	keysTableSpecific = list_filter(memtable, (void*)perteneceATabla);
 	size_t sizeOfContainer = list_size(keysTableSpecific)*(tamanio_value + 24 + 15 + 4);
 	char* container = malloc(sizeOfContainer + 1);
-	t_TablaEnEjecucion* tablaEjecutada = list_find(tablasEnEjecucion, (void*) estaTabla);
 	t_Memtablekeys* auxiliaryKey;
 	int a = 0;
 	FILE* tempPointer;
@@ -193,6 +194,7 @@ void crearTemporal(char* tabla)
 	bool firstRun = true;
 	free(auxTempDir);
 	int usedSize = 0;
+	pthread_mutex_lock(&tablaEjecutada->renombreEnCurso);
 	while(NULL != list_get(keysTableSpecific, a))
 	{
 		logInfo("Compactador: se iniciar el proceso de crear un .tmp nuevo a la %s", tabla);
@@ -253,7 +255,7 @@ void crearTemporal(char* tabla)
 		free(sizedUse);
 		free(bloquesAsignados);
 	}
-	pthread_mutex_unlock(&renombreEnCurso);
+	pthread_mutex_unlock(&tablaEjecutada->renombreEnCurso);
 	free(container);
 	free(tempDirection);
 	list_destroy(keysTableSpecific);
@@ -274,7 +276,6 @@ void ejecutarCompactacion(char* tabla)
 		free(tablaAux);
 		return result;
 	}
-	pthread_mutex_lock(&compactacionActiva);
 	logInfo("Compactador: se procede a realizar la compactación de la %s", tabla);
 	char* direccionTabla = malloc(strlen(tabla) + strlen(punto_montaje) + 9);
 	strcpy(direccionTabla, punto_montaje);
@@ -287,7 +288,7 @@ void ejecutarCompactacion(char* tabla)
 	t_list* keysToManage = list_create();
 	t_list* keysPostParsing = list_create();
 	int i = 0;
-	pthread_mutex_lock(&renombreEnCurso);
+	pthread_mutex_lock(&tablaEspecifica->renombreEnCurso);
 	for(i = 0; i < tablaEspecifica->cantTemps; i++)
 	{
 		char* aux = string_itoa(i);
@@ -305,7 +306,7 @@ void ejecutarCompactacion(char* tabla)
 		free(direccionFinal);
 	}
 	tablaEspecifica->cantTemps = 0;
-	pthread_mutex_unlock(&renombreEnCurso);
+	pthread_mutex_unlock(&tablaEspecifica->renombreEnCurso);
 	while(NULL != (tdp = readdir(tableDirectory)))
 	{
 		if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, "..") || string_ends_with(tdp->d_name, ".cfg")){}
@@ -347,8 +348,10 @@ void ejecutarCompactacion(char* tabla)
 				}
 				free(keysToParse);
 				liberadorDeArrays(keyHandlerBeta);
+				pthread_mutex_lock(&tablaEspecifica->compactacionActiva);
 				limpiarBloque(direccionTempC);
 				remove(direccionTempC);
+				pthread_mutex_unlock(&tablaEspecifica->compactacionActiva);
 				free(direccionTempC);
 			}
 			else
@@ -408,6 +411,7 @@ void ejecutarCompactacion(char* tabla)
 		keysDeParticion = obtenerKeysAPlasmar(keysPostParsing, g, particiones);
 		if(NULL != keysDeParticion)
 		{
+			pthread_mutex_lock(&tablaEspecifica->compactacionActiva);
 			char* auxg = string_itoa(g);
 			char* direccionParticion = malloc(strlen(direccionTabla) + strlen(auxg) + 6);
 			strcpy(direccionParticion, direccionTabla);
@@ -425,6 +429,7 @@ void ejecutarCompactacion(char* tabla)
 			free(bloquesAsignados);
 			config_destroy(particion);
 			free(direccionParticion);
+			pthread_mutex_unlock(&tablaEspecifica->compactacionActiva);
 		}
 		free(keysDeParticion);
 	}
@@ -435,7 +440,6 @@ void ejecutarCompactacion(char* tabla)
 	free(tdp);
 	closedir(tableDirectory);
 	free(direccionTabla);
-	pthread_mutex_unlock(&compactacionActiva);
 }
 
 char* obtenerKeysAPlasmar(t_list* keysPostParsing, int numeroDeParticion, int particiones)
