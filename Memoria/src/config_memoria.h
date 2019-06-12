@@ -20,11 +20,13 @@
 #define IP_SIZE (sizeof(char) * (strlen("123.000.000.001") + 1))
 
 typedef struct{
+
+	char* ip_memoria;
 	int puerto;
 	char* ip_fs;
 	int puerto_fs;
-	//char** ip_seeds;
-	// puerto seeds;
+	char** ip_seeds;
+	char** puerto_seeds;
 	int retardo_mp;
 	int retardo_fs;
 	int tamanio_mem;
