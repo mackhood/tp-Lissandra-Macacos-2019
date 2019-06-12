@@ -588,9 +588,20 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 	{
 		return chequeada->key == keyRecibida;
 	}
-
-	pthread_mutex_lock(&compactacionActiva);
-	pthread_mutex_unlock(&compactacionActiva);
+	bool estaTabla(t_TablaEnEjecucion* tablaDeLista)
+	{
+		char* tablaAux = malloc(strlen(tabla) + 1);
+		strcpy(tablaAux, tabla);
+		int cantCarac = strlen(tablaDeLista->tabla);
+		//char* tablaDeListaAux = string_new();
+		char* tablaDeListaAux = malloc(cantCarac + 1);
+		strcpy(tablaDeListaAux, tablaDeLista->tabla);
+		bool result = (0 == strcmp(tablaDeListaAux, tablaAux));
+		free(tablaDeListaAux);
+		free(tablaAux);
+		return result;
+	}
+	t_TablaEnEjecucion* tablaChequeada = list_find(tablasEnEjecucion, (void*) estaTabla);
 	logInfo("FileSystem: Se empieza a revisar el contenido de los bloques asignados a la %s para encontrar la clave %i."
 			, tabla, keyRecibida);
 	char* particionARevisar;
@@ -603,6 +614,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 	strcat(direccionTabla, "/");
 	DIR* table = opendir(direccionTabla);
 	struct dirent* tdp;
+	pthread_mutex_lock(&tablaChequeada->compactacionActiva);
 	while(NULL != (tdp = readdir(table)))
 	{
 		if(string_ends_with(tdp->d_name, ".cfg"))
@@ -618,7 +630,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 			free(direccionMetadataTabla);
 		}
 		else if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, "..")){}
-		else if(string_ends_with(tdp->d_name, ".tmp"))
+		else if(!string_ends_with(tdp->d_name, ".tmp") || !string_ends_with(tdp->d_name, ".tmpc"))
 		{
 			char* direccionTemp = malloc(strlen(direccionTabla) + strlen(tdp->d_name) + 2);
 			strcpy(direccionTemp, direccionTabla);
@@ -692,6 +704,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 		free(clavesLeidas);
 		liberadorDeArrays(bloques);
 	}
+	pthread_mutex_unlock(&tablaChequeada->compactacionActiva);
 	free(particionARevisar);
 	free(direccionParticion);
 
@@ -717,7 +730,6 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 		claveMasActualizada = NULL;
 		logInfo("FileSystem: La key %i no fue impactada todavía en el File System.", keyRecibida);
 	}
-
 	list_destroy(keysettersDeClave);
 	list_destroy(clavesPostParseo);
 	list_destroy_and_destroy_elements(clavesDentroDeLosBloques, &free);

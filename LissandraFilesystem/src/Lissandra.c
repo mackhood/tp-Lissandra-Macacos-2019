@@ -364,9 +364,9 @@ int insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibi
 			return 3;
 		}
 		pthread_mutex_lock(&dumpEnCurso);
-		pthread_mutex_unlock(&dumpEnCurso);
 		logInfo( "Lissandra: Se procede a insertar la clave recibida en la Memtable.");
 		list_add(memtable, auxiliar);
+		pthread_mutex_unlock(&dumpEnCurso);
 		if(tamanio_memtable == memtable->elements_count)
 		{
 			logError( "Lissandra: La clave fracasó en su intento de insertarse correctamente.");
@@ -407,7 +407,9 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 			t_Memtablekeys* auxMemtable;
 			t_keysetter* keyTemps = selectKeyFS(tabla, receivedKey);
 			t_keysetter* key;
+			pthread_mutex_lock(&dumpEnCurso);
 			keysDeTablaPedida = list_filter(memtable, (void*)perteneceATabla);
+			pthread_mutex_unlock(&dumpEnCurso);
 			keyEspecifica = list_filter(keysDeTablaPedida, (void*)esDeTalKey);
 			if(!list_is_empty(keysDeTablaPedida))
 			{
