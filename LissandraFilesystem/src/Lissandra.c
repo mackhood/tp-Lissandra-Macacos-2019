@@ -603,20 +603,18 @@ void notifier()
 {
 	int length;
 	int i = 0;
-	int fd;
-	int wd;
 	char buffer[BUF_LEN];
 
-	fd = inotify_init();
-	if( fd < 0)
+	fileToWatch = inotify_init();
+	if( fileToWatch < 0)
 	{
 		logError("Lissandra: Error al iniciar el notifier.");
 		pthread_mutex_unlock(&deathProtocol);
 		return;
 	}
 
-	wd = inotify_add_watch(fd, lissandraFL_config_ruta, IN_CREATE | IN_MODIFY | IN_DELETE);
-	length = read(fd, buffer, BUF_LEN);
+	watchDescriptor = inotify_add_watch(fileToWatch, lissandraFL_config_ruta, IN_CREATE | IN_MODIFY | IN_DELETE);
+	length = read(fileToWatch, buffer, BUF_LEN);
 
 	if(length < 0)
 	{
@@ -654,16 +652,18 @@ void notifier()
 		{
 			logInfo("Lissandra: Se ha detectado el archivo de configuración");
 		}
-		length = read(fd, buffer, BUF_LEN);
+		length = read(fileToWatch, buffer, BUF_LEN);
 	}
-	(void) inotify_rm_watch(fd, wd);
-	(void) close(fd);
+	(void) inotify_rm_watch(fileToWatch, watchDescriptor);
+	(void) close(fileToWatch);
 }
 
 void killProtocolLissandra()
 {
 	killthreads = true;
 	free(server_ip);
+	(void) inotify_rm_watch(fileToWatch, watchDescriptor);
+	(void) close(fileToWatch);
 	logInfo("Lissandra: Todas las memorias han sido desalojadas.");
 }
 

@@ -141,6 +141,7 @@ t_list* parsearKeys(t_list* clavesAParsear)
 				k = 1;
 				v = 1;
 				t = 1;
+				free(value);
 				break;
 			}
 			default:
