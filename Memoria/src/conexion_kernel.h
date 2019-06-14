@@ -3,6 +3,6 @@
 
 #include "Request.h"
 
-void escucharKernel();
+void AceptarYescucharKernel();
 
 #endif /* CONEXION_KERNEL_H_ */

@@ -16,6 +16,8 @@ int socketFD;
 char* server_ip;
 int server_puerto;
 bool killthreads;
+int watchDescriptor;
+int fileToWatch;
 
 /* FUNCIONES */
 

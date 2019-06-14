@@ -1,14 +1,20 @@
 #include "conexion_kernel.h"
 
-void escucharKernel(int* kernel){
-	int s_kernel = *kernel;
-	free(kernel);
+void AceptarYescucharKernel(){
 
+	//Acepto al Kernel
+	struct sockaddr_in direccion_cliente;
+	unsigned int tamanio_direccion = sizeof(direccion_cliente);
+
+	socket_kernel = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion);
+	printf("se ha conectado el kernel\n");
+
+	//Comienzo a recibir peticiones
 	bool connected = true;
 
 	while(connected){
 
-		t_prot_mensaje* req_recibida = prot_recibir_mensaje(s_kernel);
+		t_prot_mensaje* req_recibida = prot_recibir_mensaje(socket_kernel);
 
 		switch(req_recibida->head){
 			case SELECT_REQ:
@@ -34,7 +40,7 @@ void escucharKernel(int* kernel){
 
 				prot_enviar_mensaje(socket_kernel, KEY_SOLICITADA_SELECT, tamanio_buffer, buffer);
 
-				usleep(info_memoria.retardo_mp);
+				usleep(info_memoria.retardo_mp*1000);
 
 				free(nombre_tabla);
 
@@ -61,7 +67,7 @@ void escucharKernel(int* kernel){
 				insertReq(nombre_tabla, key, value);
 				prot_enviar_mensaje(socket_kernel, INSERT_REALIZADO, 0, NULL);
 
-				usleep(info_memoria.retardo_mp);
+				usleep(info_memoria.retardo_mp*1000);
 
 				free(nombre_tabla);
 				free(value);
@@ -105,8 +111,8 @@ void escucharKernel(int* kernel){
 							}
 						}
 
-				usleep(info_memoria.retardo_fs);
-				usleep(info_memoria.retardo_mp);
+				usleep(info_memoria.retardo_fs*1000);
+				usleep(info_memoria.retardo_mp*1000);
 
 				prot_destruir_mensaje(mensaje_fs);
 				free(nombre_tabla);
@@ -142,8 +148,8 @@ void escucharKernel(int* kernel){
 					}
 				}
 
-				usleep(info_memoria.retardo_fs);
-				usleep(info_memoria.retardo_mp);
+				usleep(info_memoria.retardo_fs*1000);
+				usleep(info_memoria.retardo_mp*1000);
 
 				prot_destruir_mensaje(respuesta_fs);
 				free(nombre_tabla);
@@ -230,11 +236,25 @@ void escucharKernel(int* kernel){
 				}
 			} break;
 
+			case DESCONEXION:
+			{
+				printf("El Kernel Se ha desconectado\n");
+				socket_kernel = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion);
+				printf("se ha conectado el kernel\n");
+
+			} break;
+
+			case FALLO_AL_RECIBIR:
+			{
+				printf("Hubo un error re zarpado\n");
+				connected = false;
+			} break;
+
 			default:
 			{
 				printf("HEADER DESCONOCIDO\n");
 				connected = false;
-			}break;
+			} break;
 
 		}
 		prot_destruir_mensaje(req_recibida);
