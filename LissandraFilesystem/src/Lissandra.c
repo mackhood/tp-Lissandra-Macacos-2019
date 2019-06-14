@@ -641,9 +641,9 @@ void notifier()
 		}
 		else if(event->mask & IN_IGNORED)
 		{
-			logInfo("Lissandra: Se ha detectado que el archivo de configuración fue eliminado. Terminando sistema.");
+			logInfo("Lissandra: Se ha detectado que watch ha sido eliminado. Terminando sistema.");
 			printf("\033[1;34m");
-			puts("El archivo de configuración de Lissandra ha sido destruido. Abortando.");
+			puts("El FileSystem está siento desconectado.");
 			printf("\033[1;36m");
 			pthread_mutex_unlock(&deathProtocol);
 			break;
