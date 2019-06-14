@@ -32,6 +32,7 @@ void iniciar()
 {
 	pthread_mutex_init(&dumpEnCurso, NULL);
 	pthread_mutex_init(&deathProtocol, NULL);
+	pthread_mutex_init(&modifierBitArray, NULL);
 	pthread_mutex_lock(&deathProtocol);
 	iniciarLissandra();
 	iniciarCompactador();

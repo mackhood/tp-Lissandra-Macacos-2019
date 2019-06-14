@@ -785,7 +785,10 @@ char* obtenerBloqueLibre()
 		{
 			char* uaxb = string_itoa(a);
 			bloqueAEnviar = malloc(strlen(uaxb) + 1);
+			pthread_mutex_lock(&modifierBitArray);
 			bitarray_set_bit(bitarray, a);
+			msync(bitarraycontent, bitarrayfd, MS_SYNC);
+			pthread_mutex_unlock(&modifierBitArray);
 			strcpy(bloqueAEnviar, uaxb);
 			free(uaxb);
 		}
@@ -873,6 +876,7 @@ void limpiarBloque(char* direccionPart)
 {
 	int i = 0;
 	char** bloques = obtenerBloques(direccionPart);
+	pthread_mutex_lock(&modifierBitArray);
 	while(bloques[i] != NULL)
 	{
 		char* direccionBloqueALiberar = malloc(strlen(direccionFileSystemBlocks) + strlen(bloques[i]) + 5);
@@ -888,6 +892,7 @@ void limpiarBloque(char* direccionPart)
 	}
 	liberadorDeArrays(bloques);
 	msync(bitarraycontent, bitarrayfd, MS_SYNC);
+	pthread_mutex_unlock(&modifierBitArray);
 }
 
 char* leerBloque(char* bloque)

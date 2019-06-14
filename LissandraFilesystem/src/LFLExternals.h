@@ -68,6 +68,7 @@ char* punto_montaje;
 t_list* tablasEnEjecucion;
 pthread_mutex_t deathProtocol;
 pthread_mutex_t dumpEnCurso;
+pthread_mutex_t modifierBitArray;
 
 /* FUNCIONES GLOBALES */
 int cantidadDeBloquesLibres();
