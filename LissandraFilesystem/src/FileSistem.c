@@ -647,10 +647,12 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 				char* clavesLeidas = malloc(partSize + 1);
 				while(bloques[i] != NULL)
 				{
+					char* helper = leerBloque(bloques[i]);
 					if(i == 0)
-						strcpy(clavesLeidas, leerBloque(bloques[i]));
+						strcpy(clavesLeidas, helper);
 					else
-						strcat(clavesLeidas, leerBloque(bloques[i]));
+						strcat(clavesLeidas, helper);
+					free(helper);
 					i++;
 				}
 				list_add(clavesDentroDeLosBloques, clavesLeidas);
