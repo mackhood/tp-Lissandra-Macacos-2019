@@ -28,23 +28,6 @@ void levantarLogs(){
 	leerConfig(memoria_config_ruta, loggerMem);
 }
 
-void initThread(){
-
-	pthread_create(&threadConsola, NULL, (void*)handleConsola, NULL);
-
-	int* kernel = (int*) malloc (sizeof(int));
-	*kernel = socket_kernel;
-	pthread_create(&threadReqKernel, NULL, (void*)escucharKernel, kernel);
-
-//	int* memoria = (int*) malloc (sizeof(int));
-//	*memoria = socket_memoria;
-//	pthread_create(&threadMensajesMemoria,NULL, (void*)escucharMemoria, memoria);
-
-	pthread_join(threadConsola ,NULL);
-	pthread_join(threadReqKernel, NULL);
-//	pthread_detach(threadMensajesMemoria, NULL);
-}
-
 void levantarConexion(){
 
 	//me conecto al fs primero y me manda el tamanio_value
@@ -55,24 +38,18 @@ void levantarConexion(){
 	prot_destruir_mensaje(handshake);
 	log_info(loggerMem, "Se ha conectado la memoria con el File System");
 
-	//levanto servidor para Kernel
+	//levanto servidor para Kernel y otras Memorias
 	socket_escucha = levantar_servidor(info_memoria.puerto);
-
-	struct sockaddr_in direccion_cliente;
-	unsigned int tamanio_direccion = sizeof(direccion_cliente);
-
-	socket_kernel = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion);
-	printf("se ha conectado el kernel\n");
 
 	//levanto servidor para otras memorias
 	//Se aceptan clientes cuando los haya
 	// accept es una funcion bloqueante, si no hay ningun cliente esperando ser atendido, se queda esperando a que venga uno.
-	while(  (socket_memoria = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion)) > 0)
+/*	while(  (socket_memoria = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion)) > 0)
 			{
 				puts("Se ha conectado una memoria");
 				logInfo( "[Memoria]: Se conecto con otra Memoria");
 		}
-
+*/
 
 }
 
@@ -84,7 +61,6 @@ void levantarEstrMemorias(){
 	//el double ocupa 8 bytes
 
 	//variables iniciales
-	//tamanio_value = 4; //copio la del config del fs por ahora
 	tamanio_pag = sizeof(uint16_t) + tamanio_value + sizeof(double);
 	cant_paginas = info_memoria.tamanio_mem/tamanio_pag;
 
@@ -104,21 +80,22 @@ void levantarEstrMemorias(){
 	//creo el mutex
 	pthread_mutex_init(&mutex_estructuras_memoria, NULL);
 
-	//_____________________________PRUEBA________________________________//
-	/*double timestamp = 1876;
-	uint16_t key = 16;
-	char* value = malloc(tamanio_value);
-	memcpy(value, "abc", tamanio_value);
+	//inicializo la variable global se_hizo_journal en false por las dudas (aunque por defecto deberia ser false)
+	se_hizo_journal = false;
+}
 
-	memcpy(memoria_principal+(tamanio_pag*4), &timestamp, sizeof(double));
-	memcpy(memoria_principal+(tamanio_pag*4)+sizeof(double), &key, sizeof(uint16_t));
-	memcpy(memoria_principal+(tamanio_pag*4)+sizeof(double)+sizeof(uint16_t), value, tamanio_value);
+void initThread(){
 
-	uint16_t key_recolectada;
-	memcpy(&key_recolectada, memoria_principal+(tamanio_pag*4)+sizeof(double), sizeof(uint16_t));
-	printf("en el marco 4 deberia estar la key %d\n", key_recolectada);*/
+	pthread_create(&threadConsola, NULL, (void*)handleConsola, NULL);
+	pthread_create(&threadReqKernel, NULL, (void*)AceptarYescucharKernel, NULL);
 
-	//______________________________PRUEBA_______________________________//
+//	int* memoria = (int*) malloc (sizeof(int));
+//	*memoria = socket_memoria;
+//	pthread_create(&threadMensajesMemoria,NULL, (void*)escucharMemoria, memoria);
+
+	pthread_join(threadReqKernel, NULL);
+	pthread_join(threadConsola ,NULL);
+//	pthread_detach(threadMensajesMemoria, NULL);
 }
 
 void setearValores(){
