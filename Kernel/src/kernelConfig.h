@@ -14,7 +14,7 @@
 #include <time.h>
 #include <pthread.h>
 #include <semaphore.h>
-#include "../SharedLibrary/conexiones.h"
+#include "../../SharedLibrary/conexiones.h"
 
 pthread_mutex_t mutexIdGDT;
 pthread_mutex_t mutexIdMemoria;

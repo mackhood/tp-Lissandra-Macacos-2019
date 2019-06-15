@@ -13,7 +13,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <string.h>
-#include <loggers.h>
+#include "../../SharedLibrary/loggers.h"
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <commons/log.h>
@@ -48,7 +48,14 @@ typedef enum{
 	OCUPADO
 }t_estado;
 
+typedef struct{
+	int numero_memoria;
+	char* ip_memoria;
+	int puerto_memoria;
+}t_est_memoria;
+
 t_list* lista_segmentos;
+t_list* tabla_gossip;
 size_t tamanio_pag;
 size_t tamanio_value; //nos lo pasa el fs
 size_t cant_paginas;
@@ -61,10 +68,12 @@ bool se_inserta_segmento;
 int socket_escucha;
 int socket_kernel;
 int socket_fs;
+int socket_memoria;
 
 //hilos
 pthread_t threadConsola;
 pthread_t threadReqKernel;
+pthread_t threadMensajesMemoria;
 
 //logs
 t_log* loggerMem;
@@ -78,6 +87,7 @@ void initThread();
 void levantarEstrMemorias();
 void levantarConexion();
 void levantarLogs();
+void gossiping();
 
 //funciones para la administracion de memoria
 t_segmento* buscarSegmento(char* tabla_a_buscar);

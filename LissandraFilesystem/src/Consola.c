@@ -16,9 +16,9 @@ COMANDO comandos[] = {
 void consola()
 {
 	printf("\033[1;33m");
-	puts("°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`");
-	puts("----------------------------------------Lissandra FileSystem---------------------------------------------");
-	puts("---------------------------------------- Escriba un comando ---------------------------------------------");
+	puts("¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤");
+	puts("-------------------------------------Lissandra FileSystem-------------------------------------------");
+	puts("------------------------------------- Escriba un comando -------------------------------------------");
 	printf("\033[0;33m");
 	puts("1. - SELECT <Table> <Key>");
 	puts("2. - INSERT <Table>|<Key>|<Value>|<Timestamp[milliseconds]> (last one is optional)");
@@ -409,14 +409,14 @@ void describe (char** args)
 			strcpy(tablaSolicitada, args[1]);
 		}
 		bool solicitadoPorMemoria = false;
-		int problem = 0;
-		if (0 == (problem = describirTablas(tablaSolicitada, solicitadoPorMemoria, NULL)))
+		char* problem = malloc(2);
+		if (!strcmp((problem = describirTablas(tablaSolicitada, solicitadoPorMemoria)), "0"))
 		{
 			logInfo( "Consola: Todas las tablas solicitadas fueron descritas correctamente");
 		}
 		else
 		{
-
+			logError("Consola: No pudieron ser mostradas las tablas solicitadas");
 		}
 		free(tablaSolicitada);
 	}
@@ -535,9 +535,9 @@ void details(char** args)
 				" y realizando los pasos necesarios para afianzar los datos que hayan quedado sin impactar.");
 		puts("Se agradece que tome en cuenta las información dada sobre el funcionamiento del FS");
 		printf("\033[1;33m");
-		puts("°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`");
-		puts("----------------------------------------Lissandra FileSystem---------------------------------------------");
-		puts("---------------------------------------- Escriba un comando ---------------------------------------------");
+		puts("¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤");
+		puts("-------------------------------------Lissandra FileSystem-------------------------------------------");
+		puts("------------------------------------- Escriba un comando -------------------------------------------");
 		printf("\033[0;33m");
 		puts("1. - SELECT <Table> <Key>");
 		puts("2. - INSERT <Table>|<Key>|<Value>|<Timestamp[milliseconds]> (last one is optional)");
@@ -566,9 +566,9 @@ void show_menu(char** args)
 	else
 	{
 		printf("\033[1;33m");
-		puts("°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`");
-		puts("----------------------------------------Lissandra FileSystem---------------------------------------------");
-		puts("---------------------------------------- Escriba un comando ---------------------------------------------");
+		puts("¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤");
+		puts("-------------------------------------Lissandra FileSystem-------------------------------------------");
+		puts("------------------------------------- Escriba un comando -------------------------------------------");
 		printf("\033[0;33m");
 		puts("1. - SELECT <Table> <Key>");
 		puts("2. - INSERT <Table>|<Key>|<Value>|<Timestamp[milliseconds]> (last one is optional)");
@@ -592,6 +592,11 @@ void modifyDumpTime(char** args)
 		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
 		logError("Consola: solicitud posee cantidad errónea de parámetros");
 	}
+	else if(!itsANumber(args[1]))
+	{
+		puts("El valor que ingresó tiene caracteres inválidos.");
+		logError( "Consola: el valor para modificar es inválido.");
+	}
 	else
 	{
 		t_config* ConfigMain = config_create(lissandraFL_config_ruta);
@@ -614,6 +619,11 @@ void modifyRetardo(char** args)
 	{
 		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
 		logError("Consola: solicitud posee cantidad errónea de parámetros");
+	}
+	else if(!itsANumber(args[1]))
+	{
+		puts("El valor que ingresó tiene caracteres inválidos.");
+		logError( "Consola: el valor para modificar es inválido.");
 	}
 	else
 	{

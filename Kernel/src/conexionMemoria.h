@@ -9,7 +9,7 @@
 #define CONEXIONMEMORIA_H_
 
 
-#include "../SharedLibrary/conexiones.h"
+#include "../../SharedLibrary/conexiones.h"
 #include "kernelConfig.h"
 
 void handler_conexion_memoria(t_kernel*);

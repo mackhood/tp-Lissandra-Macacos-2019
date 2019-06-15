@@ -437,13 +437,13 @@ int existeTabla(char* tabla)
 	}
 }
 
-int mostrarMetadataEspecificada(char* tabla, int tamanio_buffer_metadatas, bool solicitadoPorMemoria, char* buffer)
+char* mostrarMetadataEspecificada(char* tabla, bool solicitadoPorMemoria)
 {
 	if(0 == existeTabla(tabla))
 	{
 		logInfo( "FileSystem: La tabla a la que quiere acceder no existe");
 		puts("La tabla a la que usted quiere acceder no existe.");
-		return 0;
+		return NULL;
 	}
 	else
 	{
@@ -460,19 +460,25 @@ int mostrarMetadataEspecificada(char* tabla, int tamanio_buffer_metadatas, bool 
 		int tiempoEntreCompactaciones = config_get_int_value(temporalArchivoConfig, "TIEMPOENTRECOMPACTACIONES");
 		if(solicitadoPorMemoria)
 		{
-			tamanio_buffer_metadatas += strlen(consistencia) + sizeof(cantParticiones) + sizeof(tiempoEntreCompactaciones) + 3;
-			buffer = realloc(buffer, tamanio_buffer_metadatas + 1);
-			strcat(buffer, consistencia);
-			strcat(buffer, ",");
-			strcat(buffer, string_itoa(cantParticiones));
-			strcat(buffer, ",");
-			strcat(buffer, string_itoa(tiempoEntreCompactaciones));
-			strcat(buffer, ";");
+			int tamanio_buffer_metadatas = strlen(tabla) + strlen(consistencia) + sizeof(cantParticiones) + sizeof(tiempoEntreCompactaciones) + 4;
+			char* auxbuffer = malloc(tamanio_buffer_metadatas + 1);
+			strcpy(auxbuffer, tabla);
+			strcat(auxbuffer, ",");
+			strcat(auxbuffer, consistencia);
+			strcat(auxbuffer, ",");
+			char* auxPart = string_itoa(cantParticiones);
+			strcat(auxbuffer, auxPart);
+			free(auxPart);
+			strcat(auxbuffer, ",");
+			char* auxtime = string_itoa(tiempoEntreCompactaciones);
+			strcat(auxbuffer, auxtime);
+			free(auxtime);
+			strcat(auxbuffer, ";");
 			free(auxdir);
 			free(direccionDeTableMetadata);
 			config_destroy(temporalArchivoConfig);
 			free(consistencia);
-			return tamanio_buffer_metadatas;
+			return auxbuffer;
 		}
 		else
 		{
@@ -483,65 +489,54 @@ int mostrarMetadataEspecificada(char* tabla, int tamanio_buffer_metadatas, bool 
 			config_destroy(temporalArchivoConfig);
 			free(auxdir);
 			free(consistencia);
-			return 0;
+			return NULL;
 		}
 	}
 }
 
-void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer)
+t_list* mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* auxbuffer)
 {
 	DIR* directorioDeTablas;
 	struct dirent* tdp;
+	t_list* listTables = list_create();
 	char* auxdir = malloc(strlen(punto_montaje) + 8);
 	strcpy(auxdir, punto_montaje);
 	strcat(auxdir, "Tables/");
-	bool firstTabla = true;
 	if(NULL == (directorioDeTablas = opendir(auxdir)))
 	{
 		logError( "FileSystem: error al acceder al directorio de tablas, abortando");
-		buffer = malloc(6);
-		strcpy(buffer, "error");
+		auxbuffer = malloc(6);
+		strcpy(auxbuffer, "error");
 		closedir(directorioDeTablas);
 	}
 	else
 	{
 		if(solicitadoPorMemoria)
 		{
-			int tamanio_buffer_metadatas = 0;
 			logInfo("FileSystem: se procede a construir el paquete a enviar a Memoria.");
 			while(NULL != (tdp = readdir(directorioDeTablas)))
 			{
 				if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, "..")){}
 				else
 				{
-					tamanio_buffer_metadatas += strlen(tdp->d_name) + 2;
-					buffer = realloc(buffer, tamanio_buffer_metadatas);
-					if(firstTabla)
-					{
-						strcpy(buffer, tdp->d_name);
-						firstTabla = false;
-					}
-					else
-						strcat(buffer, tdp->d_name);
-					strcat(buffer, ",");
-					int new_tamanio_buffer_metadatas = mostrarMetadataEspecificada(tdp->d_name, tamanio_buffer_metadatas, solicitadoPorMemoria, buffer);
-					tamanio_buffer_metadatas = new_tamanio_buffer_metadatas;
+					char* superBuffer = mostrarMetadataEspecificada(tdp->d_name, solicitadoPorMemoria);
+					char* buffer = malloc(strlen(superBuffer) + 1);
+					strcpy(buffer, superBuffer);
+					list_add(listTables, buffer);
+					free(superBuffer);
 				}
 			}
 		}
 		else
 		{
-			int tamanio_buffer_metadatas = 0;
 			logInfo("FileSystem: se procede a mostrar el contenido de las tablas del File System.");
 			while(NULL != (tdp = readdir(directorioDeTablas)))
 			{
 				if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, ".."))	{}
 				else
 				{
-					tamanio_buffer_metadatas += strlen(tdp->d_name) + 2;
-					buffer = realloc(buffer, tamanio_buffer_metadatas);
-					int new_tamanio_buffer_metadatas = mostrarMetadataEspecificada(tdp->d_name, tamanio_buffer_metadatas, solicitadoPorMemoria, buffer);
-					tamanio_buffer_metadatas = new_tamanio_buffer_metadatas;
+					char* superBuffer = mostrarMetadataEspecificada(tdp->d_name, solicitadoPorMemoria);
+					free(superBuffer);
 				}
 			}
 		}
@@ -549,6 +544,7 @@ void mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer)
 	free(tdp);
 	closedir(directorioDeTablas);
 	free(auxdir);
+	return listTables;
 }
 
 int contarTablasExistentes()
@@ -592,9 +588,20 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 	{
 		return chequeada->key == keyRecibida;
 	}
-
-	pthread_mutex_lock(&compactacionActiva);
-	pthread_mutex_unlock(&compactacionActiva);
+	bool estaTabla(t_TablaEnEjecucion* tablaDeLista)
+	{
+		char* tablaAux = malloc(strlen(tabla) + 1);
+		strcpy(tablaAux, tabla);
+		int cantCarac = strlen(tablaDeLista->tabla);
+		//char* tablaDeListaAux = string_new();
+		char* tablaDeListaAux = malloc(cantCarac + 1);
+		strcpy(tablaDeListaAux, tablaDeLista->tabla);
+		bool result = (0 == strcmp(tablaDeListaAux, tablaAux));
+		free(tablaDeListaAux);
+		free(tablaAux);
+		return result;
+	}
+	t_TablaEnEjecucion* tablaChequeada = list_find(tablasEnEjecucion, (void*) estaTabla);
 	logInfo("FileSystem: Se empieza a revisar el contenido de los bloques asignados a la %s para encontrar la clave %i."
 			, tabla, keyRecibida);
 	char* particionARevisar;
@@ -607,6 +614,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 	strcat(direccionTabla, "/");
 	DIR* table = opendir(direccionTabla);
 	struct dirent* tdp;
+	pthread_mutex_lock(&tablaChequeada->compactacionActiva);
 	while(NULL != (tdp = readdir(table)))
 	{
 		if(string_ends_with(tdp->d_name, ".cfg"))
@@ -622,7 +630,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 			free(direccionMetadataTabla);
 		}
 		else if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, "..")){}
-		else if(string_ends_with(tdp->d_name, ".tmp"))
+		else if(!string_ends_with(tdp->d_name, ".tmp") || !string_ends_with(tdp->d_name, ".tmpc"))
 		{
 			char* direccionTemp = malloc(strlen(direccionTabla) + strlen(tdp->d_name) + 2);
 			strcpy(direccionTemp, direccionTabla);
@@ -639,10 +647,12 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 				char* clavesLeidas = malloc(partSize + 1);
 				while(bloques[i] != NULL)
 				{
+					char* helper = leerBloque(bloques[i]);
 					if(i == 0)
-						strcpy(clavesLeidas, leerBloque(bloques[i]));
+						strcpy(clavesLeidas, helper);
 					else
-						strcat(clavesLeidas, leerBloque(bloques[i]));
+						strcat(clavesLeidas, helper);
+					free(helper);
 					i++;
 				}
 				list_add(clavesDentroDeLosBloques, clavesLeidas);
@@ -696,6 +706,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 		free(clavesLeidas);
 		liberadorDeArrays(bloques);
 	}
+	pthread_mutex_unlock(&tablaChequeada->compactacionActiva);
 	free(particionARevisar);
 	free(direccionParticion);
 
@@ -721,7 +732,6 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 		claveMasActualizada = NULL;
 		logInfo("FileSystem: La key %i no fue impactada todavía en el File System.", keyRecibida);
 	}
-
 	list_destroy(keysettersDeClave);
 	list_destroy(clavesPostParseo);
 	list_destroy_and_destroy_elements(clavesDentroDeLosBloques, &free);
@@ -777,7 +787,10 @@ char* obtenerBloqueLibre()
 		{
 			char* uaxb = string_itoa(a);
 			bloqueAEnviar = malloc(strlen(uaxb) + 1);
+			pthread_mutex_lock(&modifierBitArray);
 			bitarray_set_bit(bitarray, a);
+			msync(bitarraycontent, bitarrayfd, MS_SYNC);
+			pthread_mutex_unlock(&modifierBitArray);
 			strcpy(bloqueAEnviar, uaxb);
 			free(uaxb);
 		}
@@ -865,6 +878,7 @@ void limpiarBloque(char* direccionPart)
 {
 	int i = 0;
 	char** bloques = obtenerBloques(direccionPart);
+	pthread_mutex_lock(&modifierBitArray);
 	while(bloques[i] != NULL)
 	{
 		char* direccionBloqueALiberar = malloc(strlen(direccionFileSystemBlocks) + strlen(bloques[i]) + 5);
@@ -880,6 +894,7 @@ void limpiarBloque(char* direccionPart)
 	}
 	liberadorDeArrays(bloques);
 	msync(bitarraycontent, bitarrayfd, MS_SYNC);
+	pthread_mutex_unlock(&modifierBitArray);
 }
 
 char* leerBloque(char* bloque)

@@ -2,6 +2,8 @@
 archivosBibliotecaCompartida=$(cd ../../SharedLibrary; ls $PWD/*.c)
 referencias="-lcommons -lpthread -lreadline -lm  -lcrypto"
 
-echo "Compilando proyecto FileSystem";
-gcc -I archivosBibliotecaCompartida *.c ${archivosBibliotecaCompartida} -o FileSystem.o ${referencias};
+mkdir -p ../Debug
 
+echo "Compilando proyecto LissandraFileSystem";
+gcc -I archivosBibliotecaCompartida *.c ${archivosBibliotecaCompartida} -o ../Debug/LissandraFileSystem.o ${referencias};
+echo "Success";

@@ -20,9 +20,9 @@
 #include <time.h>
 #include <ftw.h>
 #include <fts.h>
-#include <auxiliaryFunctions.h>
-#include <loggers.h>
-#include <conexiones.h>
+#include "../../SharedLibrary/auxiliaryFunctions.h"
+#include "../../SharedLibrary/loggers.h"
+#include "../../SharedLibrary/conexiones.h"
 #include <commons/bitarray.h>
 #include <sys/mman.h>
 #include <fcntl.h>
@@ -45,6 +45,8 @@ typedef struct {
 typedef struct {
 	char* tabla;
 	int cantTemps;
+	pthread_mutex_t compactacionActiva;
+	pthread_mutex_t renombreEnCurso;
 }__attribute__((packed)) t_TablaEnEjecucion;
 
 /* VARIABLES GLOBALES */
@@ -65,9 +67,8 @@ t_list * memtable;
 char* punto_montaje;
 t_list* tablasEnEjecucion;
 pthread_mutex_t deathProtocol;
-pthread_mutex_t compactacionActiva;
 pthread_mutex_t dumpEnCurso;
-pthread_mutex_t renombreEnCurso;
+pthread_mutex_t modifierBitArray;
 
 /* FUNCIONES GLOBALES */
 int cantidadDeBloquesLibres();

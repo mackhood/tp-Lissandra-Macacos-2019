@@ -34,6 +34,7 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 
 			prot_enviar_mensaje(socket_fs, SOLICITUD_TABLA, tamanio_buffer, buffer);
 			t_prot_mensaje* mensaje_con_tabla = prot_recibir_mensaje(socket_fs);
+			usleep(info_memoria.retardo_fs*1000);
 
 			//el fs nos manda tiempo + tamanio value + value
 			double tiempo_a_insertar;
@@ -51,7 +52,7 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 
 			segmento_buscado = buscarEinsertarEnMem(segmento_buscado, key, tiempo_a_insertar, value);
 
-			//prueba
+			//verifico
 			printf("el nombre del segmento es: %s\n", segmento_buscado->nombre_tabla);
 
 			t_est_pag* pagina_buscada = buscarEstPagBuscada(key, segmento_buscado);
@@ -95,6 +96,7 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 
 		prot_enviar_mensaje(socket_fs, SOLICITUD_TABLA, tamanio_buffer, buffer);
 		t_prot_mensaje* mensaje_con_tabla = prot_recibir_mensaje(socket_fs);
+		usleep(info_memoria.retardo_fs*1000);
 
 		//el fs nos manda tiempo + tamanio value + value
 		double tiempo_a_insertar;
@@ -112,16 +114,14 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 
 		segmento_nuevo = buscarEinsertarEnMem(segmento_nuevo, key, tiempo_a_insertar, value);
 
-		/*	agrego al segmento despues de insertar la pagina en memoria debido a que dentro de la funcion esa uso al LRU y puedo estar usando
-		*	el journaling el cual me elimina al segmento en cuestion
-		*/
+		//Siempre se inserta el segmento nuevo a menos que se haya realizado el journal, en ese caso se agrega dentro de la funcion buscarEinsertar
 		if(se_inserta_segmento){
 			list_add(lista_segmentos, segmento_nuevo);
 
 		}
 		se_inserta_segmento = true;
 
-		//prueba
+		//verifico
 		printf("el nombre del segmento es: %s\n", segmento_nuevo->nombre_tabla);
 
 		t_est_pag* pagina_buscada = buscarEstPagBuscada(key, segmento_nuevo);
@@ -171,9 +171,8 @@ void insertReq (char* nombre_tabla, uint16_t key, char* value) {
 			double nuevo_time = getCurrentTime();
 
 			segmento_buscado = buscarEinsertarEnMem(segmento_buscado, key, nuevo_time, value);
-			//preguntar si tiene que tener el 1 o puede ser 0 (es la primera vez que aparece en memoria)
 
-			//prueba y ademas marco el flag en 1
+			//verifico y ademas marco el flag en 1
 			t_est_pag* pagina_buscada = buscarEstPagBuscada(key, segmento_buscado);
 			pagina_buscada->flag = 1;
 
@@ -205,18 +204,14 @@ void insertReq (char* nombre_tabla, uint16_t key, char* value) {
 		double nuevo_time = getCurrentTime();
 
 		segmento_nuevo = buscarEinsertarEnMem(segmento_nuevo, key, nuevo_time, value);
-		//preguntar si tiene que tener el 1 o puede ser 0 (es la primera vez que aparece en memoria)
 
-		/*	agrego al segmento despues de insertar la pagina en memoria debido a que dentro de la funcion esa uso al LRU y puedo estar usando
-		*	el journaling el cual me elimina al segmento en cuestion
-		*	esta variable global se utiliza en caso de que se haya insertado una pagina nueva de un segmento que existia y la mismo tiro el LRU
-		*/
+		//Siempre se insertara el segmento nuevo a menos que se haya realizado el journal, en ese caso el mismo se agregara dentro de la funcion buscarEinsertar
 		if(se_inserta_segmento){
 			list_add(lista_segmentos, segmento_nuevo);
 		}
 		se_inserta_segmento = true;
 
-		//prueba y ademas marco el flag en 1
+		//verifico y ademas marco el flag en 1
 		t_est_pag* pagina_buscada = buscarEstPagBuscada(key, segmento_nuevo);
 		pagina_buscada->flag = 1;
 
@@ -260,7 +255,6 @@ t_prot_mensaje* dropReq (char* nombre_tabla) {
 
 	pthread_mutex_lock(&mutex_estructuras_memoria);
 	t_segmento* segmento_buscado = buscarSegmento(nombre_tabla);
-	int posicion_del_segmento_en_lista;
 
 	if(segmento_buscado){
 
@@ -268,14 +262,13 @@ t_prot_mensaje* dropReq (char* nombre_tabla) {
 		 * en base a la posicion del mismo
 		 */
 
-		posicion_del_segmento_en_lista = buscarPosSeg(nombre_tabla);
+		int posicion_del_segmento_en_lista = buscarPosSeg(nombre_tabla);
 
 		/*	Segmento a remover deberia dar el mismo segmento que segmento buscado pero lo necesito declarar de nuevo
 		 * 	por el list_remove.
 		 */
 		t_segmento* segmento_a_remover = list_remove(lista_segmentos, posicion_del_segmento_en_lista);
 
-//--
 		int cant_paginas_seg = list_size(segmento_a_remover->tabla_paginas.paginas);
 
 		printf("Libero los marcos asignados al segmento %s\n", segmento_a_remover->nombre_tabla);
@@ -286,7 +279,7 @@ t_prot_mensaje* dropReq (char* nombre_tabla) {
 			printf("libero el marco %d asignado a la pagina %d\n", pagina_a_remover->offset, i);
 		}
 
-//--
+
 		//destruyo la TP(t_list*) del segmento a remover y sus paginas. Luego libero la memoria asignada al segmento en cuestion
 		list_destroy_and_destroy_elements(segmento_a_remover->tabla_paginas.paginas, &free);
 		free(segmento_a_remover->nombre_tabla);

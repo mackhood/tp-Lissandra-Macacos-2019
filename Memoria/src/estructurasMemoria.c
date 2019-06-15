@@ -31,12 +31,17 @@ t_segmento* buscarEinsertarEnMem(t_segmento* segmento, uint16_t key, double time
 
 	int marco_disponible = buscarPaginaLibre();
 
+	/*	Siempre marcamos el se_inserta_segmento en true, si se realiza journal este quedara en false hasta que haya una nueva peticion
+	*	de buscarEinsertar. Cabe destacar que se utiliza por si queremos agregar un segmento nuevo en memoria y el mismo tira journal,
+	*	en este caso lo agrega dentro del condicional y en la request (es complejo y tiene un problema MINIMO de memory leak)
+	*/
+
 	se_inserta_segmento = true;
-	//PREGUNTAR
 	if(se_hizo_journal){
 		segmento = malloc(sizeof(t_segmento));
 		segmento->nombre_tabla = nombre_tabla;
 		segmento->tabla_paginas.paginas = list_create();
+
 		list_add(lista_segmentos, segmento);
 
 		se_inserta_segmento = false;

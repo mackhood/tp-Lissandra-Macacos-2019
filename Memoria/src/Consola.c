@@ -133,7 +133,7 @@ void selectt(char** args){
 
 	printf("el value buscado es %s\n", value_buscado);
 
-	usleep(info_memoria.retardo_mp);
+	usleep(info_memoria.retardo_mp*1000);
 
 	free(nombre_tabla);
 	free(value_buscado);
@@ -146,7 +146,7 @@ void insert(char** args){
 
 	insertReq(nombre_tabla, key, value);
 
-	usleep(info_memoria.retardo_mp);
+	usleep(info_memoria.retardo_mp*1000);
 
 	free(nombre_tabla);
 	free(value);
@@ -176,8 +176,8 @@ void create(char** args){
 			}
 		}
 
-	usleep(info_memoria.retardo_fs);
-	usleep(info_memoria.retardo_mp);
+	usleep(info_memoria.retardo_fs*1000);
+	usleep(info_memoria.retardo_mp*1000);
 
 	prot_destruir_mensaje(mensaje_fs);
 	free(nombre_tabla);
@@ -205,8 +205,8 @@ void drop(char** args){
 		}
 	}
 
-	usleep(info_memoria.retardo_fs);
-	usleep(info_memoria.retardo_mp);
+	usleep(info_memoria.retardo_fs*1000);
+	usleep(info_memoria.retardo_mp*1000);
 
 	prot_destruir_mensaje(respuesta_fs);
 	free(nombre_tabla);
@@ -219,13 +219,13 @@ void journal(char** args){
 	journalReq();
 	pthread_mutex_unlock(&mutex_estructuras_memoria);
 
+	usleep(info_memoria.retardo_mp*1000);
 }
 
 void describe(char** args){
 
-	char* nombre_tabla = strdup(args[1]);
-
-	if(nombre_tabla){
+	if(args[1] != NULL){
+		char* nombre_tabla = strdup(args[1]);
 		int largo_nombre_tabla = strlen(nombre_tabla);
 
 		int tamanio_buffer = sizeof(int) + largo_nombre_tabla;
@@ -264,6 +264,7 @@ void describe(char** args){
 
 		free(buffer);
 		prot_destruir_mensaje(data_del_fs);
+		free(nombre_tabla);
 	}
 	else{
 		prot_enviar_mensaje(socket_fs, DESCRIBE, 0, NULL);
@@ -301,5 +302,4 @@ void describe(char** args){
 
 		prot_destruir_mensaje(data_del_fs);
 	}
-	free(nombre_tabla);
 }

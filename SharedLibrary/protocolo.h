@@ -40,7 +40,6 @@ typedef enum{
 	DROP_REQ,
 	DESCRIBE_REQ,
 
-
 	//Memoria-FileSystem
 	HANDSHAKE,
 	SOLICITUD_TABLA,
@@ -65,8 +64,11 @@ typedef enum{
 	INSERT_FAILED_ON_MEMTABLE,
 	INSERT_FAILURE,
 	POOL_MEMORIA,
-	GOODBYE //desconexion.
+	GOODBYE, //desconexion.
 
+	//Memoria-Memoria
+	SOLICITUD_GOSSIP,
+	MEMORIA_GOSSIP
 
 }t_header;
 

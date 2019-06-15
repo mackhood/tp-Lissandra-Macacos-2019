@@ -89,6 +89,7 @@ void escucharMemoria(int* socket_memoria)
 				memcpy(messageBuffer, &tamanio_value, sizeof(int));
 				prot_enviar_mensaje(socket, HANDSHAKE, tamanioBuffer, messageBuffer);
 				logInfo("Lissandra: Se ha enviado la información de saludo a la Memoria.");
+				free(messageBuffer);
 				break;
 			}
 			case SOLICITUD_TABLA:
@@ -118,6 +119,8 @@ void escucharMemoria(int* socket_memoria)
 					memcpy(buffer+sizeof(double)+sizeof(int), value, tamanio_value);
 
 					prot_enviar_mensaje(socket, VALUE_SOLICITADO_OK, tamanio_buffer, buffer);
+					logInfo("Lissandra: se envía a Memoria el value de la key &i", helpinghand->key);
+					free(buffer);
 				 }
 				 else
 				 {
@@ -214,7 +217,7 @@ void escucharMemoria(int* socket_memoria)
 			{
 				puts("Llegó un Describe desde memoria.");
 				bool solicitadoPorMemoria = true;
-				if(mensaje_memoria->payload != NULL)
+				if(mensaje_memoria->tamanio_total > 8)
 				{
 					char* tablaRecibida = string_new();
 					int tamanioNombreTabla;
@@ -222,27 +225,33 @@ void escucharMemoria(int* socket_memoria)
 					tablaRecibida = malloc(tamanioNombreTabla + 2);
 					memcpy(tablaRecibida, mensaje_memoria->payload + sizeof(int), tamanioNombreTabla);
 					tablaRecibida[tamanioNombreTabla] = '\0';
-					char* buffer = string_new();
-					if(0 == describirTablas(tablaRecibida, solicitadoPorMemoria, buffer))
+					char* buffer;
+					if(!strcmp((buffer = describirTablas(tablaRecibida, solicitadoPorMemoria)), "1"))
+					{
+						prot_enviar_mensaje(socket, FAILED_DESCRIBE, 0, NULL);
+						logError( "Lissandra: fallo al leer la %s", tablaRecibida);
+					}
+					else
 					{
 						size_t tamanioBuffer = strlen(buffer);
 						void* messageBuffer = malloc(tamanioBuffer + 1);
 						memcpy(messageBuffer, buffer, strlen(buffer));
 						prot_enviar_mensaje(socket, POINT_DESCRIBE, tamanioBuffer, messageBuffer);
 						logInfo( "Lissandra: Se ha enviado la metadata de la %s a Memoria.", tablaRecibida);
-					}
-					else
-					{
-						prot_enviar_mensaje(socket, FAILED_DESCRIBE, 0, NULL);
-						logError( "Lissandra: fallo al leer la %s", tablaRecibida);
+						free(messageBuffer);
 					}
 					free(tablaRecibida);
 					free(buffer);
 				}
 				else
 				{
-					char* buffer = string_new();
-					if(0 == describirTablas("", solicitadoPorMemoria, buffer))
+					char* buffer;
+					if(!strcmp((buffer = describirTablas("", solicitadoPorMemoria)), "1"))
+					{
+						prot_enviar_mensaje(socket, FAILED_DESCRIBE, 0, NULL);
+						logError( "Lissandra: falló al leer todas las tablas");
+					}
+					else
 					{
 						size_t tamanioBuffer = sizeof(int) + strlen(buffer);
 						void* messageBuffer = malloc(tamanioBuffer + 1);
@@ -251,11 +260,7 @@ void escucharMemoria(int* socket_memoria)
 						memcpy(messageBuffer + sizeof(int), buffer, tamanio_buffer);
 						prot_enviar_mensaje(socket, FULL_DESCRIBE, tamanioBuffer, messageBuffer);
 						logInfo( "Lissandra: Se ha enviado la metadata de todas las tablas a Memoria.");
-					}
-					else
-					{
-						prot_enviar_mensaje(socket, FAILED_DESCRIBE, 0, NULL);
-						logError( "Lissandra: falló al leer todas las tablas");
+						free(messageBuffer);
 					}
 					free(buffer);
 				}
@@ -346,6 +351,7 @@ int insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibi
 	{
 		logError( "Lissandra: La tabla no existe, por lo que no puede insertarse una clave.");
 		printf("Tabla no existente.\n");
+		printf("\033[1;36m");
 		return 1;
 	}
 	else
@@ -354,22 +360,25 @@ int insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibi
 		{
 			logError("Lissandra: el value a agregar era demasiado grande");
 			printf("El value ingresado era demasiado grande, por favor, ingrese uno más pequeño.\n");
+			printf("\033[1;36m");
 			return 3;
 		}
 		pthread_mutex_lock(&dumpEnCurso);
-		pthread_mutex_unlock(&dumpEnCurso);
 		logInfo( "Lissandra: Se procede a insertar la clave recibida en la Memtable.");
 		list_add(memtable, auxiliar);
+		pthread_mutex_unlock(&dumpEnCurso);
 		if(tamanio_memtable == memtable->elements_count)
 		{
 			logError( "Lissandra: La clave fracasó en su intento de insertarse correctamente.");
 			printf("Fallo al agregar a memtable.\n");
+			printf("\033[1;36m");
 			return 2;
 		}
 		else
 		{
 			logInfo( "Lissandra: La clave fue insertada correctamente.");
 			printf("Agregado correctamente.\n");
+			printf("\033[1;36m");
 			return 0;
 		}
 	}
@@ -398,7 +407,9 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 			t_Memtablekeys* auxMemtable;
 			t_keysetter* keyTemps = selectKeyFS(tabla, receivedKey);
 			t_keysetter* key;
+			pthread_mutex_lock(&dumpEnCurso);
 			keysDeTablaPedida = list_filter(memtable, (void*)perteneceATabla);
+			pthread_mutex_unlock(&dumpEnCurso);
 			keyEspecifica = list_filter(keysDeTablaPedida, (void*)esDeTalKey);
 			if(!list_is_empty(keysDeTablaPedida))
 			{
@@ -506,13 +517,12 @@ int llamarEliminarTabla(char* tablaPorEliminar)
 	return result;
 }
 
-int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, char* buffer)
+char* describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria)
 {
-	char* tabla = malloc(strlen(tablaSolicitada) + 1);
-	strcpy(tabla, tablaSolicitada);
-	char* auxbuffer = string_new();
-	if(0 == strcmp(tabla, ""))
+	char* buffer;
+	if(0 == strcmp(tablaSolicitada, ""))
 	{
+		char* auxbuffer = string_new();
 		logInfo( "Lissandra: Me llega un pedido de describir todas las tablas");
 		int tablasExistentes = contarTablasExistentes();
 		if(tablasExistentes == 0)
@@ -520,68 +530,91 @@ int describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria, char* buff
 			logError( "Lissandra: No existe ningún directorio en el FileSystem");
 			printf("No existe ninguna tabla.");
 			char* errormarker = "error";
-			buffer = realloc(buffer, 6);
+			buffer = malloc(6);
 			memcpy(buffer, errormarker, strlen(errormarker));
-			free(tabla);
-			return 1;
+			return "1";
 		}
 		else
 		{
 			if(!solicitadoPorMemoria)
 			{
-				mostrarTodosLosMetadatas(solicitadoPorMemoria, auxbuffer);
-				return 0;
+				t_list* ignoredList = list_create();
+				ignoredList = mostrarTodosLosMetadatas(solicitadoPorMemoria, auxbuffer);
+				list_destroy_and_destroy_elements(ignoredList, &free);
+				return "0";
 			}
 			else
 			{
-				char* massiveBufferMetadatas = string_new();
-				mostrarTodosLosMetadatas(solicitadoPorMemoria, massiveBufferMetadatas);
-				int largoMassiveBuffer = strlen(massiveBufferMetadatas);
-				buffer = realloc(buffer, largoMassiveBuffer + 1);
-				strcpy(buffer, massiveBufferMetadatas);
-				return 0;
+				t_list* listedTables = list_create();
+				listedTables = mostrarTodosLosMetadatas(solicitadoPorMemoria, auxbuffer);
+				int parserList = 0;
+				int totalSize = 0;
+				if(list_is_empty(listedTables))
+				{
+					return "1";
+				}
+				while(NULL != list_get(listedTables, parserList))
+				{
+					char* table = list_get(listedTables, parserList);
+					totalSize += strlen(table);
+					parserList++;
+				}
+				parserList = 0;
+				buffer = malloc(totalSize + 1);
+				while(NULL != list_get(listedTables, parserList))
+				{
+					char* table = list_get(listedTables, parserList);
+					if(parserList == 0)
+						strcpy(buffer,table);
+					else
+						strcat(buffer, table);
+					parserList++;
+				}
+				list_destroy_and_destroy_elements(listedTables, &free);
+				return buffer;
 			}
 		}
 	}
 	else
 	{
-		int tamanio_buffer = 1;
-		logInfo( "Lissandra: Me llega un pedido de describir la tabla %s", tabla);
+		char* auxbuffer = malloc(strlen(tablaSolicitada) + 2);
+		logInfo("Lissandra: Me llega un pedido de describir la tabla %s", tablaSolicitada);
 		if(solicitadoPorMemoria)
 		{
-			tamanio_buffer = mostrarMetadataEspecificada(tabla, tamanio_buffer, solicitadoPorMemoria, auxbuffer);
+			strcpy(auxbuffer, tablaSolicitada);
+			strcat(auxbuffer, ",");
+			auxbuffer = mostrarMetadataEspecificada(tablaSolicitada, solicitadoPorMemoria);
 			int sizebuffer = strlen(auxbuffer);
-			buffer = realloc(buffer, sizebuffer + 1);
+			buffer = malloc(sizebuffer + 1);
 			strcpy(buffer, auxbuffer);
-			return 0;
+			free(auxbuffer);
+			return buffer;
 		}
 		else
 		{
-			mostrarMetadataEspecificada(tabla, tamanio_buffer, solicitadoPorMemoria, auxbuffer);
-			return 0;
+			auxbuffer = mostrarMetadataEspecificada(tablaSolicitada, solicitadoPorMemoria);
+			free(auxbuffer);
+			return "0";
 		}
 	}
-	free(tabla);
 }
 
 void notifier()
 {
 	int length;
 	int i = 0;
-	int fd;
-	int wd;
 	char buffer[BUF_LEN];
 
-	fd = inotify_init();
-	if( fd < 0)
+	fileToWatch = inotify_init();
+	if( fileToWatch < 0)
 	{
 		logError("Lissandra: Error al iniciar el notifier.");
 		pthread_mutex_unlock(&deathProtocol);
 		return;
 	}
 
-	wd = inotify_add_watch(fd, lissandraFL_config_ruta, IN_CREATE | IN_MODIFY | IN_DELETE);
-	length = read(fd, buffer, BUF_LEN);
+	watchDescriptor = inotify_add_watch(fileToWatch, lissandraFL_config_ruta, IN_CREATE | IN_MODIFY | IN_DELETE);
+	length = read(fileToWatch, buffer, BUF_LEN);
 
 	if(length < 0)
 	{
@@ -604,11 +637,14 @@ void notifier()
 			logInfo("Lissandra: valores actualizados.");
 			printf("\033[1;34m");
 			puts("Al detectarse un cambio en el archivo de configuración, se actualizaron los valores del FS.");
+			printf("\033[1;36m");
 		}
 		else if(event->mask & IN_IGNORED)
 		{
-			logInfo("Lissandra: Se ha detectado que el archivo de configuración fue eliminado. Terminando sistema.");
-			puts("El archivo de configuración de Lissandra ha sido destruido. Abortando.");
+			logInfo("Lissandra: Se ha detectado que watch ha sido eliminado. Terminando sistema.");
+			printf("\033[1;34m");
+			puts("El FileSystem está siento desconectado.");
+			printf("\033[1;36m");
 			pthread_mutex_unlock(&deathProtocol);
 			break;
 		}
@@ -616,16 +652,18 @@ void notifier()
 		{
 			logInfo("Lissandra: Se ha detectado el archivo de configuración");
 		}
-		length = read(fd, buffer, BUF_LEN);
+		length = read(fileToWatch, buffer, BUF_LEN);
 	}
-	(void) inotify_rm_watch(fd, wd);
-	(void) close(fd);
+	(void) inotify_rm_watch(fileToWatch, watchDescriptor);
+	(void) close(fileToWatch);
 }
 
 void killProtocolLissandra()
 {
 	killthreads = true;
 	free(server_ip);
+	(void) inotify_rm_watch(fileToWatch, watchDescriptor);
+	(void) close(fileToWatch);
 	logInfo("Lissandra: Todas las memorias han sido desalojadas.");
 }
 
