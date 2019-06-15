@@ -373,7 +373,8 @@ void drop (char** args) {
 
 			DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,parametros);
 			dtb_nuevo->total_sentencias=1;
-			envairAnew(dtb_nuevo);
+			dtb_nuevo->tablaSentencias[0]=unaPalabra;
+			enviarANew(dtb_nuevo);
 
 
 //			if(estaEnMetadata(nombre_tabla)){

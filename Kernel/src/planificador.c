@@ -55,7 +55,7 @@ dtb->sentenciaActual=0;
 int socket_memoria = 0;
 
 
-socket_memoria = conectar_a_servidor(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Memoria");
+//socket_memoria = conectar_a_servidor(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Memoria");
 
 while(quantum >0 && dtb->flag != 1  && dtb->total_sentencias > 0 ) {
 
