@@ -191,22 +191,13 @@ switch(dtb->operacionActual) {
 		prot_enviar_mensaje(socket_memoria, INSERT_REQ, tamanio_buffer, buffer);
 
 
-		t_prot_mensaje* mensaje_recibido = prot_recibir_mensaje(socket_memoria);
+		//t_prot_mensaje* mensaje_recibido = prot_recibir_mensaje(socket_memoria);
 
 
 		printf("Insert realizado \n");
 
 
 		dtb->sentenciaActual++;
-
-
-
-
-
-//
-//
-
-
 
 		break;
 	}

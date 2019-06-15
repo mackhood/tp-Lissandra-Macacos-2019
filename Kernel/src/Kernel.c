@@ -98,10 +98,12 @@ void initThread(){
 void interPlanificador(){
 
 
-
+while(1){
 
 	DTB_KERNEL* dtb=(DTB_KERNEL*)getDTBNew();
 				enviarAReady(dtb);
+
+}
 
 }
 

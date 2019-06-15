@@ -315,17 +315,18 @@ void create (char** args) {
 
 
 					 dtb_nuevo->tablaSentencias[0]=unaPalabra;
-					if(estaEnMetadata(nombre_tabla)){
-
-						enviarANew(dtb_nuevo);
-						logInfo("Se envio a new el proceso");
-
-					} else{
-
-						enviarAEXIT(dtb_nuevo);
-						logInfo("La tabla no se encuentra en metadata");
-
-					}
+					 				enviarANew(dtb_nuevo);
+//					if(estaEnMetadata(nombre_tabla)){
+//
+//						enviarANew(dtb_nuevo);
+//						logInfo("Se envio a new el proceso");
+//
+//					} else{
+//
+//						enviarAEXIT(dtb_nuevo);
+//						logInfo("La tabla no se encuentra en metadata");
+//
+//					}
 
 }
 
@@ -372,18 +373,20 @@ void drop (char** args) {
 
 			DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,parametros);
 			dtb_nuevo->total_sentencias=1;
+			envairAnew(dtb_nuevo);
 
-			if(estaEnMetadata(nombre_tabla)){
 
-				enviarANew(dtb_nuevo);
-				logInfo("Se envio a new el proceso");
-
-			} else{
-
-				enviarAEXIT(dtb_nuevo);
-				logInfo("La tabla no se encuentra en metadata");
-
-			}
+//			if(estaEnMetadata(nombre_tabla)){
+//
+//				enviarANew(dtb_nuevo);
+//				logInfo("Se envio a new el proceso");
+//
+//			} else{
+//
+//				enviarAEXIT(dtb_nuevo);
+//				logInfo("La tabla no se encuentra en metadata");
+//
+//			}
 
 
 
