@@ -159,7 +159,9 @@ void crearTemporal(char* tabla)
 	{
 		char* testTable = malloc(strlen(tabla) + 1);
 		strcpy(testTable, tabla);
-		return 0 == strcmp(key->tabla, testTable);
+		int result = strcmp(key->tabla, testTable);
+		free(testTable);
+		return 0 == result;
 	}
 
 	bool estaTabla(t_TablaEnEjecucion* tablaDeLista)
@@ -424,12 +426,12 @@ void ejecutarCompactacion(char* tabla)
 			char* bloquesAsignados = escribirBloquesDeFs(keysDeParticion, strlen(keysDeParticion), tabla);
 			config_set_value(particion, "BLOCKS", bloquesAsignados);
 			config_save(particion);
+			pthread_mutex_unlock(&tablaEspecifica->compactacionActiva);
 			free(auxg);
 			free(sizedUse);
 			free(bloquesAsignados);
 			config_destroy(particion);
 			free(direccionParticion);
-			pthread_mutex_unlock(&tablaEspecifica->compactacionActiva);
 		}
 		free(keysDeParticion);
 	}

@@ -123,6 +123,7 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 	{
 		if(1 == existeTabla(nombre))
 		{
+			closedir(newdir);
 			logInfo( "FileSystem: La tabla que usted quiere crear ya existe");
 			free(tablename);
 			free(puntodemontaje);
@@ -130,6 +131,7 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 		}
 		else
 		{
+			closedir(newdir);
 			strcat(tablename,"/");
 			strncpy(buff + strlen(buff), tablename, strlen(tablename) + 1);
 			strcat(puntodemontaje, tablename);
@@ -143,7 +145,6 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 			{
 				perror("[ERROR] Error al crear Metadata, abortando");
 				logError( "FileSistem: Error al crear Metadata, abortando");
-				closedir(newdir);
 				free(tablename);
 				free(puntodemontaje);
 				return(1);
@@ -155,14 +156,9 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 				{
 					perror("[ERROR] Error al crear particiones, abortando");
 					logError( "FileSistem: Error al crear particiones, abortando");
-					closedir(newdir);
 					free(tablename);
 					free(puntodemontaje);
 					return(1);
-				}
-				else
-				{
-					closedir(newdir);
 				}
 			}
 			free(direccionFinal);
