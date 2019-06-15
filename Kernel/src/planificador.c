@@ -85,7 +85,7 @@ while(quantum >0 && dtb->flag != 1  && dtb->total_sentencias > 0 ) {
 		if(strcmp(args[0], "DROP")==0)
 		dtb->operacionActual= DROP_REQ;
 
-		if(strcmp(args[0], "DESCRIBE_REQ")==0)
+		if(strcmp(args[0], "DESCRIBE")==0)
 		dtb->operacionActual= DESCRIBE_REQ;
 
 
