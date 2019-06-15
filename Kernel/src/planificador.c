@@ -65,6 +65,8 @@ while(quantum >0 && dtb->flag != 1  && dtb->total_sentencias > 0 ) {
 
 		inicializarParametros(parametros);
 
+
+
 		char** args = string_split(dtb->tablaSentencias[dtb->sentenciaActual], " ");
 
 
@@ -139,14 +141,51 @@ switch(dtb->operacionActual) {
 		int largo_value = strlen(args[3]);
 		int largo_nombre_tabla = strlen(args[1]);
 		u_int16_t key = atoi(args[2]);
-		size_t tamanio_buffer = sizeof(uint16_t) + sizeof(int) + largo_nombre_tabla + sizeof(int) + largo_value;
+		int value_total =0;
+		int c =3;
+		while(args[c] != NULL ){
+
+		 value_total +=	strlen(args[c]);
+		 c++;
+		 value_total++;
+		}
+
+		char *stringEnviar = string_new();
+
+
+		int d=3;
+		while(args[d] != NULL ){
+
+			if(args[d+1] !=NULL ){
+		string_append(&stringEnviar, strcat(args[d], " "));
+			}
+
+			string_append(&stringEnviar,args[d]);
+
+		d++;
+
+				}
+
+
+		int largoStringEnviar =strlen(stringEnviar);
+
+		size_t tamanio_buffer = sizeof(uint16_t) + sizeof(int) + largo_nombre_tabla + sizeof(int) + value_total;
 		void* buffer = malloc(tamanio_buffer);
 		memcpy(buffer,&largo_nombre_tabla,sizeof(int));
 		memcpy(buffer + sizeof(int),args[1],largo_nombre_tabla);
 		memcpy(buffer+sizeof(int)+largo_nombre_tabla,&key,sizeof(u_int16_t));
-		memcpy(buffer+sizeof(int)+largo_nombre_tabla+sizeof(u_int16_t),&largo_value,sizeof(int));
-		memcpy(buffer+sizeof(int)+largo_nombre_tabla+sizeof(u_int16_t)+sizeof(int),args[3],largo_value);
+		memcpy(buffer+sizeof(int)+largo_nombre_tabla+sizeof(u_int16_t),&largoStringEnviar,sizeof(int));
+		memcpy(buffer+sizeof(int)+largo_nombre_tabla+sizeof(u_int16_t)+sizeof(int),stringEnviar,largoStringEnviar);
 
+//		int i =3;
+//		while(args[i] != NULL){
+//			int largo_value=0;
+//			largo_value = strlen(args[i]) +1;
+//			memcpy(buffer+sizeof(int)+largo_nombre_tabla+sizeof(u_int16_t),&largo_value,sizeof(int));
+//
+//			memcpy(buffer+sizeof(int)+largo_nombre_tabla+sizeof(u_int16_t)+sizeof(int),args[i],largo_value);
+//			i++;
+//		}
 
 
 		prot_enviar_mensaje(socket_memoria, INSERT_REQ, tamanio_buffer, buffer);
@@ -297,6 +336,7 @@ switch(dtb->operacionActual) {
 			metadataTabla = malloc(tamanio_mensaje + 1);
 			memcpy(metadataTabla, mensaje_memoria->payload + sizeof(int), tamanio_mensaje);
 			metadataTabla[tamanio_mensaje] = '\0';
+			printf(metadataTabla);
 			break;
 		}
 		case FULL_DESCRIBE:

@@ -143,6 +143,8 @@ int ejecutar_linea (char * linea){
 
 
 
+
+
 void selectt(char** args){
 	char* nombre_tabla = string_duplicate(args[1]);
 	uint16_t key = atoi(args[2]);
@@ -160,17 +162,17 @@ void selectt(char** args){
 	dtb_nuevo->quantum= tKernel->config->quantum;
 	dtb_nuevo->total_sentencias=1;
 
-	if(estaEnMetadata(nombre_tabla)){
-
-		enviarANew(dtb_nuevo);
-		logInfo("Se envio a new el proceso");
-
-	} else{
-
-		enviarAEXIT(dtb_nuevo);
-		logInfo("La tabla no se encuentra en metadata");
-
-	}
+//	if(estaEnMetadata(nombre_tabla)){
+//
+//		enviarANew(dtb_nuevo);
+//		logInfo("Se envio a new el proceso");
+//
+//	} else{
+//
+//		enviarAEXIT(dtb_nuevo);
+//		logInfo("La tabla no se encuentra en metadata");
+//
+//	}
 
 
 	char* tabla [100];
@@ -223,7 +225,7 @@ void inicializarParametros(params* params){
 
 void insert (char** args) {
 
-
+	// INSERT Tabla1|key|value
 	char* nombre_tabla = string_duplicate(args[0]);
 		uint16_t key = atoi(args[1]);
 		char* value = string_duplicate(args[2]);
@@ -237,24 +239,36 @@ void insert (char** args) {
 		parametros->arreglo[0] = nombre_tabla;
 		parametros->arreglo[1] = value;
 
+		int b =0;
+
+		char *unaPalabra = string_new();
+			 while( args[b] !=NULL){
+
+
+
+				 string_append(&unaPalabra, strcat(args[b], " "));
+				   b++;
+			   }
+
+
 
 		DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,parametros);
 		dtb_nuevo->total_sentencias=1;
-
-		if(estaEnMetadata(nombre_tabla)){
-
-			enviarANew(dtb_nuevo);
-			logInfo("Se envio a new el proceso");
-
-		} else{
-
-			enviarAEXIT(dtb_nuevo);
-			logInfo("La tabla no se encuentra en metadata");
-
-		}
+		dtb_nuevo->tablaSentencias[0]=unaPalabra;
+//		if(estaEnMetadata(nombre_tabla)){
+//
+//			enviarANew(dtb_nuevo);
+//			logInfo("Se envio a new el proceso");
+//
+//		} else{
+//
+//			enviarAEXIT(dtb_nuevo);
+//			logInfo("La tabla no se encuentra en metadata");
+//
+//		}
 		char* tabla [100];
 
-
+		enviarANew(dtb_nuevo);
 
 		free(nombre_tabla);
 
@@ -279,11 +293,28 @@ void create (char** args) {
 			parametros->arreglo[0] = nombre_tabla;
 			parametros->arreglo[1] = tipoConsistencia;
 
+			 int b =0;
+			 char *unaPalabra = string_new();
+				 while( args[b] !=NULL){
+
+
+
+					 string_append(&unaPalabra, strcat(args[b], " "));
+					   b++;
+				   }
+
+
+
+
+
+
 
 
 			DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,parametros);
-					dtb_nuevo->total_sentencias=1;
+		dtb_nuevo->total_sentencias=1;
 
+
+					 dtb_nuevo->tablaSentencias[0]=unaPalabra;
 					if(estaEnMetadata(nombre_tabla)){
 
 						enviarANew(dtb_nuevo);
@@ -322,6 +353,21 @@ void drop (char** args) {
 			inicializarParametros(parametros);
 
 			parametros->arreglo[0] = nombre_tabla;
+
+
+
+			char *unaPalabra = string_new();
+			int b =0;
+			while( args[b] !=NULL){
+
+
+
+			string_append(&unaPalabra, strcat(args[b], " "));
+			b++;
+
+
+				}
+
 
 
 			DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,parametros);
@@ -473,18 +519,18 @@ char * ch =string_new();
 
 
 
-   int b=0;
+       int b=0;
 
-   while( argus[b] !=NULL){
+       while( argus[b] !=NULL){
 
 
 
 	   dtb_nuevo->tablaSentencias[b]=argus[b];
 
 	   b++;
-   }
+       }
 
-   x=b;
+       x=b;
 //   for(b=0;b<=x;b++){
 //
 //
@@ -498,7 +544,12 @@ char * ch =string_new();
    enviarANew(dtb_nuevo);
   // logInfo("Se envio a new el proceso");
    printf("se envio a new el proceso");
-   }
+
+
+
+
+
+}
 
 
 
