@@ -28,8 +28,34 @@ typedef struct {
 }metadata;
 
 
+typedef struct {
 
 
+	int numero;
+	char* criterio;
+
+
+}tabla;
+
+
+
+
+
+
+
+
+typedef struct {
+
+int Read_Latency; // 30s: El tiempo promedio que tarda un SELECT en ejecutarse en los últimos 30 segundos.
+int Write_Latency; // 30s: El tiempo promedio que tarda un INSERT en ejecutarse en los últimos 30 segundos.
+int Reads ;// 30s: Cantidad de SELECT ejecutados en los últimos 30 segundos.
+int Writes; // 30s: Cantidad de INSERT ejecutados en los últimos 30 segundos.
+int Memory_Load [];  //(por cada memoria):  Cantidad de INSERT / SELECT que se ejecutaron en esa memoria respecto de las operaciones totales.
+
+
+}estadisticas;
+
+estadisticas * t_estadisticas;
 
 
 typedef struct  {
