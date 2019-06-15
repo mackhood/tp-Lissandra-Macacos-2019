@@ -320,6 +320,7 @@ void escucharMemoria(int* socket_memoria)
 				break;
 			}
 		}
+		prot_destruir_mensaje(mensaje_memoria);
 		if(memoriaDesconectada)
 		{
 			logInfo("Una memoria se ha desconectado");
