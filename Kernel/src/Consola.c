@@ -336,7 +336,24 @@ void describe (char** args) {
 
 
 
+	char *unaPalabra = string_new();
+				int b =0;
+				while( args[b] !=NULL){
 
+
+
+				string_append(&unaPalabra, strcat(args[b], " "));
+				b++;
+
+
+					}
+
+
+
+				DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,NULL);
+				dtb_nuevo->total_sentencias=1;
+				dtb_nuevo->tablaSentencias[0]=unaPalabra;
+				enviarANew(dtb_nuevo);
 
 
 

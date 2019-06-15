@@ -55,7 +55,7 @@ dtb->sentenciaActual=0;
 int socket_memoria = 0;
 
 
-//socket_memoria = conectar_a_servidor(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Memoria");
+socket_memoria = conectar_a_servidor(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Memoria");
 
 while(quantum >0 && dtb->flag != 1  && dtb->total_sentencias > 0 ) {
 
@@ -266,7 +266,7 @@ switch(dtb->operacionActual) {
 		memcpy(buffer + sizeof(int), nombre_tabla, largo_nombre_tabla);
 
 		//mando solicitud de drop de tabla a Memoria
-		prot_enviar_mensaje(socket_memoria, TABLE_DROP, tamanio_buffer, buffer);
+		prot_enviar_mensaje(socket_memoria, DROP_REQ, tamanio_buffer, buffer);
 		t_prot_mensaje* respuesta = prot_recibir_mensaje(socket_memoria);
 		dtb->sentenciaActual++;
 
