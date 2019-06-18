@@ -158,7 +158,7 @@ void AceptarYescucharKernel(){
 
 			case DESCRIBE_REQ:
 			{
-				if(req_recibida->payload){
+				if(req_recibida->tamanio_total>4){
 					int largo_nombre_tabla;
 					char* nombre_tabla;
 
@@ -249,6 +249,13 @@ void AceptarYescucharKernel(){
 				printf("Hubo un error re zarpado\n");
 				connected = false;
 			} break;
+
+
+			case GOSSIPING:
+			{
+
+
+			}break;
 
 			default:
 			{
