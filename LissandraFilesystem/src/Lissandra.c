@@ -233,9 +233,11 @@ void escucharMemoria(int* socket_memoria)
 					}
 					else
 					{
-						size_t tamanioBuffer = strlen(buffer);
+						int tamanio_buffer = strlen(buffer);
+						size_t tamanioBuffer = sizeof(int) + tamanio_buffer;
 						void* messageBuffer = malloc(tamanioBuffer + 1);
-						memcpy(messageBuffer, buffer, strlen(buffer));
+						memcpy(messageBuffer, &tamanio_buffer, sizeof(int));
+						memcpy(messageBuffer + sizeof(int), buffer, strlen(buffer));
 						prot_enviar_mensaje(socket, POINT_DESCRIBE, tamanioBuffer, messageBuffer);
 						logInfo( "Lissandra: Se ha enviado la metadata de la %s a Memoria.", tablaRecibida);
 						free(messageBuffer);

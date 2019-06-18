@@ -39,6 +39,7 @@ typedef enum{
 	INSERT_REALIZADO,
 	DROP_REQ,
 	DESCRIBE_REQ,
+	GOSSIPING,
 
 	//Memoria-FileSystem
 	HANDSHAKE,
