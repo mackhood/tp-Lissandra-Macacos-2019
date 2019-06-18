@@ -86,19 +86,18 @@ void initConfiguracion(){
 void initThread(){
 
 	logInfo("Creando thread para atender las conexiones de memoria");
-	//pthread_create(&threadConexionMemoria, NULL, (void*) handler_conexion_memoria, tKernel);
+	pthread_create(&threadConexionMemoria, NULL, (void*) handler_conexion_memoria, tKernel);
 	logInfo("Creando thread para el funcionamiento de la consola");
 	pthread_create(&threadConsola, NULL, (void*)handleConsola,NULL);
 	pthread_create(&threadInterPlanificador,NULL,(void*)interPlanificador,NULL);
-	pthread_create(&threadEstadisticas, NULL, (void*)handleConsola,NULL);
-
+	pthread_create(&threadEstadisticas, NULL, (void*)handleEstadisticas,NULL);
 
 	pthread_create(&threadPlanificador, NULL, (void*)pasarArunnign(),NULL);
 	pthread_detach(threadPlanificador );
 
 	pthread_detach(threadConsola );
 	pthread_detach(threadInterPlanificador);
-//	pthread_detach(threadConexionMemoria);
+	pthread_detach(threadConexionMemoria);
 
 }
 
@@ -128,6 +127,34 @@ void reestablecerEstadisticas(){
 }
 
 
+
+void handleEstadisticas(){
+
+
+	while(1){
+
+
+			logInfo(t_estadisticas->Reads);
+			logInfo(t_estadisticas ->Read_Latency);
+			logInfo(t_estadisticas->Write_Latency);
+			logInfo(t_estadisticas->Writes);
+
+
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+}
 
 
 
