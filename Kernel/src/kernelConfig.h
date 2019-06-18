@@ -106,6 +106,7 @@ typedef struct {
 	int primerConexion; //falg utilizado para conectarse por primera vez
 	t_list* memoriasSinCriterio;
 	t_list* memoriasConCriterio;
+	t_list* memorias;
 }t_kernel;
 
 criterios* t_Criterios;

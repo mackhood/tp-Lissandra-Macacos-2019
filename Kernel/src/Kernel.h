@@ -39,6 +39,6 @@ pthread_t threadConexionMemoria;
 pthread_t threadConsola;
 pthread_t threadPlanificador;
 pthread_t	threadInterPlanificador;
-
+pthread_t threadEstadisticas;
 
 #endif /* KERNEL_H_ */
