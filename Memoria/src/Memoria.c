@@ -111,92 +111,116 @@ void gossiping(){
 	//Comienza gossip: Se descubren y conocen demás memorias
 
 
-			while (NULL != ip_seeds[i])
+	while (NULL != ip_seeds[i])
+	{
+		//Intento conectarme a la seed.
+
+		char* ip_a_conectar = ip_seeds[i];
+		char* puerto = puerto_seeds[i];
+
+		int puerto_a_conectar = atoi(puerto);
+
+		socket_memoria = conectar_a_memoria_flexible(ip_a_conectar, puerto_a_conectar, "Memoria Gossiping");
+
+		//Consulto si se pudo conectar a la memoria seed
+		if (socket_memoria == -3)
+		{
+			//Aca entro si NO se pudo conectar. Esto significa que, o no fue levantada, o se desconectó
+			//Verifico si es la primera memoria a la que intento conectarme
+
+			if (list_is_empty(tabla_gossip))
 			{
-				//Intento conectarme a la seed.
+			//No fue levantada -> Indico en mi tabla Gossip que sólo yo existo.
+			logInfo("La memoria a la que se intenta conectar no fue levantada");
 
-				char* ip_a_conectar = ip_seeds[i];
-				char* puerto = puerto_seeds[i];
+			t_est_memoria* nuevaMemoria = malloc(sizeof(t_est_memoria));
 
-				int puerto_a_conectar = atoi(puerto);
+			nuevaMemoria->ip_memoria = info_memoria.ip_memoria;
+			nuevaMemoria->puerto_memoria = info_memoria.puerto;
+			nuevaMemoria->numero_memoria = info_memoria.numero_memoria;
 
-				socket_memoria = conectar_a_memoria_flexible(ip_a_conectar, puerto_a_conectar, "Memoria Gossiping");
+			list_add(tabla_gossip, nuevaMemoria);
+			}else
+			{
+				/* Si entro acá, la tabla gossip NO está vacía.
+				 * Verifico si contengo la memoria en la tabla gossip.
+				 * Si está, significa que fue desconectada en algún momento, por ende tengo que borrarla de mi tabla
+				 */
 
-				if (socket_memoria == -3)
+				bool conteniaEnTabla (t_est_memoria* memoria)
 				{
-					// Si no fue levantada -> Indico en mi tabla Gossip que sólo yo existo.
-					logInfo("Falló conexion con memoria");
-
-					t_est_memoria* nuevaMemoria = malloc(sizeof(t_est_memoria));
-
-					nuevaMemoria->ip_memoria = info_memoria.ip_memoria;
-					nuevaMemoria->puerto_memoria = info_memoria.puerto;
-					nuevaMemoria->numero_memoria = info_memoria.numero_memoria;
-
-					list_add(tabla_gossip, nuevaMemoria);
-
-					break;
-
-				}
-				else
-				{
-					/*	Si fue levantada -> intercambian su tabla gossip agregando nodos faltantes.
-						Una memoria conoce las que conoce la otra.
-					*/
-
-
-					logInfo("Se conectó con otra memoria");
-
-					//Solicito tabla de gossip a la otra memoria. Ella me va a mandar elemento por elemento.
-
-					prot_enviar_mensaje(socket_memoria, SOLICITUD_GOSSIP, 0, NULL);
-
-					t_prot_mensaje* mensaje_con_memoria = prot_recibir_mensaje(socket_memoria);
-
-
-					//La otra memoria me manda su tabla gossip (memoria por memoria) (numero + ip + puerto)
-
-					//Contemplar envío de todas las memorias de la tabla gossip juntas  por medio de un char* y parsear.
-
-					int numero_mandado;
-					char* ip_mandado;
-					int puerto_mandado;
-
-					memcpy(&numero_mandado, mensaje_con_memoria->payload, sizeof(int));
-					memcpy(ip_mandado, mensaje_con_memoria->payload+sizeof(int), IP_SIZE);
-					memcpy(&puerto_mandado, mensaje_con_memoria->payload+sizeof(int)+IP_SIZE, sizeof(int));
-
-					prot_destruir_mensaje(mensaje_con_memoria);
-
-					int tamanio = list_size(tabla_gossip);
-					bool laContiene = false;
-
-					for (int i=0; i<tamanio; i++)
-						{
-							t_est_memoria* nodoActual = list_get(tabla_gossip, i);
-
-							if(nodoActual->numero_memoria == numero_mandado)
-							{
-								laContiene = true;
-								break;
-							}
-						}
-
-					if(!laContiene)
+					if (memoria->puerto_memoria == puerto_a_conectar)
 					{
-						t_est_memoria* nuevaMemoria = malloc(sizeof(t_est_memoria));
-
-						nuevaMemoria->numero_memoria = numero_mandado;
-						nuevaMemoria->ip_memoria = ip_mandado;
-						nuevaMemoria->puerto_memoria = puerto_mandado;
-
-						list_add(tabla_gossip, nuevaMemoria);
-
+						return 1;
 					}
-
+					return 0;
 				}
 
-				i++;
+				list_remove_and_destroy_by_condition(tabla_gossip, (void*)conteniaEnTabla, &free);
+				//Acá elimino la memoria de mi tabla gossip, falta saber cómo hacer que se enteren las demas que no se conectan directamente con ella.
+
 			}
+
+		}
+		else
+		{
+			/*	Si fue levantada -> intercambian su tabla gossip agregando nodos faltantes.
+				Una memoria conoce las que conoce la otra.
+			*/
+
+			logInfo("Se conectó con otra memoria");
+
+			//Solicito tabla de gossip a la otra memoria. Ella me va a mandar elemento por elemento.
+
+			prot_enviar_mensaje(socket_memoria, SOLICITUD_GOSSIP, 0, NULL);
+
+			t_prot_mensaje* mensaje_con_memoria = prot_recibir_mensaje(socket_memoria);
+
+			//La otra memoria me manda su tabla gossip (memoria por memoria) (numero + ip + puerto)
+
+			//Contemplar envío de todas las memorias de la tabla gossip juntas  por medio de un char* y parsear.
+
+			int numero_mandado;
+			char* ip_mandado;
+			int puerto_mandado;
+
+			memcpy(&numero_mandado, mensaje_con_memoria->payload, sizeof(int));
+			memcpy(&ip_mandado, mensaje_con_memoria->payload+sizeof(int), IP_SIZE);
+			memcpy(&puerto_mandado, mensaje_con_memoria->payload+sizeof(int)+IP_SIZE, sizeof(int));
+
+			prot_destruir_mensaje(mensaje_con_memoria);
+
+			int tamanio = list_size(tabla_gossip);
+
+
+			bool contieneMemoria (void* memoria)
+			{
+				t_est_memoria* memoria_a_comparar = (void*)memoria;
+
+				if(memoria_a_comparar->numero_memoria == numero_mandado)
+				{return 1;}
+
+				else
+				{return 0;}
+			}
+
+			bool laContiene = list_any_satisfy(tabla_gossip, contieneMemoria);
+
+			if(!laContiene)
+			{
+				t_est_memoria* nuevaMemoria = malloc(sizeof(t_est_memoria));
+
+				nuevaMemoria->numero_memoria = numero_mandado;
+				nuevaMemoria->ip_memoria = ip_mandado;
+				nuevaMemoria->puerto_memoria = puerto_mandado;
+
+				list_add(tabla_gossip, nuevaMemoria);
+
+			}
+
+		}
+
+		i++;
+	}
 
 }
