@@ -253,7 +253,44 @@ void AceptarYescucharKernel(){
 
 			case GOSSIPING:
 			{
+				int tamanio_tabla = list_size(tabla_gossip);
+				int tamanio_buffer = 0;
 
+				for (int i=0; i<tamanio_tabla; i++)
+				{
+					t_est_memoria* memoria = list_get(tabla_gossip, i);
+					int tamanio_memoria = strlen(memoria->ip_memoria)+sizeof(memoria->puerto_memoria)+2;
+					tamanio_buffer += tamanio_memoria;
+				}
+
+				char* buffer = malloc(tamanio_buffer+1);
+				bool primeraLectura = true;
+
+				for (int i=0; i<tamanio_tabla; i++)
+				{
+					t_est_memoria* memoria= list_get(tabla_gossip, i);
+					if(primeraLectura){
+						strcpy(buffer, memoria->ip_memoria);
+						primeraLectura = false;
+					}
+					else
+					{
+						strcat(buffer, memoria->ip_memoria);
+					}
+
+					strcat(buffer, ",");
+					char* puerto = string_itoa(memoria->puerto_memoria);
+					strcat(buffer, puerto);
+					strcat(buffer, ";");
+				}
+
+				int tamanio_buffer_kernel = sizeof(int) + tamanio_buffer;
+
+				void* buffer_kernel = malloc(tamanio_buffer_kernel);
+
+				memcpy(buffer_kernel, &tamanio_buffer, sizeof(int));
+				memcpy(buffer_kernel+sizeof(int), buffer, tamanio_buffer);
+				prot_enviar_mensaje(socket_kernel, GOSSIPING, tamanio_buffer_kernel, buffer_kernel);
 
 			}break;
 

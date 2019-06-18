@@ -104,6 +104,9 @@ void setearValores(){
 
 void gossiping(){
 
+	pthread_mutex_lock(&mutex_gossiping_memoria);
+	list_clean(tabla_gossip);
+
 	char** ip_seeds = info_memoria.ip_seeds;
 	char** puerto_seeds = info_memoria.puerto_seeds;
 	int i=0;
@@ -190,8 +193,6 @@ void gossiping(){
 
 			prot_destruir_mensaje(mensaje_con_memoria);
 
-			int tamanio = list_size(tabla_gossip);
-
 
 			bool contieneMemoria (void* memoria)
 			{
@@ -204,6 +205,7 @@ void gossiping(){
 				{return 0;}
 			}
 
+			//verifico si contengo la memoria. Si no está, la agrego a mi tabla gossip.
 			bool laContiene = list_any_satisfy(tabla_gossip, contieneMemoria);
 
 			if(!laContiene)
@@ -222,5 +224,7 @@ void gossiping(){
 
 		i++;
 	}
+
+	pthread_mutex_unlock(&mutex_gossiping_memoria);
 
 }
