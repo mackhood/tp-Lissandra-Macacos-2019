@@ -66,12 +66,16 @@ void initConfiguracion(){
 				kernelConfig->quantum,
 				kernelConfig->sleep_ejecucion
 	);
-	t_list* criterioss = list_create();
+	t_list* memoriasGossiping = list_create();
+	t_list* memorias = list_create();
 	tKernel = malloc(sizeof(t_kernel));
 	tKernel->config = kernelConfig;
-	tKernel->memoriasSincriterio = criterioss;
+	tKernel->memoriasSinCriterio = memoriasGossiping;
+	tKernel->memoriasConCriterio = memorias;
 	initConfigAdminColas();
 	crearPrimerMemoria();
+	reestablecerEstadisticas();
+
 }
 
 
@@ -109,6 +113,20 @@ while(1){
 
 
 
+void reestablecerEstadisticas(){
+
+
+	t_estadisticas->Reads = 0;
+	t_estadisticas ->Read_Latency = 0;
+	t_estadisticas->Write_Latency =0;
+	t_estadisticas->Writes = 0;
+
+
+}
+
+
+
+
 
 
 void crearPrimerMemoria(){
@@ -120,6 +138,8 @@ void crearPrimerMemoria(){
 
 	t_Criterios = malloc(sizeof(criterios));
 	t_Criterios->strongConsistency = (memoria*)crearMemoria(tKernel->config->puerto_memoria,tKernel->config->ip_memoria);
+
+
 
 	configuracion = memoriaNueva;
 
@@ -147,6 +167,10 @@ memoria* crearMemoria(int puerto,char* ip){
 	nuevaMemoria->numeroMemoria = getIdMemoria();
 	nuevaMemoria->estaEjecutando =0;
 	nuevaMemoria->ip = ip;
+	nuevaMemoria->estadisticasMemoria->Read_Latency = 0;
+	nuevaMemoria->estadisticasMemoria->Write_Latency = 0;
+	nuevaMemoria->estadisticasMemoria->Reads = 0;
+	nuevaMemoria->estadisticasMemoria->Writes = 0;
 
 	return nuevaMemoria;
 }
