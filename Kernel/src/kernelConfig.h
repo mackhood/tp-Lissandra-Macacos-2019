@@ -46,11 +46,13 @@ typedef struct {
 
 typedef struct {
 
-int Read_Latency; // 30s: El tiempo promedio que tarda un SELECT en ejecutarse en los últimos 30 segundos.
-int Write_Latency; // 30s: El tiempo promedio que tarda un INSERT en ejecutarse en los últimos 30 segundos.
+double Read_Latency; // 30s: El tiempo promedio que tarda un SELECT en ejecutarse en los últimos 30 segundos.
+double Write_Latency; // 30s: El tiempo promedio que tarda un INSERT en ejecutarse en los últimos 30 segundos.
 int Reads ;// 30s: Cantidad de SELECT ejecutados en los últimos 30 segundos.
 int Writes; // 30s: Cantidad de INSERT ejecutados en los últimos 30 segundos.
-int Memory_Load [];  //(por cada memoria):  Cantidad de INSERT / SELECT que se ejecutaron en esa memoria respecto de las operaciones totales.
+//int Memory_Load [];  //(por cada memoria):  Cantidad de INSERT / SELECT que se ejecutaron en esa memoria respecto de las operaciones totales.
+//int  Memory_Load_Select [];
+//int Memory_Load_Insert [];
 
 
 }estadisticas;
@@ -65,6 +67,9 @@ int numeroMemoria;
 int estaEjecutando;
 int puerto;
 char * ip;
+estadisticas * estadisticasMemoria;
+
+
 
 }memoria;
 
@@ -99,7 +104,8 @@ typedef struct {
 	kernel_config* config;
 	int cantMemoriasPool;
 	int primerConexion; //falg utilizado para conectarse por primera vez
-	t_list* memoriasSincriterio;
+	t_list* memoriasSinCriterio;
+	t_list* memoriasConCriterio;
 }t_kernel;
 
 criterios* t_Criterios;
