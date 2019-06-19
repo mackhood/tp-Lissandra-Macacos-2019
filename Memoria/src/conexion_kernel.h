@@ -2,6 +2,9 @@
 #define CONEXION_KERNEL_H_
 
 #include "Request.h"
+#include "stdlib.h"
+#include "stdio.h"
+#include "string.h"
 
 void AceptarYescucharKernel();
 
