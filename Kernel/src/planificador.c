@@ -130,13 +130,16 @@ while(quantum >0 && dtb->flag != 1  && dtb->total_sentencias > 0 ) {
 
 			if(args[1]== NULL ){
 
+			memoria * memoriaConectar  =queue_pop(tKernel->memoriasCola);
 
-
+		socket_memoria = conectar_a_servidor(memoriaConectar->ip, memoriaConectar->puerto, "KERNEL");
 
 
 
 			}
 			else{
+
+				//
 
 
 
