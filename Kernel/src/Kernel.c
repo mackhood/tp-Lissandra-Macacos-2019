@@ -133,16 +133,102 @@ void handleEstadisticas(){
 
 	while(1){
 
+			logInfo("Estadisticas globales de todos los criterios");
+			logInfo(string_itoa(t_estadisticas->Reads));
+			logInfo(string_itoa(t_estadisticas ->Read_Latency));
+			logInfo(string_itoa(t_estadisticas->Write_Latency));
+			logInfo(string_itoa(t_estadisticas->Writes));
+			int i;
+			for( i=0 ; i< list_size(tKernel->memorias);i++){
 
-			logInfo(t_estadisticas->Reads);
-			logInfo(t_estadisticas ->Read_Latency);
-			logInfo(t_estadisticas->Write_Latency);
-			logInfo(t_estadisticas->Writes);
+			memoria* unaMemoria =	list_get(tKernel->memoriasConCriterio,i);
+			logInfo("Memoria Numero : %d ", unaMemoria->numeroMemoria);
+
+			logInfo("Criterio SC:");
+
+			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Read_Latency));
+			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Reads));
+			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Write_Latency));
+			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Writes));
+
+			if(unaMemoria->selectTotales == 0){
+
+
+				logInfo("Memory Load para SC de esta memoria es 0");
+
+			}else{
+
+
+				logInfo("Memory Load para SC de esta memoria es : %f", unaMemoria->insertsTotales / unaMemoria->selectTotales);
+
+
+
+			}
+
+
+			logInfo("Criterio SHC:");
+
+
+
+			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Read_Latency));
+			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Reads));
+			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Write_Latency));
+			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Writes));
+
+			if(unaMemoria->selectTotales == 0){
+
+
+				logInfo("Memory Load para SHC de esta memoria es 0");
+
+			}else{
+
+
+				logInfo("Memory Load para SHC de esta memoria es : %f", unaMemoria->insertsTotales / unaMemoria->selectTotales);
+
+
+
+			}
+
+
+
+
+			logInfo("Criterio EC:");
 
 
 
 
 
+			logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Read_Latency));
+			logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Reads));
+			logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Write_Latency));
+			logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Writes));
+
+			if(unaMemoria->selectTotales == 0){
+
+
+				logInfo("Memory Load para EC de esta memoria es 0");
+
+			}else{
+
+
+				logInfo("Memory Load para EC de esta memoria es : %f", unaMemoria->insertsTotales / unaMemoria->selectTotales);
+
+
+
+			}
+
+
+
+			reestablecerEstadisticasMemoria(unaMemoria);
+
+
+			}
+
+
+			reestablecerEstadisticas();
+
+
+			sleep(30);
 
 
 
@@ -202,12 +288,45 @@ memoria* crearMemoria(int puerto,char* ip){
 	estructura->Reads = 0;
 	estructura->Write_Latency = 0;
 	estructura->Writes = 0;
-	nuevaMemoria->estadisticasMemoria = estructura;
+	nuevaMemoria->estadisticasMemoriaSC = estructura;
+	nuevaMemoria->estadisticasMemoriaSHC = estructura;
+	nuevaMemoria->estadisticasMemoriaEC = estructura;
+	nuevaMemoria->insertsTotales=0;
+	nuevaMemoria->selectTotales=0;
 
 	return nuevaMemoria;
 }
 
 
+void reestablecerEstadisticasMemoria(memoria * unaMemoria) {
+
+
+
+unaMemoria->estadisticasMemoriaEC->Read_Latency=0;
+unaMemoria->estadisticasMemoriaEC->Reads=0;
+unaMemoria->estadisticasMemoriaEC->Write_Latency=0;
+unaMemoria->estadisticasMemoriaEC->Writes=0;
+
+
+
+unaMemoria->estadisticasMemoriaSC->Read_Latency=0;
+unaMemoria->estadisticasMemoriaSC->Reads=0;
+unaMemoria->estadisticasMemoriaSC->Write_Latency=0;
+unaMemoria->estadisticasMemoriaSC->Writes=0;
+
+
+
+unaMemoria->estadisticasMemoriaSHC->Read_Latency=0;
+unaMemoria->estadisticasMemoriaSHC->Reads=0;
+unaMemoria->estadisticasMemoriaSHC->Write_Latency=0;
+unaMemoria->estadisticasMemoriaSHC->Writes=0;
+
+
+
+
+
+
+}
 
 
 

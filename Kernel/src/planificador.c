@@ -67,15 +67,36 @@ dtb->sentenciaActual=0;
 int socket_memoria = 0;
 
 
+
+
+
+
 socket_memoria = conectar_a_servidor(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Memoria");
 
 while(quantum >0 && dtb->flag != 1  && dtb->total_sentencias > 0 ) {
 
-	params* parametros = malloc( sizeof(params) );
-	inicializarParametros(parametros);
 
 
-		inicializarParametros(parametros);
+//	SELECT
+//	INSERT
+//	CREATE
+//	DESCRIBE
+//	DROP
+
+
+
+
+
+
+
+
+
+
+//	params* parametros = malloc( sizeof(params) );
+//	inicializarParametros(parametros);
+//
+//
+//		inicializarParametros(parametros);
 
 
 
@@ -102,6 +123,33 @@ while(quantum >0 && dtb->flag != 1  && dtb->total_sentencias > 0 ) {
 
 
 		dtb->total_sentencias--;
+
+
+		if(dtb->operacionActual ==SELECT_REQ || dtb->operacionActual == INSERT_REQ || dtb->operacionActual == CREATE_REQ || dtb->operacionActual == DROP_REQ || dtb->operacionActual ==DESCRIBE_REQ)
+		{
+
+			if(args[1]== NULL ){
+
+
+
+
+
+
+			}
+			else{
+
+
+
+
+
+
+			}
+
+
+		}
+
+
+
 
 switch(dtb->operacionActual) {
 
@@ -252,10 +300,17 @@ switch(dtb->operacionActual) {
 									}
 
 
-									if(!list_any_satisfy(tMetadata->tablas,(void*)estaEnMetadata))
-									list_add(tMetadata->tablas,nombre_tabla);
+									if(!list_any_satisfy(tMetadata->tablas,(void*)estaEnMetadata)){
+
+										tabla* nuevaTabla = malloc(sizeof(tabla));
+										nuevaTabla->criterio = tipo_consistencia;
+										nuevaTabla->nombre= nombre_tabla;
+
+										list_add(tMetadata->tablas,nuevaTabla);
 
 							printf("la tabla fue creada\n");
+
+									}
 						}break;
 						case TABLA_CREADA_YA_EXISTENTE:{
 						printf("la tabla ya se encuentra existente\n");

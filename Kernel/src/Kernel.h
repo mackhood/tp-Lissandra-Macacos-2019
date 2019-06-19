@@ -32,7 +32,7 @@ void initConfiguracion();
 void initThreadAPI ();
 void setearValores(t_config * archivoConfig);
 void interPlanificador();
-
+void handleEstadisticas();
 
 
 pthread_t threadConexionMemoria;

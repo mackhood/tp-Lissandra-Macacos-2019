@@ -418,10 +418,20 @@ void journal (char** args) {
 
 
 
+	//send journal to all memories in tKernel->memoriasConCriterio; Implementar en planificador
+
+
 
 
 }
 void add (char** args) {
+
+
+	int memoria = atoi(strdup(args[2]));
+	char* criterio = strdup(args[4]);
+
+
+
 
 
 

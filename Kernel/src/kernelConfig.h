@@ -31,7 +31,7 @@ typedef struct {
 typedef struct {
 
 
-	int numero;
+	char* nombre;
 	char* criterio;
 
 
@@ -67,9 +67,11 @@ int numeroMemoria;
 int estaEjecutando;
 int puerto;
 char * ip;
-estadisticas * estadisticasMemoria;
-
-
+estadisticas * estadisticasMemoriaSC;
+estadisticas * estadisticasMemoriaSHC;
+estadisticas * estadisticasMemoriaEC;
+int insertsTotales;
+int selectTotales;
 
 }memoria;
 
@@ -107,6 +109,7 @@ typedef struct {
 	t_list* memoriasSinCriterio;
 	t_list* memoriasConCriterio;
 	t_list* memorias;
+	t_queue * memoriasCola;
 }t_kernel;
 
 criterios* t_Criterios;
