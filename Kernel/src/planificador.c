@@ -506,26 +506,25 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 					}
 
 
-					memoria* masMemoria;
-				bool estaEnSC(memoria* memoriaAux2) {
-					return  numero_memoria == memoriaAux2->numeroMemoria;
+					memoria* memoriaAReemplazar;
+					bool estaLaDeSC(memoria* memoriaAux2) {
+						return  t_Criterios->strongConsistency->numeroMemoria == memoriaAux2->numeroMemoria;
+					}
+
+					if(!list_any_satisfy(t_Criterios->StrongHash,(void*)estaLaDeSC) &&
+							!list_any_satisfy(t_Criterios->eventualConsistency->elements,(void*) estaLaDeSC)){
+
+
+						pthread_mutex_lock(&memoriasCriterio);
+						memoriaAReemplazar =list_remove_by_condition(tKernel->memoriasConCriterio,(void*) estaLaDeSC);
+						pthread_mutex_unlock(&memoriasCriterio);
+						pthread_mutex_lock(&memoriasSinCriterio);
+						list_add(tKernel->memoriasSinCriterio,memoriaAReemplazar);
+						pthread_mutex_unlock(&memoriasSinCriterio);
+
+
+					}
 				}
-
-				if(list_find(tKernel->memoriasConCriterio,(void*)estaEnSC)!= NULL ){
-
-					pthread_mutex_lock(&memoriasSinCriterio);
-					masMemoria =list_remove_by_condition(tKernel->memoriasSinCriterio,(void*) estaEnSC);
-					pthread_mutex_unlock(&memoriasSinCriterio);
-					pthread_mutex_lock(&memoriasCriterio);
-					list_add(tKernel->memoriasConCriterio,masMemoria);
-					pthread_mutex_unlock(&memoriasCriterio);
-
-
-				}
-				}
-
-
-
 
 
 
@@ -535,13 +534,10 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 
 
-		}
 
 
 
-
-
-		break;
+			break;
 
 		}
 
@@ -559,32 +555,35 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 			printf("Invalid operation\n" );
 
+		}
+
+
+
 	}
 
-
-
-}
-
-if(dtb->flag){
-	logInfo("Fallo , se suspende todo");
-	moverExecToExit(dtb);
-
-	close(socket_memoria);
-
-
-}else{
-
-	if(dtb->total_sentencias == 0){
-
-		logInfo("Finalizo");
+	if(dtb->flag){
+		logInfo("Fallo , se suspende todo");
 		moverExecToExit(dtb);
+
 		close(socket_memoria);
+
 
 	}else{
 
-		logInfo("Fin de quantum");
-		moverExecToReady(dtb);
-		close(socket_memoria);
+		if(dtb->total_sentencias == 0){
+
+			logInfo("Finalizo");
+			moverExecToExit(dtb);
+			close(socket_memoria);
+
+		}else{
+
+			logInfo("Fin de quantum");
+			moverExecToReady(dtb);
+			close(socket_memoria);
+
+		}
+
 
 	}
 
@@ -592,5 +591,7 @@ if(dtb->flag){
 }
 
 
-}
+
+
+
 
