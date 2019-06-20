@@ -40,6 +40,8 @@ typedef enum{
 	DROP_REQ,
 	DESCRIBE_REQ,
 	GOSSIPING,
+	JOURNAL_REQ,
+	ADD_REQ,
 
 	//Memoria-FileSystem
 	HANDSHAKE,

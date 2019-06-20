@@ -18,7 +18,12 @@
 
 pthread_mutex_t mutexIdGDT;
 pthread_mutex_t mutexIdMemoria;
-
+pthread_mutex_t sc;
+pthread_mutex_t ec;
+pthread_mutex_t shc;
+pthread_mutex_t memoriasCriterio;
+pthread_mutex_t memoriasSinCriterio;
+pthread_mutex_t memoriasCola;
 
 typedef struct {
 

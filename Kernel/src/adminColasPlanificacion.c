@@ -30,6 +30,16 @@ void initConfigAdminColas(){
 	pthread_mutex_init(&mutexListEjecucion, NULL);
 	pthread_mutex_init(&mutexListPendReady, NULL);
 	pthread_mutex_init(&mutexListcolaPrioridad, NULL);
+	pthread_mutex_init(&shc,NULL);
+	pthread_mutex_init(&sc,NULL);
+	pthread_mutex_init(&ec,NULL);
+	pthread_mutex_init(&memoriasCola,NULL);
+	pthread_mutex_init(&memoriasCriterio,NULL);
+	pthread_mutex_init(&memoriasSinCriterio,NULL);
+
+
+
+
 
 	sem_init(&semPCbNew,0,0);
 	sem_init(&semPcbReady,0,0);

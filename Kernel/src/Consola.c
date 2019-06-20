@@ -367,10 +367,10 @@ void drop (char** args) {
 
 			//char* key = string_duplicate(args[2]);
 
-			params* parametros = malloc( sizeof(params) );
-			inicializarParametros(parametros);
-
-			parametros->arreglo[0] = nombre_tabla;
+//			params* parametros = malloc( sizeof(params) );
+//			inicializarParametros(parametros);
+//
+//			parametros->arreglo[0] = nombre_tabla;
 
 
 
@@ -388,7 +388,7 @@ void drop (char** args) {
 
 
 
-			DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,parametros);
+			DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,NULL);
 			dtb_nuevo->total_sentencias=1;
 			dtb_nuevo->tablaSentencias[0]=unaPalabra;
 			enviarANew(dtb_nuevo);
@@ -417,18 +417,54 @@ void drop (char** args) {
 void journal (char** args) {
 
 
+	char *unaPalabra = string_new();
+	int b =0;
+	while( args[b] !=NULL){
+
+
+
+	string_append(&unaPalabra, strcat(args[b], " "));
+	b++;
+
+
+		}
 
 	//send journal to all memories in tKernel->memoriasConCriterio; Implementar en planificador
 
-
+	DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,NULL);
+				dtb_nuevo->total_sentencias=1;
+				dtb_nuevo->tablaSentencias[0]=unaPalabra;
+				enviarANew(dtb_nuevo);
 
 
 }
 void add (char** args) {
 
 
-	int memoria = atoi(strdup(args[2]));
-	char* criterio = strdup(args[4]);
+//	int memoria = atoi(strdup(args[2]));
+//	char* criterio = strdup(args[4]);
+
+
+
+	char *unaPalabra = string_new();
+		int b =0;
+		while( args[b] !=NULL){
+
+
+
+		string_append(&unaPalabra, strcat(args[b], " "));
+		b++;
+
+
+			}
+
+		//send journal to all memories in tKernel->memoriasConCriterio; Implementar en planificador
+
+		DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,NULL);
+					dtb_nuevo->total_sentencias=1;
+					dtb_nuevo->tablaSentencias[0]=unaPalabra;
+					enviarANew(dtb_nuevo);
+
 
 
 
