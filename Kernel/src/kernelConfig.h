@@ -41,7 +41,7 @@ typedef struct {
 
 
 
-
+bool destProtocol;
 
 
 

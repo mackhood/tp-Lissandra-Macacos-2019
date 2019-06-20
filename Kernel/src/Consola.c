@@ -24,11 +24,7 @@ COMANDO comandos[] = {
 		{"journal",journal},
 		{"add",add},
 		{"run",run},
-		{"Read Latency",readLatency},
-		{"Write Latency",writeLatency},
-		{"Reads",reads},
-		{"Writes",writes},
-		{"Memory Load",memoryLoad},
+		{"metrics",metrics},
 		{(char *) NULL, (Funcion *) NULL}
 }; // para generalizar las funciones reciben un string.
 
@@ -57,7 +53,8 @@ void handleConsola(){
 
 		if (strcmp(linea, "exit")==0){
 			free(linea);
-			puts("EXIT.");
+			destProtocol = 1;
+			puts("El Kernel ha sido desconectado.");
 			break;
 		}
 
@@ -618,55 +615,100 @@ char * ch =string_new();
 
 }
 
+void metrics (char ** args) {
+
+
+
+
+	logInfo("Estadisticas globales de todos los criterios");
+	logInfo(string_itoa(t_estadisticas->Reads));
+	logInfo(string_itoa(t_estadisticas ->Read_Latency));
+	logInfo(string_itoa(t_estadisticas->Write_Latency));
+	logInfo(string_itoa(t_estadisticas->Writes));
+	int i;
+	for( i=0 ; i< list_size(tKernel->memorias);i++){
+
+	memoria* unaMemoria =	list_get(tKernel->memoriasConCriterio,i);
+	logInfo("Memoria Numero : %d ", unaMemoria->numeroMemoria);
+
+	logInfo("Criterio SC:");
+
+	logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Read_Latency));
+	logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Reads));
+	logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Write_Latency));
+	logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Writes));
+
+	if(unaMemoria->selectTotales == 0){
+
+
+		logInfo("Memory Load para SC de esta memoria es 0");
+
+	}else{
+
+
+		logInfo("Memory Load para SC de esta memoria es : %f", unaMemoria->insertsTotales / unaMemoria->selectTotales);
+
+
+
+	}
+
+
+	logInfo("Criterio SHC:");
+
+
+
+	logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Read_Latency));
+	logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Reads));
+	logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Write_Latency));
+	logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Writes));
+
+	if(unaMemoria->selectTotales == 0){
+
+
+		logInfo("Memory Load para SHC de esta memoria es 0");
+
+	}else{
+
+
+		logInfo("Memory Load para SHC de esta memoria es : %f", unaMemoria->insertsTotales / unaMemoria->selectTotales);
+
+
+
+	}
+
+
+
+
+	logInfo("Criterio EC:");
 
 
 
 
 
+	logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Read_Latency));
+	logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Reads));
+	logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Write_Latency));
+	logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Writes));
+
+	if(unaMemoria->selectTotales == 0){
+
+
+		logInfo("Memory Load para EC de esta memoria es 0");
+
+	}else{
+
+
+		logInfo("Memory Load para EC de esta memoria es : %f", unaMemoria->insertsTotales / unaMemoria->selectTotales);
 
 
 
-
-void readLatency (char** args) {
-
-
-
+	}
 
 
 }
-void writeLatency (char** args) {
-
-
-
 
 
 }
-void reads (char** args) {
-
-
-
-
-
-}
-void writes (char** args) {
-
-
-
-
-
-}
-void memoryLoad (char** args) {
-
-
-
-
-
-}
-
-
-
-
-
 
 //void ejecutarScript(char** args){
 //

@@ -12,7 +12,7 @@
 
 void pasarArunnign() {
 
-	while(1){
+	while(!destProtocol){
 
 
 
@@ -510,7 +510,9 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 							pthread_mutex_unlock(&memoriasSinCriterio);
 
 						}
+						pthread_mutex_lock(&sc);
 						t_Criterios->strongConsistency = memoriaAgregar;
+						pthread_mutex_unlock(&sc);
 					}
 					else
 					{
@@ -537,7 +539,9 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 					{
 						memoriaAgregar =list_find(tKernel->memoriasConCriterio,(void*)estaEnLaLista);
 					}
+					pthread_mutex_lock(&sc);
 					t_Criterios->strongConsistency = memoriaAgregar;
+					pthread_mutex_unlock(&sc);
 				}
 			}
 			else if(!strcmp(criterio,"SHC"))
@@ -610,6 +614,70 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 
 
+			int cantidadMemorias = list_size(tKernel->memoriasConCriterio);
+			int x =0;
+			bool hayMemorias = 1;
+			while(x<cantidadMemorias && hayMemorias){
+
+
+				memoria* laMemoria = list_get(tKernel->memoriasConCriterio,x);
+				int socket_memoria = conectar_a_memoria_flexible(laMemoria->ip,laMemoria->puerto,"Kernel");
+				if(socket_memoria == -3 ){
+
+					bool  estaEnLaLista(memoria* memoriaAux) {
+						return  laMemoria->numeroMemoria == memoriaAux->numeroMemoria;
+					}
+					pthread_mutex_lock(&memoriasCriterio);
+					list_remove_by_condition(tKernel->memoriasConCriterio,(void*)estaEnLaLista);
+					pthread_mutex_unlock(&memoriasCriterio);
+					pthread_mutex_lock(&shc);
+					list_remove_by_condition(t_Criterios->StrongHash,(void*)estaEnLaLista);
+					pthread_mutex_unlock(&shc);
+					pthread_mutex_lock(&ec);
+					list_remove_by_condition(t_Criterios->eventualConsistency->elements,(void*)estaEnLaLista);
+					pthread_mutex_unlock(&ec);
+					if(t_Criterios->strongConsistency->numeroMemoria == laMemoria->numeroMemoria){
+
+						pthread_mutex_lock(&memoriasCola);
+						memoria * loMemoria = queue_pop(tKernel->memoriasCola);
+						pthread_mutex_unlock(&memoriasCola);
+
+						while(conectar_a_memoria_flexible(loMemoria->ip,loMemoria->puerto,"Kernel") == -3){
+
+							pthread_mutex_lock(&memoriasCola);
+							memoria * loMemoria = queue_pop(tKernel->memoriasCola);
+							pthread_mutex_unlock(&memoriasCola);
+							if(loMemoria != NULL){
+
+
+
+							}else{
+								printf("no quedan memorias para asignar a SC");
+								hayMemorias = 0;
+								destProtocol = 1;
+								printf ("VOLO TODO");
+
+							}
+						}
+
+
+					}
+
+
+				}else {
+
+
+					prot_enviar_mensaje(socket_memoria, JOURNAL_REQ, 0, NULL);
+
+
+
+
+				}
+
+
+
+				x++;
+			}
 
 
 			break;
