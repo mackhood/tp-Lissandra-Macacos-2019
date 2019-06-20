@@ -29,13 +29,9 @@ typedef struct {
 
 
 typedef struct {
-
-
 	char* nombre;
 	char* criterio;
-
-
-}tabla;
+}__attribute__((packed)) t_tabla;
 
 
 

@@ -26,14 +26,14 @@ while(1){
 
 	prot_enviar_mensaje(conexion,DESCRIBE_REQ,0,NULL);
 
-	t_prot_mensaje* mensaje_recibido1 = prot_recibir_mensaje(conexion);
+	t_prot_mensaje* mensaje_recibido = prot_recibir_mensaje(conexion);
 
 
 
 
 	//PRIMERO DEBO PERDIR LA CANTIDAD DE MEMORIASCONECTADAS AL POOL DE MEMORIA
 
-	t_prot_mensaje* mensaje_recibido = prot_recibir_mensaje(conexion);
+//	t_prot_mensaje* mensaje_recibido = prot_recibir_mensaje(conexion);
 
 
 	int tamanio ;
@@ -41,7 +41,7 @@ while(1){
 
 	char * mensaje = malloc(tamanio + 1);
 	memcpy(mensaje,mensaje_recibido->payload + sizeof(int), tamanio);
-
+	mensaje[tamanio] = '\0';
 	char ** tablaDescribe = string_split(mensaje, ";");
 
 
@@ -50,15 +50,19 @@ while(1){
 	while(tablaDescribe[a] != NULL  ){
 
 		char* tabla = strtok(tablaDescribe[a],",");
+		char* criterio = strtok(NULL, ",");
 		a++;
+		t_tabla * nuevaTabla = malloc(sizeof(t_tabla));
+		nuevaTabla->nombre = tabla;
+		nuevaTabla->criterio = criterio;
 
-		bool  estaEnMetadata(void* nombre_tabla) {
-			return  string_equals_ignore_case((char *) tabla,(char*)nombre_tabla);
+		bool  estaEnMetadata(t_tabla* tablaAux) {
+			return  string_equals_ignore_case(nuevaTabla->nombre, tablaAux->nombre);
 		}
 
 
 		if(!list_any_satisfy(tMetadata->tablas,(void*)estaEnMetadata))
-		list_add(tMetadata->tablas,tabla);
+		list_add(tMetadata->tablas, nuevaTabla);
 
 
 
@@ -84,7 +88,7 @@ while(1){
 
 
 
-	sleep(tKernel->config->metadata_refresh);
+	usleep(tKernel->config->metadata_refresh*1000);
 
 
 

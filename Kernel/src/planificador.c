@@ -305,7 +305,7 @@ switch(dtb->operacionActual) {
 
 									if(!list_any_satisfy(tMetadata->tablas,(void*)estaEnMetadata)){
 
-										tabla* nuevaTabla = malloc(sizeof(tabla));
+										t_tabla* nuevaTabla = malloc(sizeof(t_tabla));
 										nuevaTabla->criterio = tipo_consistencia;
 										nuevaTabla->nombre= nombre_tabla;
 
