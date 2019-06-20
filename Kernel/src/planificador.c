@@ -471,74 +471,138 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 			int  numero_memoria =  atoi((args[2]));
 			char* criterio = string_duplicate(args[4]);
-
-
-			if(!strcmp(criterio,"SC")){
-
-				if (t_Criterios->strongConsistency->numeroMemoria != numero_memoria  && t_Criterios->strongConsistency != NULL )
+			if(!strcmp(criterio,"SC"))
+			{
+				if(t_Criterios->strongConsistency != NULL)
 				{
+					if(t_Criterios->strongConsistency->numeroMemoria != numero_memoria)
+					{
+						bool  estaEnLaLista(memoria* memoriaAux) {
+							return  numero_memoria == memoriaAux->numeroMemoria;
+						}
 
+						memoria* memoriaAgregar ;
+						if(list_find(tKernel->memoriasSinCriterio,(void*)estaEnLaLista)!= NULL )
+						{
+							pthread_mutex_lock(&memoriasSinCriterio);
+							memoriaAgregar =	list_remove_by_condition(tKernel->memoriasSinCriterio,(void*) estaEnLaLista);
+							pthread_mutex_unlock(&memoriasSinCriterio);
+							pthread_mutex_lock(&memoriasCriterio);
+							list_add(tKernel->memoriasConCriterio,memoriaAgregar);
+							pthread_mutex_unlock(&memoriasCriterio);
+						}
+						else
+						{
+							memoriaAgregar =list_find(tKernel->memoriasConCriterio,(void*)estaEnLaLista);
+						}
+						memoria* memoriaAReemplazar;
+						bool estaLaDeSC(memoria* memoriaAux2) {
+							return  t_Criterios->strongConsistency->numeroMemoria == memoriaAux2->numeroMemoria;
+						}
+						if(!list_any_satisfy(t_Criterios->StrongHash,(void*)estaLaDeSC) &&
+								!list_any_satisfy(t_Criterios->eventualConsistency->elements,(void*) estaLaDeSC))
+						{
+							pthread_mutex_lock(&memoriasCriterio);
+							memoriaAReemplazar =list_remove_by_condition(tKernel->memoriasConCriterio,(void*) estaLaDeSC);
+							pthread_mutex_unlock(&memoriasCriterio);
+							pthread_mutex_lock(&memoriasSinCriterio);
+							list_add(tKernel->memoriasSinCriterio,memoriaAReemplazar);
+							pthread_mutex_unlock(&memoriasSinCriterio);
 
-
+						}
+						t_Criterios->strongConsistency = memoriaAgregar;
+					}
+					else
+					{
+						printf("Esta es la misma memoria que está asignada");
+					}
+				}
+				else
+				{
 					bool  estaEnLaLista(memoria* memoriaAux) {
 						return  numero_memoria == memoriaAux->numeroMemoria;
 					}
 
-
-
 					memoria* memoriaAgregar ;
-
-					if(list_find(tKernel->memoriasSinCriterio,(void*)estaEnLaLista)!= NULL ){
-
+					if(list_find(tKernel->memoriasSinCriterio,(void*)estaEnLaLista)!= NULL )
+					{
 						pthread_mutex_lock(&memoriasSinCriterio);
 						memoriaAgregar =	list_remove_by_condition(tKernel->memoriasSinCriterio,(void*) estaEnLaLista);
 						pthread_mutex_unlock(&memoriasSinCriterio);
 						pthread_mutex_lock(&memoriasCriterio);
 						list_add(tKernel->memoriasConCriterio,memoriaAgregar);
 						pthread_mutex_unlock(&memoriasCriterio);
-
-
-					}else {
-
+					}
+					else
+					{
 						memoriaAgregar =list_find(tKernel->memoriasConCriterio,(void*)estaEnLaLista);
-
-
 					}
-
-
-					memoria* memoriaAReemplazar;
-					bool estaLaDeSC(memoria* memoriaAux2) {
-						return  t_Criterios->strongConsistency->numeroMemoria == memoriaAux2->numeroMemoria;
-					}
-
-					if(!list_any_satisfy(t_Criterios->StrongHash,(void*)estaLaDeSC) &&
-							!list_any_satisfy(t_Criterios->eventualConsistency->elements,(void*) estaLaDeSC)){
-
-
-						pthread_mutex_lock(&memoriasCriterio);
-						memoriaAReemplazar =list_remove_by_condition(tKernel->memoriasConCriterio,(void*) estaLaDeSC);
-						pthread_mutex_unlock(&memoriasCriterio);
-						pthread_mutex_lock(&memoriasSinCriterio);
-						list_add(tKernel->memoriasSinCriterio,memoriaAReemplazar);
-						pthread_mutex_unlock(&memoriasSinCriterio);
-
-
-					}
+					t_Criterios->strongConsistency = memoriaAgregar;
 				}
-
-
-
-
 			}
-
-
-
-
-
-
-
+			else if(!strcmp(criterio,"SHC"))
+			{
+				bool  estaEnLaLista(memoria* memoriaAux) {
+					return  numero_memoria == memoriaAux->numeroMemoria;
+				}
+				if(NULL != list_find(t_Criterios->StrongHash, (void)estaEnLaLista))
+				{
+					printf("La memoria ya está en este criterio");
+				}
+				else
+				{
+					memoria* memoriaAgregar ;
+					if(list_find(tKernel->memoriasSinCriterio,(void*)estaEnLaLista) != NULL )
+					{
+						pthread_mutex_lock(&memoriasSinCriterio);
+						memoriaAgregar = list_remove_by_condition(tKernel->memoriasSinCriterio,(void*) estaEnLaLista);
+						pthread_mutex_unlock(&memoriasSinCriterio);
+						pthread_mutex_lock(&memoriasCriterio);
+						list_add(tKernel->memoriasConCriterio,memoriaAgregar);
+						pthread_mutex_unlock(&memoriasCriterio);
+					}
+					else
+					{
+						memoriaAgregar = list_find(tKernel->memoriasConCriterio,(void*)estaEnLaLista);
+					}
+					list_add(t_Criterios->StrongHash, memoriaAgregar);
+				}
+			}
+			else if(!strcmp(criterio,"EC"))
+			{
+				bool  estaEnLaLista(memoria* memoriaAux) {
+					return  numero_memoria == memoriaAux->numeroMemoria;
+				}
+				if(NULL != list_find(t_Criterios->eventualConsistency->elements, (void)estaEnLaLista))
+				{
+					printf("La memoria ya está en este criterio");
+				}
+				else
+				{
+					memoria* memoriaAgregar ;
+					if(list_find(tKernel->memoriasSinCriterio,(void*)estaEnLaLista) != NULL )
+					{
+						pthread_mutex_lock(&memoriasSinCriterio);
+						memoriaAgregar = list_remove_by_condition(tKernel->memoriasSinCriterio,(void*) estaEnLaLista);
+						pthread_mutex_unlock(&memoriasSinCriterio);
+						pthread_mutex_lock(&memoriasCriterio);
+						list_add(tKernel->memoriasConCriterio,memoriaAgregar);
+						pthread_mutex_unlock(&memoriasCriterio);
+					}
+					else
+					{
+						memoriaAgregar = list_find(tKernel->memoriasConCriterio,(void*)estaEnLaLista);
+					}
+					pthread_mutex_lock(&ec);
+					queue_push(t_Criterios->eventualConsistency, memoriaAgregar);
+					pthread_mutex_unlock(&ec);
+				}
+			}
+			else
+			{
+				printf("El criterio es invalido");
+			}
 			break;
-
 		}
 
 		case JOURNAL_REQ:
