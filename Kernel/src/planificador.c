@@ -545,7 +545,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 				bool  estaEnLaLista(memoria* memoriaAux) {
 					return  numero_memoria == memoriaAux->numeroMemoria;
 				}
-				if(NULL != list_find(t_Criterios->StrongHash, (void)estaEnLaLista))
+				if(NULL != list_find(t_Criterios->StrongHash, (void*)estaEnLaLista))
 				{
 					printf("La memoria ya está en este criterio");
 				}
@@ -573,7 +573,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 				bool  estaEnLaLista(memoria* memoriaAux) {
 					return  numero_memoria == memoriaAux->numeroMemoria;
 				}
-				if(NULL != list_find(t_Criterios->eventualConsistency->elements, (void)estaEnLaLista))
+				if(NULL != list_find(t_Criterios->eventualConsistency->elements, (void*)estaEnLaLista))
 				{
 					printf("La memoria ya está en este criterio");
 				}
