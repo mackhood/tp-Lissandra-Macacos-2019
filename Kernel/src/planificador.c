@@ -12,7 +12,7 @@
 
 void pasarArunnign() {
 
-	while(1){
+	while(!destProtocol){
 
 
 
@@ -71,7 +71,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 
 
-	socket_memoria = conectar_a_servidor(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Memoria");
+	//	socket_memoria = conectar_a_servidor(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Memoria");
 
 	while(quantum >0 && dtb->flag != 1  && dtb->total_sentencias > 0 ) {
 
@@ -82,15 +82,6 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 		//	CREATE
 		//	DESCRIBE
 		//	DROP
-
-
-
-
-
-
-
-
-
 
 		//	params* parametros = malloc( sizeof(params) );
 		//	inicializarParametros(parametros);
@@ -130,32 +121,193 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 		dtb->total_sentencias--;
 
+		t_tabla* laTabla;
+		memoria * leMemoria;
+		if(dtb->operacionActual ==SELECT_REQ || dtb->operacionActual == INSERT_REQ || dtb->operacionActual == CREATE_REQ || dtb->operacionActual == DROP_REQ )
+		{
 
-		//		if(dtb->operacionActual ==SELECT_REQ || dtb->operacionActual == INSERT_REQ || dtb->operacionActual == CREATE_REQ || dtb->operacionActual == DROP_REQ || dtb->operacionActual ==DESCRIBE_REQ)
-		//		{
-		//
-		//			if(args[1]== NULL ){
-		//
-		//			memoria * memoriaConectar  =queue_pop(tKernel->memoriasCola);
-		//
-		//		socket_memoria = conectar_a_servidor(memoriaConectar->ip, memoriaConectar->puerto, "KERNEL");
-		//
-		//
-		//
-		//			}
-		//			else{
-		//
-		//				//
-		//
-		//
-		//
-		//
-		//
-		//
-		//			}
+			if((dtb->operacionActual == DESCRIBE_REQ && args[1] != NULL) ||dtb->operacionActual == DROP_REQ ){
+
+				char * tablaABuscar = strdup(args[1]);
+				bool  estaEnMetadata(t_tabla* una_tabla) {
+					return  string_equals_ignore_case((char *) tablaABuscar,una_tabla->nombre);
+				}
+				laTabla = list_find(tMetadata->tablas,(void*)estaEnMetadata);
+
+				if(laTabla != NULL){
 
 
-		//	}
+					if(!strcmp(laTabla->criterio,"SC")){
+
+						pthread_mutex_lock(t_Criterios->strongConsistency->enUso);
+						socket_memoria = conectar_a_memoria_flexible(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Kernel");
+
+
+					}else if(!strcmp(laTabla->criterio,"EC")){
+
+						pthread_mutex_lock(&ec);
+						leMemoria = queue_pop(t_Criterios->eventualConsistency);
+						pthread_mutex_unlock(&ec);
+
+						pthread_mutex_lock(leMemoria->enUso);
+						socket_memoria = conectar_a_memoria_flexible(leMemoria->ip, leMemoria->puerto, "Kernel");
+
+
+					}else if(!strcmp(laTabla->criterio,"SHC")){
+
+						int cantidadEnHash = list_size(t_Criterios->StrongHash);
+
+						int value =	(rand() % cantidadEnHash);
+
+						leMemoria = list_get(t_Criterios->StrongHash,value);
+						pthread_mutex_lock(leMemoria->enUso);
+						socket_memoria = conectar_a_memoria_flexible(leMemoria->ip, leMemoria->puerto, "Kernel");
+
+
+					} else{
+
+
+						dtb->operacionActual = ERROR;
+						printf("No se encontro criterio");
+						dtb->flag = 1;
+
+					}
+
+
+
+
+				}	dtb->operacionActual = ERROR;
+				printf("La tabla no se encuentra en metadata");
+				dtb->flag = 1;
+
+			}else{
+				if(dtb->operacionActual == DESCRIBE_REQ) {
+					pthread_mutex_lock(&memoriasCola);
+					leMemoria  =queue_pop(tKernel->memoriasCola);
+					pthread_mutex_unlock(&memoriasCola);
+
+					pthread_mutex(&leMemoria->enUso);
+					socket_memoria = conectar_a_servidor(leMemoria->ip, leMemoria->puerto, "KERNEL");
+
+
+				}else if (dtb->operacionActual == CREATE_REQ){
+
+
+					if(!strcmp(args[2],"SC")){
+
+						pthread_mutex_lock(t_Criterios->strongConsistency->enUso);
+						socket_memoria = conectar_a_memoria_flexible(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Kernel");
+
+
+					}else if(!strcmp(args[2],"EC")){
+
+						pthread_mutex_lock(&ec);
+						leMemoria = queue_pop(t_Criterios->eventualConsistency);
+						pthread_mutex_unlock(&ec);
+
+						pthread_mutex_lock(leMemoria->enUso);
+						socket_memoria = conectar_a_memoria_flexible(leMemoria->ip, leMemoria->puerto, "Kernel");
+
+
+					}else if(!strcmp(args[2],"SHC")){
+
+						int cantidadEnHash = list_size(t_Criterios->StrongHash);
+
+						int value =	(rand() % cantidadEnHash);
+
+						leMemoria = list_get(t_Criterios->StrongHash,value);
+						pthread_mutex_lock(leMemoria->enUso);
+						socket_memoria = conectar_a_memoria_flexible(leMemoria->ip, leMemoria->puerto, "Kernel");
+
+
+					} else{
+
+						dtb->operacionActual = ERROR;
+						printf("No se encontro criterio");
+						dtb->flag = 1;
+
+					}
+
+
+
+
+
+				} else if(dtb->operacionActual == SELECT_REQ || dtb->operacionActual == INSERT_REQ){
+
+
+
+
+					char * tablaABuscar = strdup(args[1]);
+					bool  estaEnMetadata(t_tabla* una_tabla) {
+						return  string_equals_ignore_case((char *) tablaABuscar,una_tabla->nombre);
+					}
+					laTabla = list_find(tMetadata->tablas,(void*)estaEnMetadata);
+
+					if(laTabla != NULL){
+
+
+						if(!strcmp(laTabla->criterio,"SC")){
+
+							pthread_mutex_lock(t_Criterios->strongConsistency->enUso);
+							socket_memoria = conectar_a_memoria_flexible(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Kernel");
+
+
+						}else if(!strcmp(laTabla->criterio,"EC")){
+
+							pthread_mutex_lock(&ec);
+							leMemoria = queue_pop(t_Criterios->eventualConsistency);
+							pthread_mutex_unlock(&ec);
+
+							pthread_mutex_lock(leMemoria->enUso);
+							socket_memoria = conectar_a_memoria_flexible(leMemoria->ip, leMemoria->puerto, "Kernel");
+
+
+						}else if(!strcmp(laTabla->criterio,"SHC")){
+
+							int cantidadEnHash = list_size(t_Criterios->StrongHash);
+
+							int key =	atoi(args[2]);
+
+							int value = key % cantidadEnHash;
+
+
+							leMemoria = list_get(t_Criterios->StrongHash,value);
+							pthread_mutex_lock(leMemoria->enUso);
+							socket_memoria = conectar_a_memoria_flexible(leMemoria->ip, leMemoria->puerto, "Kernel");
+
+
+						} else{
+
+
+							dtb->operacionActual = ERROR;
+							printf("No se encontro criterio");
+							dtb->flag = 1;
+
+						}
+
+
+
+
+					}	dtb->operacionActual = ERROR;
+					printf("La tabla no se encuentra en metadata");
+					dtb->flag = 1;
+
+
+
+
+
+
+				}
+
+
+
+
+
+
+			}
+
+
+		}
 
 
 
@@ -186,6 +338,14 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 			prueba[largoValue]=	'\0';
 
 			printf("el value solicitado es %s \n",prueba);
+
+
+			if(laTabla->criterio == "EC"){
+
+				queue_push(t_Criterios->eventualConsistency,leMemoria);
+
+
+			}
 
 
 
@@ -263,6 +423,12 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 			t_prot_mensaje* mensaje_recibido = prot_recibir_mensaje(socket_memoria);
 			double cantSegundosFinal= getCurrentTime() ;
 
+			if(laTabla->criterio == "EC"){
+
+				queue_push(t_Criterios->eventualConsistency,leMemoria);
+
+
+			}
 
 
 			printf("Insert realizado \n");
@@ -298,14 +464,22 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 			prot_enviar_mensaje(socket_memoria, CREATE_REQ, tamanio_buffer, buffer);
 			t_prot_mensaje * mensaje_recibido = prot_recibir_mensaje(socket_memoria);
+
+			if(laTabla->criterio == "EC"){
+
+				queue_push(t_Criterios->eventualConsistency,leMemoria);
+
+
+			}
+
 			//printf("Insert realizado \n");
 			dtb->sentenciaActual++;
 
 			switch(mensaje_recibido->head){
 			case TABLA_CREADA_OK:{
 
-				bool  estaEnMetadata(void* una_tabla) {
-					return  string_equals_ignore_case((char *) nombre_tabla,(char*)una_tabla);
+				bool  estaEnMetadata(t_tabla* una_tabla) {
+					return  string_equals_ignore_case((char *) nombre_tabla,una_tabla->nombre);
 				}
 
 
@@ -346,6 +520,12 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 			//mando solicitud de drop de tabla a Memoria
 			prot_enviar_mensaje(socket_memoria, DROP_REQ, tamanio_buffer, buffer);
 			t_prot_mensaje* respuesta = prot_recibir_mensaje(socket_memoria);
+			if(laTabla->criterio == "EC"){
+
+				queue_push(t_Criterios->eventualConsistency,leMemoria);
+
+
+			}
 			dtb->sentenciaActual++;
 
 			//posibles respuestas
@@ -395,10 +575,30 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 				prot_enviar_mensaje(socket_memoria, DESCRIBE_REQ, 0, NULL);
 			}
 			t_prot_mensaje* mensaje_memoria = prot_recibir_mensaje(socket_memoria);
+			if(laTabla->criterio == "EC"){
+
+				queue_push(t_Criterios->eventualConsistency,leMemoria);
+
+
+			}
+
+			if(args[1]!= NULL){
+
+			}else{
+
+				queue_push(tKernel->memoriasCola,leMemoria);
+
+			}
+
+
+
 			switch(mensaje_memoria->head)
 			{
 			case POINT_DESCRIBE:
 			{
+
+
+
 				int tamanio_mensaje;
 				char* metadataTabla;
 				memcpy(&tamanio_mensaje, mensaje_memoria->payload, sizeof(int));
@@ -416,7 +616,6 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 				metadataTablas = malloc(tamanio_mensaje + 1);
 				memcpy(metadataTablas, mensaje_memoria->payload + sizeof(int), tamanio_mensaje);
 				metadataTablas[tamanio_mensaje] = '\0';
-
 
 
 				char ** tablaDescribe = string_split(metadataTablas, ";");
@@ -510,7 +709,9 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 							pthread_mutex_unlock(&memoriasSinCriterio);
 
 						}
+						pthread_mutex_lock(&sc);
 						t_Criterios->strongConsistency = memoriaAgregar;
+						pthread_mutex_unlock(&sc);
 					}
 					else
 					{
@@ -537,7 +738,9 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 					{
 						memoriaAgregar =list_find(tKernel->memoriasConCriterio,(void*)estaEnLaLista);
 					}
+					pthread_mutex_lock(&sc);
 					t_Criterios->strongConsistency = memoriaAgregar;
+					pthread_mutex_unlock(&sc);
 				}
 			}
 			else if(!strcmp(criterio,"SHC"))
@@ -610,11 +813,85 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 
 
+			int cantidadMemorias = list_size(tKernel->memoriasConCriterio);
+			int x =0;
+			bool hayMemorias = 1;
+			while(x<cantidadMemorias && hayMemorias){
+
+
+				memoria* laMemoria = list_get(tKernel->memoriasConCriterio,x);
+				int socket_memoria = conectar_a_memoria_flexible(laMemoria->ip,laMemoria->puerto,"Kernel");
+				if(socket_memoria == -3 ){
+
+					bool  estaEnLaLista(memoria* memoriaAux) {
+						return  laMemoria->numeroMemoria == memoriaAux->numeroMemoria;
+					}
+					pthread_mutex_lock(&memoriasCriterio);
+					list_remove_by_condition(tKernel->memoriasConCriterio,(void*)estaEnLaLista);
+					pthread_mutex_unlock(&memoriasCriterio);
+					pthread_mutex_lock(&shc);
+					list_remove_by_condition(t_Criterios->StrongHash,(void*)estaEnLaLista);
+					pthread_mutex_unlock(&shc);
+					pthread_mutex_lock(&ec);
+					list_remove_by_condition(t_Criterios->eventualConsistency->elements,(void*)estaEnLaLista);
+					pthread_mutex_unlock(&ec);
+					if(t_Criterios->strongConsistency->numeroMemoria == laMemoria->numeroMemoria){
+
+						pthread_mutex_lock(&memoriasCola);
+						memoria * loMemoria = queue_pop(tKernel->memoriasCola);
+						pthread_mutex_unlock(&memoriasCola);
+
+						while(conectar_a_memoria_flexible(loMemoria->ip,loMemoria->puerto,"Kernel") == -3){
+
+							pthread_mutex_lock(&memoriasCola);
+							memoria * loMemoria = queue_pop(tKernel->memoriasCola);
+							pthread_mutex_unlock(&memoriasCola);
+							if(loMemoria != NULL){
+
+
+
+							}else{
+								printf("no quedan memorias para asignar a SC");
+								hayMemorias = 0;
+								destProtocol = 1;
+								printf ("VOLO TODO");
+
+							}
+						}
+
+
+					}
+
+
+				}else {
+
+
+					prot_enviar_mensaje(socket_memoria, JOURNAL_REQ, 0, NULL);
+
+
+
+
+				}
+
+
+
+				x++;
+			}
 
 
 			break;
 
 		}
+
+
+		case ERROR: {
+
+
+
+			break;
+		}
+
+
 		default :
 
 			printf("Invalid operation\n" );

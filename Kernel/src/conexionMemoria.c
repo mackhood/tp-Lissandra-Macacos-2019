@@ -9,7 +9,7 @@
 
 void handler_conexion_memoria(t_kernel* tKernel) {
 
-while(1){
+while(!destProtocol){
 
 
 	int conexion=conectar_a_servidor(tKernel->config->ip_memoria,tKernel->config->puerto_memoria,"Memoria1");
