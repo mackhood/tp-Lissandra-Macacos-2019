@@ -222,5 +222,21 @@ t_list* inversaParsearKeys(t_list* clavesADesparsear)
 	return clavesParseadas;
 }
 
-
+int cantBloquesFS(char* direccion)
+{
+	DIR* directorioDeBloques;
+	struct dirent* blockdir;
+	directorioDeBloques = opendir(direccion);
+	int contadorDeBloques = 0;
+	while(NULL != (blockdir = readdir(directorioDeBloques)))
+	{
+		if(!strcmp(blockdir->d_name, ".") || !strcmp(blockdir->d_name, "..")){}
+		else
+		{
+			contadorDeBloques++;
+		}
+	}
+	closedir(directorioDeBloques);
+	return contadorDeBloques;
+}
 

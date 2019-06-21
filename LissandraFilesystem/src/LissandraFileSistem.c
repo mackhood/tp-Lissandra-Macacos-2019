@@ -34,9 +34,10 @@ void iniciar()
 	pthread_mutex_init(&deathProtocol, NULL);
 	pthread_mutex_init(&modifierBitArray, NULL);
 	pthread_mutex_lock(&deathProtocol);
+	criticalFailure = false;
+	iniciarFileSistem();
 	iniciarLissandra();
 	iniciarCompactador();
-	iniciarFileSistem();
 	iniciarConsola();
 }
 

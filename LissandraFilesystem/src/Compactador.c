@@ -220,7 +220,7 @@ void crearTemporal(char* tabla)
 		char* auxTimestamp = string_from_format("%lf", auxiliaryKey->data->timestamp);
 		char* auxc = string_itoa(auxiliaryKey->data->key);
 		int sizeOfKey = strlen(auxc) + strlen(auxiliaryKey->data->clave)
-				+ strlen(auxTimestamp) + 3;
+						+ strlen(auxTimestamp) + 3;
 		char* claveParaTemp = malloc(sizeOfKey + 1);
 		char* auxb = string_substring_until(auxTimestamp, strlen(auxTimestamp) - 7);
 		strcpy(claveParaTemp, auxb);
@@ -511,12 +511,23 @@ char* obtenerKeysAPlasmar(t_list* keysPostParsing, int numeroDeParticion, int pa
 
 void killProtocolCompactador()
 {
-	lastDumpSituation = 1;
-	list_clean_and_destroy_elements(tablasEnEjecucion, &free);
-	logInfo("Compactador: Desconectando todas las tablas.");
-	usleep(slowestCompactationInterval * 1000); //Esto está para que el compactador tenga tiempo a matar todas las tablas de su sistema.
-	free(TableEntry);
-	closedir(directorioDeTablas);
-	free(direccionDeLasTablas);
+	if(criticalFailure)
+	{
+		logError("Compactador: un error crítico ha sido decretado, el FS se desconectará sin dar tiempo a proteger datos.");
+		list_clean_and_destroy_elements(tablasEnEjecucion, &free);
+		free(TableEntry);
+		closedir(directorioDeTablas);
+		free(direccionDeLasTablas);
+	}
+	else
+	{
+		lastDumpSituation = 1;
+		list_clean_and_destroy_elements(tablasEnEjecucion, &free);
+		logInfo("Compactador: Desconectando todas las tablas.");
+		usleep(slowestCompactationInterval * 1000); //Esto está para que el compactador tenga tiempo a matar todas las tablas de su sistema.
+		free(TableEntry);
+		closedir(directorioDeTablas);
+		free(direccionDeLasTablas);
+	}
 }
 

@@ -1,8 +1,13 @@
 #include "FileSistem.h"
 
+#define EVENT_SIZE (sizeof(struct inotify_event))
+#define BUF_LEN (1024* (EVENT_SIZE + 16))
+
 void mainFileSistem()
 {
 	testerFileSystem();
+	initBlocksNotifier();
+	initTablesNotifier();
 }
 
 void testerFileSystem()
@@ -13,6 +18,13 @@ void testerFileSystem()
 	strcat(direccionFileSystem, "Blocks/");
 	direccionFileSystemBlocks = malloc(strlen(direccionFileSystem) + 1);
 	strcpy(direccionFileSystemBlocks, direccionFileSystem);
+	DIR* blockDirection;
+	if(NULL == (blockDirection = opendir(direccionFileSystemBlocks)))
+	{
+		logInfo("FileSystem: al no encontrarse el punto de montaje de los bloques, se procede a crearlo.");
+		mkdir(direccionFileSystemBlocks, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+	}
+	closedir(blockDirection);
 	char* aux = malloc(strlen(direccionFileSystem) + 8);
 	strcpy(aux, direccionFileSystem);
 	strcat(aux, "0.bin");
@@ -21,6 +33,51 @@ void testerFileSystem()
 	{
 		logInfo( "FileSystem: Se procede a crear los bloques de memoria");
 		crearParticiones(direccionFileSystem, blocks);
+	}
+	else if(blocks != cantBloquesFS(direccionFileSystemBlocks))
+	{
+		fclose(doomsdaypointer);
+		logInfo("FileSystem: Como se ha detectado la falta de algunos bloques, se ve como necesaria la acción de borrar"
+				" todas las tablas existentes y reiniciar la estructura de bloques debido a posibles inconsistencias de datos.");
+		printf("\033[1;34m");
+		puts("Se han detectado inconsistencias en el FS, dicha situación se debe a que algunos bloques pueden haber desaparecido"
+				", lamentablemente ésto puede generar inconsistencias y puede deberse a que la data se haya corrompido; dicho"
+				" esto, se procede a borrar todas las tablas previamente existentes y toda la información del FS, lamentamos"
+				" el inconveniente causado.");
+		printf("\033[1;36m");
+		DIR* tables;
+		struct dirent* tablepointer;
+		char* tableDirectory = malloc(strlen(punto_montaje) + 8);
+		strcpy(tableDirectory, punto_montaje);
+		strcat(tableDirectory, "Tables/");
+		tables = opendir(tableDirectory);
+		if(NULL != tables)
+		{
+			while((tablepointer = readdir(tables)) != NULL)
+			{
+				if(!strcmp(tablepointer->d_name, ".") || !strcmp(tablepointer->d_name, "..")){}
+				else
+				{
+					dropTable(tablepointer->d_name);
+				}
+			}
+			crearParticiones(direccionFileSystem, blocks);
+			sleep(5);
+		}
+		else
+		{
+			logError("FileSystem: Como el directorio de tablas es inaccesible, ésto significa que el FileSystem ha sido alterado"
+					", se creará un nuevo directorio de tablas");
+			printf("\033[1;34m");
+			puts("Como el directorio de tablas es inaccesible, ésto significa que el FileSystem ha sido alterado, se creará un"
+					" nuevo directorio de tablas");
+			printf("\033[1;36m");
+			crearParticiones(direccionFileSystem, blocks);
+			sleep(5);
+		}
+		free(tableDirectory);
+		free(tablepointer);
+		closedir(tables);
 	}
 	else
 		fclose(doomsdaypointer);
@@ -37,45 +94,45 @@ void levantarBitmap(char* direccion)
 	strcat(direccionBitmap, "Metadata/Bitmap.bin");
 	globalBitmapPath = malloc(strlen(direccionBitmap) + 1);
 	strcpy(globalBitmapPath, direccionBitmap);
-    bitarrayfd = open(globalBitmapPath, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
-    ftruncate(bitarrayfd, (blocks/8));
-    if (bitarrayfd == -1)
-    {
-    	logError("FileSystem: error al abrir el bitmap, abortando sistema");
-    	free(bitarraycontent);
-    	close(bitarrayfd);
-    	signalExit = true;
-    }
-    else
-    {
-    	bitarraycontent = mmap(NULL, (blocks/8), PROT_READ | PROT_WRITE, MAP_SHARED, bitarrayfd, 0);
-    	bitarray = bitarray_create_with_mode(bitarraycontent, (blocks/8), LSB_FIRST);
-    	int a;
-    	for(a = 0; a < blocks; a++)
-    	{
-    		char* auxb = string_itoa(a);
-    		char* direccionBloque = malloc(strlen(direccionFileSystemBlocks) + strlen(auxb) + 5);
-    		strcpy(direccionBloque, direccionFileSystemBlocks);
-    		strcat(direccionBloque, auxb);
-    		strcat(direccionBloque, ".bin");
-    		FILE* blockpointer = fopen(direccionBloque, "r+");
-    		fseek(blockpointer, 0, SEEK_END);
-    		unsigned long blocklength = (unsigned long)ftell(blockpointer);
-    		if(0 == blocklength)
-    		{
-    			bitarray_clean_bit(bitarray, a);
-    		}
-    		else
-    		{
-        		bitarray_set_bit(bitarray, a);
-    		}
-    		free(auxb);
-    		fclose(blockpointer);
-    		free(direccionBloque);
-    	}
+	bitarrayfd = open(globalBitmapPath, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+	ftruncate(bitarrayfd, (blocks/8));
+	if (bitarrayfd == -1)
+	{
+		logError("FileSystem: error al abrir el bitmap, abortando sistema");
+		free(bitarraycontent);
+		close(bitarrayfd);
+		signalExit = true;
+	}
+	else
+	{
+		bitarraycontent = mmap(NULL, (blocks/8), PROT_READ | PROT_WRITE, MAP_SHARED, bitarrayfd, 0);
+		bitarray = bitarray_create_with_mode(bitarraycontent, (blocks/8), LSB_FIRST);
+		int a;
+		for(a = 0; a < blocks; a++)
+		{
+			char* auxb = string_itoa(a);
+			char* direccionBloque = malloc(strlen(direccionFileSystemBlocks) + strlen(auxb) + 5);
+			strcpy(direccionBloque, direccionFileSystemBlocks);
+			strcat(direccionBloque, auxb);
+			strcat(direccionBloque, ".bin");
+			FILE* blockpointer = fopen(direccionBloque, "r+");
+			fseek(blockpointer, 0, SEEK_END);
+			unsigned long blocklength = (unsigned long)ftell(blockpointer);
+			if(0 == blocklength)
+			{
+				bitarray_clean_bit(bitarray, a);
+			}
+			else
+			{
+				bitarray_set_bit(bitarray, a);
+			}
+			free(auxb);
+			fclose(blockpointer);
+			free(direccionBloque);
+		}
 		msync(bitarraycontent, bitarrayfd, MS_SYNC);
 		free(direccionBitmap);
-    }
+	}
 }
 
 void setearValoresFileSistem(t_config * archivoConfig)
@@ -812,35 +869,35 @@ void escribirBloque(int* usedBlocks, int* seizedSize, int usedSize, char* block,
 	strcat(blockDirection, block);
 	strcat(blockDirection, ".bin");
 	int fd2 = open(blockDirection, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
-    ftruncate(fd2, mmapsize);
-    if (fd2 == -1)
-    {
-       	logError("FileSystem: error al abrir el bloque %s, abortando sistema", block);
-       	signalExit = true;
-    }
-    else
-    {
-    	char* mmaplocator = mmap(NULL, mmapsize + 1, PROT_READ | PROT_WRITE, MAP_SHARED, fd2, 0);
-    	for(a = 0; a < tamanio_bloques; a++)
-    	{
-    		if(*seizedSize != usedSize)
-    		{
-    			int alreadyUsedBlocks = *usedBlocks;
-    			mmaplocator[a] = clavesAImpactar[(tamanio_bloques*alreadyUsedBlocks) + a];
-    			*seizedSize = *seizedSize + 1;
-    		}
-    		else
-    		{
-    			*usedBlocks = *usedBlocks + 1;
-    			break;
-    		}
-    	}
-    	*usedBlocks = *usedBlocks + 1;
-    	msync(mmaplocator, fd2, MS_SYNC);
-    	munmap(mmaplocator, mmapsize);
-    	close(fd2);
-    	free(blockDirection);
-    }
+	ftruncate(fd2, mmapsize);
+	if (fd2 == -1)
+	{
+		logError("FileSystem: error al abrir el bloque %s, abortando sistema", block);
+		signalExit = true;
+	}
+	else
+	{
+		char* mmaplocator = mmap(NULL, mmapsize + 1, PROT_READ | PROT_WRITE, MAP_SHARED, fd2, 0);
+		for(a = 0; a < tamanio_bloques; a++)
+		{
+			if(*seizedSize != usedSize)
+			{
+				int alreadyUsedBlocks = *usedBlocks;
+				mmaplocator[a] = clavesAImpactar[(tamanio_bloques*alreadyUsedBlocks) + a];
+				*seizedSize = *seizedSize + 1;
+			}
+			else
+			{
+				*usedBlocks = *usedBlocks + 1;
+				break;
+			}
+		}
+		*usedBlocks = *usedBlocks + 1;
+		msync(mmaplocator, fd2, MS_SYNC);
+		munmap(mmaplocator, mmapsize);
+		close(fd2);
+		free(blockDirection);
+	}
 }
 
 void limpiadorDeBloques(char* direccion)
@@ -931,6 +988,188 @@ char** obtenerBloques(char* direccion)
 	return bloques;
 }
 
+void initBlocksNotifier()
+{
+	pthread_t blockNotifierHandler;
+	logInfo("FileSystem: Se inicio un hilo para manejar el notifier de los bloques.");
+	pthread_create(&blockNotifierHandler, NULL, (void *) fileSystemNotifier, NULL);
+	pthread_detach(blockNotifierHandler);
+}
+
+void initTablesNotifier()
+{
+	pthread_t tablesNotifierHandler;
+	logInfo("FileSystem: Se inicio un hilo para manejar el notifier de las tablas.");
+	pthread_create(&tablesNotifierHandler, NULL, (void *) tablesNotifier, NULL);
+	pthread_detach(tablesNotifierHandler);
+}
+
+void fileSystemNotifier()
+{
+	int length;
+	int i = 0;
+	char buffer[BUF_LEN];
+
+	blockDirectoryToWatch = inotify_init();
+	if( blockDirectoryToWatch < 0)
+	{
+		logError("Lissandra: Error al iniciar el notifier.");
+		pthread_mutex_unlock(&deathProtocol);
+		return;
+	}
+
+	blockWatchDescriptor = inotify_add_watch(blockDirectoryToWatch, direccionFileSystemBlocks, IN_DELETE);
+	length = read(blockDirectoryToWatch, buffer, BUF_LEN);
+
+	if(length < 0)
+	{
+		logError("FileSystem: Error al tratar de acceder al directorio de bloques para vigilar.");
+		pthread_mutex_unlock(&deathProtocol);
+		return;
+	}
+
+	while(i < length)
+	{
+		struct inotify_event* event = (struct inotify_event*) &buffer[i];
+		if(event->mask & IN_DELETE)
+		{
+			if(event->mask & IN_ISDIR)
+			{
+				t_TablaEnEjecucion* tabla;
+				int listRounder = 0;
+				while(NULL != (tabla = list_get(tablasEnEjecucion, listRounder)))
+				{
+					pthread_mutex_lock(&tabla->compactacionActiva);
+					pthread_mutex_lock(&tabla->renombreEnCurso);
+					listRounder++;
+				}
+				logInfo("FileSystem: Se ha detectado que el directorio de bloques fue destruido. Terminando sistema.");
+				DIR* tables;
+				struct dirent* tablepointer;
+				char* tableDirectory = malloc(strlen(punto_montaje) + 8);
+				strcpy(tableDirectory, punto_montaje);
+				strcat(tableDirectory, "Tables/");
+				tables = opendir(tableDirectory);
+				if(NULL != tables)
+				{
+					while((tablepointer = readdir(tables)) != NULL)
+					{
+						if(!strcmp(tablepointer->d_name, ".") || !strcmp(tablepointer->d_name, "..")){}
+						else
+						{
+							dropTable(tablepointer->d_name);
+						}
+					}
+				}
+				criticalFailure = true;
+				pthread_mutex_unlock(&deathProtocol);
+				break;
+			}
+			else
+			{
+				char* trueblockname = strdup(event->name);
+				char* blockname = strtok(event->name, ".");
+				int a = atoi(blockname);
+				if(bitarray_test_bit(bitarray, a))
+				{
+					printf("Lamentamos informar que como el bloque %s que estaba asignado a una tabla ha sido eliminado, se debe cerrar"
+							" el FS, y además, se perderán preciosos datos debido a este error, lo lamentamos.\n", trueblockname);
+					logInfo("FileSystem: Se ha detectado que un bloque con información fue destruido. Terminando sistema.");
+					DIR* tables;
+					struct dirent* tablepointer;
+					char* tableDirectory = malloc(strlen(punto_montaje) + 8);
+					strcpy(tableDirectory, punto_montaje);
+					strcat(tableDirectory, "Tables/");
+					tables = opendir(tableDirectory);
+					if(NULL != tables)
+					{
+						while((tablepointer = readdir(tables)) != NULL)
+						{
+							if(!strcmp(tablepointer->d_name, ".") || !strcmp(tablepointer->d_name, "..")){}
+							else
+							{
+								dropTable(tablepointer->d_name);
+							}
+						}
+					}
+					free(tablepointer);
+					closedir(tables);
+					free(tableDirectory);
+					criticalFailure = true;
+					pthread_mutex_unlock(&deathProtocol);
+				}
+				else
+				{
+					logInfo("El bloque %s que no estaba agregado en ninguna tabla fue borrado, será recreado "
+							"antes que su ausencia cause problemas", trueblockname);
+					char* direccionBloque = malloc(strlen(direccionFileSystemBlocks) + strlen(trueblockname) + 2);
+					strcpy(direccionBloque, direccionFileSystemBlocks);
+					strcat(direccionBloque, trueblockname);
+					FILE* bloque = fopen(direccionBloque, "w+");
+					fclose(bloque);
+					free(direccionBloque);
+				}
+				free(trueblockname);
+			}
+		}
+		length = read(blockDirectoryToWatch, buffer, BUF_LEN);
+	}
+}
+
+
+void tablesNotifier()
+{
+	int length;
+	int i = 0;
+	char buffer[BUF_LEN];
+
+	tableDirectoryToWatch = inotify_init();
+	if(tableDirectoryToWatch < 0)
+	{
+		logError("Lissandra: Error al iniciar el notifier.");
+		pthread_mutex_unlock(&deathProtocol);
+		return;
+	}
+
+	tableWatchDescriptor = inotify_add_watch(tableDirectoryToWatch, lissandraFL_config_ruta, IN_DELETE);
+	length = read(tableDirectoryToWatch, buffer, BUF_LEN);
+
+	if(length < 0)
+	{
+		logError("FileSystem: Error al tratar de acceder al directorio de tablas para vigilar.");
+		pthread_mutex_unlock(&deathProtocol);
+		return;
+	}
+
+	while(i < length)
+	{
+		struct inotify_event* event = (struct inotify_event*) &buffer[i];
+		if(event->mask & IN_DELETE)
+		{
+			if(event->mask & IN_ISDIR)
+			{
+				t_TablaEnEjecucion* tabla;
+				int listRounder = 0;
+				while(NULL != (tabla = list_get(tablasEnEjecucion, listRounder)))
+				{
+					pthread_mutex_lock(&tabla->compactacionActiva);
+					pthread_mutex_lock(&tabla->renombreEnCurso);
+					listRounder++;
+				}
+				logInfo("FileSystem: Se ha detectado que el directorio de tablas ha sido destruido. Terminando sistema.");
+				printf("\033[1;34m");
+				puts("El FileSystem está siento desconectado.");
+				printf("\033[1;36m");
+				criticalFailure = true;
+				pthread_mutex_unlock(&deathProtocol);
+				break;
+			}
+		}
+		length = read(tableDirectoryToWatch, buffer, BUF_LEN);
+	}
+}
+
+
 void killProtocolFileSystem()
 {
 	bitarray_destroy(bitarray);
@@ -938,6 +1177,10 @@ void killProtocolFileSystem()
 	close(bitarrayfd);
 	free(globalBitmapPath);
 	free(direccionFileSystemBlocks);
+	(void) inotify_rm_watch(blockDirectoryToWatch, blockWatchDescriptor);
+	(void) close(blockDirectoryToWatch);
+	(void) inotify_rm_watch(tableDirectoryToWatch, tableWatchDescriptor);
+	(void) close(tableDirectoryToWatch);
 	logInfo("FileSystem: El bitmap fue destruido y las direcciones globales del FileSystem fueron destruidas.");
 }
 
