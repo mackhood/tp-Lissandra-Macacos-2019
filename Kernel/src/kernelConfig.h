@@ -24,6 +24,7 @@ pthread_mutex_t shc;
 pthread_mutex_t memoriasCriterio;
 pthread_mutex_t memoriasSinCriterio;
 pthread_mutex_t memoriasCola;
+pthread_mutex_t  memoriaConfig;
 
 typedef struct {
 
@@ -101,6 +102,7 @@ typedef struct{
 	char* ip_memoria;
 	int metadata_refresh;
 	int sleep_ejecucion;
+
 
 }kernel_config;
 

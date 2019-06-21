@@ -52,6 +52,7 @@ void initConfiguracion(){
 	kernelConfig->ip_memoria = malloc( string_length(ip_memoria) + 1 );
 
 
+
 	metadata* m_etadata = malloc(sizeof(metadata));
 	m_etadata->tablas = list_create();
 
@@ -81,6 +82,7 @@ void initConfiguracion(){
 	tKernel->memoriasSinCriterio = memoriasGossiping;
 	tKernel->memoriasConCriterio = memorias;
 	tKernel->memorias=nuevasMemorias;
+	tKernel->primerConexion=1;
 	initConfigAdminColas();
 	crearPrimerMemoria();
 	reestablecerEstadisticas();
@@ -261,7 +263,7 @@ void crearPrimerMemoria(){
 
 	t_Criterios = malloc(sizeof(criterios));
 	t_Criterios->strongConsistency = (memoria*)crearMemoria(tKernel->config->puerto_memoria,tKernel->config->ip_memoria);
-
+	tKernel->config = memoriaNueva;
 
 
 	configuracion = memoriaNueva;

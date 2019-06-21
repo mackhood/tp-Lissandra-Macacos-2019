@@ -36,6 +36,7 @@ void initConfigAdminColas(){
 	pthread_mutex_init(&memoriasCola,NULL);
 	pthread_mutex_init(&memoriasCriterio,NULL);
 	pthread_mutex_init(&memoriasSinCriterio,NULL);
+	pthread_mutex_init(&memoriaConfig,NULL);
 
 
 
