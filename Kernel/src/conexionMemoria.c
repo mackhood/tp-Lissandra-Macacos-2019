@@ -144,6 +144,7 @@ void handler_conexion_memoria(t_kernel* tKernel) {
 			memcpy(tablaGossip,mensaje_recibido->payload+sizeof(int),large);
 			tablaGossip[large]=	'\0';
 			close(conexion);
+			pthread_mutex_unlock(&configuracion->enUso);
 
 			char ** contenidoTabla = string_split(tablaGossip, ";");
 			int a;
