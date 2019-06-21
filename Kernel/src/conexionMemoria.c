@@ -101,13 +101,13 @@ void handler_conexion_memoria(t_kernel* tKernel) {
 			char ** tablaDescribe = string_split(mensaje, ";");
 
 
-			int a=0;
+			int k=0;
 			list_clean(tMetadata->tablas);
-			while(tablaDescribe[a] != NULL  ){
+			while(tablaDescribe[k] != NULL  ){
 
-				char* tabla = strtok(tablaDescribe[a],",");
+				char* tabla = strtok(tablaDescribe[k],",");
 				char* criterio = strtok(NULL, ",");
-				a++;
+				k++;
 				t_tabla * nuevaTabla = malloc(sizeof(t_tabla));
 				nuevaTabla->nombre = tabla;
 				nuevaTabla->criterio = criterio;
@@ -135,14 +135,14 @@ void handler_conexion_memoria(t_kernel* tKernel) {
 
 			prot_enviar_mensaje(conexion,GOSSIPING,0,NULL);
 
-			t_prot_mensaje* mensaje_recibido = prot_recibir_mensaje(conexion);
+			t_prot_mensaje* mensajeAltoque = prot_recibir_mensaje(conexion);
 
 			char * tablaGossip ;
-			int tamanio ;
-			memcpy(&tamanio,mensaje_recibido->payload,sizeof(int));
-			tablaGossip = malloc(tamanio + 1);
-			memcpy(tablaGossip,mensaje_recibido->payload+sizeof(int),tamanio);
-			tablaGossip[tamanio]=	'\0';
+			int large ;
+			memcpy(&tamanio,mensajeAltoque->payload,sizeof(int));
+			tablaGossip = malloc(large + 1);
+			memcpy(tablaGossip,mensaje_recibido->payload+sizeof(int),large);
+			tablaGossip[large]=	'\0';
 			close(conexion);
 
 			char ** contenidoTabla = string_split(tablaGossip, ";");
