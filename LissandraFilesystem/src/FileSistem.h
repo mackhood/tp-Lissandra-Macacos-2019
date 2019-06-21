@@ -8,7 +8,10 @@
 
 int tamanio_bloques;
 int creatingFL;
-
+int tableWatchDescriptor;
+int tableDirectoryToWatch;
+int blockDirectoryToWatch;
+int blockWatchDescriptor;
 
 /* FUNCIONES */
 
@@ -33,6 +36,10 @@ void limpiadorDeBloques(char* direccion);
 void limpiarBloque(char* direccionPart);
 char* leerBloque(char* bloque);
 char** obtenerBloques(char* direccion);
+void initTablesNotifier();
+void initBlocksNotifier();
+void fileSystemNotifier();
+void tablesNotifier();
 void killProtocolFileSystem();
 
 

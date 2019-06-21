@@ -44,7 +44,6 @@ void consola()
 		if (!strcmp(aux, "exit"))
 		{
 			free(linea);
-			puts("EXIT.");
 			printf("\033[0m");
 			clear_history();
 			free(aux);

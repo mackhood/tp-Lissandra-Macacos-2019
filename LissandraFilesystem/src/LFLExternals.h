@@ -53,6 +53,7 @@ typedef struct {
 int tiempoDump;
 char* lissandraFL_config_ruta;
 bool fileSystemFull;
+bool criticalFailure;
 int tamanio_value;
 char* direccionFileSystemBlocks;
 char* globalBitmapPath;
@@ -81,6 +82,7 @@ t_keysetter* construirKeysetter(char* timestamp, char* key, char* value);
 unsigned long obtenerTamanioArchivo(char* direccionArchivo);
 t_list* parsearKeys(t_list* clavesAParsear);
 t_list* inversaParsearKeys(t_list* clavesADesparsear);
+int cantBloquesFS(char* direccion);
 
 
 #endif /* LFLEXTERNALS_H_ */

@@ -14,7 +14,7 @@ void inicializar()
 void initNotifier()
 {
 	pthread_t notifierHandler;
-	logInfo("MAIN: Se inicio un hilo para manejar el notifier.");
+	logInfo("Lissandra: Se inicio un hilo para manejar el notifier.");
 	pthread_create(&notifierHandler, NULL, (void *) notifier, NULL);
 	pthread_detach(notifierHandler);
 }
@@ -646,7 +646,7 @@ void notifier()
 		{
 			logInfo("Lissandra: Se ha detectado que watch ha sido eliminado. Terminando sistema.");
 			printf("\033[1;34m");
-			puts("El FileSystem está siento desconectado.");
+			puts("El FileSystem está siendo desconectado.");
 			printf("\033[1;36m");
 			pthread_mutex_unlock(&deathProtocol);
 			break;
