@@ -42,6 +42,7 @@ typedef enum{
 	GOSSIPING,
 	JOURNAL_REQ,
 	ADD_REQ,
+	ERROR,
 
 	//Memoria-FileSystem
 	HANDSHAKE,

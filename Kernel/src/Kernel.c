@@ -25,6 +25,12 @@ void setearValores(t_config * archivoConfig) {
 
 void initConfiguracion(){
 
+	srand((unsigned) time(&randomNumbertime));
+
+
+
+
+
 
 	destProtocol = 0;
 	t_config* config = config_create("/home/utnso/workspace/tp-2019-1c-Macacos/Kernel/kernel.properties");
@@ -249,7 +255,7 @@ void crearPrimerMemoria(){
 
 
 	memoria* memoriaNueva = malloc(sizeof(memoria));
-
+	memoriaNueva->enUso = pthread_mutex_init();
 	memoriaNueva = (memoria*)crearMemoria(tKernel->config->puerto_memoria,tKernel->config->ip_memoria);
 
 	t_Criterios = malloc(sizeof(criterios));
@@ -293,7 +299,7 @@ memoria* crearMemoria(int puerto,char* ip){
 	nuevaMemoria->estadisticasMemoriaEC = estructura;
 	nuevaMemoria->insertsTotales=0;
 	nuevaMemoria->selectTotales=0;
-
+	nuevaMemoria->enUso = pthread_mutex_init();
 	return nuevaMemoria;
 }
 

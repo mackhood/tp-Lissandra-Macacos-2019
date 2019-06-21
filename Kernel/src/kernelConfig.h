@@ -73,6 +73,8 @@ estadisticas * estadisticasMemoriaSHC;
 estadisticas * estadisticasMemoriaEC;
 int insertsTotales;
 int selectTotales;
+pthread_mutex_t enUso;
+
 
 }memoria;
 
@@ -117,7 +119,7 @@ criterios* t_Criterios;
 
 metadata* tMetadata;
 
-
+time_t randomNumbertime;
 t_kernel* tKernel;
 
 
