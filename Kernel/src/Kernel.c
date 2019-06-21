@@ -255,7 +255,8 @@ void crearPrimerMemoria(){
 
 
 	memoria* memoriaNueva = malloc(sizeof(memoria));
-	memoriaNueva->enUso = pthread_mutex_init();
+	pthread_mutex_init(&memoriaNueva->enUso,NULL);
+
 	memoriaNueva = (memoria*)crearMemoria(tKernel->config->puerto_memoria,tKernel->config->ip_memoria);
 
 	t_Criterios = malloc(sizeof(criterios));
@@ -299,7 +300,7 @@ memoria* crearMemoria(int puerto,char* ip){
 	nuevaMemoria->estadisticasMemoriaEC = estructura;
 	nuevaMemoria->insertsTotales=0;
 	nuevaMemoria->selectTotales=0;
-	nuevaMemoria->enUso = pthread_mutex_init();
+	pthread_mutex_init(&nuevaMemoria,NULL);
 	return nuevaMemoria;
 }
 

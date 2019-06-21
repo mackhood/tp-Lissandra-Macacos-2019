@@ -139,7 +139,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 					if(!strcmp(laTabla->criterio,"SC")){
 
-						pthread_mutex_lock(t_Criterios->strongConsistency->enUso);
+						pthread_mutex_lock(&t_Criterios->strongConsistency->enUso);
 						socket_memoria = conectar_a_memoria_flexible(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Kernel");
 
 
@@ -149,7 +149,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 						leMemoria = queue_pop(t_Criterios->eventualConsistency);
 						pthread_mutex_unlock(&ec);
 
-						pthread_mutex_lock(leMemoria->enUso);
+						pthread_mutex_lock(&leMemoria->enUso);
 						socket_memoria = conectar_a_memoria_flexible(leMemoria->ip, leMemoria->puerto, "Kernel");
 
 
@@ -160,7 +160,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 						int value =	(rand() % cantidadEnHash);
 
 						leMemoria = list_get(t_Criterios->StrongHash,value);
-						pthread_mutex_lock(leMemoria->enUso);
+						pthread_mutex_lock(&leMemoria->enUso);
 						socket_memoria = conectar_a_memoria_flexible(leMemoria->ip, leMemoria->puerto, "Kernel");
 
 
@@ -186,7 +186,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 					leMemoria  =queue_pop(tKernel->memoriasCola);
 					pthread_mutex_unlock(&memoriasCola);
 
-					pthread_mutex(&leMemoria->enUso);
+					pthread_mutex_unlock(&leMemoria->enUso);
 					socket_memoria = conectar_a_servidor(leMemoria->ip, leMemoria->puerto, "KERNEL");
 
 
@@ -195,7 +195,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 					if(!strcmp(args[2],"SC")){
 
-						pthread_mutex_lock(t_Criterios->strongConsistency->enUso);
+						pthread_mutex_lock(&t_Criterios->strongConsistency->enUso);
 						socket_memoria = conectar_a_memoria_flexible(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Kernel");
 
 
@@ -205,7 +205,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 						leMemoria = queue_pop(t_Criterios->eventualConsistency);
 						pthread_mutex_unlock(&ec);
 
-						pthread_mutex_lock(leMemoria->enUso);
+						pthread_mutex_lock(&leMemoria->enUso);
 						socket_memoria = conectar_a_memoria_flexible(leMemoria->ip, leMemoria->puerto, "Kernel");
 
 
@@ -216,7 +216,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 						int value =	(rand() % cantidadEnHash);
 
 						leMemoria = list_get(t_Criterios->StrongHash,value);
-						pthread_mutex_lock(leMemoria->enUso);
+						pthread_mutex_lock(&leMemoria->enUso);
 						socket_memoria = conectar_a_memoria_flexible(leMemoria->ip, leMemoria->puerto, "Kernel");
 
 
@@ -248,7 +248,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 						if(!strcmp(laTabla->criterio,"SC")){
 
-							pthread_mutex_lock(t_Criterios->strongConsistency->enUso);
+							pthread_mutex_lock(&t_Criterios->strongConsistency->enUso);
 							socket_memoria = conectar_a_memoria_flexible(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Kernel");
 
 
@@ -258,7 +258,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 							leMemoria = queue_pop(t_Criterios->eventualConsistency);
 							pthread_mutex_unlock(&ec);
 
-							pthread_mutex_lock(leMemoria->enUso);
+							pthread_mutex_lock(&leMemoria->enUso);
 							socket_memoria = conectar_a_memoria_flexible(leMemoria->ip, leMemoria->puerto, "Kernel");
 
 
@@ -272,7 +272,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 
 							leMemoria = list_get(t_Criterios->StrongHash,value);
-							pthread_mutex_lock(leMemoria->enUso);
+							pthread_mutex_lock(&leMemoria->enUso);
 							socket_memoria = conectar_a_memoria_flexible(leMemoria->ip, leMemoria->puerto, "Kernel");
 
 
