@@ -154,7 +154,7 @@ void selectt(char** args){
 
 
 
-	DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,parametros);
+	DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,parametros);
 	dtb_nuevo->total_sentencias =1;
 	dtb_nuevo->quantum= tKernel->config->quantum;
 	dtb_nuevo->total_sentencias=1;
@@ -249,7 +249,7 @@ void insert (char** args) {
 
 
 
-		DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,parametros);
+		DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,parametros);
 		dtb_nuevo->total_sentencias=1;
 		dtb_nuevo->tablaSentencias[0]=unaPalabra;
 //		if(estaEnMetadata(nombre_tabla)){
@@ -307,7 +307,7 @@ void create (char** args) {
 
 
 
-			DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,parametros);
+			DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,parametros);
 		dtb_nuevo->total_sentencias=1;
 
 
@@ -347,7 +347,7 @@ void describe (char** args) {
 
 
 
-				DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,NULL);
+				DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,NULL);
 				dtb_nuevo->total_sentencias=1;
 				dtb_nuevo->tablaSentencias[0]=unaPalabra;
 				enviarANew(dtb_nuevo);
@@ -385,7 +385,7 @@ void drop (char** args) {
 
 
 
-			DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,NULL);
+			DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,NULL);
 			dtb_nuevo->total_sentencias=1;
 			dtb_nuevo->tablaSentencias[0]=unaPalabra;
 			enviarANew(dtb_nuevo);
@@ -428,7 +428,7 @@ void journal (char** args) {
 
 	//send journal to all memories in tKernel->memoriasConCriterio; Implementar en planificador
 
-	DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,NULL);
+	DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,NULL);
 				dtb_nuevo->total_sentencias=1;
 				dtb_nuevo->tablaSentencias[0]=unaPalabra;
 				enviarANew(dtb_nuevo);
@@ -457,7 +457,7 @@ void add (char** args) {
 
 		//send journal to all memories in tKernel->memoriasConCriterio; Implementar en planificador
 
-		DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,NULL);
+		DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,NULL);
 					dtb_nuevo->total_sentencias=1;
 					dtb_nuevo->tablaSentencias[0]=unaPalabra;
 					enviarANew(dtb_nuevo);
@@ -493,7 +493,7 @@ params* parametros = malloc( sizeof(params) );
 
 			parametros->arreglo[0] = path;
 
-DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel,parametros);
+DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,parametros);
 
 
 

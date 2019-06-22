@@ -73,7 +73,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 	//	socket_memoria = conectar_a_servidor(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Memoria");
 
-	while(quantum >0 && dtb->flag != 1  && dtb->total_sentencias > 0 ) {
+	while(dtb->quantum >0 && dtb->flag != 1  && dtb->total_sentencias > 0 ) {
 
 
 
@@ -768,7 +768,33 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 					{
 						memoriaAgregar = list_find(tKernel->memoriasConCriterio,(void*)estaEnLaLista);
 					}
+					int u= 0;
+					while(list_get(t_Criterios->StrongHash,u) != NULL){
+
+						memoria* fruta =list_get(t_Criterios->StrongHash,u);
+						pthread_mutex_lock(&fruta->enUso);
+						int otrolSocket = conectar_a_memoria_flexible(fruta->ip,fruta->puerto,"Kernel");
+						prot_enviar_mensaje(otrolSocket,JOURNAL_REQ,0,NULL);
+						close(otrolSocket);
+
+						u++;
+					}
+
+					pthread_mutex_lock(&memoriaAgregar->enUso);
 					list_add(t_Criterios->StrongHash, memoriaAgregar);
+
+					u=0;
+					while(list_get(t_Criterios->StrongHash,u) != NULL){
+
+						memoria* fruta =list_get(t_Criterios->StrongHash,u);
+						pthread_mutex_unlock(&fruta->enUso);
+
+
+						u++;
+					}
+
+
+
 				}
 			}
 			else if(!strcmp(criterio,"EC"))

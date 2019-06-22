@@ -73,15 +73,19 @@ void initConfiguracion(){
 				kernelConfig->quantum,
 				kernelConfig->sleep_ejecucion
 	);
-	t_list* memoriasGossiping = list_create();
-	t_list* memorias = list_create();
-	t_list* nuevasMemorias = list_create();
+
 	t_estadisticas = malloc(sizeof(estadisticas));
 	tKernel = malloc(sizeof(t_kernel));
 	tKernel->config = kernelConfig;
-	tKernel->memoriasSinCriterio = memoriasGossiping;
-	tKernel->memoriasConCriterio = memorias;
-	tKernel->memorias=nuevasMemorias;
+	tKernel->memoriasSinCriterio = list_create();
+	tKernel->memoriasConCriterio = list_create();
+	tKernel->memoriasCola = queue_create();
+	tKernel->memorias=list_create();
+
+	t_Criterios = malloc(sizeof(criterios));
+	t_Criterios->StrongHash = list_create();
+	t_Criterios->eventualConsistency = queue_create();
+
 	tKernel->primerConexion=1;
 	initConfigAdminColas();
 	crearPrimerMemoria();
@@ -260,13 +264,14 @@ void crearPrimerMemoria(){
 
 	memoriaNueva = (memoria*)crearMemoria(tKernel->config->puerto_memoria,tKernel->config->ip_memoria);
 
-	t_Criterios = malloc(sizeof(criterios));
+
+
 	t_Criterios->strongConsistency = (memoria*)crearMemoria(tKernel->config->puerto_memoria,tKernel->config->ip_memoria);
-	tKernel->config = memoriaNueva;
 
 
 	configuracion = memoriaNueva;
-
+	list_add(tKernel->memoriasConCriterio,memoriaNueva);
+	queue_push(tKernel->memoriasCola,memoriaNueva);
 
 
 }
