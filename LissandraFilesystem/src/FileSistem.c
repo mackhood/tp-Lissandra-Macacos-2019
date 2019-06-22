@@ -1,7 +1,7 @@
 #include "FileSistem.h"
 
 #define EVENT_SIZE (sizeof(struct inotify_event))
-#define BUF_LEN (1024* (EVENT_SIZE + 16))
+#define BUF_LEN (8196* (EVENT_SIZE + 16))
 
 void mainFileSistem()
 {
@@ -1018,7 +1018,7 @@ void fileSystemNotifier()
 		return;
 	}
 
-	blockWatchDescriptor = inotify_add_watch(blockDirectoryToWatch, direccionFileSystemBlocks, IN_DELETE);
+	blockWatchDescriptor = inotify_add_watch(blockDirectoryToWatch, direccionFileSystemBlocks, IN_DELETE_SELF | IN_DELETE);
 	length = read(blockDirectoryToWatch, buffer, BUF_LEN);
 
 	if(length < 0)
@@ -1031,7 +1031,7 @@ void fileSystemNotifier()
 	while(i < length)
 	{
 		struct inotify_event* event = (struct inotify_event*) &buffer[i];
-		if(event->mask & IN_DELETE)
+		if(event->mask & IN_DELETE_SELF)
 		{
 			if(event->mask & IN_ISDIR)
 			{
@@ -1065,6 +1065,10 @@ void fileSystemNotifier()
 				pthread_mutex_unlock(&deathProtocol);
 				break;
 			}
+		}
+		if(event->mask & IN_DELETE)
+		{
+			if(event->mask & IN_ISDIR){}
 			else
 			{
 				char* trueblockname = strdup(event->name);

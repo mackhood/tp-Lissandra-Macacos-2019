@@ -616,7 +616,7 @@ void notifier()
 		return;
 	}
 
-	watchDescriptor = inotify_add_watch(fileToWatch, lissandraFL_config_ruta, IN_CREATE | IN_MODIFY | IN_DELETE);
+	watchDescriptor = inotify_add_watch(fileToWatch, lissandraFL_config_ruta, IN_CREATE | IN_MODIFY | IN_DELETE | IN_DELETE_SELF);
 	length = read(fileToWatch, buffer, BUF_LEN);
 
 	if(length < 0)
@@ -642,11 +642,11 @@ void notifier()
 			puts("Al detectarse un cambio en el archivo de configuración, se actualizaron los valores del FS.");
 			printf("\033[1;36m");
 		}
-		else if(event->mask & IN_IGNORED)
+		else if(event->mask & IN_DELETE_SELF)
 		{
-			logInfo("Lissandra: Se ha detectado que watch ha sido eliminado. Terminando sistema.");
+			logInfo("Lissandra: Se ha detectado que el archivo de config ha sido eliminado. Terminando sistema.");
 			printf("\033[1;34m");
-			puts("El FileSystem está siendo desconectado.");
+			puts("El FileSystem está siendo desconectado ya que el archivo de configuración fue destruido.");
 			printf("\033[1;36m");
 			pthread_mutex_unlock(&deathProtocol);
 			break;

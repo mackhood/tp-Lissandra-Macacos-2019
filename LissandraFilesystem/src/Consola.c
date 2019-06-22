@@ -44,6 +44,8 @@ void consola()
 		if (!strcmp(aux, "exit"))
 		{
 			free(linea);
+			printf("\033[1;34m");
+			puts("El FileSystem procederá a apagarse.");
 			printf("\033[0m");
 			clear_history();
 			free(aux);
