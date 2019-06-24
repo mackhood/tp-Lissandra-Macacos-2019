@@ -683,7 +683,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 			free(direccionMetadataTabla);
 		}
 		else if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, "..")){}
-		else if(!string_ends_with(tdp->d_name, ".tmp") || !string_ends_with(tdp->d_name, ".tmpc"))
+		else if(string_ends_with(tdp->d_name, ".tmp") || string_ends_with(tdp->d_name, ".tmpc"))
 		{
 			char* direccionTemp = malloc(strlen(direccionTabla) + strlen(tdp->d_name) + 2);
 			strcpy(direccionTemp, direccionTabla);
@@ -713,6 +713,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 				free(direccionTemp);
 			}
 		}
+		else if(string_ends_with(tdp->d_name, ".bin")){}
 	}
 	free(tdp);
 	closedir(table);
