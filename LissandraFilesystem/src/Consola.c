@@ -162,11 +162,11 @@ int ejecutar_linea (char * linea){
 void selectt (char** args)
 {
 
-	logInfo( "Consola: Se ha recibido un pedido de select.");
+	logInfo( "[Consola]: Se ha recibido un pedido de select.");
 	if(chequearParametros(args, 3) == 1)
 	{
 		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
-		logError("Consola: solicitud posee cantidad errónea de parámetros");
+		logError("[Consola]: solicitud posee cantidad errónea de parámetros");
 	}
 	else
 	{
@@ -192,7 +192,7 @@ void selectt (char** args)
 
 void insert (char** args)
 {
-	logInfo( "Consola: Se ha recibido un pedido de insert.");
+	logInfo( "[Consola]: Se ha recibido un pedido de insert.");
 	int chequeo = 0;
 	if(args[4] == NULL )
 		chequeo = chequearParametros(args, 4);
@@ -201,19 +201,19 @@ void insert (char** args)
 	if(chequeo == 1)
 	{
 		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
-		logError( "Consola: solicitud posee cantidad errónea de parámetros");
+		logError( "[Consola]: solicitud posee cantidad errónea de parámetros");
 	}
 	else
 	{
 		if(!itsANumber(args[2]))
 		{
 			puts("La key que ingresó posee caracteres inválidos.");
-			logError( "Consola: la key a Insertar es inválida.");
+			logError( "[Consola]: la key a Insertar es inválida.");
 		}
 		else if(strlen(args[2]) > 5)
 		{
 			puts("La key que ingresó es demasiado grande.");
-			logError( "Consola: la key a Insertar es demasiado grande.");
+			logError( "[Consola]: la key a Insertar es demasiado grande.");
 		}
 		else
 		{
@@ -224,7 +224,7 @@ void insert (char** args)
 			if(atoi(claveaux) > 65536)
 			{
 				puts("La key es demasiado grande, ingrese una más pequeña.");
-				logError( "Consola: la key a Insertar es inválida.");
+				logError( "[Consola]: la key a Insertar es inválida.");
 				free(tabla);
 				free(claveaux);
 				return;
@@ -233,7 +233,7 @@ void insert (char** args)
 			if(string_contains(args[3], ";"))
 			{
 				printf("Por favor, ingrese un value que no tenga ';' dentro.");
-				logError("Consola: se ingresó un value inválido");
+				logError("[Consola]: se ingresó un value inválido");
 			}
 			else
 			{
@@ -251,7 +251,7 @@ void insert (char** args)
 					if(!itsANumber(args[4]))
 					{
 						puts("El timestamp ingresado contiene caracteres inválidos.");
-						logError( "Consola: el timestamp a Insertar es inválido.");
+						logError( "[Consola]: el timestamp a Insertar es inválido.");
 						free(value);
 						free(claveaux);
 						free(tabla);
@@ -264,7 +264,7 @@ void insert (char** args)
 						if(strlen(timestampaux) > 15)
 						{
 							puts("Ha insertado un timestamp demasiado grande. Por favor, ingrese uno más pequeño.");
-							logError( "Consola: el timestamp a Insertar es inválido.");
+							logError( "[Consola]: el timestamp a Insertar es inválido.");
 							free(value);
 							free(claveaux);
 							free(tabla);
@@ -282,13 +282,13 @@ void insert (char** args)
 				{
 				case 0:
 				{
-					logInfo( "Consola: Insert realizado.");
+					logInfo( "[Consola]: Insert realizado.");
 					free(claveaux);
 					break;
 				}
 				case 1:
 				{
-					logError("Consola: Insert fallido por tabla inexistente");
+					logError("[Consola]: Insert fallido por tabla inexistente");
 					free(value);
 					free(claveaux);
 					free(tabla);
@@ -296,7 +296,7 @@ void insert (char** args)
 				}
 				case 2:
 				{
-					logError("Consola: la memtable no pudo recibir la clave");
+					logError("[Consola]: la memtable no pudo recibir la clave");
 					free(value);
 					free(claveaux);
 					free(tabla);
@@ -304,7 +304,7 @@ void insert (char** args)
 				}
 				case 3:
 				{
-					logError("Consola: el value era demasiado grande para realizar el insert");
+					logError("[Consola]: el value era demasiado grande para realizar el insert");
 					free(value);
 					free(claveaux);
 					free(tabla);
@@ -318,28 +318,28 @@ void insert (char** args)
 
 void create (char** args)
 {
-	logInfo( "Consola: Se ha recibido un pedido de create.");
+	logInfo( "[Consola]: Se ha recibido un pedido de create.");
 	if(chequearParametros(args, 5) == 1)
 	{
 		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
-		logError( "Consola: solicitud posee cantidad errónea de parámetros");
+		logError( "[Consola]: solicitud posee cantidad errónea de parámetros");
 	}
 	else
 	{
 		if(criterioInvalido(args[2]))
 		{
 			puts("El criterio es inválido.");
-			logError( "Consola: el criterio de CREATE es inválido.");
+			logError( "[Consola]: el criterio de CREATE es inválido.");
 		}
 		else if(!itsANumber(args[3]))
 		{
 			puts("La cantidad de particiones es inválida.");
-			logError( "Consola: la cantidad de particiones para CREATE es inválida.");
+			logError( "[Consola]: la cantidad de particiones para CREATE es inválida.");
 		}
 		else if(!itsANumber(args[4]))
 		{
 			puts("El tiempo entre cada compactación es inválido.");
-			logError( "Consola: el tiempo entre cada compactación para CREATE es inválido.");
+			logError( "[Consola]: el tiempo entre cada compactación para CREATE es inválido.");
 		}
 		else
 		{
@@ -359,25 +359,25 @@ void create (char** args)
 				case 0:
 				{
 					printf("Operación exitosa\n");
-					logInfo( "Consola: Tabla creada satisfactoriamente");
+					logInfo( "[Consola]: Tabla creada satisfactoriamente");
 					break;
 				}
 				case 2:
 				{
 					printf("La tabla solicitada ya existe\n");
-					logInfo( "Consola: Tabla ya existía");
+					logInfo( "[Consola]: Tabla ya existía");
 					break;
 				}
 				case 5:
 				{
 					puts("No hay suficientes bloques disponibles en el FS para crear esta tabla");
-					logError("Consola: Se solicitaron más bloques de los disponibles actualmente en el FS.");
+					logError("[Consola]: Se solicitaron más bloques de los disponibles actualmente en el FS.");
 					break;
 				}
 				default:
 				{
 					printf("Error al crear la tabla\n");
-					logError( "Consola: La tabla o alguna de sus partes no pudo ser creada");
+					logError( "[Consola]: La tabla o alguna de sus partes no pudo ser creada");
 					break;
 				}
 			}
@@ -390,7 +390,7 @@ void create (char** args)
 
 void describe (char** args)
 {
-	logInfo( "Consola: Se ha recibido un pedido de describe.");
+	logInfo( "[Consola]: Se ha recibido un pedido de describe.");
 	int chequeo = 0;
 	if(args[1] == NULL )
 		chequeo = chequearParametros(args, 1);
@@ -399,7 +399,7 @@ void describe (char** args)
 	if(chequeo == 1)
 	{
 		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
-		logError( "Consola: solicitud posee cantidad errónea de parámetros");
+		logError( "[Consola]: solicitud posee cantidad errónea de parámetros");
 	}
 	else
 	{
@@ -413,11 +413,11 @@ void describe (char** args)
 		char* problem = malloc(2);
 		if (!strcmp((problem = describirTablas(tablaSolicitada, solicitadoPorMemoria)), "0"))
 		{
-			logInfo( "Consola: Todas las tablas solicitadas fueron descritas correctamente");
+			logInfo( "[Consola]: Todas las tablas solicitadas fueron descritas correctamente");
 		}
 		else
 		{
-			logError("Consola: No pudieron ser mostradas las tablas solicitadas");
+			logError("[Consola]: No pudieron ser mostradas las tablas solicitadas");
 		}
 		free(tablaSolicitada);
 	}
@@ -425,11 +425,11 @@ void describe (char** args)
 
 void drop (char** args)
 {
-	logInfo( "Consola: Se ha solicitado realizar un DROP");
+	logInfo( "[Consola]: Se ha solicitado realizar un DROP");
 	if(chequearParametros(args, 2) == 1)
 	{
 		printf("Por favor, especifique la cantidad de parámetros solicitada\n");
-		logError( "Consola: solicitud posee cantidad errónea de parámetros");
+		logError( "[Consola]: solicitud posee cantidad errónea de parámetros");
 	}
 	else
 	{
@@ -441,19 +441,19 @@ void drop (char** args)
 		case 1:
 		{
 			printf("La tabla que usted deseaba eliminar no existe\n");
-			logError( "Consola: Tabla inexistente");
+			logError( "[Consola]: Tabla inexistente");
 			break;
 		}
 		case 0:
 		{
 			printf("La tabla ha sido eliminada exitosamente\n");
-			logInfo( "Consola: Tabla eliminada correctamente");
+			logInfo( "[Consola]: Tabla eliminada correctamente");
 			break;
 		}
 		default:
 		{
 			printf("Ocurrió un error al intentar eliminar la tabla deseada\n");
-			logError( "Consola: operacion no terminada");
+			logError( "[Consola]: operacion no terminada");
 		}
 		}
 		free(tablaAEliminar);
@@ -462,12 +462,12 @@ void drop (char** args)
 
 void details(char** args)
 {
-	logInfo("Consola: se ha solicitado información sobre le uso del FileSystem.");
+	logInfo("[Consola]: se ha solicitado información sobre le uso del FileSystem.");
 	int chequeo = chequearParametros(args, 1);
 	if(chequeo)
 	{
 		printf("La instrucción details no lleva parámetros.\n");
-		logError( "Consola: solicitud posee cantidad errónea de parámetros");
+		logError( "[Consola]: solicitud posee cantidad errónea de parámetros");
 	}
 	else
 	{
@@ -562,7 +562,7 @@ void show_menu(char** args)
 	if(chequeo)
 	{
 		printf("La instrucción SHOW_MENU no lleva parámetros.\n");
-		logError( "Consola: solicitud posee cantidad errónea de parámetros");
+		logError( "[Consola]: solicitud posee cantidad errónea de parámetros");
 	}
 	else
 	{
@@ -586,17 +586,17 @@ void show_menu(char** args)
 
 void modifyDumpTime(char** args)
 {
-	logInfo("Consola: Ha llegado un pedido para modificar el tiempoDeDump.");
+	logInfo("[Consola]: Ha llegado un pedido para modificar el tiempoDeDump.");
 	int chequeo = chequearParametros(args, 2);
 	if(chequeo)
 	{
 		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
-		logError("Consola: solicitud posee cantidad errónea de parámetros");
+		logError("[Consola]: solicitud posee cantidad errónea de parámetros");
 	}
 	else if(!itsANumber(args[1]))
 	{
 		puts("El valor que ingresó tiene caracteres inválidos.");
-		logError( "Consola: el valor para modificar es inválido.");
+		logError( "[Consola]: el valor para modificar es inválido.");
 	}
 	else
 	{
@@ -607,24 +607,24 @@ void modifyDumpTime(char** args)
 		config_save(ConfigMain);
 		config_destroy(ConfigMain);
 		free(dumpTime);
-		logInfo("Consola: se ha modificado el tiempo de dumpeo.");
+		logInfo("[Consola]: se ha modificado el tiempo de dumpeo.");
 		puts("Se ha modificado el tiempo entre Dumps");
 	}
 }
 
 void modifyRetardo(char** args)
 {
-	logInfo("Consola: Ha llegado un pedido para modificar el retardo entre instrucciones.");
+	logInfo("[Consola]: Ha llegado un pedido para modificar el retardo entre instrucciones.");
 	int chequeo = chequearParametros(args, 2);
 	if(chequeo)
 	{
 		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
-		logError("Consola: solicitud posee cantidad errónea de parámetros");
+		logError("[Consola]: solicitud posee cantidad errónea de parámetros");
 	}
 	else if(!itsANumber(args[1]))
 	{
 		puts("El valor que ingresó tiene caracteres inválidos.");
-		logError( "Consola: el valor para modificar es inválido.");
+		logError( "[Consola]: el valor para modificar es inválido.");
 	}
 	else
 	{
@@ -635,7 +635,8 @@ void modifyRetardo(char** args)
 		config_save(ConfigMain);
 		config_destroy(ConfigMain);
 		free(delay);
-		logInfo("Consola: se ha modificado el tiempo de delay.");
+		logInfo("[Consola]: se ha modificado el tiempo de delay.");
 		puts("Se ha modificado el delay entre instrucciones");
 	}
 }
+

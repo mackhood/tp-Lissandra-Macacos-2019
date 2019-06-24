@@ -8,7 +8,7 @@ void mainCompactador()
 	strcat(direccionDeLasTablas, "Tables/");
 	if(NULL == (directorioDeTablas = opendir(direccionDeLasTablas)))
 	{
-		logError("Compactador: error al acceder al directorio de tablas, abortando");
+		logError("[Compactador]: error al acceder al directorio de tablas, abortando");
 		free(direccionDeLasTablas);
 		closedir(directorioDeTablas);
 	}
@@ -30,14 +30,14 @@ void setearValoresCompactador(t_config* archivoConfig)
 {
 	tiempoDump = config_get_int_value(archivoConfig, "TIEMPO_DUMP");
 	tablasEnEjecucion = list_create();
-	slowestCompactationInterval = 0;
+	slowestCompactationInterval = tiempoDump;
 	lastDumpSituation = 0;
 }
 
 void gestionarTabla(char*tabla)
 {
 	pthread_t hiloTabla;
-	logInfo("Compactador: Se inicio un hilo para manejar a %s.",tabla);
+	logInfo("[Compactador]: Se inicio un hilo para manejar a %s.",tabla);
 	pthread_create(&hiloTabla, NULL, (void *) compactarTablas, tabla);
 	pthread_detach(hiloTabla);
 }
@@ -97,7 +97,7 @@ void compactarTablas(char*tabla)
 		usleep(tiempoEntreCompactacion * 1000);
 		if(!list_find(tablasEnEjecucion, (void*) estaTabla))
 		{
-			logInfo("Compactador: La %s, al haber sido previamente desalojada dejará de ser buscada en el compactador", tabla);
+			logInfo("[Compactador]: La %s, al haber sido previamente desalojada dejará de ser buscada en el compactador", tabla);
 			break;
 		}
 		else if(tablaAAgregar->cantTemps == 0){}
@@ -112,7 +112,7 @@ void compactarTablas(char*tabla)
 void gestionarDumps()
 {
 	pthread_t hiloMemtable;
-	logInfo("Compactador: Se inicio un hilo para manejar a la memtable");
+	logInfo("[Compactador]: Se inicio un hilo para manejar a la memtable");
 	pthread_create(&hiloMemtable, NULL, (void *) gestionarMemtable, NULL);
 	pthread_detach(hiloMemtable);
 }
@@ -133,7 +133,7 @@ void gestionarMemtable()
 				fileSystemFull = false;
 			if(!fileSystemFull)
 			{
-				logInfo("Compactador: Se procede a realizar un dump de la memtable.");
+				logInfo("[Compactador]: Se procede a realizar un dump de la memtable.");
 				pthread_mutex_lock(&dumpEnCurso);
 				while(NULL != list_get(tablasEnEjecucion, a))
 				{
@@ -146,7 +146,7 @@ void gestionarMemtable()
 			}
 			else
 			{
-				logInfo("Compactador: no hay suficiente espacio en el FS para realizar un Dump. Se reintentará luego.");
+				logInfo("[Compactador]: no hay suficiente espacio en el FS para realizar un Dump. Se reintentará luego.");
 				puts("FileSystem se encuentra sin espacio suficiente para dumpear");
 			}
 		}
@@ -199,7 +199,7 @@ void crearTemporal(char* tabla)
 	pthread_mutex_lock(&tablaEjecutada->renombreEnCurso);
 	while(NULL != list_get(keysTableSpecific, a))
 	{
-		logInfo("Compactador: se iniciar el proceso de crear un .tmp nuevo a la %s", tabla);
+		logInfo("[Compactador]: se iniciar el proceso de crear un .tmp nuevo a la %s", tabla);
 		if(firstRun)
 		{
 			tempPointer = fopen(tempDirection, "w+");
@@ -252,7 +252,7 @@ void crearTemporal(char* tabla)
 		char* bloquesAsignados = escribirBloquesDeFs(container, usedSize, tabla);
 		config_set_value(tempArchConf, "BLOCKS", bloquesAsignados);
 		config_save(tempArchConf);
-		logInfo("Compactador: temporal creado");
+		logInfo("[Compactador]: temporal creado");
 		config_destroy(tempArchConf);
 		free(sizedUse);
 		free(bloquesAsignados);
@@ -278,7 +278,7 @@ void ejecutarCompactacion(char* tabla)
 		free(tablaAux);
 		return result;
 	}
-	logInfo("Compactador: se procede a realizar la compactación de la %s", tabla);
+	logInfo("[Compactador]: se procede a realizar la compactación de la %s", tabla);
 	char* direccionTabla = malloc(strlen(tabla) + strlen(punto_montaje) + 9);
 	strcpy(direccionTabla, punto_montaje);
 	strcat(direccionTabla, "Tables/");
@@ -435,7 +435,7 @@ void ejecutarCompactacion(char* tabla)
 		}
 		free(keysDeParticion);
 	}
-	logInfo("Compactador: la %s ha sido compactada.", tabla);
+	logInfo("[Compactador]: la %s ha sido compactada.", tabla);
 	free(direccionMetadata);
 	list_destroy_and_destroy_elements(keysPostParsing, &free);
 	list_destroy_and_destroy_elements(keysToManage, &free);
@@ -513,7 +513,7 @@ void killProtocolCompactador()
 {
 	if(criticalFailure)
 	{
-		logError("Compactador: un error crítico ha sido decretado, el FS se desconectará sin dar tiempo a proteger datos.");
+		logError("[Compactador]: un error crítico ha sido decretado, el FS se desconectará sin dar tiempo a proteger datos.");
 		list_clean_and_destroy_elements(tablasEnEjecucion, &free);
 		free(TableEntry);
 		closedir(directorioDeTablas);
@@ -523,7 +523,7 @@ void killProtocolCompactador()
 	{
 		lastDumpSituation = 1;
 		list_clean_and_destroy_elements(tablasEnEjecucion, &free);
-		logInfo("Compactador: Desconectando todas las tablas.");
+		logInfo("[Compactador]: Desconectando todas las tablas.");
 		usleep(slowestCompactationInterval * 1000); //Esto está para que el compactador tenga tiempo a matar todas las tablas de su sistema.
 		free(TableEntry);
 		closedir(directorioDeTablas);

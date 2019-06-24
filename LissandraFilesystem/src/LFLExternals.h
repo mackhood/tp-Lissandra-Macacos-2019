@@ -23,6 +23,8 @@
 #include "../../SharedLibrary/auxiliaryFunctions.h"
 #include "../../SharedLibrary/loggers.h"
 #include "../../SharedLibrary/conexiones.h"
+#include "../../SharedLibrary/configs.h"
+#include "../../SharedLibrary/protocolo.h"
 #include <commons/bitarray.h>
 #include <sys/mman.h>
 #include <fcntl.h>
@@ -50,6 +52,7 @@ typedef struct {
 }__attribute__((packed)) t_TablaEnEjecucion;
 
 /* VARIABLES GLOBALES */
+int slowestCompactationInterval;
 int tiempoDump;
 char* lissandraFL_config_ruta;
 bool fileSystemFull;

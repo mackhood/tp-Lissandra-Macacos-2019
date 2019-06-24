@@ -6,7 +6,6 @@
 
 /* VARIABLES GLOBALES*/
 
-int slowestCompactationInterval;
 int lastDumpSituation;
 char* direccionDeLasTablas;
 struct dirent* TableEntry;
