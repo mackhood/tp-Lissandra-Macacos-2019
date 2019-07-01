@@ -49,6 +49,7 @@ typedef struct {
 	int cantTemps;
 	pthread_mutex_t compactacionActiva;
 	pthread_mutex_t renombreEnCurso;
+	pthread_mutex_t dropPendiente;
 }__attribute__((packed)) t_TablaEnEjecucion;
 
 /* VARIABLES GLOBALES */

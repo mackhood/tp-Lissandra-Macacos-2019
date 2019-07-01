@@ -95,7 +95,7 @@ void levantarBitmap(char* direccion)
 	globalBitmapPath = malloc(strlen(direccionBitmap) + 1);
 	strcpy(globalBitmapPath, direccionBitmap);
 	bitarrayfd = open(globalBitmapPath, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
-	ftruncate(bitarrayfd, (blocks/8));
+	ftruncate(bitarrayfd, (blocks/8) + 1);
 	if (bitarrayfd == -1)
 	{
 		logError("[FileSystem]: error al abrir el bitmap, abortando sistema");
@@ -105,7 +105,7 @@ void levantarBitmap(char* direccion)
 	}
 	else
 	{
-		bitarraycontent = mmap(NULL, (blocks/8), PROT_READ | PROT_WRITE, MAP_SHARED, bitarrayfd, 0);
+		bitarraycontent = mmap(NULL, (blocks/8) + 1, PROT_READ | PROT_WRITE, MAP_SHARED, bitarrayfd, 0);
 		bitarray = bitarray_create_with_mode(bitarraycontent, (blocks/8), LSB_FIRST);
 		int a;
 		for(a = 0; a < blocks; a++)

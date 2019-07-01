@@ -510,8 +510,11 @@ int llamarEliminarTabla(char* tablaPorEliminar)
 	{
 	case 0:
 	{
+		t_TablaEnEjecucion * tabla = list_find(tablasEnEjecucion, (void*) estaTabla);
+		pthread_mutex_lock(&tabla->dropPendiente);
 		list_remove_by_condition(tablasEnEjecucion, (void*) estaTabla);
 		logInfo("[Lissandra]: Se ha removido a la %s de la lista de tablas en ejecución", tablaPorEliminar);
+		pthread_mutex_unlock(&tabla->dropPendiente);
 		break;
 	}
 	default:

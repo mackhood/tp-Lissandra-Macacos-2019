@@ -61,6 +61,7 @@ void compactarTablas(char*tabla)
 	tablaAAgregar->tabla = tabla;
 	pthread_mutex_init(&tablaAAgregar->compactacionActiva, NULL);
 	pthread_mutex_init(&tablaAAgregar->renombreEnCurso, NULL);
+	pthread_mutex_init(&tablaAAgregar->dropPendiente, NULL);
 	char* direccionTabla = malloc(strlen(punto_montaje) + strlen(tabla) + 10);//son 20 de tables/ y metadata.cfg +1 por las dudas
 	strcpy(direccionTabla, punto_montaje);
 	strcat(direccionTabla, "Tables/");
@@ -103,7 +104,9 @@ void compactarTablas(char*tabla)
 		else if(tablaAAgregar->cantTemps == 0){}
 		else
 		{
+			pthread_mutex_lock(&tablaAAgregar->dropPendiente);
 			ejecutarCompactacion(tabla);
+			pthread_mutex_unlock(&tablaAAgregar->dropPendiente);
 		}
 	}
 	free(direccionMetadataTabla);
