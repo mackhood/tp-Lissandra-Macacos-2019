@@ -10,7 +10,7 @@
 
 void leerConfig(char * configPath,t_log* logger) {
 	leerArchivoDeConfiguracion(configPath,logger);
-	logInfo("[Main]: Archivo de configuracion leido correctamente");
+	log_info(logger, "[Main]: Archivo de configuracion leido correctamente");
 }
 
 void leerArchivoDeConfiguracion(char * configPath,t_log* logger) {

@@ -31,6 +31,8 @@ typedef struct {
 
 
 void handleConsola();
+COMANDO * buscar_comando(char* linea);
+int ejecutar_linea (char * linea);
 void selectt (char** args);
 void insert (char** args);
 void create (char** args);

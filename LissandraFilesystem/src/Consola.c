@@ -161,7 +161,6 @@ int ejecutar_linea (char * linea){
 
 void selectt (char** args)
 {
-
 	logInfo( "[Consola]: Se ha recibido un pedido de select.");
 	if(chequearParametros(args, 3) == 1)
 	{
@@ -332,6 +331,11 @@ void create (char** args)
 			logError( "[Consola]: el criterio de CREATE es inválido.");
 		}
 		else if(!itsANumber(args[3]))
+		{
+			puts("La cantidad de particiones es inválida.");
+			logError( "[Consola]: la cantidad de particiones para CREATE es inválida.");
+		}
+		else if(atoi(args[3]) < 1)
 		{
 			puts("La cantidad de particiones es inválida.");
 			logError( "[Consola]: la cantidad de particiones para CREATE es inválida.");
