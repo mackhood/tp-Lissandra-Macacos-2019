@@ -126,7 +126,7 @@ void handler_conexion_memoria(t_kernel* tKernel) {
 
 			}
 
-
+			pthread_mutex_unlock(&configuracion->enUso);
 			close(conexion);
 
 
