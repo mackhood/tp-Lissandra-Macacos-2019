@@ -432,6 +432,11 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 				queue_push(t_Criterios->eventualConsistency,leMemoria);
 
 
+			}if(laTabla->criterio == "SC"){
+
+
+				pthread_mutex_unlock(&t_Criterios->strongConsistency->enUso);
+
 			}
 
 

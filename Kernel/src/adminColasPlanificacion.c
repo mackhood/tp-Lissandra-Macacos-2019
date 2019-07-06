@@ -56,7 +56,7 @@ void enviarANew(DTB_KERNEL* dtb){
 	queue_push(tKernelEstados->new, dtb);
 	signalDTBNew();
 	pthread_mutex_unlock(&mutexListNuevo);
-	logInfo("El DTB id %d y path %s ingreso a la cola de NEW",dtb->idGDT, dtb->path);
+	//logInfo("El DTB id %d y path %s ingreso a la cola de NEW",dtb->idGDT, dtb->path);
 }
 
 
