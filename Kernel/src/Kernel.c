@@ -63,7 +63,7 @@ void initConfiguracion(){
 
 
 	//logueo todos los datos de configuracion
-	initMutexlog(KERNEL_LOG_PATH,PROGRAM_NAME,ACTIVE_CONSOLE,LOG_LEVEL_TRACE);
+	initMutexlog(KERNEL_LOG_PATH,PROGRAM_NAME,0,LOG_LEVEL_TRACE);
 
 	logInfo("IP de memoria :%s -Metadata refresh: %d -Multiprocesamiento: %d -Puerto Memoria: %d -Quantum: %d  -Sleep ejecucion: %d\n",
 				kernelConfig->ip_memoria,
@@ -281,9 +281,10 @@ void crearPrimerMemoria(){
 int actualIdMemoria = 0 ;
 
 	int getIdMemoria(){
-			int id;
+			int id= 0;;
 			pthread_mutex_lock(&mutexIdMemoria);
-			id = actualIdMemoria++;
+			actualIdMemoria++;
+			id = actualIdMemoria;
 			pthread_mutex_unlock(&mutexIdMemoria);
 			return id;
 		}

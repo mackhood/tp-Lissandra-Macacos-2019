@@ -123,7 +123,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 		t_tabla* laTabla;
 		memoria * leMemoria;
-		if(dtb->operacionActual ==SELECT_REQ || dtb->operacionActual == INSERT_REQ || dtb->operacionActual == CREATE_REQ || dtb->operacionActual == DROP_REQ )
+		if((dtb->operacionActual == SELECT_REQ )|| (dtb->operacionActual == INSERT_REQ )|| (dtb->operacionActual == CREATE_REQ) || (dtb->operacionActual == DROP_REQ) )
 		{
 
 			if((dtb->operacionActual == DESCRIBE_REQ && args[1] != NULL) ||dtb->operacionActual == DROP_REQ ){
@@ -142,33 +142,61 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 						pthread_mutex_lock(&t_Criterios->strongConsistency->enUso);
 						socket_memoria = conectar_a_memoria_flexible(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Kernel");
 
+						if( socket_memoria == -3){
 
+
+							printf("Fallo Conexion en sc");
+							dtb->operacionActual = ERROR;
+
+						}
 					}else if(!strcmp(laTabla->criterio,"EC")){
 
 						pthread_mutex_lock(&ec);
 						leMemoria = queue_pop(t_Criterios->eventualConsistency);
 						pthread_mutex_unlock(&ec);
 
-						pthread_mutex_lock(&leMemoria->enUso);
-						socket_memoria = conectar_a_memoria_flexible(leMemoria->ip, leMemoria->puerto, "Kernel");
+						if(leMemoria != NULL){
 
+
+							pthread_mutex_lock(&leMemoria->enUso);
+							socket_memoria = conectar_a_memoria_flexible(leMemoria->ip, leMemoria->puerto, "Kernel");
+						} else {
+
+							printf("no hay memorias para ec");
+							dtb->operacionActual = ERROR;
+
+						}
 
 					}else if(!strcmp(laTabla->criterio,"SHC")){
 
 						int cantidadEnHash = list_size(t_Criterios->StrongHash);
 
-						int value =	(rand() % cantidadEnHash);
+						if(cantidadEnHash != 0) {
 
-						leMemoria = list_get(t_Criterios->StrongHash,value);
-						pthread_mutex_lock(&leMemoria->enUso);
-						socket_memoria = conectar_a_memoria_flexible(leMemoria->ip, leMemoria->puerto, "Kernel");
+
+
+							int value =	(rand() % cantidadEnHash);
+
+							leMemoria = list_get(t_Criterios->StrongHash,value);
+							pthread_mutex_lock(&leMemoria->enUso);
+							socket_memoria = conectar_a_memoria_flexible(leMemoria->ip, leMemoria->puerto, "Kernel");
+						}else {
+
+
+							printf("no hay memorias para shc");
+							dtb->operacionActual = ERROR;
+
+
+						}
+
+
 
 
 					} else{
 
 
 						dtb->operacionActual = ERROR;
-						printf("No se encontro criterio");
+						printf("No se encontro criterio ec");
 						dtb->flag = 1;
 
 					}
@@ -176,9 +204,10 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 
 
-				}	dtb->operacionActual = ERROR;
+				}else{	dtb->operacionActual = ERROR;
 				printf("La tabla no se encuentra en metadata");
 				dtb->flag = 1;
+				}
 
 			}else{
 				if(dtb->operacionActual == DESCRIBE_REQ) {
@@ -186,9 +215,18 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 					leMemoria  =queue_pop(tKernel->memoriasCola);
 					pthread_mutex_unlock(&memoriasCola);
 
-					pthread_mutex_unlock(&leMemoria->enUso);
-					socket_memoria = conectar_a_servidor(leMemoria->ip, leMemoria->puerto, "KERNEL");
+					if(leMemoria != NULL) {
 
+
+						pthread_mutex_lock(&leMemoria->enUso);
+						socket_memoria = conectar_a_memoria_flexible(leMemoria->ip, leMemoria->puerto, "KERNEL");
+					}else{
+
+						printf("no hay memorias disponibles en memoriasColas");
+						dtb->operacionActual = ERROR;
+
+
+					}
 
 				}else if (dtb->operacionActual == CREATE_REQ){
 
@@ -197,7 +235,13 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 						pthread_mutex_lock(&t_Criterios->strongConsistency->enUso);
 						socket_memoria = conectar_a_memoria_flexible(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Kernel");
+						if( socket_memoria == -3){
 
+
+							printf("Fallo Conexion en sc");
+							dtb->operacionActual = ERROR;
+
+						}
 
 					}else if(!strcmp(args[2],"EC")){
 
@@ -205,20 +249,39 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 						leMemoria = queue_pop(t_Criterios->eventualConsistency);
 						pthread_mutex_unlock(&ec);
 
-						pthread_mutex_lock(&leMemoria->enUso);
-						socket_memoria = conectar_a_memoria_flexible(leMemoria->ip, leMemoria->puerto, "Kernel");
+						if( leMemoria != NULL){
 
+
+							pthread_mutex_lock(&leMemoria->enUso);
+							socket_memoria = conectar_a_memoria_flexible(leMemoria->ip, leMemoria->puerto, "Kernel");
+						}else{
+
+							printf("no hay memorias para este criterio");
+
+							dtb->sentenciaActual = ERROR;
+
+						}
 
 					}else if(!strcmp(args[2],"SHC")){
 
 						int cantidadEnHash = list_size(t_Criterios->StrongHash);
+						if(cantidadEnHash != 0){
 
-						int value =	(rand() % cantidadEnHash);
 
-						leMemoria = list_get(t_Criterios->StrongHash,value);
-						pthread_mutex_lock(&leMemoria->enUso);
-						socket_memoria = conectar_a_memoria_flexible(leMemoria->ip, leMemoria->puerto, "Kernel");
 
+
+							int value =	(rand() % cantidadEnHash);
+
+							leMemoria = list_get(t_Criterios->StrongHash,value);
+							pthread_mutex_lock(&leMemoria->enUso);
+							socket_memoria = conectar_a_memoria_flexible(leMemoria->ip, leMemoria->puerto, "Kernel");
+						}else{
+
+
+							printf("no hay memorias en shc");
+							dtb->operacionActual = ERROR;
+
+						}
 
 					} else{
 
@@ -251,15 +314,32 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 							pthread_mutex_lock(&t_Criterios->strongConsistency->enUso);
 							socket_memoria = conectar_a_memoria_flexible(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Kernel");
 
+							if( socket_memoria == -3){
 
+
+								printf("Fallo Conexion en sc");
+								dtb->operacionActual = ERROR;
+
+							}
 						}else if(!strcmp(laTabla->criterio,"EC")){
 
 							pthread_mutex_lock(&ec);
 							leMemoria = queue_pop(t_Criterios->eventualConsistency);
 							pthread_mutex_unlock(&ec);
 
+							if(leMemoria != NULL){
+
+
 							pthread_mutex_lock(&leMemoria->enUso);
 							socket_memoria = conectar_a_memoria_flexible(leMemoria->ip, leMemoria->puerto, "Kernel");
+
+							}else{
+
+
+								printf("no hay memoria en ec");
+
+							}
+
 
 
 						}else if(!strcmp(laTabla->criterio,"SHC")){
@@ -269,12 +349,19 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 							int key =	atoi(args[2]);
 
 							int value = key % cantidadEnHash;
+							if(cantidadEnHash != 0){
 
 
 							leMemoria = list_get(t_Criterios->StrongHash,value);
 							pthread_mutex_lock(&leMemoria->enUso);
 							socket_memoria = conectar_a_memoria_flexible(leMemoria->ip, leMemoria->puerto, "Kernel");
+							}else {
 
+								printf("no hay memorias en shc");
+								dtb->operacionActual = ERROR;
+
+
+							}
 
 						} else{
 
@@ -288,11 +375,11 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 
 
-					}	dtb->operacionActual = ERROR;
+					}else{	dtb->operacionActual = ERROR;
 					printf("La tabla no se encuentra en metadata");
 					dtb->flag = 1;
 
-
+					}
 
 
 
@@ -387,10 +474,10 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 				if(args[d+1] !=NULL ){
 					string_append(&stringEnviar, strcat(args[d], " "));
-				}
+				}else{
 
 				string_append(&stringEnviar,args[d]);
-
+				}
 				d++;
 
 			}
@@ -912,7 +999,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 		case ERROR: {
 
-
+			dtb->flag = 1;
 
 			break;
 		}
@@ -922,6 +1009,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 			printf("Invalid operation\n" );
 
+			dtb->flag =1 ;
 		}
 
 

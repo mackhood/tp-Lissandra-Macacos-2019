@@ -48,20 +48,28 @@ void handleConsola(){
 	puts("9. - METRICS  <id_dtb>");
 	char* linea;
 
-		while (1) {
+	while (1) {
 		linea = readline("\n Kernel: ");
 
-		if (strcmp(linea, "exit")==0){
+		char* aux = malloc(strlen(linea) + 1);
+		strcpy(aux, linea);
+		//string_to_upper(aux);
+
+
+
+		if (strcmp(aux, "EXIT")==0){
 			free(linea);
+			free(aux);
 			destProtocol = 1;
 			puts("El Kernel ha sido desconectado.");
 			break;
 		}
 
-		if (ejecutar_linea(linea)){
-			add_history(linea);
+		if (ejecutar_linea(aux)){
+			add_history(aux);
 		}
-		free(linea);
+		//free(linea);
+		free(aux);
 	}
 }
 
@@ -91,11 +99,11 @@ int ejecutar_linea (char * linea){
 
 	if(string_contains(linea, "|"))
 	{
-			while (linea_aux[i] != '|') i++;
+		while (linea_aux[i] != '|') i++;
 
-			funcion = malloc((sizeof(char) * i) + 1);
-			strncpy(funcion, linea_aux, i);
-			funcion[i] = '\0';
+		funcion = malloc((sizeof(char) * i) + 1);
+		strncpy(funcion, linea_aux, i);
+		funcion[i] = '\0';
 	}
 	else
 	{
@@ -159,41 +167,41 @@ void selectt(char** args){
 	dtb_nuevo->quantum= tKernel->config->quantum;
 	dtb_nuevo->total_sentencias=1;
 
-//	if(estaEnMetadata(nombre_tabla)){
-//
-//		enviarANew(dtb_nuevo);
-//		logInfo("Se envio a new el proceso");
-//
-//	} else{
-//
-//		enviarAEXIT(dtb_nuevo);
-//		logInfo("La tabla no se encuentra en metadata");
-//
-//	}
+	//	if(estaEnMetadata(nombre_tabla)){
+	//
+	//		enviarANew(dtb_nuevo);
+	//		logInfo("Se envio a new el proceso");
+	//
+	//	} else{
+	//
+	//		enviarAEXIT(dtb_nuevo);
+	//		logInfo("La tabla no se encuentra en metadata");
+	//
+	//	}
 
 
 	char* tabla [100];
 	int i;
 	int b=0;
-		for(i=0; i<100; i++){
+	for(i=0; i<100; i++){
 
 		tabla[i] = string_new();
 
 
-		}
+	}
 
 
 
-		 char *unaPalabra = string_new();
-	 while( args[b] !=NULL){
+	char *unaPalabra = string_new();
+	while( args[b] !=NULL){
 
 
 
-		 string_append(&unaPalabra, strcat(args[b], " "));
-		   b++;
-	   }
+		string_append(&unaPalabra, strcat(args[b], " "));
+		b++;
+	}
 
-	 dtb_nuevo->tablaSentencias[0]=unaPalabra;
+	dtb_nuevo->tablaSentencias[0]=unaPalabra;
 
 	enviarANew(dtb_nuevo);
 	logInfo("Se envio a new el proceso");
@@ -213,8 +221,8 @@ void inicializarParametros(params* params){
 	int i;
 	for(i=0; i<10; i++){
 
-	 params->arreglo[i] = string_new();
-	    }
+		params->arreglo[i] = string_new();
+	}
 
 
 }
@@ -223,107 +231,107 @@ void inicializarParametros(params* params){
 void insert (char** args) {
 
 	// INSERT Tabla1|key|value
-	char* nombre_tabla = string_duplicate(args[0]);
-		uint16_t key = atoi(args[1]);
-		char* value = string_duplicate(args[2]);
-
-		//char* key = string_duplicate(args[2]);
-
-		params* parametros = malloc( sizeof(params) );
-		inicializarParametros(parametros);
-
-		parametros->enteros[0]= key;
-		parametros->arreglo[0] = nombre_tabla;
-		parametros->arreglo[1] = value;
-
-		int b =0;
-
-		char *unaPalabra = string_new();
-			 while( args[b] !=NULL){
-
-
-
-				 string_append(&unaPalabra, strcat(args[b], " "));
-				   b++;
-			   }
-
-
-
-		DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,parametros);
-		dtb_nuevo->total_sentencias=1;
-		dtb_nuevo->tablaSentencias[0]=unaPalabra;
-//		if(estaEnMetadata(nombre_tabla)){
+//	char* nombre_tabla = string_duplicate(args[1]);
+//	uint16_t key = atoi(args[2]);
+//	char* value = string_duplicate(args[3]);
 //
-//			enviarANew(dtb_nuevo);
-//			logInfo("Se envio a new el proceso");
+//	//char* key = string_duplicate(args[2]);
 //
-//		} else{
+//	params* parametros = malloc( sizeof(params) );
+//	inicializarParametros(parametros);
 //
-//			enviarAEXIT(dtb_nuevo);
-//			logInfo("La tabla no se encuentra en metadata");
-//
-//		}
-		char* tabla [100];
+//	parametros->enteros[0]= key;
+//	parametros->arreglo[0] = nombre_tabla;
+//	parametros->arreglo[1] = value;
 
-		enviarANew(dtb_nuevo);
+	int b =0;
 
-		free(nombre_tabla);
+	char *unaPalabra = string_new();
+	while( args[b] !=NULL){
+
+
+
+		string_append(&unaPalabra, strcat(args[b], " "));
+		b++;
+	}
+
+
+
+	DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,NULL);
+	dtb_nuevo->total_sentencias=1;
+	dtb_nuevo->tablaSentencias[0]=unaPalabra;
+	//		if(estaEnMetadata(nombre_tabla)){
+	//
+	//			enviarANew(dtb_nuevo);
+	//			logInfo("Se envio a new el proceso");
+	//
+	//		} else{
+	//
+	//			enviarAEXIT(dtb_nuevo);
+	//			logInfo("La tabla no se encuentra en metadata");
+	//
+	//		}
+	char* tabla [100];
+
+	enviarANew(dtb_nuevo);
+
+	//free(nombre_tabla);
 
 
 }
 void create (char** args) {
-//				0		1					2					3
-//	CREATE [TABLA] [TIPO_CONSISTENCIA] [NUMERO_PARTICIONES] [COMPACTION_TIME]
-//	Ej:
-//	CREATE TABLA1 SC 4 60000
+	//		0		1		2					3					4
+	//	CREATE [TABLA] [TIPO_CONSISTENCIA] [NUMERO_PARTICIONES] [COMPACTION_TIME]
+	//	Ej:
+	//	CREATE TABLA1 SC 4 60000
 
-	char* nombre_tabla = string_duplicate(args[0]);
-			int numeroParticiones = atoi(args[2]);
-			char* tipoConsistencia = string_duplicate(args[1]);
-			int tiempoCompactacion = atoi(args[3]);
-			//char* key = string_duplicate(args[2]);
+	char* nombre_tabla = string_duplicate(args[1]);
+	int numeroParticiones = atoi(args[3]);
+	char* tipoConsistencia = string_duplicate(args[2]);
+	int tiempoCompactacion = atoi(args[4]);
+	//char* key = string_duplicate(args[2]);
 
-			params* parametros = malloc( sizeof(params) );
-			inicializarParametros(parametros);
-			parametros->enteros[0]= numeroParticiones;
-			parametros->enteros[1]=tiempoCompactacion;
-			parametros->arreglo[0] = nombre_tabla;
-			parametros->arreglo[1] = tipoConsistencia;
+	params* parametros = malloc( sizeof(params) );
+	inicializarParametros(parametros);
+	parametros->enteros[0]= numeroParticiones;
+	parametros->enteros[1]=tiempoCompactacion;
+	parametros->arreglo[0] = nombre_tabla;
+	parametros->arreglo[1] = tipoConsistencia;
 
-			 int b =0;
-			 char *unaPalabra = string_new();
-				 while( args[b] !=NULL){
-
-
-
-					 string_append(&unaPalabra, strcat(args[b], " "));
-					   b++;
-				   }
+	int b =0;
+	char *unaPalabra = string_new();
+	while( args[b] !=NULL){
 
 
+
+		string_append(&unaPalabra, strcat(args[b], " "));
+		b++;
+	}
 
 
 
 
 
 
-			DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,parametros);
-		dtb_nuevo->total_sentencias=1;
 
 
-					 dtb_nuevo->tablaSentencias[0]=unaPalabra;
-					 				enviarANew(dtb_nuevo);
-//					if(estaEnMetadata(nombre_tabla)){
-//
-//						enviarANew(dtb_nuevo);
-//						logInfo("Se envio a new el proceso");
-//
-//					} else{
-//
-//						enviarAEXIT(dtb_nuevo);
-//						logInfo("La tabla no se encuentra en metadata");
-//
-//					}
+	DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,parametros);
+	dtb_nuevo->total_sentencias=1;
+
+
+	dtb_nuevo->tablaSentencias[0]=unaPalabra;
+	enviarANew(dtb_nuevo);
+	//					if(estaEnMetadata(nombre_tabla)){
+	//
+	//						enviarANew(dtb_nuevo);
+	//						logInfo("Se envio a new el proceso");
+	//
+	//					} else{
+	//
+	//						enviarAEXIT(dtb_nuevo);
+	//						logInfo("La tabla no se encuentra en metadata");
+	//
+	//					}
 
 }
 
@@ -334,23 +342,23 @@ void describe (char** args) {
 
 
 	char *unaPalabra = string_new();
-				int b =0;
-				while( args[b] !=NULL){
+	int b =0;
+	while( args[b] !=NULL){
 
 
 
-				string_append(&unaPalabra, strcat(args[b], " "));
-				b++;
+		string_append(&unaPalabra, strcat(args[b], " "));
+		b++;
 
 
-					}
+	}
 
 
 
-				DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,NULL);
-				dtb_nuevo->total_sentencias=1;
-				dtb_nuevo->tablaSentencias[0]=unaPalabra;
-				enviarANew(dtb_nuevo);
+	DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,NULL);
+	dtb_nuevo->total_sentencias=1;
+	dtb_nuevo->tablaSentencias[0]=unaPalabra;
+	enviarANew(dtb_nuevo);
 
 
 
@@ -362,56 +370,13 @@ void drop (char** args) {
 
 	char* nombre_tabla = string_duplicate(args[1]);
 
-			//char* key = string_duplicate(args[2]);
+	//char* key = string_duplicate(args[2]);
 
-//			params* parametros = malloc( sizeof(params) );
-//			inicializarParametros(parametros);
-//
-//			parametros->arreglo[0] = nombre_tabla;
+	//			params* parametros = malloc( sizeof(params) );
+	//			inicializarParametros(parametros);
+	//
+	//			parametros->arreglo[0] = nombre_tabla;
 
-
-
-			char *unaPalabra = string_new();
-			int b =0;
-			while( args[b] !=NULL){
-
-
-
-			string_append(&unaPalabra, strcat(args[b], " "));
-			b++;
-
-
-				}
-
-
-
-			DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,NULL);
-			dtb_nuevo->total_sentencias=1;
-			dtb_nuevo->tablaSentencias[0]=unaPalabra;
-			enviarANew(dtb_nuevo);
-
-
-//			if(estaEnMetadata(nombre_tabla)){
-//
-//				enviarANew(dtb_nuevo);
-//				logInfo("Se envio a new el proceso");
-//
-//			} else{
-//
-//				enviarAEXIT(dtb_nuevo);
-//				logInfo("La tabla no se encuentra en metadata");
-//
-//			}
-
-
-
-			free(nombre_tabla);
-
-
-
-
-}
-void journal (char** args) {
 
 
 	char *unaPalabra = string_new();
@@ -420,47 +385,338 @@ void journal (char** args) {
 
 
 
-	string_append(&unaPalabra, strcat(args[b], " "));
-	b++;
+		string_append(&unaPalabra, strcat(args[b], " "));
+		b++;
+
+
+	}
+
+
+
+	DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,NULL);
+	dtb_nuevo->total_sentencias=1;
+	dtb_nuevo->tablaSentencias[0]=unaPalabra;
+	enviarANew(dtb_nuevo);
+
+
+	//			if(estaEnMetadata(nombre_tabla)){
+	//
+	//				enviarANew(dtb_nuevo);
+	//				logInfo("Se envio a new el proceso");
+	//
+	//			} else{
+	//
+	//				enviarAEXIT(dtb_nuevo);
+	//				logInfo("La tabla no se encuentra en metadata");
+	//
+	//			}
+
+
+
+	free(nombre_tabla);
+
+
+
+
+}
+void journal (char** args) {
+
+
+	//	char *unaPalabra = string_new();
+	//	int b =0;
+	//	while( args[b] !=NULL){
+	//
+	//
+	//
+	//	string_append(&unaPalabra, strcat(args[b], " "));
+	//	b++;
+	//
+	//
+	//		}
+	//
+	//	//send journal to all memories in tKernel->memoriasConCriterio; Implementar en planificador
+	//
+	//	DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,NULL);
+	//				dtb_nuevo->total_sentencias=1;
+	//				dtb_nuevo->tablaSentencias[0]=unaPalabra;
+	//				enviarANew(dtb_nuevo);
+
+	int cantidadMemorias = list_size(tKernel->memoriasConCriterio);
+	int x =0;
+	bool hayMemorias = 1;
+	while(x<cantidadMemorias && hayMemorias){
+
+
+		memoria* laMemoria = list_get(tKernel->memoriasConCriterio,x);
+		int socket_memoria = conectar_a_memoria_flexible(laMemoria->ip,laMemoria->puerto,"Kernel");
+		if(socket_memoria == -3 ){
+
+			bool  estaEnLaLista(memoria* memoriaAux) {
+				return  laMemoria->numeroMemoria == memoriaAux->numeroMemoria;
+			}
+			pthread_mutex_lock(&memoriasCriterio);
+			list_remove_by_condition(tKernel->memoriasConCriterio,(void*)estaEnLaLista);
+			pthread_mutex_unlock(&memoriasCriterio);
+			pthread_mutex_lock(&shc);
+			list_remove_by_condition(t_Criterios->StrongHash,(void*)estaEnLaLista);
+			pthread_mutex_unlock(&shc);
+			pthread_mutex_lock(&ec);
+			list_remove_by_condition(t_Criterios->eventualConsistency->elements,(void*)estaEnLaLista);
+			pthread_mutex_unlock(&ec);
+			if(t_Criterios->strongConsistency->numeroMemoria == laMemoria->numeroMemoria){
+
+				pthread_mutex_lock(&memoriasCola);
+				memoria * loMemoria = queue_pop(tKernel->memoriasCola);
+				pthread_mutex_unlock(&memoriasCola);
+
+				while(conectar_a_memoria_flexible(loMemoria->ip,loMemoria->puerto,"Kernel") == -3){
+
+					pthread_mutex_lock(&memoriasCola);
+					memoria * loMemoria = queue_pop(tKernel->memoriasCola);
+					pthread_mutex_unlock(&memoriasCola);
+					if(loMemoria != NULL){
+
+
+
+					}else{
+						printf("no quedan memorias para asignar a SC");
+						hayMemorias = 0;
+						destProtocol = 1;
+						printf ("VOLO TODO");
+
+					}
+				}
+
+
+			}
+
+
+		}else {
+
+
+			prot_enviar_mensaje(socket_memoria, JOURNAL_REQ, 0, NULL);
+
+
 
 
 		}
 
-	//send journal to all memories in tKernel->memoriasConCriterio; Implementar en planificador
 
-	DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,NULL);
-				dtb_nuevo->total_sentencias=1;
-				dtb_nuevo->tablaSentencias[0]=unaPalabra;
-				enviarANew(dtb_nuevo);
 
+		x++;
+	}
 
 }
 void add (char** args) {
 
 
-//	int memoria = atoi(strdup(args[2]));
-//	char* criterio = strdup(args[4]);
+//		int memoria = atoi(strdup(args[2]));
+//		char* criterio = strdup(args[4]);
+//
+//
+//
+//	char *unaPalabra = string_new();
+//	int b =0;
+//	while( args[b] !=NULL){
+//
+//
+//
+//		string_append(&unaPalabra, strcat(args[b], " "));
+//		b++;
+//
+//
+//	}
+//
+//	//send journal to all memories in tKernel->memoriasConCriterio; Implementar en planificador
+//
+//	DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,NULL);
+//	dtb_nuevo->total_sentencias=1;
+//	dtb_nuevo->tablaSentencias[0]=unaPalabra;
+//	enviarANew(dtb_nuevo);
+////
 
 
 
-	char *unaPalabra = string_new();
-		int b =0;
-		while( args[b] !=NULL){
+	int  numero_memoria =  atoi((args[2]));
+	char* criterio = string_duplicate(args[4]);
+	if(!strcmp(criterio,"SC"))
+	{
+		if(t_Criterios->strongConsistency != NULL)
+		{
+			if(t_Criterios->strongConsistency->numeroMemoria != numero_memoria)
+			{
+				bool  estaEnLaLista(memoria* memoriaAux) {
+					return  numero_memoria == memoriaAux->numeroMemoria;
+				}
 
+				memoria* memoriaAgregar ;
+				if(list_find(tKernel->memoriasSinCriterio,(void*)estaEnLaLista)!= NULL )
+				{
+					pthread_mutex_lock(&memoriasSinCriterio);
+					memoriaAgregar =	list_remove_by_condition(tKernel->memoriasSinCriterio,(void*) estaEnLaLista);
+					pthread_mutex_unlock(&memoriasSinCriterio);
+					pthread_mutex_lock(&memoriasCriterio);
+					list_add(tKernel->memoriasConCriterio,memoriaAgregar);
+					pthread_mutex_unlock(&memoriasCriterio);
+				}
+				else
+				{
+					memoriaAgregar =list_find(tKernel->memoriasConCriterio,(void*)estaEnLaLista);
+				}
+				memoria* memoriaAReemplazar;
+				bool estaLaDeSC(memoria* memoriaAux2) {
+					return  t_Criterios->strongConsistency->numeroMemoria == memoriaAux2->numeroMemoria;
+				}
+				if(!list_any_satisfy(t_Criterios->StrongHash,(void*)estaLaDeSC) &&
+						!list_any_satisfy(t_Criterios->eventualConsistency->elements,(void*) estaLaDeSC))
+				{
+					pthread_mutex_lock(&memoriasCriterio);
+					memoriaAReemplazar =list_remove_by_condition(tKernel->memoriasConCriterio,(void*) estaLaDeSC);
+					pthread_mutex_unlock(&memoriasCriterio);
+					pthread_mutex_lock(&memoriasSinCriterio);
+					list_add(tKernel->memoriasSinCriterio,memoriaAReemplazar);
+					pthread_mutex_unlock(&memoriasSinCriterio);
 
-
-		string_append(&unaPalabra, strcat(args[b], " "));
-		b++;
-
-
+				}
+				pthread_mutex_lock(&sc);
+				t_Criterios->strongConsistency = memoriaAgregar;
+				pthread_mutex_unlock(&sc);
+			}
+			else
+			{
+				printf("Esta es la misma memoria que está asignada");
+			}
+		}
+		else
+		{
+			bool  estaEnLaLista(memoria* memoriaAux) {
+				return  numero_memoria == memoriaAux->numeroMemoria;
 			}
 
-		//send journal to all memories in tKernel->memoriasConCriterio; Implementar en planificador
+			memoria* memoriaAgregar ;
+			if(list_find(tKernel->memoriasSinCriterio,(void*)estaEnLaLista)!= NULL )
+			{
+				pthread_mutex_lock(&memoriasSinCriterio);
+				memoriaAgregar =	list_remove_by_condition(tKernel->memoriasSinCriterio,(void*) estaEnLaLista);
+				pthread_mutex_unlock(&memoriasSinCriterio);
+				pthread_mutex_lock(&memoriasCriterio);
+				list_add(tKernel->memoriasConCriterio,memoriaAgregar);
+				pthread_mutex_unlock(&memoriasCriterio);
+			}
+			else
+			{
+				memoriaAgregar =list_find(tKernel->memoriasConCriterio,(void*)estaEnLaLista);
+			}
+			pthread_mutex_lock(&sc);
+			t_Criterios->strongConsistency = memoriaAgregar;
+			pthread_mutex_unlock(&sc);
+		}
+	}
+	else if(!strcmp(criterio,"SHC"))
+	{
+		bool  estaEnLaLista(memoria* memoriaAux) {
+			return  numero_memoria == memoriaAux->numeroMemoria;
+		}
+		if(NULL != list_find(t_Criterios->StrongHash, (void*)estaEnLaLista))
+		{
+			printf("La memoria ya está en este criterio");
+		}
+		else
+		{
+			memoria* memoriaAgregar ;
+			if(list_find(tKernel->memoriasSinCriterio,(void*)estaEnLaLista) != NULL )
+			{
+				pthread_mutex_lock(&memoriasSinCriterio);
+				memoriaAgregar = list_remove_by_condition(tKernel->memoriasSinCriterio,(void*) estaEnLaLista);
+				pthread_mutex_unlock(&memoriasSinCriterio);
+				pthread_mutex_lock(&memoriasCriterio);
+				list_add(tKernel->memoriasConCriterio,memoriaAgregar);
+				pthread_mutex_unlock(&memoriasCriterio);
+			}
+			else
+			{
+				memoriaAgregar = list_find(tKernel->memoriasConCriterio,(void*)estaEnLaLista);
+			}
+			int u= 0;
+			while(list_get(t_Criterios->StrongHash,u) != NULL){
 
-		DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,NULL);
-					dtb_nuevo->total_sentencias=1;
-					dtb_nuevo->tablaSentencias[0]=unaPalabra;
-					enviarANew(dtb_nuevo);
+				memoria* fruta =list_get(t_Criterios->StrongHash,u);
+				pthread_mutex_lock(&fruta->enUso);
+				int otrolSocket = conectar_a_memoria_flexible(fruta->ip,fruta->puerto,"Kernel");
+				prot_enviar_mensaje(otrolSocket,JOURNAL_REQ,0,NULL);
+				close(otrolSocket);
+
+				u++;
+			}
+
+			pthread_mutex_lock(&memoriaAgregar->enUso);
+			list_add(t_Criterios->StrongHash, memoriaAgregar);
+
+			u=0;
+			while(list_get(t_Criterios->StrongHash,u) != NULL){
+
+				memoria* fruta =list_get(t_Criterios->StrongHash,u);
+				pthread_mutex_unlock(&fruta->enUso);
+
+
+				u++;
+			}
+
+
+
+		}
+	}
+	else if(!strcmp(criterio,"EC"))
+	{
+		bool  estaEnLaLista(memoria* memoriaAux) {
+			return  numero_memoria == memoriaAux->numeroMemoria;
+		}
+		if(NULL != list_find(t_Criterios->eventualConsistency->elements, (void*)estaEnLaLista))
+		{
+			printf("La memoria ya está en este criterio");
+		}
+		else
+		{
+			memoria* memoriaAgregar ;
+			if(list_find(tKernel->memoriasSinCriterio,(void*)estaEnLaLista) != NULL )
+			{
+				pthread_mutex_lock(&memoriasSinCriterio);
+				memoriaAgregar = list_remove_by_condition(tKernel->memoriasSinCriterio,(void*) estaEnLaLista);
+				pthread_mutex_unlock(&memoriasSinCriterio);
+				pthread_mutex_lock(&memoriasCriterio);
+				list_add(tKernel->memoriasConCriterio,memoriaAgregar);
+				pthread_mutex_unlock(&memoriasCriterio);
+			}
+			else
+			{
+				memoriaAgregar = list_find(tKernel->memoriasConCriterio,(void*)estaEnLaLista);
+			}
+			pthread_mutex_lock(&ec);
+			queue_push(t_Criterios->eventualConsistency, memoriaAgregar);
+			pthread_mutex_unlock(&ec);
+		}
+	}
+	else
+	{
+		printf("El criterio es invalido");
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -486,128 +742,128 @@ unsigned long obtenerTamanioArchivo(char* direccionArchivo)
 
 void run (char** args) {
 
-char* path = string_duplicate(args[1]);
+	char* path = string_duplicate(args[1]);
 
-params* parametros = malloc( sizeof(params) );
-			inicializarParametros(parametros);
+	params* parametros = malloc( sizeof(params) );
+	inicializarParametros(parametros);
 
-			parametros->arreglo[0] = path;
+	parametros->arreglo[0] = path;
 
-DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,parametros);
-
-
-
-//char linea[1024];
-//    FILE *fich;
-//
-//    fich = fopen(path, "r");
-//    while(fgets(linea, 1024, (FILE*) fich)) {
-//        printf("LINEA: %s FIN_DE_LINEA\n", linea);
-//    }
-//    fclose(fich);
-//}
+	DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,parametros);
 
 
-char* tabla [100];
-int i;
-int x=0;
-int a =0;
+
+	//char linea[1024];
+	//    FILE *fich;
+	//
+	//    fich = fopen(path, "r");
+	//    while(fgets(linea, 1024, (FILE*) fich)) {
+	//        printf("LINEA: %s FIN_DE_LINEA\n", linea);
+	//    }
+	//    fclose(fich);
+	//}
+
+
+	char* tabla [100];
+	int i;
+	int x=0;
+	int a =0;
 	for(i=0; i<100; i++){
 
-	tabla[i] = string_new();
+		tabla[i] = string_new();
 
 
 	}
 
-char * ch =string_new();
-   FILE *fp;
+	char * ch =string_new();
+	FILE *fp;
 
-   //printf("Enter name of a file you wish to see\n");
-
-
-   fp = fopen(path, "r"); // read mode
-
-   if (fp == NULL)
-   {
-      perror("Error while opening the file.\n");
-      exit(EXIT_FAILURE);
-   }
-
-   //printf("The contents of %s file are:\n", path);
+	//printf("Enter name of a file you wish to see\n");
 
 
+	fp = fopen(path, "r"); // read mode
 
+	if (fp == NULL)
+	{
+		perror("Error while opening the file.\n");
+		exit(EXIT_FAILURE);
+	}
 
-
-//   char auxiliar [100];
-//   int f =0;
-//   char outs= fgetc(fp);
-//   while(!feof(fp)){
-//
-//	   switch(outs){
-//
-//	   case '\n':{
-//
-//		   memcpy(tabla[x], auxiliar,f);
-//		   x++;
-//		   f=0;
-//		   break;
-//	   }
-//	   default: {
-//
-//		   auxiliar[f]=outs;
-//		   f++;
-//
-//		   break;
-//	   }
-//	   }
-//
-//	   outs= fgetc(fp);
-//   }
-//   	   auxiliar[f] = '\0';
-//   	   f++;
-//   	   memcpy(tabla[x], auxiliar,f);
-//
-
-
-
-       int size = obtenerTamanioArchivo(path) ;
+	//printf("The contents of %s file are:\n", path);
 
 
 
 
-       char* sentenciasParsear = (char *) mmap (0, size, PROT_READ, MAP_SHARED, fp->_fileno, 0);
+
+	//   char auxiliar [100];
+	//   int f =0;
+	//   char outs= fgetc(fp);
+	//   while(!feof(fp)){
+	//
+	//	   switch(outs){
+	//
+	//	   case '\n':{
+	//
+	//		   memcpy(tabla[x], auxiliar,f);
+	//		   x++;
+	//		   f=0;
+	//		   break;
+	//	   }
+	//	   default: {
+	//
+	//		   auxiliar[f]=outs;
+	//		   f++;
+	//
+	//		   break;
+	//	   }
+	//	   }
+	//
+	//	   outs= fgetc(fp);
+	//   }
+	//   	   auxiliar[f] = '\0';
+	//   	   f++;
+	//   	   memcpy(tabla[x], auxiliar,f);
+	//
 
 
-       char** argus = string_split(sentenciasParsear,"\n");
+
+	int size = obtenerTamanioArchivo(path) ;
 
 
 
-       int b=0;
 
-       while( argus[b] !=NULL){
-
+	char* sentenciasParsear = (char *) mmap (0, size, PROT_READ, MAP_SHARED, fp->_fileno, 0);
 
 
-	   dtb_nuevo->tablaSentencias[b]=argus[b];
-
-	   b++;
-       }
-
-       x=b;
-//   for(b=0;b<=x;b++){
-//
-//
-//	 dtb_nuevo->tablaSentencias[b]=tabla[b];
-//
-//   }
-   dtb_nuevo->total_sentencias = x;
- //  dtb_nuevo->sentenciaActual=a;
+	char** argus = string_split(sentenciasParsear,"\n");
 
 
-   enviarANew(dtb_nuevo);
-  // logInfo("Se envio a new el proceso");
-   printf("se envio a new el proceso");
+
+	int b=0;
+
+	while( argus[b] !=NULL){
+
+
+
+		dtb_nuevo->tablaSentencias[b]=argus[b];
+
+		b++;
+	}
+
+	x=b;
+	//   for(b=0;b<=x;b++){
+	//
+	//
+	//	 dtb_nuevo->tablaSentencias[b]=tabla[b];
+	//
+	//   }
+	dtb_nuevo->total_sentencias = x;
+	//  dtb_nuevo->sentenciaActual=a;
+
+
+	enviarANew(dtb_nuevo);
+	// logInfo("Se envio a new el proceso");
+	printf("se envio a new el proceso");
 
 
 
@@ -628,84 +884,84 @@ void metrics (char ** args) {
 	int i;
 	for( i=0 ; i< list_size(tKernel->memorias);i++){
 
-	memoria* unaMemoria =	list_get(tKernel->memoriasConCriterio,i);
-	logInfo("Memoria Numero : %d ", unaMemoria->numeroMemoria);
+		memoria* unaMemoria =	list_get(tKernel->memoriasConCriterio,i);
+		logInfo("Memoria Numero : %d ", unaMemoria->numeroMemoria);
 
-	logInfo("Criterio SC:");
+		logInfo("Criterio SC:");
 
-	logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Read_Latency));
-	logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Reads));
-	logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Write_Latency));
-	logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Writes));
+		logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Read_Latency));
+		logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Reads));
+		logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Write_Latency));
+		logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Writes));
 
-	if(unaMemoria->selectTotales == 0){
-
-
-		logInfo("Memory Load para SC de esta memoria es 0");
-
-	}else{
+		if(unaMemoria->selectTotales == 0){
 
 
-		logInfo("Memory Load para SC de esta memoria es : %f", unaMemoria->insertsTotales / unaMemoria->selectTotales);
+			logInfo("Memory Load para SC de esta memoria es 0");
 
+		}else{
+
+
+			logInfo("Memory Load para SC de esta memoria es : %f", unaMemoria->insertsTotales / unaMemoria->selectTotales);
+
+
+
+		}
+
+
+		logInfo("Criterio SHC:");
+
+
+
+		logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Read_Latency));
+		logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Reads));
+		logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Write_Latency));
+		logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Writes));
+
+		if(unaMemoria->selectTotales == 0){
+
+
+			logInfo("Memory Load para SHC de esta memoria es 0");
+
+		}else{
+
+
+			logInfo("Memory Load para SHC de esta memoria es : %f", unaMemoria->insertsTotales / unaMemoria->selectTotales);
+
+
+
+		}
+
+
+
+
+		logInfo("Criterio EC:");
+
+
+
+
+
+		logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Read_Latency));
+		logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Reads));
+		logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Write_Latency));
+		logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Writes));
+
+		if(unaMemoria->selectTotales == 0){
+
+
+			logInfo("Memory Load para EC de esta memoria es 0");
+
+		}else{
+
+
+			logInfo("Memory Load para EC de esta memoria es : %f", unaMemoria->insertsTotales / unaMemoria->selectTotales);
+
+
+
+		}
 
 
 	}
-
-
-	logInfo("Criterio SHC:");
-
-
-
-	logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Read_Latency));
-	logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Reads));
-	logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Write_Latency));
-	logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Writes));
-
-	if(unaMemoria->selectTotales == 0){
-
-
-		logInfo("Memory Load para SHC de esta memoria es 0");
-
-	}else{
-
-
-		logInfo("Memory Load para SHC de esta memoria es : %f", unaMemoria->insertsTotales / unaMemoria->selectTotales);
-
-
-
-	}
-
-
-
-
-	logInfo("Criterio EC:");
-
-
-
-
-
-	logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Read_Latency));
-	logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Reads));
-	logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Write_Latency));
-	logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Writes));
-
-	if(unaMemoria->selectTotales == 0){
-
-
-		logInfo("Memory Load para EC de esta memoria es 0");
-
-	}else{
-
-
-		logInfo("Memory Load para EC de esta memoria es : %f", unaMemoria->insertsTotales / unaMemoria->selectTotales);
-
-
-
-	}
-
-
-}
 
 
 }
