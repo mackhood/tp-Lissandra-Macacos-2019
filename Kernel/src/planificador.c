@@ -301,10 +301,11 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 
 							char * tablaABuscar = strdup(args[1]);
-							bool  estaEnMetadata(t_tabla* una_tabla) {
-								return  string_equals_ignore_case((char *) tablaABuscar,una_tabla->nombre);
+
+							bool  estaEnMetadataStruct2(t_tabla* una_tabla) {
+								return  !strcmp( tablaABuscar,una_tabla->nombre);
 							}
-							laTabla = list_find(tMetadata->tablas,(void*)estaEnMetadata);
+							laTabla = list_find(tMetadata->tablas,(void*)estaEnMetadataStruct2);
 
 							if(laTabla != NULL){
 

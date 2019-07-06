@@ -143,17 +143,20 @@ void asigna_recurso(t_recurso* rec, GDT* gdt){
 
 bool  estaEnMetadata(char *nombre_tabla) {
 
-	bool _esLaBuscada(void* tabla){
-	return  string_equals_ignore_case((char *) tabla,nombre_tabla);
+	bool _esLaBuscada(t_tabla* tabla){
+	return  !strcmp(tabla->nombre,nombre_tabla);
 		}
 
 
 
-return	list_any_satisfy(tMetadata->tablas,(void*)estaEnMetadata);
+return	list_any_satisfy(tMetadata->tablas,(void*)_esLaBuscada);
 
 
 
 }
+
+
+
 
 
 

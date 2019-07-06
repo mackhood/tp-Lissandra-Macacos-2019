@@ -231,6 +231,10 @@ void inicializarParametros(params* params){
 
 void insert (char** args)
 {
+
+
+
+
 	logInfo( "[Consola]: Se ha recibido un pedido de insert.");
 	int chequeo = 0;
 	int i = 0;
@@ -264,7 +268,7 @@ void insert (char** args)
 		else
 		{
 			// INSERT Tabla1|key|value
-			char* nombre_tabla = string_duplicate(args[0]);
+			char* nombre_tabla = string_duplicate(args[1]);
 			char* claveaux = malloc(strlen(args[2]) + 1);
 			strcpy(claveaux, args[2]);
 			if(atoi(claveaux) > 65536)
@@ -278,23 +282,18 @@ void insert (char** args)
 			else
 			{
 				uint16_t key = atoi(args[1]);
-				char* value = string_duplicate(args[2]);
+				char* value = string_duplicate(args[3]);
 
 				//char* key = string_duplicate(args[2]);
 
 				params* parametros = malloc( sizeof(params) );
 				inicializarParametros(parametros);
 
-				parametros->enteros[0]= key;
-				parametros->arreglo[0] = nombre_tabla;
-				parametros->arreglo[1] = value;
+				parametros->enteros[2]= key;
+				parametros->arreglo[1] = nombre_tabla;
+				parametros->arreglo[3] = value;
 
-				char* tabla [100];
-				int i;
-				for(i=0; i<100; i++){
 
-					tabla[i] = string_new();
-				}
 				int b =0;
 
 				char *unaPalabra = string_new();
@@ -317,7 +316,6 @@ void insert (char** args)
 					enviarAEXIT(dtb_nuevo);
 					logInfo("La tabla no se encuentra en metadata");
 				}
-				enviarANew(dtb_nuevo);
 
 				free(nombre_tabla);
 			}
@@ -329,6 +327,22 @@ void insert (char** args)
 
 void create (char** args)
 {
+
+	bool  estaEnMetadata(char *nombre_tabla) {
+
+		bool _esLaBuscada(t_tabla* tabla){
+		return  !strcmp(tabla->nombre,nombre_tabla);
+			}
+
+
+
+	return	list_any_satisfy(tMetadata->tablas,(void*)estaEnMetadata);
+
+
+
+	}
+
+
 	//				0		1					2					3
 	//	CREATE [TABLA] [TIPO_CONSISTENCIA] [NUMERO_PARTICIONES] [COMPACTION_TIME]
 	//	Ej:
@@ -435,6 +449,26 @@ void describe (char** args)
 }
 
 void drop (char** args) {
+
+
+
+	bool  estaEnMetadata(char *nombre_tabla) {
+
+		bool _esLaBuscada(t_tabla* tabla){
+		return  !strcmp(tabla->nombre,nombre_tabla);
+			}
+
+
+
+	return	list_any_satisfy(tMetadata->tablas,(void*)estaEnMetadata);
+
+
+
+	}
+
+
+
+
 	logInfo( "[Consola]: Se ha solicitado realizar un DROP");
 	if(chequearParametros(args, 2) == 1)
 	{

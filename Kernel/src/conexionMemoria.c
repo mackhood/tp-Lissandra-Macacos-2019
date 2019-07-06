@@ -24,7 +24,7 @@ void handler_conexion_memoria(t_kernel* tKernel) {
 
 
 
-		}else if(conexion ==3 && tKernel->primerConexion !=1 ){
+		}else if(conexion == -3 && tKernel->primerConexion !=1 ){
 
 			pthread_mutex_lock(&memoriasCola);
 			memoria * loMemoria = queue_pop(tKernel->memoriasCola);
@@ -112,12 +112,12 @@ void handler_conexion_memoria(t_kernel* tKernel) {
 				nuevaTabla->nombre = tabla;
 				nuevaTabla->criterio = criterio;
 
-				bool  estaEnMetadata(t_tabla* tablaAux) {
-					return  string_equals_ignore_case(nuevaTabla->nombre, tablaAux->nombre);
+				bool  estaEnMetadataStruct(t_tabla* tablaAux) {
+					return  !strcmp(nuevaTabla->nombre, tablaAux->nombre);
 				}
 
 
-				if(!list_any_satisfy(tMetadata->tablas,(void*)estaEnMetadata))
+				if(!list_any_satisfy(tMetadata->tablas,(void*)estaEnMetadataStruct))
 					list_add(tMetadata->tablas, nuevaTabla);
 
 
@@ -180,7 +180,7 @@ void handler_conexion_memoria(t_kernel* tKernel) {
 
 
 
-			usleep(tKernel->config->metadata_refresh*1000);
+			usleep(tKernel->config->metadata_refresh*10000);
 
 		}
 
