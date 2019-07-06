@@ -489,19 +489,89 @@ void journal (char** args) {
 	}
 	else
 	{
-		char *unaPalabra = string_new();
-		int b =0;
-		while( args[b] !=NULL)
-		{
-			string_append(&unaPalabra, strcat(args[b], " "));
-			b++;
-		}
-		//send journal to all memories in tKernel->memoriasConCriterio; Implementar en planificador
+//		char *unaPalabra = string_new();
+//		int b =0;
+//		while( args[b] !=NULL)
+//		{
+//			string_append(&unaPalabra, strcat(args[b], " "));
+//			b++;
+//		}
+//		//send journal to all memories in tKernel->memoriasConCriterio; Implementar en planificador
+//
+//		DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,NULL);
+//		dtb_nuevo->total_sentencias=1;
+//		dtb_nuevo->tablaSentencias[0]=unaPalabra;
+//		enviarANew(dtb_nuevo);
 
-		DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,NULL);
-		dtb_nuevo->total_sentencias=1;
-		dtb_nuevo->tablaSentencias[0]=unaPalabra;
-		enviarANew(dtb_nuevo);
+
+
+
+
+
+		int cantidadMemorias = list_size(tKernel->memoriasConCriterio);
+		int x =0;
+		bool hayMemorias = 1;
+		while(x<cantidadMemorias && hayMemorias){
+
+
+			memoria* laMemoria = list_get(tKernel->memoriasConCriterio,x);
+			int socket_memoria = conectar_a_memoria_flexible(laMemoria->ip,laMemoria->puerto,"Kernel");
+			if(socket_memoria == -3 ){
+
+				bool  estaEnLaLista(memoria* memoriaAux) {
+					return  laMemoria->numeroMemoria == memoriaAux->numeroMemoria;
+				}
+				pthread_mutex_lock(&memoriasCriterio);
+				list_remove_by_condition(tKernel->memoriasConCriterio,(void*)estaEnLaLista);
+				pthread_mutex_unlock(&memoriasCriterio);
+				pthread_mutex_lock(&shc);
+				list_remove_by_condition(t_Criterios->StrongHash,(void*)estaEnLaLista);
+				pthread_mutex_unlock(&shc);
+				pthread_mutex_lock(&ec);
+				list_remove_by_condition(t_Criterios->eventualConsistency->elements,(void*)estaEnLaLista);
+				pthread_mutex_unlock(&ec);
+				if(t_Criterios->strongConsistency->numeroMemoria == laMemoria->numeroMemoria){
+
+					pthread_mutex_lock(&memoriasCola);
+					memoria * loMemoria = queue_pop(tKernel->memoriasCola);
+					pthread_mutex_unlock(&memoriasCola);
+
+					while(conectar_a_memoria_flexible(loMemoria->ip,loMemoria->puerto,"Kernel") == -3){
+
+						pthread_mutex_lock(&memoriasCola);
+						memoria * loMemoria = queue_pop(tKernel->memoriasCola);
+						pthread_mutex_unlock(&memoriasCola);
+						if(loMemoria != NULL){
+
+
+
+						}else{
+							printf("no quedan memorias para asignar a SC");
+							hayMemorias = 0;
+							destProtocol = 1;
+							printf ("VOLO TODO");
+
+						}
+					}
+
+
+				}
+
+
+			}else {
+
+
+				prot_enviar_mensaje(socket_memoria, JOURNAL_REQ, 0, NULL);
+
+
+
+
+			}
+
+
+
+			x++;
+		}
 
 	}
 }
@@ -539,19 +609,189 @@ void add (char** args) {
 		else
 		{
 
-			char *unaPalabra = string_new();
-			int b =0;
-			while( args[b] !=NULL)
-			{
-				string_append(&unaPalabra, strcat(args[b], " "));
-				b++;
-			}
-			//send journal to all memories in tKernel->memoriasConCriterio; Implementar en planificador
+//			char *unaPalabra = string_new();
+//			int b =0;
+//			while( args[b] !=NULL)
+//			{
+//				string_append(&unaPalabra, strcat(args[b], " "));
+//				b++;
+//			}
+//			//send journal to all memories in tKernel->memoriasConCriterio; Implementar en planificador
+//
+//			DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,NULL);
+//			dtb_nuevo->total_sentencias=1;
+//			dtb_nuevo->tablaSentencias[0]=unaPalabra;
+//			enviarANew(dtb_nuevo);
 
-			DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,NULL);
-			dtb_nuevo->total_sentencias=1;
-			dtb_nuevo->tablaSentencias[0]=unaPalabra;
-			enviarANew(dtb_nuevo);
+
+			int  numero_memoria =  atoi((args[2]));
+			char* criterio = string_duplicate(args[4]);
+			if(!strcmp(criterio,"SC"))
+			{
+				if(t_Criterios->strongConsistency != NULL)
+				{
+					if(t_Criterios->strongConsistency->numeroMemoria != numero_memoria)
+					{
+						bool  estaEnLaLista(memoria* memoriaAux) {
+							return  numero_memoria == memoriaAux->numeroMemoria;
+						}
+
+						memoria* memoriaAgregar ;
+						if(list_find(tKernel->memoriasSinCriterio,(void*)estaEnLaLista)!= NULL )
+						{
+							pthread_mutex_lock(&memoriasSinCriterio);
+							memoriaAgregar =	list_remove_by_condition(tKernel->memoriasSinCriterio,(void*) estaEnLaLista);
+							pthread_mutex_unlock(&memoriasSinCriterio);
+							pthread_mutex_lock(&memoriasCriterio);
+							list_add(tKernel->memoriasConCriterio,memoriaAgregar);
+							pthread_mutex_unlock(&memoriasCriterio);
+						}
+						else
+						{
+							memoriaAgregar =list_find(tKernel->memoriasConCriterio,(void*)estaEnLaLista);
+						}
+						memoria* memoriaAReemplazar;
+						bool estaLaDeSC(memoria* memoriaAux2) {
+							return  t_Criterios->strongConsistency->numeroMemoria == memoriaAux2->numeroMemoria;
+						}
+						if(!list_any_satisfy(t_Criterios->StrongHash,(void*)estaLaDeSC) &&
+								!list_any_satisfy(t_Criterios->eventualConsistency->elements,(void*) estaLaDeSC))
+						{
+							pthread_mutex_lock(&memoriasCriterio);
+							memoriaAReemplazar =list_remove_by_condition(tKernel->memoriasConCriterio,(void*) estaLaDeSC);
+							pthread_mutex_unlock(&memoriasCriterio);
+							pthread_mutex_lock(&memoriasSinCriterio);
+							list_add(tKernel->memoriasSinCriterio,memoriaAReemplazar);
+							pthread_mutex_unlock(&memoriasSinCriterio);
+
+						}
+						pthread_mutex_lock(&sc);
+						t_Criterios->strongConsistency = memoriaAgregar;
+						pthread_mutex_unlock(&sc);
+					}
+					else
+					{
+						printf("Esta es la misma memoria que está asignada");
+					}
+				}
+				else
+				{
+					bool  estaEnLaLista(memoria* memoriaAux) {
+						return  numero_memoria == memoriaAux->numeroMemoria;
+					}
+
+					memoria* memoriaAgregar ;
+					if(list_find(tKernel->memoriasSinCriterio,(void*)estaEnLaLista)!= NULL )
+					{
+						pthread_mutex_lock(&memoriasSinCriterio);
+						memoriaAgregar =	list_remove_by_condition(tKernel->memoriasSinCriterio,(void*) estaEnLaLista);
+						pthread_mutex_unlock(&memoriasSinCriterio);
+						pthread_mutex_lock(&memoriasCriterio);
+						list_add(tKernel->memoriasConCriterio,memoriaAgregar);
+						pthread_mutex_unlock(&memoriasCriterio);
+					}
+					else
+					{
+						memoriaAgregar =list_find(tKernel->memoriasConCriterio,(void*)estaEnLaLista);
+					}
+					pthread_mutex_lock(&sc);
+					t_Criterios->strongConsistency = memoriaAgregar;
+					pthread_mutex_unlock(&sc);
+				}
+			}
+			else if(!strcmp(criterio,"SHC"))
+			{
+				bool  estaEnLaLista(memoria* memoriaAux) {
+					return  numero_memoria == memoriaAux->numeroMemoria;
+				}
+				if(NULL != list_find(t_Criterios->StrongHash, (void*)estaEnLaLista))
+				{
+					printf("La memoria ya está en este criterio");
+				}
+				else
+				{
+					memoria* memoriaAgregar ;
+					if(list_find(tKernel->memoriasSinCriterio,(void*)estaEnLaLista) != NULL )
+					{
+						pthread_mutex_lock(&memoriasSinCriterio);
+						memoriaAgregar = list_remove_by_condition(tKernel->memoriasSinCriterio,(void*) estaEnLaLista);
+						pthread_mutex_unlock(&memoriasSinCriterio);
+						pthread_mutex_lock(&memoriasCriterio);
+						list_add(tKernel->memoriasConCriterio,memoriaAgregar);
+						pthread_mutex_unlock(&memoriasCriterio);
+					}
+					else
+					{
+						memoriaAgregar = list_find(tKernel->memoriasConCriterio,(void*)estaEnLaLista);
+					}
+					int u= 0;
+					while(list_get(t_Criterios->StrongHash,u) != NULL){
+
+						memoria* fruta =list_get(t_Criterios->StrongHash,u);
+						pthread_mutex_lock(&fruta->enUso);
+						int otrolSocket = conectar_a_memoria_flexible(fruta->ip,fruta->puerto,"Kernel");
+						prot_enviar_mensaje(otrolSocket,JOURNAL_REQ,0,NULL);
+						close(otrolSocket);
+
+						u++;
+					}
+
+					pthread_mutex_lock(&memoriaAgregar->enUso);
+					list_add(t_Criterios->StrongHash, memoriaAgregar);
+
+					u=0;
+					while(list_get(t_Criterios->StrongHash,u) != NULL){
+
+						memoria* fruta =list_get(t_Criterios->StrongHash,u);
+						pthread_mutex_unlock(&fruta->enUso);
+
+
+						u++;
+					}
+
+
+
+				}
+			}
+			else if(!strcmp(criterio,"EC"))
+			{
+				bool  estaEnLaLista(memoria* memoriaAux) {
+					return  numero_memoria == memoriaAux->numeroMemoria;
+				}
+				if(NULL != list_find(t_Criterios->eventualConsistency->elements, (void*)estaEnLaLista))
+				{
+					printf("La memoria ya está en este criterio");
+				}
+				else
+				{
+					memoria* memoriaAgregar ;
+					if(list_find(tKernel->memoriasSinCriterio,(void*)estaEnLaLista) != NULL )
+					{
+						pthread_mutex_lock(&memoriasSinCriterio);
+						memoriaAgregar = list_remove_by_condition(tKernel->memoriasSinCriterio,(void*) estaEnLaLista);
+						pthread_mutex_unlock(&memoriasSinCriterio);
+						pthread_mutex_lock(&memoriasCriterio);
+						list_add(tKernel->memoriasConCriterio,memoriaAgregar);
+						pthread_mutex_unlock(&memoriasCriterio);
+					}
+					else
+					{
+						memoriaAgregar = list_find(tKernel->memoriasConCriterio,(void*)estaEnLaLista);
+					}
+					pthread_mutex_lock(&ec);
+					queue_push(t_Criterios->eventualConsistency, memoriaAgregar);
+					pthread_mutex_unlock(&ec);
+				}
+			}
+			else
+			{
+				printf("El criterio es invalido");
+			}
+
+
+
+
+
 		}
 	}
 }
