@@ -61,12 +61,12 @@ void initConfiguracion(){
 	initMutexlog(KERNEL_LOG_PATH,PROGRAM_NAME,0,LOG_LEVEL_TRACE);
 
 	logInfo("IP de memoria :%s -Metadata refresh: %d -Multiprocesamiento: %d -Puerto Memoria: %d -Quantum: %d  -Sleep ejecucion: %d\n",
-				kernelConfig->ip_memoria,
-				kernelConfig->metadata_refresh,
-				kernelConfig->multiprocesamiento,
-				kernelConfig->puerto_memoria,
-				kernelConfig->quantum,
-				kernelConfig->sleep_ejecucion
+			kernelConfig->ip_memoria,
+			kernelConfig->metadata_refresh,
+			kernelConfig->multiprocesamiento,
+			kernelConfig->puerto_memoria,
+			kernelConfig->quantum,
+			kernelConfig->sleep_ejecucion
 	);
 
 	t_estadisticas = malloc(sizeof(estadisticas));
@@ -112,12 +112,12 @@ void initThread(){
 void interPlanificador(){
 
 
-while(!destProtocol){
+	while(!destProtocol){
 
-	DTB_KERNEL* dtb=(DTB_KERNEL*)getDTBNew();
-				enviarAReady(dtb);
+		DTB_KERNEL* dtb=(DTB_KERNEL*)getDTBNew();
+		enviarAReady(dtb);
 
-}
+	}
 
 }
 
@@ -140,13 +140,13 @@ void handleEstadisticas(){
 
 	while(!destProtocol){
 
-			logInfo("Estadisticas globales de todos los criterios");
-			logInfo(string_itoa(t_estadisticas->Reads));
-			logInfo(string_itoa(t_estadisticas ->Read_Latency));
-			logInfo(string_itoa(t_estadisticas->Write_Latency));
-			logInfo(string_itoa(t_estadisticas->Writes));
-			int i;
-			for( i=0 ; i< list_size(tKernel->memorias);i++){
+		logInfo("Estadisticas globales de todos los criterios");
+		logInfo(string_itoa(t_estadisticas->Reads));
+		logInfo(string_itoa(t_estadisticas ->Read_Latency));
+		logInfo(string_itoa(t_estadisticas->Write_Latency));
+		logInfo(string_itoa(t_estadisticas->Writes));
+		int i;
+		for( i=0 ; i< list_size(tKernel->memorias);i++){
 
 			memoria* unaMemoria =	list_get(tKernel->memoriasConCriterio,i);
 			logInfo("Memoria Numero : %d ", unaMemoria->numeroMemoria);
@@ -229,13 +229,13 @@ void handleEstadisticas(){
 			reestablecerEstadisticasMemoria(unaMemoria);
 
 
-			}
+		}
 
 
-			reestablecerEstadisticas();
+		reestablecerEstadisticas();
 
 
-			sleep(30);
+		sleep(30);
 
 
 
@@ -261,7 +261,7 @@ void crearPrimerMemoria(){
 
 
 
-	t_Criterios->strongConsistency = (memoria*)crearMemoria(tKernel->config->puerto_memoria,tKernel->config->ip_memoria);
+	t_Criterios->strongConsistency = memoriaNueva;
 
 
 	configuracion = memoriaNueva;
@@ -275,14 +275,14 @@ void crearPrimerMemoria(){
 
 int actualIdMemoria = 0 ;
 
-	int getIdMemoria(){
-			int id = 0;
-			pthread_mutex_lock(&mutexIdMemoria);
-			actualIdMemoria++;
-			id = actualIdMemoria;
-			pthread_mutex_unlock(&mutexIdMemoria);
-			return id;
-		}
+int getIdMemoria(){
+	int id = 0;
+	pthread_mutex_lock(&mutexIdMemoria);
+	actualIdMemoria++;
+	id = actualIdMemoria;
+	pthread_mutex_unlock(&mutexIdMemoria);
+	return id;
+}
 
 
 memoria* crearMemoria(int puerto,char* ip){
@@ -302,7 +302,6 @@ memoria* crearMemoria(int puerto,char* ip){
 	nuevaMemoria->estadisticasMemoriaEC = estructura;
 	nuevaMemoria->insertsTotales=0;
 	nuevaMemoria->selectTotales=0;
-	pthread_mutex_init(&nuevaMemoria->enUso,NULL);
 	return nuevaMemoria;
 }
 
@@ -311,24 +310,24 @@ void reestablecerEstadisticasMemoria(memoria * unaMemoria) {
 
 
 
-unaMemoria->estadisticasMemoriaEC->Read_Latency=0;
-unaMemoria->estadisticasMemoriaEC->Reads=0;
-unaMemoria->estadisticasMemoriaEC->Write_Latency=0;
-unaMemoria->estadisticasMemoriaEC->Writes=0;
+	unaMemoria->estadisticasMemoriaEC->Read_Latency=0;
+	unaMemoria->estadisticasMemoriaEC->Reads=0;
+	unaMemoria->estadisticasMemoriaEC->Write_Latency=0;
+	unaMemoria->estadisticasMemoriaEC->Writes=0;
 
 
 
-unaMemoria->estadisticasMemoriaSC->Read_Latency=0;
-unaMemoria->estadisticasMemoriaSC->Reads=0;
-unaMemoria->estadisticasMemoriaSC->Write_Latency=0;
-unaMemoria->estadisticasMemoriaSC->Writes=0;
+	unaMemoria->estadisticasMemoriaSC->Read_Latency=0;
+	unaMemoria->estadisticasMemoriaSC->Reads=0;
+	unaMemoria->estadisticasMemoriaSC->Write_Latency=0;
+	unaMemoria->estadisticasMemoriaSC->Writes=0;
 
 
 
-unaMemoria->estadisticasMemoriaSHC->Read_Latency=0;
-unaMemoria->estadisticasMemoriaSHC->Reads=0;
-unaMemoria->estadisticasMemoriaSHC->Write_Latency=0;
-unaMemoria->estadisticasMemoriaSHC->Writes=0;
+	unaMemoria->estadisticasMemoriaSHC->Read_Latency=0;
+	unaMemoria->estadisticasMemoriaSHC->Reads=0;
+	unaMemoria->estadisticasMemoriaSHC->Write_Latency=0;
+	unaMemoria->estadisticasMemoriaSHC->Writes=0;
 
 
 

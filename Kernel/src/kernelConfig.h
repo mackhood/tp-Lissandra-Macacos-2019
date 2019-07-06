@@ -75,7 +75,6 @@ estadisticas * estadisticasMemoriaSHC;
 estadisticas * estadisticasMemoriaEC;
 int insertsTotales;
 int selectTotales;
-pthread_mutex_t enUso;
 
 
 }memoria;

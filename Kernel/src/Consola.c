@@ -198,7 +198,8 @@ void selectt(char** args){
 			int b=0;
 			char *unaPalabra = string_new();
 			while( args[b] !=NULL){
-				string_append(&unaPalabra, strcat(args[b], " "));
+				string_append(&args[b], " ");
+				string_append(&unaPalabra, args[b]);
 				b++;
 			}
 
@@ -299,7 +300,8 @@ void insert (char** args)
 				char *unaPalabra = string_new();
 				while( args[b] !=NULL)
 				{
-					string_append(&unaPalabra, strcat(args[b], " "));
+					string_append(&args[b], " ");
+					string_append(&unaPalabra, args[b]);
 					b++;
 				}
 
@@ -327,22 +329,6 @@ void insert (char** args)
 
 void create (char** args)
 {
-
-	bool  estaEnMetadata(char *nombre_tabla) {
-
-		bool _esLaBuscada(t_tabla* tabla){
-		return  !strcmp(tabla->nombre,nombre_tabla);
-			}
-
-
-
-	return	list_any_satisfy(tMetadata->tablas,(void*)estaEnMetadata);
-
-
-
-	}
-
-
 	//				0		1					2					3
 	//	CREATE [TABLA] [TIPO_CONSISTENCIA] [NUMERO_PARTICIONES] [COMPACTION_TIME]
 	//	Ej:
@@ -365,7 +351,7 @@ void create (char** args)
 			puts("La cantidad de particiones es inválida.");
 			logError( "[Consola]: la cantidad de particiones para CREATE es inválida.");
 		}
-		else if(atoi(args[3]) > 0)
+		else if(atoi(args[3]) < 1)
 		{
 			puts("La cantidad de particiones es inválida.");
 			logError( "[Consola]: la cantidad de particiones para CREATE es inválida.");
@@ -377,10 +363,10 @@ void create (char** args)
 		}
 		else
 		{
-			char* nombre_tabla = string_duplicate(args[0]);
-			int numeroParticiones = atoi(args[2]);
-			char* tipoConsistencia = string_duplicate(args[1]);
-			int tiempoCompactacion = atoi(args[3]);
+			char* nombre_tabla = string_duplicate(args[1]);
+			int numeroParticiones = atoi(args[3]);
+			char* tipoConsistencia = string_duplicate(args[2]);
+			int tiempoCompactacion = atoi(args[4]);
 			//char* key = string_duplicate(args[2]);
 
 			params* parametros = malloc( sizeof(params) );
@@ -394,7 +380,8 @@ void create (char** args)
 			char *unaPalabra = string_new();
 			while( args[b] !=NULL)
 			{
-				string_append(&unaPalabra, strcat(args[b], " "));
+				string_append(&args[b], " ");
+				string_append(&unaPalabra, args[b]);
 				b++;
 			}
 
@@ -404,16 +391,16 @@ void create (char** args)
 
 			dtb_nuevo->tablaSentencias[0]=unaPalabra;
 			enviarANew(dtb_nuevo);
-			if(!estaEnMetadata(nombre_tabla)){
-
+			if(!estaEnMetadata(nombre_tabla))
+			{
 				enviarANew(dtb_nuevo);
 				logInfo("Se envio a new el proceso");
 
-			} else{
-
+			}
+			else
+			{
 				enviarAEXIT(dtb_nuevo);
 				logInfo("La tabla ya se encuentra en metadata");
-
 			}
 		}
 	}
@@ -438,7 +425,8 @@ void describe (char** args)
 		int b =0;
 		while( args[b] !=NULL)
 		{
-			string_append(&unaPalabra, strcat(args[b], " "));
+			string_append(&args[b], " ");
+			string_append(&unaPalabra, args[b]);
 			b++;
 		}
 		DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,NULL);
@@ -448,27 +436,8 @@ void describe (char** args)
 	}
 }
 
-void drop (char** args) {
-
-
-
-	bool  estaEnMetadata(char *nombre_tabla) {
-
-		bool _esLaBuscada(t_tabla* tabla){
-		return  !strcmp(tabla->nombre,nombre_tabla);
-			}
-
-
-
-	return	list_any_satisfy(tMetadata->tablas,(void*)estaEnMetadata);
-
-
-
-	}
-
-
-
-
+void drop (char** args)
+{
 	logInfo( "[Consola]: Se ha solicitado realizar un DROP");
 	if(chequearParametros(args, 2) == 1)
 	{
@@ -489,11 +458,12 @@ void drop (char** args) {
 		int b =0;
 		while( args[b] !=NULL)
 		{
-			string_append(&unaPalabra, strcat(args[b], " "));
+			string_append(&args[b], " ");
+			string_append(&unaPalabra, args[b]);
 			b++;
 		}
 		DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,NULL);
-		dtb_nuevo->total_sentencias=1;
+		dtb_nuevo->total_sentencias = 1;
 		dtb_nuevo->tablaSentencias[0]=unaPalabra;
 		enviarANew(dtb_nuevo);
 
@@ -527,7 +497,8 @@ void journal (char** args) {
 //		int b =0;
 //		while( args[b] !=NULL)
 //		{
-//			string_append(&unaPalabra, strcat(args[b], " "));
+//							string_append(&args[b], " ");
+//		string_append(&unaPalabra, args[b]);
 //			b++;
 //		}
 //		//send journal to all memories in tKernel->memoriasConCriterio; Implementar en planificador
@@ -625,17 +596,17 @@ void add (char** args) {
 
 		//	int memoria = atoi(strdup(args[2]));
 		//	char* criterio = strdup(args[4]);
-		if(criterioInvalido(args[4]))
+		if(criterioInvalido(args[3]))
 		{
 			puts("El criterio es inválido.");
 			logError( "[Consola]: el criterio de ADD es inválido.");
 		}
-		else if(!itsANumber(args[2]))
+		else if(!itsANumber(args[1]))
 		{
 			puts("El numero de memoria es inválido.");
 			logError( "[Consola]: El numero de memoria para ADD es inválido.");
 		}
-		else if(args[2] > 0)
+		else if(atoi(args[1]) < 1)
 		{
 			puts("El numero de memoria es inválido.");
 			logError( "[Consola]: El numero de memoria para ADD es inválido.");
@@ -647,7 +618,8 @@ void add (char** args) {
 //			int b =0;
 //			while( args[b] !=NULL)
 //			{
-//				string_append(&unaPalabra, strcat(args[b], " "));
+//								string_append(&args[b], " ");
+//			string_append(&unaPalabra, args[b]);
 //				b++;
 //			}
 //			//send journal to all memories in tKernel->memoriasConCriterio; Implementar en planificador
@@ -658,8 +630,8 @@ void add (char** args) {
 //			enviarANew(dtb_nuevo);
 
 
-			int  numero_memoria =  atoi((args[2]));
-			char* criterio = string_duplicate(args[4]);
+			int  numero_memoria =  atoi((args[1]));
+			char* criterio = string_duplicate(args[3]);
 			if(!strcmp(criterio,"SC"))
 			{
 				if(t_Criterios->strongConsistency != NULL)
@@ -674,7 +646,7 @@ void add (char** args) {
 						if(list_find(tKernel->memoriasSinCriterio,(void*)estaEnLaLista)!= NULL )
 						{
 							pthread_mutex_lock(&memoriasSinCriterio);
-							memoriaAgregar =	list_remove_by_condition(tKernel->memoriasSinCriterio,(void*) estaEnLaLista);
+							memoriaAgregar = list_remove_by_condition(tKernel->memoriasSinCriterio,(void*) estaEnLaLista);
 							pthread_mutex_unlock(&memoriasSinCriterio);
 							pthread_mutex_lock(&memoriasCriterio);
 							list_add(tKernel->memoriasConCriterio,memoriaAgregar);
@@ -762,7 +734,6 @@ void add (char** args) {
 					while(list_get(t_Criterios->StrongHash,u) != NULL){
 
 						memoria* fruta =list_get(t_Criterios->StrongHash,u);
-						pthread_mutex_lock(&fruta->enUso);
 						int otrolSocket = conectar_a_memoria_flexible(fruta->ip,fruta->puerto,"Kernel");
 						prot_enviar_mensaje(otrolSocket,JOURNAL_REQ,0,NULL);
 						close(otrolSocket);
@@ -770,14 +741,14 @@ void add (char** args) {
 						u++;
 					}
 
-					pthread_mutex_lock(&memoriaAgregar->enUso);
+
 					list_add(t_Criterios->StrongHash, memoriaAgregar);
 
 					u=0;
 					while(list_get(t_Criterios->StrongHash,u) != NULL){
 
 						memoria* fruta =list_get(t_Criterios->StrongHash,u);
-						pthread_mutex_unlock(&fruta->enUso);
+
 
 
 						u++;

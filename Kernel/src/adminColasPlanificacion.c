@@ -131,7 +131,7 @@ DTB_KERNEL* getDTBReady(){
 	pthread_mutex_lock(&mutexListListo);
 	dtb = queue_pop(tKernelEstados->ready);
 	pthread_mutex_unlock(&mutexListListo);
-	logTrace("programa-dtb :%d seleccionado de la lista de ready ",dtb->idGDT) ;
+//	logTrace("programa-dtb :%d seleccionado de la lista de ready ",dtb->idGDT) ;
 	return dtb;
 
 }
@@ -140,7 +140,7 @@ void enviarAEjecutar(DTB_KERNEL* dtb) {
 	pthread_mutex_lock(&mutexListEjecucion);
 	list_add(tKernelEstados->exec,dtb);
 	pthread_mutex_unlock(&mutexListEjecucion);
-	logInfo("Se envio el proceso a ejecutar :%d", dtb->idGDT);
+//	logInfo("Se envio el proceso a ejecutar :%d", dtb->idGDT);
 }
 
 int getEstadoPlanficacion(DTB_KERNEL* dtb){

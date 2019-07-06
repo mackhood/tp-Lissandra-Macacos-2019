@@ -11,7 +11,6 @@ void handler_conexion_memoria(t_kernel* tKernel) {
 
 	while(!destProtocol){
 
-		pthread_mutex_lock(&configuracion->enUso);
 		int conexion=conectar_a_memoria_flexible(configuracion->ip,configuracion->puerto,"Memoria1");
 
 		if (conexion ==3 && tKernel->primerConexion){
@@ -126,7 +125,6 @@ void handler_conexion_memoria(t_kernel* tKernel) {
 
 			}
 
-			pthread_mutex_unlock(&configuracion->enUso);
 			close(conexion);
 
 
@@ -144,7 +142,6 @@ void handler_conexion_memoria(t_kernel* tKernel) {
 //			memcpy(tablaGossip,mensaje_recibido->payload+sizeof(int),large);
 //			tablaGossip[large]=	'\0';
 //			close(conexion);
-//			pthread_mutex_unlock(&configuracion->enUso);
 //
 //			char ** contenidoTabla = string_split(tablaGossip, ";");
 //			int a;

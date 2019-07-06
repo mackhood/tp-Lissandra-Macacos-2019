@@ -264,7 +264,7 @@ void create(char** args)
 			puts("La cantidad de particiones es inválida.");
 			log_error(loggerMem, "[Consola]: la cantidad de particiones para CREATE es inválida.");
 		}
-		else if(atoi(args[3]) > 0)
+		else if(atoi(args[3]) < 1)
 		{
 			puts("La cantidad de particiones es inválida.");
 			log_error(loggerMem, "[Consola]: la cantidad de particiones para CREATE es inválida.");

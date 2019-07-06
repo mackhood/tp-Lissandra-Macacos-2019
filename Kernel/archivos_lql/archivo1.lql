@@ -2,3 +2,4 @@ SELECT TablaA 7
 INSERT TablaB 7 Meow
 SELECT TablaA 98
 INSERT TablaC 67 Carradoon
+CREATE TablaH SC 5 5000
