@@ -11,7 +11,6 @@
 #include <stdlib.h>
 
 
-
 void initConfiguracion();
 void initThread();
 #endif /* MAIN_H_ */

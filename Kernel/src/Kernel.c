@@ -27,11 +27,6 @@ void initConfiguracion(){
 
 	srand((unsigned) time(&randomNumbertime));
 
-
-
-
-
-
 	destProtocol = 0;
 	t_config* config = config_create("/home/utnso/workspace/tp-2019-1c-Macacos/Kernel/kernel.properties");
 	if(config  == NULL){

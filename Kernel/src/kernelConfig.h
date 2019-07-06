@@ -15,6 +15,7 @@
 #include <pthread.h>
 #include <semaphore.h>
 #include "../../SharedLibrary/conexiones.h"
+#include "../../SharedLibrary/loggers.h"
 
 pthread_mutex_t mutexIdGDT;
 pthread_mutex_t mutexIdMemoria;

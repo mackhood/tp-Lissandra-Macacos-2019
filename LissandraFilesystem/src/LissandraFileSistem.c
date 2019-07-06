@@ -8,7 +8,7 @@ int main(void)
 	strcat(lissandraFL_log_ruta, dateForLogger);
 	strcat(lissandraFL_log_ruta, ".log");
 	logger = crearLogger(lissandraFL_log_ruta, "LissandraFileSystem");
-	logInfo("Main: Atra estherni ono thelduin, ai fricai.");
+	logInfo("[Main]: Atra estherni ono thelduin, ai fricai.");
 	lissandraFL_config_ruta = strdup("/home/utnso/workspace/tp-2019-1c-Macacos/LissandraFilesystem/src/Lissandra.cfg");
 	leerConfig(lissandraFL_config_ruta,logger);
 	hilosLFL = list_create();
@@ -43,7 +43,7 @@ void iniciar()
 
 void iniciarConsola(){
 	pthread_t hiloConsola;
-	logInfo("MAIN: Se inicio un hilo para manejar la consola.");
+	logInfo("[Main]: Se inicio un hilo para manejar la consola.");
 	pthread_create(&hiloConsola, NULL, (void *) consola, NULL);
 	pthread_detach(hiloConsola);
 }
@@ -51,7 +51,7 @@ void iniciarConsola(){
 void iniciarLissandra()
 {
 	pthread_t hiloLissandra;
-	logInfo("MAIN: Se inicio un hilo para manejar a Lissandra.");
+	logInfo("[Main]: Se inicio un hilo para manejar a Lissandra.");
 	pthread_create(&hiloLissandra, NULL, (void *) mainLissandra, NULL);
 	pthread_detach(hiloLissandra);
 }
@@ -59,7 +59,7 @@ void iniciarLissandra()
 void iniciarCompactador()
 {
 	pthread_t hiloCompactador;
-	logInfo("MAIN: Se inicio un hilo para manejar el Compactador.");
+	logInfo("[Main]: Se inicio un hilo para manejar el Compactador.");
 	pthread_create(&hiloCompactador, NULL, (void *) mainCompactador, NULL);
 	pthread_detach(hiloCompactador);
 }
@@ -67,14 +67,14 @@ void iniciarCompactador()
 void iniciarFileSistem()
 {
 	pthread_t hiloFileSistem;
-	logInfo("MAIN: Se inicio un hilo para manejar el FileSistem.");
+	logInfo("[Main]: Se inicio un hilo para manejar el FileSistem.");
 	pthread_create(&hiloFileSistem, NULL, (void *) mainFileSistem, NULL);
 	pthread_detach(hiloFileSistem);
 }
 
 void terminationProtocol()
 {
-	logInfo("Main: El termination protocol ha sido inicializado, apagando sistema.");
+	logInfo("[Main]: El termination protocol ha sido inicializado, apagando sistema.");
 	list_destroy(hilosLFL);
 	killProtocolLissandra();
 	killProtocolCompactador();
@@ -101,6 +101,6 @@ void terminationProtocol()
 	puts("_____:                ____________________");
 	puts("___; .         l--  ______________________");
 	puts("_:   (         ; _________________________");
-	logInfo("Main: Waise neiat.");
+	logInfo("[Main]: Waise neiat.");
 	log_destroy(logger);
 }

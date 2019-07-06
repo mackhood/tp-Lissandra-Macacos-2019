@@ -1,7 +1,7 @@
 #include "FileSistem.h"
 
 #define EVENT_SIZE (sizeof(struct inotify_event))
-#define BUF_LEN (1024* (EVENT_SIZE + 16))
+#define BUF_LEN (8196* (EVENT_SIZE + 16))
 
 void mainFileSistem()
 {
@@ -21,7 +21,7 @@ void testerFileSystem()
 	DIR* blockDirection;
 	if(NULL == (blockDirection = opendir(direccionFileSystemBlocks)))
 	{
-		logInfo("FileSystem: al no encontrarse el punto de montaje de los bloques, se procede a crearlo.");
+		logInfo("[FileSystem]: al no encontrarse el punto de montaje de los bloques, se procede a crearlo.");
 		mkdir(direccionFileSystemBlocks, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 	}
 	closedir(blockDirection);
@@ -31,13 +31,13 @@ void testerFileSystem()
 	FILE* doomsdaypointer;
 	if(NULL == (doomsdaypointer = fopen(aux, "r+")))
 	{
-		logInfo( "FileSystem: Se procede a crear los bloques de memoria");
+		logInfo( "[FileSystem]: Se procede a crear los bloques de memoria");
 		crearParticiones(direccionFileSystem, blocks);
 	}
 	else if(blocks != cantBloquesFS(direccionFileSystemBlocks))
 	{
 		fclose(doomsdaypointer);
-		logInfo("FileSystem: Como se ha detectado la falta de algunos bloques, se ve como necesaria la acción de borrar"
+		logInfo("[FileSystem]: Como se ha detectado la falta de algunos bloques, se ve como necesaria la acción de borrar"
 				" todas las tablas existentes y reiniciar la estructura de bloques debido a posibles inconsistencias de datos.");
 		printf("\033[1;34m");
 		puts("Se han detectado inconsistencias en el FS, dicha situación se debe a que algunos bloques pueden haber desaparecido"
@@ -66,7 +66,7 @@ void testerFileSystem()
 		}
 		else
 		{
-			logError("FileSystem: Como el directorio de tablas es inaccesible, ésto significa que el FileSystem ha sido alterado"
+			logError("[FileSystem]: Como el directorio de tablas es inaccesible, ésto significa que el FileSystem ha sido alterado"
 					", se creará un nuevo directorio de tablas");
 			printf("\033[1;34m");
 			puts("Como el directorio de tablas es inaccesible, ésto significa que el FileSystem ha sido alterado, se creará un"
@@ -88,24 +88,24 @@ void testerFileSystem()
 
 void levantarBitmap(char* direccion)
 {
-	logInfo( "FileSystem: Se procede a crear el bitmap");
+	logInfo( "[FileSystem]: Se procede a crear el bitmap");
 	char* direccionBitmap = malloc(strlen(punto_montaje) + 21);
 	strcpy(direccionBitmap, punto_montaje);
 	strcat(direccionBitmap, "Metadata/Bitmap.bin");
 	globalBitmapPath = malloc(strlen(direccionBitmap) + 1);
 	strcpy(globalBitmapPath, direccionBitmap);
 	bitarrayfd = open(globalBitmapPath, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
-	ftruncate(bitarrayfd, (blocks/8));
+	ftruncate(bitarrayfd, (blocks/8) + 1);
 	if (bitarrayfd == -1)
 	{
-		logError("FileSystem: error al abrir el bitmap, abortando sistema");
+		logError("[FileSystem]: error al abrir el bitmap, abortando sistema");
 		free(bitarraycontent);
 		close(bitarrayfd);
 		signalExit = true;
 	}
 	else
 	{
-		bitarraycontent = mmap(NULL, (blocks/8), PROT_READ | PROT_WRITE, MAP_SHARED, bitarrayfd, 0);
+		bitarraycontent = mmap(NULL, (blocks/8) + 1, PROT_READ | PROT_WRITE, MAP_SHARED, bitarrayfd, 0);
 		bitarray = bitarray_create_with_mode(bitarraycontent, (blocks/8), LSB_FIRST);
 		int a;
 		for(a = 0; a < blocks; a++)
@@ -154,7 +154,7 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 {
 	if(particiones > cantidadDeBloquesLibres())
 	{
-		logError("FileSystem: No hay suficientes bloques para asignar a la tabla.");
+		logError("[FileSystem]: No hay suficientes bloques para asignar a la tabla.");
 		return 5;
 	}
 	creatingFL = 0;
@@ -181,7 +181,7 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 		if(1 == existeTabla(nombre))
 		{
 			closedir(newdir);
-			logInfo( "FileSystem: La tabla que usted quiere crear ya existe");
+			logInfo( "[FileSystem]: La tabla que usted quiere crear ya existe");
 			free(tablename);
 			free(puntodemontaje);
 			return(2);
@@ -219,7 +219,7 @@ int crearTabla(char* nombre, char* consistencia, int particiones, int tiempoComp
 				}
 			}
 			free(direccionFinal);
-			logInfo("FileSystem: Tabla creada satisfactoriamente");
+			logInfo("[FileSystem]: Tabla creada satisfactoriamente");
 			free(tablename);
 			free(puntodemontaje);
 			return(0);
@@ -346,7 +346,7 @@ int dropTable(char* tablaPorEliminar)
 	{
 		if(NULL == (checkdir = opendir(checkaux)))
 		{
-			logInfo( "FileSystem: La tabla que usted quiere borrar no existe");
+			logInfo( "[FileSystem]: La tabla que usted quiere borrar no existe");
 			closedir(newdir);
 			free(tablename);
 			free(checkaux);
@@ -360,7 +360,7 @@ int dropTable(char* tablaPorEliminar)
 			if (limpiadorDeArchivos(checkaux, tablaPorEliminar) == 1)
 			{
 				rmdir(checkaux);
-				logInfo( "FileSystem: el directorio ha sido eliminado correctamente");
+				logInfo( "[FileSystem]: el directorio ha sido eliminado correctamente");
 				free(tablename);
 				free(checkaux);
 				free(puntodemontaje);
@@ -368,7 +368,7 @@ int dropTable(char* tablaPorEliminar)
 			}
 			else
 			{
-				logError( "FileSystem: error al eliminar el directorio");
+				logError( "[FileSystem]: error al eliminar el directorio");
 				free(tablename);
 				free(checkaux);
 				free(puntodemontaje);
@@ -392,7 +392,7 @@ int limpiadorDeArchivos(char* direccion, char* tabla)
 		free(tablaDeListaAux);
 		return result;
 	}
-	limpiadorDeBloques(direccion);
+	limpiadorDeBloques(direccion, tabla);
 	char* direccionMetadata = malloc(strlen(direccion) + 14);
 	strcpy(direccionMetadata, direccion);
 	strcat(direccionMetadata, "/Metadata.cfg");
@@ -414,7 +414,7 @@ int limpiadorDeArchivos(char* direccion, char* tabla)
 		if(status == 0){}
 		else
 		{
-			logError( "FileSystem: Error al eliminar particiones");
+			logError( "[FileSystem]: Error al eliminar particiones");
 			return 0;
 		}
 		free(direccionBin);
@@ -449,7 +449,7 @@ int limpiadorDeArchivos(char* direccion, char* tabla)
 		if(statusTemp == 0){}
 		else
 		{
-			logError( "FileSystem: Error al eliminar temporales");
+			logError( "[FileSystem]: Error al eliminar temporales");
 			free(direccionTemp);
 			free(archivo);
 			return 0;
@@ -494,7 +494,7 @@ char* mostrarMetadataEspecificada(char* tabla, bool solicitadoPorMemoria)
 {
 	if(0 == existeTabla(tabla))
 	{
-		logInfo( "FileSystem: La tabla a la que quiere acceder no existe");
+		logInfo( "[FileSystem]: La tabla a la que quiere acceder no existe");
 		puts("La tabla a la que usted quiere acceder no existe.");
 		return NULL;
 	}
@@ -557,7 +557,7 @@ t_list* mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* auxbuffer)
 	strcat(auxdir, "Tables/");
 	if(NULL == (directorioDeTablas = opendir(auxdir)))
 	{
-		logError( "FileSystem: error al acceder al directorio de tablas, abortando");
+		logError( "[FileSystem]: error al acceder al directorio de tablas, abortando");
 		auxbuffer = malloc(6);
 		strcpy(auxbuffer, "error");
 		closedir(directorioDeTablas);
@@ -566,7 +566,7 @@ t_list* mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* auxbuffer)
 	{
 		if(solicitadoPorMemoria)
 		{
-			logInfo("FileSystem: se procede a construir el paquete a enviar a Memoria.");
+			logInfo("[FileSystem]: se procede a construir el paquete a enviar a Memoria.");
 			while(NULL != (tdp = readdir(directorioDeTablas)))
 			{
 				if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, "..")){}
@@ -582,7 +582,7 @@ t_list* mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* auxbuffer)
 		}
 		else
 		{
-			logInfo("FileSystem: se procede a mostrar el contenido de las tablas del File System.");
+			logInfo("[FileSystem]: se procede a mostrar el contenido de las tablas del File System.");
 			while(NULL != (tdp = readdir(directorioDeTablas)))
 			{
 				if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, ".."))	{}
@@ -609,7 +609,7 @@ int contarTablasExistentes()
 	struct dirent* dr;
 	if(NULL == (auxdir = opendir(puntodemontaje)))
 	{
-		logError("FileSystem: No se pudo acceder al directorio de tablas.");
+		logError("[FileSystem]: No se pudo acceder al directorio de tablas.");
 		printf("Error al querer contar las tablas existentes");
 		free(puntodemontaje);
 		closedir(auxdir);
@@ -627,7 +627,7 @@ int contarTablasExistentes()
 			else
 				contadorDirectorios++;
 		}
-		logInfo("FileSystem: La cantidad de directorios existente es: %i", contadorDirectorios);
+		logInfo("[FileSystem]: La cantidad de directorios existente es: %i", contadorDirectorios);
 		free(puntodemontaje);
 		free(dr);
 		closedir(auxdir);
@@ -655,7 +655,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 		return result;
 	}
 	t_TablaEnEjecucion* tablaChequeada = list_find(tablasEnEjecucion, (void*) estaTabla);
-	logInfo("FileSystem: Se empieza a revisar el contenido de los bloques asignados a la %s para encontrar la clave %i."
+	logInfo("[FileSystem]: Se empieza a revisar el contenido de los bloques asignados a la %s para encontrar la clave %i."
 			, tabla, keyRecibida);
 	char* particionARevisar;
 	t_list* clavesDentroDeLosBloques = list_create();
@@ -683,7 +683,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 			free(direccionMetadataTabla);
 		}
 		else if(!strcmp(tdp->d_name, ".") || !strcmp(tdp->d_name, "..")){}
-		else if(!string_ends_with(tdp->d_name, ".tmp") || !string_ends_with(tdp->d_name, ".tmpc"))
+		else if(string_ends_with(tdp->d_name, ".tmp") || string_ends_with(tdp->d_name, ".tmpc"))
 		{
 			char* direccionTemp = malloc(strlen(direccionTabla) + strlen(tdp->d_name) + 2);
 			strcpy(direccionTemp, direccionTabla);
@@ -713,6 +713,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 				free(direccionTemp);
 			}
 		}
+		else if(string_ends_with(tdp->d_name, ".bin")){}
 	}
 	free(tdp);
 	closedir(table);
@@ -766,24 +767,24 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 	// Fin de primera parte del select que setea todos los arrays y listas necesarios para reevisar y comparar las claves
 
 	// Parte 2 parser de lista de claves sacada de cada tmp.
-	logInfo("FileSystem: Se procede a parsear los contenidos de los bloques de los .tmp y de la particion pertenecientes a la %s."
+	logInfo("[FileSystem]: Se procede a parsear los contenidos de los bloques de los .tmp y de la particion pertenecientes a la %s."
 			, tabla);
 	clavesPostParseo = parsearKeys(clavesDentroDeLosBloques);
 
 	//Paso 3 Correr select
 	t_list* keysettersDeClave = list_create();
 	keysettersDeClave = list_filter(clavesPostParseo, (void*)esDeTalKey);
-	t_keysetter* claveMasActualizada = malloc(sizeof(t_keysetter) + 3);
+	t_keysetter* claveMasActualizada;
 	if(!list_is_empty(keysettersDeClave))
 	{
 		list_sort(keysettersDeClave, (void*)chequearTimeKey);
 		claveMasActualizada = list_get(keysettersDeClave, 0);
-		logInfo("FileSystem: Se ha obtenido el valor más reciente de la key %i.", keyRecibida);
+		logInfo("[FileSystem]: Se ha obtenido el valor más reciente de la key %i.", keyRecibida);
 	}
 	else
 	{
 		claveMasActualizada = NULL;
-		logInfo("FileSystem: La key %i no fue impactada todavía en el File System.", keyRecibida);
+		logInfo("[FileSystem]: La key %i no fue impactada todavía en el File System.", keyRecibida);
 	}
 	list_destroy(keysettersDeClave);
 	list_destroy(clavesPostParseo);
@@ -872,7 +873,7 @@ void escribirBloque(int* usedBlocks, int* seizedSize, int usedSize, char* block,
 	ftruncate(fd2, mmapsize);
 	if (fd2 == -1)
 	{
-		logError("FileSystem: error al abrir el bloque %s, abortando sistema", block);
+		logError("[FileSystem]: error al abrir el bloque %s, abortando sistema", block);
 		signalExit = true;
 	}
 	else
@@ -900,9 +901,9 @@ void escribirBloque(int* usedBlocks, int* seizedSize, int usedSize, char* block,
 	}
 }
 
-void limpiadorDeBloques(char* direccion)
+void limpiadorDeBloques(char* direccion, char* tablename)
 {
-	logInfo("File System: procedo a limpiar los bloques otorgados a la tabla.");
+	logInfo("[FileSystem]: procedo a limpiar los bloques otorgados a la tabla %s.", tablename);
 	DIR* tabla;
 	struct dirent* tdp;
 	tabla = opendir(direccion);
@@ -963,7 +964,7 @@ char* leerBloque(char* bloque)
 	if(!contenidoBloque)
 	{
 		fclose(partpointer);
-		logError("FileSystem: error al usar calloc para abrir el contenido del bloque %s.bin", bloque);
+		logError("[FileSystem]: error al usar calloc para abrir el contenido del bloque %s.bin", bloque);
 		free(direccionBloque);
 		return "error";
 	}
@@ -973,7 +974,7 @@ char* leerBloque(char* bloque)
 		fread(contenidoBloque, partlength, 1, partpointer);
 		fclose(partpointer);
 		free(direccionBloque);
-		logInfo("FileSystem: Se ha leído el contenido del bloque %s.bin.", bloque);
+		logInfo("[FileSystem]: Se ha leído el contenido del bloque %s.bin.", bloque);
 		return contenidoBloque;
 	}
 }
@@ -991,7 +992,7 @@ char** obtenerBloques(char* direccion)
 void initBlocksNotifier()
 {
 	pthread_t blockNotifierHandler;
-	logInfo("FileSystem: Se inicio un hilo para manejar el notifier de los bloques.");
+	logInfo("[FileSystem]: Se inicio un hilo para manejar el notifier de los bloques.");
 	pthread_create(&blockNotifierHandler, NULL, (void *) fileSystemNotifier, NULL);
 	pthread_detach(blockNotifierHandler);
 }
@@ -999,7 +1000,7 @@ void initBlocksNotifier()
 void initTablesNotifier()
 {
 	pthread_t tablesNotifierHandler;
-	logInfo("FileSystem: Se inicio un hilo para manejar el notifier de las tablas.");
+	logInfo("[FileSystem]: Se inicio un hilo para manejar el notifier de las tablas.");
 	pthread_create(&tablesNotifierHandler, NULL, (void *) tablesNotifier, NULL);
 	pthread_detach(tablesNotifierHandler);
 }
@@ -1018,12 +1019,12 @@ void fileSystemNotifier()
 		return;
 	}
 
-	blockWatchDescriptor = inotify_add_watch(blockDirectoryToWatch, direccionFileSystemBlocks, IN_DELETE);
+	blockWatchDescriptor = inotify_add_watch(blockDirectoryToWatch, direccionFileSystemBlocks, IN_DELETE_SELF | IN_DELETE);
 	length = read(blockDirectoryToWatch, buffer, BUF_LEN);
 
 	if(length < 0)
 	{
-		logError("FileSystem: Error al tratar de acceder al directorio de bloques para vigilar.");
+		logError("[FileSystem]: Error al tratar de acceder al directorio de bloques para vigilar.");
 		pthread_mutex_unlock(&deathProtocol);
 		return;
 	}
@@ -1031,7 +1032,7 @@ void fileSystemNotifier()
 	while(i < length)
 	{
 		struct inotify_event* event = (struct inotify_event*) &buffer[i];
-		if(event->mask & IN_DELETE)
+		if(event->mask & IN_DELETE_SELF)
 		{
 			if(event->mask & IN_ISDIR)
 			{
@@ -1043,7 +1044,7 @@ void fileSystemNotifier()
 					pthread_mutex_lock(&tabla->renombreEnCurso);
 					listRounder++;
 				}
-				logInfo("FileSystem: Se ha detectado que el directorio de bloques fue destruido. Terminando sistema.");
+				logInfo("[FileSystem]: Se ha detectado que el directorio de bloques fue destruido. Terminando sistema.");
 				DIR* tables;
 				struct dirent* tablepointer;
 				char* tableDirectory = malloc(strlen(punto_montaje) + 8);
@@ -1065,6 +1066,10 @@ void fileSystemNotifier()
 				pthread_mutex_unlock(&deathProtocol);
 				break;
 			}
+		}
+		if(event->mask & IN_DELETE)
+		{
+			if(event->mask & IN_ISDIR){}
 			else
 			{
 				char* trueblockname = strdup(event->name);
@@ -1074,7 +1079,7 @@ void fileSystemNotifier()
 				{
 					printf("Lamentamos informar que como el bloque %s que estaba asignado a una tabla ha sido eliminado, se debe cerrar"
 							" el FS, y además, se perderán preciosos datos debido a este error, lo lamentamos.\n", trueblockname);
-					logInfo("FileSystem: Se ha detectado que un bloque con información fue destruido. Terminando sistema.");
+					logInfo("[FileSystem]: Se ha detectado que un bloque con información fue destruido. Terminando sistema.");
 					DIR* tables;
 					struct dirent* tablepointer;
 					char* tableDirectory = malloc(strlen(punto_montaje) + 8);
@@ -1116,7 +1121,6 @@ void fileSystemNotifier()
 	}
 }
 
-
 void tablesNotifier()
 {
 	int length;
@@ -1136,7 +1140,7 @@ void tablesNotifier()
 
 	if(length < 0)
 	{
-		logError("FileSystem: Error al tratar de acceder al directorio de tablas para vigilar.");
+		logError("[FileSystem]: Error al tratar de acceder al directorio de tablas para vigilar.");
 		pthread_mutex_unlock(&deathProtocol);
 		return;
 	}
@@ -1156,7 +1160,7 @@ void tablesNotifier()
 					pthread_mutex_lock(&tabla->renombreEnCurso);
 					listRounder++;
 				}
-				logInfo("FileSystem: Se ha detectado que el directorio de tablas ha sido destruido. Terminando sistema.");
+				logInfo("[FileSystem]: Se ha detectado que el directorio de tablas ha sido destruido. Terminando sistema.");
 				printf("\033[1;34m");
 				puts("El FileSystem está siento desconectado.");
 				printf("\033[1;36m");
@@ -1169,7 +1173,6 @@ void tablesNotifier()
 	}
 }
 
-
 void killProtocolFileSystem()
 {
 	bitarray_destroy(bitarray);
@@ -1181,6 +1184,6 @@ void killProtocolFileSystem()
 	(void) close(blockDirectoryToWatch);
 	(void) inotify_rm_watch(tableDirectoryToWatch, tableWatchDescriptor);
 	(void) close(tableDirectoryToWatch);
-	logInfo("FileSystem: El bitmap fue destruido y las direcciones globales del FileSystem fueron destruidas.");
+	logInfo("[FileSystem]: El bitmap fue destruido y las direcciones globales del FileSystem fueron destruidas.");
 }
 
