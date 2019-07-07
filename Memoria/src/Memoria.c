@@ -93,8 +93,8 @@ void initThread(){
 //	*memoria = socket_memoria;
 //	pthread_create(&threadMensajesMemoria,NULL, (void*)escucharMemoria, memoria);
 
-	pthread_join(threadReqKernel, NULL);
-	pthread_join(threadConsola ,NULL);
+	pthread_detach(threadReqKernel);
+	pthread_detach(threadConsola);
 //	pthread_detach(threadMensajesMemoria, NULL);
 }
 

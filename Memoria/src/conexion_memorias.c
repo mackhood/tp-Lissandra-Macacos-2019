@@ -1,11 +1,29 @@
 #include "conexion_memorias.h"
 
+void AceptarMemoria()
+{
+	//Acepto a la memoria
+	struct sockaddr_in direccion_cliente;
+	unsigned int tamanio_direccion = sizeof(direccion_cliente);
+
+	socket_memoria = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion);
+	printf("Se ha conectado una memoria\n");
+
+	//Creo hilos para atender solicitudes de memoria
+	while(  (socket_memoria = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion)) > 0)
+		{
+			puts("Se ha conectado a una memoria");
+			pthread_t RecibirMensajesMemoria;
+			pthread_create(&RecibirMensajesMemoria,NULL, (void*)escucharMemoria, NULL);
+		}
+}
 void escucharMemoria(int* memoria){
+
 	int s_memoria = *memoria;
 	free(memoria);
+	bool connected = true;
 
-	while(1){
-
+	while(connected){
 		t_prot_mensaje* mensaje_recibido = prot_recibir_mensaje(s_memoria);
 
 		switch(mensaje_recibido->head){
@@ -85,6 +103,13 @@ void escucharMemoria(int* memoria){
 			break;
 		}
 
+		case DESCONEXION:
+		{
+			puts("Se ha desconectado una memoria");
+			connected = false;
+			break;
+		}
+
 		default:
 		{
 			break;
@@ -92,6 +117,7 @@ void escucharMemoria(int* memoria){
 
 
 
-		}
+
+	}
 	}
 }
