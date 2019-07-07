@@ -203,7 +203,8 @@ void selectt(char** args){
 				b++;
 			}
 
-			dtb_nuevo->tablaSentencias[0]=unaPalabra;
+			queue_push(dtb_nuevo->tablaSentenciasMejorada,unaPalabra);
+			//dtb_nuevo->tablaSentencias[0]=unaPalabra;
 
 			enviarANew(dtb_nuevo);
 			logInfo("Se envio a new el proceso");
@@ -307,7 +308,9 @@ void insert (char** args)
 
 				DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,parametros);
 				dtb_nuevo->total_sentencias=1;
-				dtb_nuevo->tablaSentencias[0]=unaPalabra;
+				queue_push(dtb_nuevo->tablaSentenciasMejorada,unaPalabra);
+
+//				dtb_nuevo->tablaSentencias[0]=unaPalabra;
 				if(estaEnMetadata(nombre_tabla))
 				{
 					enviarANew(dtb_nuevo);
@@ -389,7 +392,9 @@ void create (char** args)
 			dtb_nuevo->total_sentencias=1;
 
 
-			dtb_nuevo->tablaSentencias[0]=unaPalabra;
+//			dtb_nuevo->tablaSentencias[0]=unaPalabra;
+			queue_push(dtb_nuevo->tablaSentenciasMejorada,unaPalabra);
+
 			enviarANew(dtb_nuevo);
 			if(!estaEnMetadata(nombre_tabla))
 			{
@@ -431,7 +436,9 @@ void describe (char** args)
 		}
 		DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,NULL);
 		dtb_nuevo->total_sentencias=1;
-		dtb_nuevo->tablaSentencias[0]=unaPalabra;
+//		dtb_nuevo->tablaSentencias[0]=unaPalabra;
+		queue_push(dtb_nuevo->tablaSentenciasMejorada,unaPalabra);
+
 		enviarANew(dtb_nuevo);
 	}
 }
@@ -464,8 +471,9 @@ void drop (char** args)
 		}
 		DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,NULL);
 		dtb_nuevo->total_sentencias = 1;
-		dtb_nuevo->tablaSentencias[0]=unaPalabra;
-		enviarANew(dtb_nuevo);
+//		dtb_nuevo->tablaSentencias[0]=unaPalabra;
+		queue_push(dtb_nuevo->tablaSentenciasMejorada,unaPalabra);
+
 
 
 		if(estaEnMetadata(nombre_tabla))
@@ -923,8 +931,9 @@ void run (char** args) {
 		while( argus[b] !=NULL){
 
 
+			queue_push(dtb_nuevo->tablaSentenciasMejorada,argus[b]);
 
-			dtb_nuevo->tablaSentencias[b]=argus[b];
+//			dtb_nuevo->tablaSentencias[b]=argus[b];
 
 			b++;
 		}

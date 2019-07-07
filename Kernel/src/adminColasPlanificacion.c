@@ -421,7 +421,8 @@ DTB_KERNEL* crearDTBKernel(int gdtId, char* path, int quantum, params * parametr
 //	dtb->tablaDeArchivosAbiertos = list_create();
 //	dtb->prox_io = queue_create();
 	dtb->parametros = parametros;
-	dtb->tablaSentencias;
+	//dtb->tablaSentencias;
+	dtb->tablaSentenciasMejorada = queue_create();
 	return dtb;
 }
 

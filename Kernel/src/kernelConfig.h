@@ -151,7 +151,8 @@ typedef struct{
 	t_header instruccion_actual;
 	params * parametros;
 	t_header operacionActual;
-	char* tablaSentencias [7000];
+	t_queue * tablaSentenciasMejorada;
+	//char* tablaSentencias [7000];
 	int sentenciaActual;
 }DTB_KERNEL;
 

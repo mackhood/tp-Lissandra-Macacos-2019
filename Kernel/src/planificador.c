@@ -89,9 +89,9 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 
 
-		char** args = string_split(dtb->tablaSentencias[dtb->sentenciaActual], " ");
+//		char** args = string_split(dtb->tablaSentencias[dtb->sentenciaActual], " ");
 
-
+		char** args = string_split(queue_pop(dtb->tablaSentenciasMejorada), " ");
 
 
 
