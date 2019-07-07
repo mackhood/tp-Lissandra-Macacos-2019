@@ -1,15 +1,24 @@
 #include "conexion_kernel.h"
 
-void AceptarYescucharKernel(){
+void AceptarKernel(){
 
 	//Acepto al Kernel
 	struct sockaddr_in direccion_cliente;
 	unsigned int tamanio_direccion = sizeof(direccion_cliente);
 
 	socket_kernel = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion);
-	printf("se ha conectado el kernel\n");
+	printf("Se ha conectado el kernel\n");
 
-	//Comienzo a recibir peticiones
+	//Creo un hilo para atender solicitudes del Kernel
+
+	pthread_t RecibirMensajesKernel;
+	pthread_create(&RecibirMensajesKernel, NULL, (void*)escucharYatenderKernel, NULL);
+
+}
+
+void escucharYatenderKernel(){
+
+//Comienzo a recibir peticiones
 	bool connected = true;
 
 	while(connected){
@@ -239,8 +248,10 @@ void AceptarYescucharKernel(){
 			case DESCONEXION:
 			{
 				printf("El Kernel Se ha desconectado\n");
-				socket_kernel = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion);
-				printf("se ha conectado el kernel\n");
+				connected = false;
+
+//				socket_kernel = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion);
+//				printf("se ha conectado el kernel\n");
 
 			} break;
 

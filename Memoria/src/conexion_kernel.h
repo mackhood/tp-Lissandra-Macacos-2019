@@ -6,6 +6,7 @@
 #include "stdio.h"
 #include "string.h"
 
-void AceptarYescucharKernel();
+void AceptarKernel();
+void escucharYatenderKernel();
 
 #endif /* CONEXION_KERNEL_H_ */

@@ -87,7 +87,7 @@ void levantarEstrMemorias(){
 void initThread(){
 
 	pthread_create(&threadConsola, NULL, (void*)handleConsola, NULL);
-	pthread_create(&threadReqKernel, NULL, (void*)AceptarYescucharKernel, NULL);
+	pthread_create(&threadReqKernel, NULL, (void*)AceptarKernel, NULL);
 
 //	int* memoria = (int*) malloc (sizeof(int));
 //	*memoria = socket_memoria;
@@ -177,47 +177,98 @@ void gossiping(){
 
 			prot_enviar_mensaje(socket_memoria, SOLICITUD_GOSSIP, 0, NULL);
 
-			t_prot_mensaje* mensaje_con_memoria = prot_recibir_mensaje(socket_memoria);
+			t_prot_mensaje* mensaje_con_memorias = prot_recibir_mensaje(socket_memoria);
 
-			//La otra memoria me manda su tabla gossip (memoria por memoria) (numero + ip + puerto)
+			//Recibo todas las memorias de la tabla gossip juntas contenidas en un char*
 
-			//Contemplar envío de todas las memorias de la tabla gossip juntas  por medio de un char* y parsear.
+			int tamanio_mensaje;
 
-			int numero_mandado;
-			char* ip_mandado;
-			int puerto_mandado;
+			memcpy(&tamanio_mensaje,mensaje_con_memorias->payload,sizeof(int));
 
-			memcpy(&numero_mandado, mensaje_con_memoria->payload, sizeof(int));
-			memcpy(&ip_mandado, mensaje_con_memoria->payload+sizeof(int), IP_SIZE);
-			memcpy(&puerto_mandado, mensaje_con_memoria->payload+sizeof(int)+IP_SIZE, sizeof(int));
+			char* mensaje = malloc(tamanio_mensaje + 1);
 
-			prot_destruir_mensaje(mensaje_con_memoria);
+			memcpy(mensaje, mensaje_con_memorias->payload + sizeof(int), tamanio_mensaje);
+
+			mensaje[tamanio_mensaje] = '\0';
+
+			//Separo la info de las memorias por ; en datosTAbla
+
+			char ** datosTabla = string_split(mensaje, ";");
+
+			t_list* tablaDeOtraMemoria;
+
+			//Creo una lista de tablas para guardar memorias directamente
+			int q=0;
+
+			//recibo númeroTabla, ip, puerto;
+
+			while(datosTabla[q]!=NULL){
+
+				char* numero_memoria = strtok(datosTabla[q],",");
+				char* ip_memoria = strtok(NULL, ",");
+				char* puerto_memoria = strtok(NULL, ",");
+
+				t_est_memoria* nuevaMemoria = malloc(sizeof(t_est_memoria*));
+
+				int nuevo_numero = atoi(numero_memoria);
+				int nuevo_puerto = atoi(puerto_memoria);
+
+				nuevaMemoria->numero_memoria = nuevo_numero;
+				strcpy(nuevaMemoria->ip_memoria, ip_memoria);
+				nuevaMemoria->puerto_memoria = nuevo_puerto;
 
 
-			bool contieneMemoria (void* memoria)
-			{
-				t_est_memoria* memoria_a_comparar = (void*)memoria;
 
-				if(memoria_a_comparar->numero_memoria == numero_mandado)
-				{return 1;}
+				list_add(tablaDeOtraMemoria, nuevaMemoria);
 
-				else
-				{return 0;}
+				q++;
+
 			}
 
-			//verifico si contengo la memoria. Si no está, la agrego a mi tabla gossip.
-			bool laContiene = list_any_satisfy(tabla_gossip, contieneMemoria);
+			//La otra memoria me manda su tabla gossip (memoria por memoria) (numero + ip + puerto)
+//			int numero_mandado;
+//			char* ip_mandado;
+//			int puerto_mandado;
+//
+//			memcpy(&numero_mandado, mensaje_con_memoria->payload, sizeof(int));
+//			memcpy(&ip_mandado, mensaje_con_memoria->payload+sizeof(int), IP_SIZE);
+//			memcpy(&puerto_mandado, mensaje_con_memoria->payload+sizeof(int)+IP_SIZE, sizeof(int));
+//
+			prot_destruir_mensaje(mensaje_con_memorias);
 
-			if(!laContiene)
+			int tam = list_size(tablaDeOtraMemoria);
+
+			for (int j=0; j<tam; j++)
 			{
-				t_est_memoria* nuevaMemoria = malloc(sizeof(t_est_memoria));
 
-				nuevaMemoria->numero_memoria = numero_mandado;
-				nuevaMemoria->ip_memoria = ip_mandado;
-				nuevaMemoria->puerto_memoria = puerto_mandado;
+				t_est_memoria* memoria_tabla = list_get(tablaDeOtraMemoria, j);
 
-				list_add(tabla_gossip, nuevaMemoria);
 
+				bool contieneMemoria (void* memoria)
+					{
+						t_est_memoria* memoria_a_comparar = (void*)memoria;
+
+						if(memoria_a_comparar->numero_memoria == memoria_tabla->numero_memoria)
+							{return 1;}
+
+						else
+							{return 0;}
+					}
+
+				//verifico si contengo la memoria. Si no está, la agrego a mi tabla gossip.
+				bool laContiene = list_any_satisfy(tabla_gossip, contieneMemoria);
+
+				if(!laContiene)
+							{
+								t_est_memoria* memoriaAgregar = malloc(sizeof(t_est_memoria));
+
+								memoriaAgregar->numero_memoria = memoria_tabla->numero_memoria;
+								strcpy(memoriaAgregar->ip_memoria, memoria_tabla->ip_memoria);
+								memoriaAgregar->puerto_memoria = memoria_tabla->puerto_memoria;
+
+								list_add(tabla_gossip, memoriaAgregar);
+
+							}
 			}
 
 		}
