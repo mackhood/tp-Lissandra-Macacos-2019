@@ -412,9 +412,8 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 			t_keysetter* key;
 			pthread_mutex_lock(&dumpEnCurso);
 			keysDeTablaPedida = list_filter(memtable, (void*)perteneceATabla);
-			pthread_mutex_unlock(&dumpEnCurso);
 			keyEspecifica = list_filter(keysDeTablaPedida, (void*)esDeTalKey);
-			if(!list_is_empty(keysDeTablaPedida))
+			if(!list_is_empty(keyEspecifica))
 			{
 				list_sort(keyEspecifica, (void*)chequearTimestamps);
 				auxMemtable = list_get(keyEspecifica, 0);
@@ -423,10 +422,16 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 					if(chequearTimeKey(keyTemps, auxMemtable->data))
 						key = keyTemps;
 					else
-						key = auxMemtable->data;
+					{
+						key = malloc(sizeof(auxMemtable->data) + 3);
+						memcpy(key, auxMemtable->data, sizeof(auxMemtable->data));
+					}
 				}
 				else
-					key = auxMemtable->data;
+				{
+					key = malloc(sizeof(auxMemtable->data) + 3);
+					memcpy(key, auxMemtable->data, sizeof(auxMemtable->data));
+				}
 			}
 			else
 			{
@@ -437,10 +442,11 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 					puts("La key que usted solicitó no existe en el File System.");
 					logError("[Lissandra]: Clave inexistente en el FS.");
 					key = NULL;
+					pthread_mutex_unlock(&dumpEnCurso);
 					return key;
 				}
 			}
-
+			pthread_mutex_unlock(&dumpEnCurso);
 			list_destroy_and_destroy_elements(keysDeTablaPedida, &free);
 			list_destroy(keyEspecifica);
 			logInfo("[Lissandra]: se ha obtenido la clave más actualizada en el proceso.");
