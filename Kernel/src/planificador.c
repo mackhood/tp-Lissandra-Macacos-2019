@@ -73,10 +73,8 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 	//	socket_memoria = conectar_a_servidor(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Memoria");
 
-	while(dtb->quantum >0 && dtb->flag != 1  && dtb->total_sentencias > 0 ) {
-
-
-
+	while(dtb->quantum >0 && dtb->flag != 1  && dtb->total_sentencias > 0 )
+	{
 		//	SELECT
 		//	INSERT
 		//	CREATE
@@ -948,6 +946,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 			printf("Invalid operation\n" );
 
 		}
+		close(socket_memoria);
 
 
 
@@ -957,7 +956,6 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 		logInfo("Fallo , se suspende todo");
 		moverExecToExit(dtb);
 
-		close(socket_memoria);
 
 
 	}else{
@@ -966,19 +964,16 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 			logInfo("Finalizo");
 			moverExecToExit(dtb);
-			close(socket_memoria);
 
 		}else{
 
 			logInfo("Fin de quantum");
 			moverExecToReady(dtb);
-			close(socket_memoria);
 
 		}
 
 
 	}
-
 
 }
 
