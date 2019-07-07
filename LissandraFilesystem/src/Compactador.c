@@ -136,8 +136,8 @@ void gestionarMemtable()
 				fileSystemFull = false;
 			if(!fileSystemFull)
 			{
-				logInfo("[Compactador]: Se procede a realizar un dump de la memtable.");
 				pthread_mutex_lock(&dumpEnCurso);
+				logInfo("[Compactador]: Se procede a realizar un dump de la memtable.");
 				while(NULL != list_get(tablasEnEjecucion, a))
 				{
 					t_TablaEnEjecucion* tablaTomada = list_get(tablasEnEjecucion, a);

@@ -113,87 +113,87 @@ t_list* parsearKeys(t_list* clavesAParsear)
 	char* keyHandler;
 	while((keyHandler = list_get(clavesAParsear, parserListPointer)) != NULL)
 	{
-//		int parserPointer = 0;
-//		int handlerSize = strlen(keyHandler);
-//		char* key = malloc(6);
-//		char* value = malloc(tamanio_value + 1);
-//		char* timestamp = malloc(15);
-//		int status = 0;
-//		int k = 1;
-//		int v = 1;
-//		int t = 1;
-//		while(parserPointer < handlerSize)
-//		{
-//			switch(keyHandler[parserPointer])
-//			{
-//			case ';':
-//			{
-//				parserPointer++;
-//				status++;
-//				break;
-//			}
-//			case '\n':
-//			{
-//				t_keysetter* helpingHand = construirKeysetter(timestamp, key, value);
-//				list_add(clavesPostParseo, helpingHand);
-//				parserPointer++;
-//				status = 0;
-//				k = 1;
-//				v = 1;
-//				t = 1;
-//				break;
-//			}
-//			default:
-//			{
-//				char* aux = malloc(2);
-//				aux[0] = keyHandler[parserPointer];
-//				aux[1] = '\0';
-//				switch(status)
-//				{
-//				case 0:
-//				{
-//					if(t)
-//					{
-//						strcpy(timestamp, aux);
-//						t = 0;
-//					}
-//					else
-//						strcat(timestamp, aux);
-//					break;
-//				}
-//				case 1:
-//				{
-//					if(k)
-//					{
-//						strcpy(key, aux);
-//						k = 0;
-//					}
-//					else
-//						strcat(key, aux);
-//					break;
-//				}
-//				case 2:
-//				{
-//					if(v)
-//					{
-//						strcpy(value, aux);
-//						v = 0;
-//					}
-//					else
-//						strcat(value, aux);
-//					break;
-//				}
-//				}
-//				free(aux);
-//				parserPointer++;
-//				break;
-//			}
-//			}
-//		}
+		int parserPointer = 0;
+		int handlerSize = strlen(keyHandler);
+		char* key = malloc(6);
+		char* value = malloc(tamanio_value + 1);
+		char* timestamp = malloc(15);
+		int status = 0;
+		int k = 1;
+		int v = 1;
+		int t = 1;
+		while(parserPointer < handlerSize)
+		{
+			switch(keyHandler[parserPointer])
+			{
+			case ';':
+			{
+				parserPointer++;
+				status++;
+				break;
+			}
+			case '\n':
+			{
+				t_keysetter* helpingHand = construirKeysetter(timestamp, key, value);
+				list_add(clavesPostParseo, helpingHand);
+				parserPointer++;
+				status = 0;
+				k = 1;
+				v = 1;
+				t = 1;
+				break;
+			}
+			default:
+			{
+				char* aux = malloc(2);
+				aux[0] = keyHandler[parserPointer];
+				aux[1] = '\0';
+				switch(status)
+				{
+				case 0:
+				{
+					if(t)
+					{
+						strcpy(timestamp, aux);
+						t = 0;
+					}
+					else
+						strcat(timestamp, aux);
+					break;
+				}
+				case 1:
+				{
+					if(k)
+					{
+						strcpy(key, aux);
+						k = 0;
+					}
+					else
+						strcat(key, aux);
+					break;
+				}
+				case 2:
+				{
+					if(v)
+					{
+						strcpy(value, aux);
+						v = 0;
+					}
+					else
+						strcat(value, aux);
+					break;
+				}
+				}
+				free(aux);
+				parserPointer++;
+				break;
+			}
+			}
+		}
 
-		char** key = string_split(keyHandler, ";");
-		t_keysetter* helpingHand = construirKeysetter(key[0], key[1], strtok(key[2], "\n"));
-		list_add(clavesPostParseo, helpingHand);
+//		char** key = string_split(keyHandler, ";");
+//		t_keysetter* helpingHand = construirKeysetter(key[0], key[1], strtok(key[2], "\n"));
+//		list_add(clavesPostParseo, helpingHand);
 		parserListPointer++;
 	}
 	free(keyHandler);

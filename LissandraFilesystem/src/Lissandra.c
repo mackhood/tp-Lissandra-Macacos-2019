@@ -109,7 +109,8 @@ void escucharMemoria(int* socket_memoria)
 				 if(helpinghand != NULL)
 				 {
 					double tiempo_pag = helpinghand->timestamp;
-					char* value = helpinghand->clave;
+					char* value = malloc(sizeof(helpinghand->clave));
+					strcpy(value, helpinghand->clave);
 					int tamanio_value = strlen(value);
 					size_t tamanio_buffer = (sizeof(double)+tamanio_value+sizeof(int));
 					void* buffer = malloc(tamanio_buffer);
@@ -119,7 +120,7 @@ void escucharMemoria(int* socket_memoria)
 					memcpy(buffer+sizeof(double)+sizeof(int), value, tamanio_value);
 
 					prot_enviar_mensaje(socket, VALUE_SOLICITADO_OK, tamanio_buffer, buffer);
-					logInfo("[Lissandra]: se envía a Memoria el value de la key &i", helpinghand->key);
+					logInfo("[Lissandra]: se envía a Memoria el value de la key %i", helpinghand->key);
 					free(buffer);
 				 }
 				 else
@@ -338,7 +339,6 @@ void escucharMemoria(int* socket_memoria)
 
 int insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibido, double timestampRecibido)
 {
-	tamanio_memtable = memtable->elements_count;
 	t_Memtablekeys* auxiliar = malloc(sizeof(t_Memtablekeys) + 4);
 	t_keysetter* auxiliarprima = malloc(sizeof(t_keysetter) + 3);
 	auxiliarprima->key = keyRecibida;
@@ -367,11 +367,12 @@ int insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibi
 			return 3;
 		}
 		pthread_mutex_lock(&dumpEnCurso);
+		tamanio_memtable = memtable->elements_count;
 		logInfo( "[Lissandra]: Se procede a insertar la clave recibida en la Memtable.");
 		list_add(memtable, auxiliar);
-		pthread_mutex_unlock(&dumpEnCurso);
 		if(tamanio_memtable == memtable->elements_count)
 		{
+			pthread_mutex_unlock(&dumpEnCurso);
 			logError( "[Lissandra]: La clave fracasó en su intento de insertarse correctamente.");
 			printf("Fallo al agregar a memtable.\n");
 			printf("\033[1;36m");
@@ -379,6 +380,7 @@ int insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibi
 		}
 		else
 		{
+			pthread_mutex_unlock(&dumpEnCurso);
 			logInfo( "[Lissandra]: La clave fue insertada correctamente.");
 			printf("Agregado correctamente.\n");
 			printf("\033[1;36m");
@@ -408,7 +410,6 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 			t_list* keysDeTablaPedida = list_create();
 			t_list* keyEspecifica = list_create();
 			t_Memtablekeys* auxMemtable;
-			t_keysetter* keyTemps = selectKeyFS(tabla, receivedKey);
 			t_keysetter* key;
 			pthread_mutex_lock(&dumpEnCurso);
 			keysDeTablaPedida = list_filter(memtable, (void*)perteneceATabla);
@@ -417,6 +418,7 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 			{
 				list_sort(keyEspecifica, (void*)chequearTimestamps);
 				auxMemtable = list_get(keyEspecifica, 0);
+				t_keysetter* keyTemps = selectKeyFS(tabla, receivedKey);
 				if(keyTemps != NULL)
 				{
 					if(chequearTimeKey(keyTemps, auxMemtable->data))
@@ -424,17 +426,18 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 					else
 					{
 						key = malloc(sizeof(auxMemtable->data) + 3);
-						memcpy(key, auxMemtable->data, sizeof(auxMemtable->data));
+						memmove(&key, &auxMemtable->data, sizeof(auxMemtable->data));
 					}
 				}
 				else
 				{
 					key = malloc(sizeof(auxMemtable->data) + 3);
-					memcpy(key, auxMemtable->data, sizeof(auxMemtable->data));
+					memmove(&key, &auxMemtable->data, sizeof(auxMemtable->data));
 				}
 			}
 			else
 			{
+				t_keysetter* keyTemps = selectKeyFS(tabla, receivedKey);
 				if(keyTemps != NULL)
 					key = keyTemps;
 				else
@@ -447,7 +450,7 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 				}
 			}
 			pthread_mutex_unlock(&dumpEnCurso);
-			list_destroy_and_destroy_elements(keysDeTablaPedida, &free);
+			list_destroy(keysDeTablaPedida);
 			list_destroy(keyEspecifica);
 			logInfo("[Lissandra]: se ha obtenido la clave más actualizada en el proceso.");
 			return key;
