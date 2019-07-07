@@ -9,10 +9,13 @@ void AceptarKernel(){
 	socket_kernel = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion);
 	printf("Se ha conectado el kernel\n");
 
-	//Creo un hilo para atender solicitudes del Kernel
-
-	pthread_t RecibirMensajesKernel;
-	pthread_create(&RecibirMensajesKernel, NULL, (void*)escucharYatenderKernel, NULL);
+	//Creo hilos para atender solicitudes del Kernel
+	while(  (socket_kernel = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion)) > 0)
+		{
+			puts("Se ha conectado el kernel");
+			pthread_t RecibirMensajesKernel;
+			pthread_create(&RecibirMensajesKernel,NULL, (void*)escucharYatenderKernel, NULL);
+		}
 
 }
 
