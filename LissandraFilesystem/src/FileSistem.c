@@ -250,19 +250,22 @@ int crearMetadata (char* direccion, char* consistencia, int particiones, int tie
 		strcat(Linea,"\n");
 		fwrite(Linea, strlen(Linea), 1, metadata);
 		free(Linea);
-		char* Linea2 = malloc(sizeof(particiones) + 14);
 		char* cantparticiones = string_itoa(particiones);
+		char* Linea2 = malloc(strlen(cantparticiones) + 14);
 		strcpy(Linea2, "PARTICIONES=");
 		strcat(Linea2, cantparticiones);
 		strcat(Linea2, "\n");
 		fwrite(Linea2, strlen(Linea2), 1, metadata);
 		free(Linea2);
-		char* Linea3 = malloc(strlen(string_itoa(tiempoCompactacion)) + 28);
+		free(cantparticiones);
 		char* tiempoEntreCompactaciones = string_itoa(tiempoCompactacion);
+		char* Linea3 = malloc(strlen(tiempoEntreCompactaciones) + 28);
 		strcpy(Linea3, "TIEMPOENTRECOMPACTACIONES=");
 		strcat(Linea3, tiempoEntreCompactaciones);
 		strcat(Linea3, "\n");
 		fwrite(Linea3, strlen(Linea3), 1, metadata);
+		free(tiempoEntreCompactaciones);
+		free(Linea3);
 		fclose(metadata);
 		free(direccionDelMetadata);
 		return 0;
@@ -275,9 +278,8 @@ int crearParticiones(char* direccionFinal, int particiones)
 	FILE* particion;
 	while(i < particiones)
 	{
-		char* aux = malloc(sizeof(i)+1);
-		char* particionado = malloc(strlen(direccionFinal)+sizeof(i)+5);
-		strcpy(aux, string_itoa(i));
+		char* aux = string_itoa(i);
+		char* particionado = malloc(strlen(direccionFinal)+strlen(aux)+5);
 		strcpy(particionado, direccionFinal);
 		strcat(particionado, aux);
 		strcat(particionado, ".bin");
@@ -292,7 +294,7 @@ int crearParticiones(char* direccionFinal, int particiones)
 				strcpy(size, "SIZE=0");
 				strcat(size, "\n");
 				fwrite(size, strlen(size), 1, particion);
-				char* blocks = malloc(sizeof(int) + 13);
+				char* blocks = malloc(18);
 				char* auxBlock = obtenerBloqueLibre();
 				int blocksUsed = 0;
 				int seizedSize = 0;
@@ -403,13 +405,12 @@ int limpiadorDeArchivos(char* direccion, char* tabla)
 	int i;
 	for(i = 0; i < particiones; i++)
 	{
-		char* direccionBin = malloc(strlen(direccion) + sizeof(i) + 3);
+		char* archivo = string_itoa(i);
+		char* direccionBin = malloc(strlen(direccion) + strlen(archivo) + 3);
 		strcpy(direccionBin, direccion);
-		char* archivo = malloc(sizeof(i) + 2);
-		strcpy(archivo, string_itoa(i));
-		strcat(archivo, ".bin");
 		strcat(direccionBin, "/");
 		strcat(direccionBin, archivo);
+		strcat(direccionBin, ".bin");
 		int status = remove(direccionBin);
 		if(status == 0){}
 		else
@@ -438,13 +439,15 @@ int limpiadorDeArchivos(char* direccion, char* tabla)
 		return 1;
 	for(b = 0; b < tablaABorrar->cantTemps; b++)
 	{
-		char* direccionTemp = malloc(strlen(direccion) + strlen(string_itoa(b)) + 6);
+		char* auxMeep = string_itoa(b);
+		char* direccionTemp = malloc(strlen(direccion) + strlen(auxMeep) + 6);
 		strcpy(direccionTemp, direccion);
-		char* archivo = malloc(strlen(string_itoa(b)) + 5);
-		strcpy(archivo, string_itoa(b));
+		char* archivo = malloc(strlen(auxMeep) + 5);
+		strcpy(archivo, auxMeep);
 		strcat(archivo, ".tmp");
 		strcat(direccionTemp, "/");
 		strcat(direccionTemp, archivo);
+		free(auxMeep);
 		int statusTemp = remove(direccionTemp);
 		if(statusTemp == 0){}
 		else
@@ -547,7 +550,7 @@ char* mostrarMetadataEspecificada(char* tabla, bool solicitadoPorMemoria)
 	}
 }
 
-t_list* mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* auxbuffer)
+t_list* mostrarTodosLosMetadatas(bool solicitadoPorMemoria)
 {
 	DIR* directorioDeTablas;
 	struct dirent* tdp;
@@ -558,8 +561,7 @@ t_list* mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* auxbuffer)
 	if(NULL == (directorioDeTablas = opendir(auxdir)))
 	{
 		logError( "[FileSystem]: error al acceder al directorio de tablas, abortando");
-		auxbuffer = malloc(6);
-		strcpy(auxbuffer, "error");
+		listTables = NULL;
 		closedir(directorioDeTablas);
 	}
 	else
@@ -668,6 +670,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 	DIR* table = opendir(direccionTabla);
 	struct dirent* tdp;
 	pthread_mutex_lock(&tablaChequeada->compactacionActiva);
+	pthread_mutex_lock(&tablaChequeada->renombreEnCurso);
 	while(NULL != (tdp = readdir(table)))
 	{
 		if(string_ends_with(tdp->d_name, ".cfg"))
@@ -761,6 +764,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 		liberadorDeArrays(bloques);
 	}
 	pthread_mutex_unlock(&tablaChequeada->compactacionActiva);
+	pthread_mutex_unlock(&tablaChequeada->renombreEnCurso);
 	free(particionARevisar);
 	free(direccionParticion);
 
@@ -832,8 +836,7 @@ char* escribirBloquesDeFs(char* todasLasClavesAImpactar, int tamanioUsado, char*
 char* obtenerBloqueLibre()
 {
 	int a = 0;
-	char* bloqueAEnviar = malloc(5);
-	bloqueAEnviar = "";
+	char* bloqueAEnviar = "";
 	while(!strcmp(bloqueAEnviar, ""))
 	{
 		//Hago que consulte al bitmap por el primer bloque libre//

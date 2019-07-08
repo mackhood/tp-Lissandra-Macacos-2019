@@ -453,21 +453,45 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 
 			t_prot_mensaje* mensaje_recibido = prot_recibir_mensaje(socket_memoria);
-			double cantSegundosFinal= getCurrentTime() ;
+			switch(mensaje_recibido->head)
+			{
+			case INSERT_REALIZADO:
+			{
+				double cantSegundosFinal= getCurrentTime() ;
 
-			if(laTabla->criterio == "EC"){
+				if(!strcmp(laTabla->criterio, "SC"))
+				{
+					leMemoria->estadisticasMemoriaSC->Write_Latency += (cantSegundosFinal - cantSegundosInicial);
+					leMemoria->estadisticasMemoriaSC->Writes++;
+				}
+				else if(!strcmp(laTabla->criterio, "EC"))
+				{
+					leMemoria->estadisticasMemoriaEC->Write_Latency += (cantSegundosFinal - cantSegundosInicial);
+					leMemoria->estadisticasMemoriaEC->Writes++;
+					queue_push(t_Criterios->eventualConsistency,leMemoria);
+				}
+				else
+				{
+					leMemoria->estadisticasMemoriaSHC->Write_Latency += (cantSegundosFinal - cantSegundosInicial);
+					leMemoria->estadisticasMemoriaSHC->Writes++;
+				}
 
-				queue_push(t_Criterios->eventualConsistency,leMemoria);
+				printf("Insert realizado \n");
 
-
+				dtb->sentenciaActual++;
+				break;
 			}
-
-
-			printf("Insert realizado \n");
-
-
-			dtb->sentenciaActual++;
-
+			case INSERT_FAILURE:
+			{
+				dtb->flag = 1;
+				break;
+			}
+			default:
+			{
+				dtb->flag = 1;
+				break;
+			}
+			}
 			break;
 		}
 		case CREATE_REQ :{

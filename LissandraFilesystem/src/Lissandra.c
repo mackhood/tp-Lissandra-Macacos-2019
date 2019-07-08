@@ -134,8 +134,8 @@ void escucharMemoria(int* socket_memoria)
 			{
 				logInfo( "[Lissandra]: Llega un pedido de Create de parte de Memoria");
 				puts("Llegó un Create desde memoria.");
-				char* tablaRecibida = string_new();
-				char* consistenciaRecibida = string_new();
+				char* tablaRecibida;
+				char* consistenciaRecibida;
 				int cantParticionesRecibida;
 				int tiempoEntreCompactacionesRecibido;
 				int tamanioNombreTabla;
@@ -425,14 +425,12 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 						key = keyTemps;
 					else
 					{
-						key = malloc(sizeof(auxMemtable->data) + 3);
-						memmove(&key, &auxMemtable->data, sizeof(auxMemtable->data));
+						key = auxMemtable->data;
 					}
 				}
 				else
 				{
-					key = malloc(sizeof(auxMemtable->data) + 3);
-					memmove(&key, &auxMemtable->data, sizeof(auxMemtable->data));
+					key = auxMemtable->data;
 				}
 			}
 			else
@@ -537,7 +535,6 @@ char* describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria)
 	char* buffer;
 	if(0 == strcmp(tablaSolicitada, ""))
 	{
-		char* auxbuffer = string_new();
 		logInfo( "[Lissandra]: Me llega un pedido de describir todas las tablas");
 		int tablasExistentes = contarTablasExistentes();
 		if(tablasExistentes == 0)
@@ -554,14 +551,14 @@ char* describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria)
 			if(!solicitadoPorMemoria)
 			{
 				t_list* ignoredList = list_create();
-				ignoredList = mostrarTodosLosMetadatas(solicitadoPorMemoria, auxbuffer);
+				ignoredList = mostrarTodosLosMetadatas(solicitadoPorMemoria);
 				list_destroy_and_destroy_elements(ignoredList, &free);
 				return "0";
 			}
 			else
 			{
 				t_list* listedTables = list_create();
-				listedTables = mostrarTodosLosMetadatas(solicitadoPorMemoria, auxbuffer);
+				listedTables = mostrarTodosLosMetadatas(solicitadoPorMemoria);
 				int parserList = 0;
 				int totalSize = 0;
 				if(list_is_empty(listedTables))

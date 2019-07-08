@@ -26,7 +26,7 @@ int dropTable(char* tablaPorEliminar);
 int limpiadorDeArchivos(char* direccion, char* tabla);
 int existeTabla(char* tabla);
 char* mostrarMetadataEspecificada(char* tabla, bool solicitadoPorMemoria);
-t_list* mostrarTodosLosMetadatas(bool solicitadoPorMemoria, char* buffer);
+t_list* mostrarTodosLosMetadatas(bool solicitadoPorMemoria);
 int contarTablasExistentes();
 t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida);
 char* escribirBloquesDeFs(char* todasLasClavesAImpactar, int tamanioUsado, char* tabla);
