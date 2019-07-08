@@ -406,7 +406,7 @@ int limpiadorDeArchivos(char* direccion, char* tabla)
 	for(i = 0; i < particiones; i++)
 	{
 		char* archivo = string_itoa(i);
-		char* direccionBin = malloc(strlen(direccion) + strlen(archivo) + 3);
+		char* direccionBin = malloc(strlen(direccion) + strlen(archivo) + 8);
 		strcpy(direccionBin, direccion);
 		strcat(direccionBin, "/");
 		strcat(direccionBin, archivo);
@@ -661,7 +661,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 			, tabla, keyRecibida);
 	char* particionARevisar;
 	t_list* clavesDentroDeLosBloques = list_create();
-	t_list* clavesPostParseo = list_create();
+	t_list* clavesPostParseo;
 	char* direccionTabla = malloc(strlen(punto_montaje) + strlen(tabla) + 9);
 	strcpy(direccionTabla, punto_montaje);
 	strcat(direccionTabla, "Tables/");
@@ -776,7 +776,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 	clavesPostParseo = parsearKeys(clavesDentroDeLosBloques);
 
 	//Paso 3 Correr select
-	t_list* keysettersDeClave = list_create();
+	t_list* keysettersDeClave;
 	keysettersDeClave = list_filter(clavesPostParseo, (void*)esDeTalKey);
 	t_keysetter* claveMasActualizada;
 	if(!list_is_empty(keysettersDeClave))

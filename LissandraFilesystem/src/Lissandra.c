@@ -97,11 +97,10 @@ void escucharMemoria(int* socket_memoria)
 				logInfo( "[Lissandra]: Nos llega un pedido de Select de parte de la Memoria");
 				puts("Llegó un select desde memoria.");
 				uint16_t auxkey;
-				char* tabla;
 				int tamanioNombre;
 				memcpy(&auxkey, mensaje_memoria->payload, sizeof(uint16_t));
 				memcpy(&tamanioNombre, mensaje_memoria->payload + sizeof(uint16_t), sizeof(int));
-				tabla = malloc(tamanioNombre + 1);
+				char* tabla = malloc(tamanioNombre + 1);
 				memcpy(tabla, mensaje_memoria->payload + sizeof(uint16_t) + sizeof(int), tamanioNombre);
 				tabla[tamanioNombre] = '\0';
 
@@ -109,8 +108,7 @@ void escucharMemoria(int* socket_memoria)
 				 if(helpinghand != NULL)
 				 {
 					double tiempo_pag = helpinghand->timestamp;
-					char* value = malloc(sizeof(helpinghand->clave));
-					strcpy(value, helpinghand->clave);
+					char* value = strdup(helpinghand->clave);
 					int tamanio_value = strlen(value);
 					size_t tamanio_buffer = (sizeof(double)+tamanio_value+sizeof(int));
 					void* buffer = malloc(tamanio_buffer);
@@ -134,18 +132,16 @@ void escucharMemoria(int* socket_memoria)
 			{
 				logInfo( "[Lissandra]: Llega un pedido de Create de parte de Memoria");
 				puts("Llegó un Create desde memoria.");
-				char* tablaRecibida;
-				char* consistenciaRecibida;
 				int cantParticionesRecibida;
 				int tiempoEntreCompactacionesRecibido;
 				int tamanioNombreTabla;
 				int tamanioConsistencia;
 				memcpy(&tamanioNombreTabla, mensaje_memoria->payload, sizeof(int));
-				tablaRecibida = malloc(tamanioNombreTabla + 2);
+				char* tablaRecibida = malloc(tamanioNombreTabla + 2);
 				memcpy(tablaRecibida, mensaje_memoria->payload + sizeof(int), tamanioNombreTabla);
 				tablaRecibida[tamanioNombreTabla] = '\0';
 				memcpy(&tamanioConsistencia, mensaje_memoria->payload + sizeof(int) + tamanioNombreTabla, sizeof(int));
-				consistenciaRecibida = malloc(tamanioConsistencia + 2);
+				char* consistenciaRecibida = malloc(tamanioConsistencia + 2);
 				memcpy(consistenciaRecibida, mensaje_memoria->payload + sizeof(int) + tamanioNombreTabla +sizeof(int),
 						tamanioConsistencia);
 				consistenciaRecibida[tamanioConsistencia] = '\0';
@@ -184,7 +180,7 @@ void escucharMemoria(int* socket_memoria)
 			case TABLE_DROP:
 			{
 				puts("Llegó un Drop desde memoria.");
-				char* tablaRecibida = string_new();
+				char* tablaRecibida;
 				int tamanioNombreTabla;
 				memcpy(&tamanioNombreTabla, mensaje_memoria->payload, sizeof(int));
 				tablaRecibida = malloc(tamanioNombreTabla + 2);
@@ -220,7 +216,7 @@ void escucharMemoria(int* socket_memoria)
 				bool solicitadoPorMemoria = true;
 				if(mensaje_memoria->tamanio_total > 8)
 				{
-					char* tablaRecibida = string_new();
+					char* tablaRecibida;
 					int tamanioNombreTabla;
 					memcpy(&tamanioNombreTabla, mensaje_memoria->payload, sizeof(int));
 					tablaRecibida = malloc(tamanioNombreTabla + 2);
@@ -272,22 +268,20 @@ void escucharMemoria(int* socket_memoria)
 			case JOURNALING_INSERT:
 			{
 				puts("Llegó un Insert desde memoria.");
-				char* tablaRecibida;
-				char* valueRecibido;
 				uint16_t keyRecibida;
 				double timestampRecibido;
 				int tamanioNombreTabla;
 				int tamanioValue;
 				memcpy(&timestampRecibido, mensaje_memoria->payload, sizeof(double));
 				memcpy(&tamanioNombreTabla, mensaje_memoria->payload + sizeof(double), sizeof(int));
-				tablaRecibida = malloc(tamanioNombreTabla + 2);
+				char* tablaRecibida = malloc(tamanioNombreTabla + 2);
 				memcpy(tablaRecibida, mensaje_memoria->payload + sizeof(double) + sizeof(int), tamanioNombreTabla);
 				tablaRecibida[tamanioNombreTabla] = '\0';
 				memcpy(&keyRecibida, mensaje_memoria->payload + sizeof(double) + sizeof(int) + tamanioNombreTabla
 						, sizeof(uint16_t));
 				memcpy(&tamanioValue, mensaje_memoria->payload + sizeof(double) + sizeof(int) + tamanioNombreTabla + sizeof(uint16_t)
 						, sizeof(int));
-				valueRecibido = malloc(tamanioValue + 2);
+				char* valueRecibido = malloc(tamanioValue + 2);
 				memcpy(valueRecibido, mensaje_memoria->payload + sizeof(double) + sizeof(int) + tamanioNombreTabla + sizeof(uint16_t)
 						+ sizeof(int), tamanioValue);
 				valueRecibido[tamanioValue] = '\0';
@@ -335,6 +329,7 @@ void escucharMemoria(int* socket_memoria)
 	{
 		prot_enviar_mensaje(socket, GOODBYE, 0, NULL);
 	}
+	close(socket);
 }
 
 int insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibido, double timestampRecibido)
@@ -394,10 +389,7 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 {
 	int perteneceATabla(t_Memtablekeys* key)
 	{
-		char* testTable = string_new();
-		testTable = malloc(strlen(tabla) + 1);
-		strcpy(testTable, tabla);
-		return 0 == strcmp(key->tabla, testTable);
+		return !strcmp(key->tabla, tabla);
 	}
 
 	int esDeTalKey(t_Memtablekeys* chequeada)
@@ -407,8 +399,8 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 
 		if(existeTabla(tabla))
 		{
-			t_list* keysDeTablaPedida = list_create();
-			t_list* keyEspecifica = list_create();
+			t_list* keysDeTablaPedida;
+			t_list* keyEspecifica;
 			t_Memtablekeys* auxMemtable;
 			t_keysetter* key;
 			pthread_mutex_lock(&dumpEnCurso);
@@ -550,15 +542,13 @@ char* describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria)
 		{
 			if(!solicitadoPorMemoria)
 			{
-				t_list* ignoredList = list_create();
-				ignoredList = mostrarTodosLosMetadatas(solicitadoPorMemoria);
+				t_list* ignoredList = mostrarTodosLosMetadatas(solicitadoPorMemoria);
 				list_destroy_and_destroy_elements(ignoredList, &free);
 				return "0";
 			}
 			else
 			{
-				t_list* listedTables = list_create();
-				listedTables = mostrarTodosLosMetadatas(solicitadoPorMemoria);
+				t_list* listedTables = mostrarTodosLosMetadatas(solicitadoPorMemoria);
 				int parserList = 0;
 				int totalSize = 0;
 				if(list_is_empty(listedTables))

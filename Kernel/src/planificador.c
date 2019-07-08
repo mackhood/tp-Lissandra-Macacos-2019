@@ -461,19 +461,19 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 				if(!strcmp(laTabla->criterio, "SC"))
 				{
-					leMemoria->estadisticasMemoriaSC->Write_Latency += (cantSegundosFinal - cantSegundosInicial);
-					leMemoria->estadisticasMemoriaSC->Writes++;
+//					leMemoria->estadisticasMemoriaSC->Write_Latency += (cantSegundosFinal - cantSegundosInicial);
+//					leMemoria->estadisticasMemoriaSC->Writes++;
 				}
 				else if(!strcmp(laTabla->criterio, "EC"))
 				{
-					leMemoria->estadisticasMemoriaEC->Write_Latency += (cantSegundosFinal - cantSegundosInicial);
-					leMemoria->estadisticasMemoriaEC->Writes++;
+//					leMemoria->estadisticasMemoriaEC->Write_Latency += (cantSegundosFinal - cantSegundosInicial);
+//					leMemoria->estadisticasMemoriaEC->Writes++;
 					queue_push(t_Criterios->eventualConsistency,leMemoria);
 				}
 				else
 				{
-					leMemoria->estadisticasMemoriaSHC->Write_Latency += (cantSegundosFinal - cantSegundosInicial);
-					leMemoria->estadisticasMemoriaSHC->Writes++;
+//					leMemoria->estadisticasMemoriaSHC->Write_Latency += (cantSegundosFinal - cantSegundosInicial);
+//					leMemoria->estadisticasMemoriaSHC->Writes++;
 				}
 
 				printf("Insert realizado \n");

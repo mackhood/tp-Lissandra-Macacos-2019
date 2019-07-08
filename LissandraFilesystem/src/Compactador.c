@@ -181,8 +181,7 @@ void crearTemporal(char* tabla)
 		return result;
 	}
 	t_TablaEnEjecucion* tablaEjecutada = list_find(tablasEnEjecucion, (void*) estaTabla);
-	t_list* keysTableSpecific = list_create();
-	keysTableSpecific = list_filter(memtable, (void*)perteneceATabla);
+	t_list* keysTableSpecific = list_filter(memtable, (void*)perteneceATabla);
 	size_t sizeOfContainer = list_size(keysTableSpecific)*(tamanio_value + 24 + 15 + 4);
 	char* container = malloc(sizeOfContainer + 1);
 	t_Memtablekeys* auxiliaryKey;
@@ -291,7 +290,7 @@ void ejecutarCompactacion(char* tabla)
 	struct dirent* tdp;
 	DIR* tableDirectory = opendir(direccionTabla);
 	t_list* keysToManage = list_create();
-	t_list* keysPostParsing = list_create();
+	t_list* keysPostParsing;
 	int i = 0;
 	pthread_mutex_lock(&tablaEspecifica->renombreEnCurso);
 	for(i = 0; i < tablaEspecifica->cantTemps; i++)
@@ -456,7 +455,7 @@ char* obtenerKeysAPlasmar(t_list* keysPostParsing, int numeroDeParticion, int pa
 	}
 
 	t_list* keysAPlasmar = list_create();
-	t_list* keysDeTalParticion = list_create();
+	t_list* keysDeTalParticion;
 	keysDeTalParticion = list_filter(keysPostParsing, (void*)esDeTalParticion);
 	list_sort(keysDeTalParticion, (void*)chequearTimeKey);
 	int a = 0;
@@ -480,7 +479,7 @@ char* obtenerKeysAPlasmar(t_list* keysPostParsing, int numeroDeParticion, int pa
 	}
 	if(a != 0)
 	{
-		t_list* keysReParseadas = list_create();
+		t_list* keysReParseadas;
 		keysReParseadas = inversaParsearKeys(keysAPlasmar);
 		int listIterator = 0;
 		int sizeOfList = 0;
