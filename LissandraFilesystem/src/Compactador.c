@@ -439,7 +439,7 @@ void ejecutarCompactacion(char* tabla)
 	}
 	logInfo("[Compactador]: la %s ha sido compactada.", tabla);
 	free(direccionMetadata);
-	list_destroy_and_destroy_elements(keysPostParsing, &free);
+	list_destroy_and_destroy_elements(keysPostParsing,(void*) &liberadorDeKeys);
 	list_destroy_and_destroy_elements(keysToManage, &free);
 	free(tdp);
 	closedir(tableDirectory);

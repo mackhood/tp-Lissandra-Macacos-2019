@@ -89,7 +89,7 @@ int obtenerTamanioArchivoConfig(char* direccionArchivo)
 
 t_keysetter* construirKeysetter(char* timestamp, char* key, char* value)
 {
-	t_keysetter* theReturn = malloc(sizeof(t_keysetter) + 3);
+	t_keysetter* theReturn = (t_keysetter *)malloc(sizeof(t_keysetter));
 	theReturn->timestamp = (double)atoll(timestamp);
 	theReturn->key = atoi(key);
 	theReturn->clave = strdup(value);
@@ -195,6 +195,7 @@ t_list* parsearKeys(t_list* clavesAParsear)
 		while(keys[a] != NULL)
 		{
 			char** key = string_split(keys[a], ";");
+			key[2][strlen(key[2])] = '\0';
 			t_keysetter* helpingHand = construirKeysetter(key[0], key[1], key[2]);
 			list_add(clavesPostParseo, helpingHand);
 			liberadorDeArrays(key);
@@ -249,5 +250,17 @@ int cantBloquesFS(char* direccion)
 	}
 	closedir(directorioDeBloques);
 	return contadorDeBloques;
+}
+
+void liberadorDeKeys(t_keysetter* keysetter)
+{
+	free(keysetter->clave);
+	free(keysetter);
+}
+
+void liberadorDeMemtableKeys(t_Memtablekeys* memtableKey)
+{
+	liberadorDeKeys(memtableKey->data);
+	free(memtableKey);
 }
 

@@ -87,6 +87,8 @@ unsigned long obtenerTamanioArchivo(char* direccionArchivo);
 t_list* parsearKeys(t_list* clavesAParsear);
 t_list* inversaParsearKeys(t_list* clavesADesparsear);
 int cantBloquesFS(char* direccion);
+void liberadorDeKeys(t_keysetter* keysetter);
+void liberadorDeMemtableKeys(t_Memtablekeys* memtableKey);
 
 
 #endif /* LFLEXTERNALS_H_ */

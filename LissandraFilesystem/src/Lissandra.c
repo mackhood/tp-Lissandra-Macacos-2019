@@ -61,7 +61,6 @@ void escucharMemoria(int* socket_memoria)
 	while(!killthreads)
 	{
 		t_prot_mensaje* mensaje_memoria = prot_recibir_mensaje(socket);
-
 		switch(mensaje_memoria->head)
 		{
 			case HANDSHAKE:
@@ -137,11 +136,11 @@ void escucharMemoria(int* socket_memoria)
 				int tamanioNombreTabla;
 				int tamanioConsistencia;
 				memcpy(&tamanioNombreTabla, mensaje_memoria->payload, sizeof(int));
-				char* tablaRecibida = malloc(tamanioNombreTabla + 2);
+				char* tablaRecibida = malloc(tamanioNombreTabla + 1);
 				memcpy(tablaRecibida, mensaje_memoria->payload + sizeof(int), tamanioNombreTabla);
 				tablaRecibida[tamanioNombreTabla] = '\0';
 				memcpy(&tamanioConsistencia, mensaje_memoria->payload + sizeof(int) + tamanioNombreTabla, sizeof(int));
-				char* consistenciaRecibida = malloc(tamanioConsistencia + 2);
+				char* consistenciaRecibida = malloc(tamanioConsistencia + 1);
 				memcpy(consistenciaRecibida, mensaje_memoria->payload + sizeof(int) + tamanioNombreTabla +sizeof(int),
 						tamanioConsistencia);
 				consistenciaRecibida[tamanioConsistencia] = '\0';
@@ -183,7 +182,7 @@ void escucharMemoria(int* socket_memoria)
 				char* tablaRecibida;
 				int tamanioNombreTabla;
 				memcpy(&tamanioNombreTabla, mensaje_memoria->payload, sizeof(int));
-				tablaRecibida = malloc(tamanioNombreTabla + 2);
+				tablaRecibida = malloc(tamanioNombreTabla + 1);
 				memcpy(tablaRecibida, mensaje_memoria->payload + sizeof(int), tamanioNombreTabla);
 				tablaRecibida[tamanioNombreTabla] = '\0';
 				int results = llamarEliminarTabla(tablaRecibida);
@@ -208,6 +207,7 @@ void escucharMemoria(int* socket_memoria)
 						break;
 					}
 				}
+				free(tablaRecibida);
 				break;
 			}
 			case DESCRIBE:
@@ -219,7 +219,7 @@ void escucharMemoria(int* socket_memoria)
 					char* tablaRecibida;
 					int tamanioNombreTabla;
 					memcpy(&tamanioNombreTabla, mensaje_memoria->payload, sizeof(int));
-					tablaRecibida = malloc(tamanioNombreTabla + 2);
+					tablaRecibida = malloc(tamanioNombreTabla + 1);
 					memcpy(tablaRecibida, mensaje_memoria->payload + sizeof(int), tamanioNombreTabla);
 					tablaRecibida[tamanioNombreTabla] = '\0';
 					char* buffer;
@@ -274,14 +274,14 @@ void escucharMemoria(int* socket_memoria)
 				int tamanioValue;
 				memcpy(&timestampRecibido, mensaje_memoria->payload, sizeof(double));
 				memcpy(&tamanioNombreTabla, mensaje_memoria->payload + sizeof(double), sizeof(int));
-				char* tablaRecibida = malloc(tamanioNombreTabla + 2);
+				char* tablaRecibida = malloc(tamanioNombreTabla + 1);
 				memcpy(tablaRecibida, mensaje_memoria->payload + sizeof(double) + sizeof(int), tamanioNombreTabla);
 				tablaRecibida[tamanioNombreTabla] = '\0';
 				memcpy(&keyRecibida, mensaje_memoria->payload + sizeof(double) + sizeof(int) + tamanioNombreTabla
 						, sizeof(uint16_t));
 				memcpy(&tamanioValue, mensaje_memoria->payload + sizeof(double) + sizeof(int) + tamanioNombreTabla + sizeof(uint16_t)
 						, sizeof(int));
-				char* valueRecibido = malloc(tamanioValue + 2);
+				char* valueRecibido = malloc(tamanioValue + 1);
 				memcpy(valueRecibido, mensaje_memoria->payload + sizeof(double) + sizeof(int) + tamanioNombreTabla + sizeof(uint16_t)
 						+ sizeof(int), tamanioValue);
 				valueRecibido[tamanioValue] = '\0';
@@ -328,18 +328,18 @@ void escucharMemoria(int* socket_memoria)
 	if(!memoriaDesconectada)
 	{
 		prot_enviar_mensaje(socket, GOODBYE, 0, NULL);
+		close(socket);
 	}
-	close(socket);
 }
 
 int insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibido, double timestampRecibido)
 {
-	t_Memtablekeys* auxiliar = malloc(sizeof(t_Memtablekeys) + 4);
-	t_keysetter* auxiliarprima = malloc(sizeof(t_keysetter) + 3);
+	t_Memtablekeys* auxiliar = (t_Memtablekeys *)malloc(sizeof(t_Memtablekeys));
+	t_keysetter* auxiliarprima = (t_keysetter *)malloc(sizeof(t_keysetter));
 	auxiliarprima->key = keyRecibida;
-	auxiliarprima->clave = valueRecibido;
+	auxiliarprima->clave = strdup(valueRecibido);
 	auxiliarprima->timestamp = timestampRecibido;
-	auxiliar->tabla = tablaRecibida;
+	auxiliar->tabla = strdup(tablaRecibida);
 	auxiliar->data = auxiliarprima;
 
 	printf("\033[1;34m");
@@ -414,22 +414,29 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 				if(keyTemps != NULL)
 				{
 					if(chequearTimeKey(keyTemps, auxMemtable->data))
+					{
 						key = keyTemps;
+						liberadorDeMemtableKeys(auxMemtable);
+					}
 					else
 					{
 						key = auxMemtable->data;
+						liberadorDeKeys(keyTemps);
 					}
 				}
 				else
 				{
 					key = auxMemtable->data;
+					free(keyTemps);
 				}
 			}
 			else
 			{
 				t_keysetter* keyTemps = selectKeyFS(tabla, receivedKey);
 				if(keyTemps != NULL)
+				{
 					key = keyTemps;
+				}
 				else
 				{
 					puts("La key que usted solicitó no existe en el File System.");
@@ -579,7 +586,7 @@ char* describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria)
 	}
 	else
 	{
-		char* auxbuffer = malloc(strlen(tablaSolicitada) + 2);
+		char* auxbuffer = malloc(strlen(tablaSolicitada) + 1);
 		logInfo("[Lissandra]: Me llega un pedido de describir la tabla %s", tablaSolicitada);
 		if(solicitadoPorMemoria)
 		{

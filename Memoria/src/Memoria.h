@@ -3,7 +3,7 @@
 
 #include "Consola.h"
 #include "conexion_kernel.h"
-
+#include <pthread.h>
 #endif /* MEMORIA_H_ */
 
 

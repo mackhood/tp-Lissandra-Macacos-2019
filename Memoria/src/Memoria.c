@@ -8,7 +8,10 @@ int main() {
 	levantarEstrMemorias();
 	initThread();
 	//gossiping();
-
+	pthread_mutex_t stop;
+	pthread_mutex_init(&stop, NULL);
+	pthread_mutex_lock(&stop);
+	pthread_mutex_lock(&stop);
 	while(1);
 	return EXIT_SUCCESS;
 }
