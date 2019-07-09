@@ -731,7 +731,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 	else
 	{
 		char** bloques = obtenerBloques(direccionParticion);
-		char* clavesLeidas = malloc(tamanioParticion + 20);
+		char* clavesLeidas = malloc(tamanioParticion + 50);
 		int a = 0;
 		while(bloques[a] != NULL)
 		{

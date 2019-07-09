@@ -144,7 +144,7 @@ void gestionarMemtable()
 					crearTemporal(tablaTomada->tabla);
 					a++;
 				}
-				list_clean_and_destroy_elements(memtable, &free);
+				list_clean_and_destroy_elements(memtable, &liberadorDeMemtableKeys);
 				pthread_mutex_unlock(&dumpEnCurso);
 			}
 			else
