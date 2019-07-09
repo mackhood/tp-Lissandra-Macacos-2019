@@ -369,7 +369,7 @@ void ejecutarCompactacion(char* tabla)
 				{
 					char** blocks = obtenerBloques(direccionPart);
 					int counter = 0;
-					char* keysToParse = malloc(fullTempSize + 1);
+					char* keysToParse = malloc(fullTempSize + 20);
 					while(blocks[counter] != NULL)
 					{
 						char* blockContents = leerBloque(blocks[counter]);

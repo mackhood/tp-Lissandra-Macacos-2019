@@ -416,7 +416,6 @@ t_keysetter* selectKey(char* tabla, uint16_t receivedKey)
 					if(chequearTimeKey(keyTemps, auxMemtable->data))
 					{
 						key = keyTemps;
-						liberadorDeMemtableKeys(auxMemtable);
 					}
 					else
 					{
