@@ -6,8 +6,8 @@ void AceptarMemoria()
 	struct sockaddr_in direccion_cliente;
 	unsigned int tamanio_direccion = sizeof(direccion_cliente);
 
-	socket_memoria = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion);
-	printf("Se ha conectado una memoria\n");
+	//socket_memoria = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion);
+	//printf("Se ha conectado una memoria\n");
 
 	//Creo hilos para atender solicitudes de memoria
 	while(  (socket_memoria = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion)) > 0)
@@ -15,6 +15,7 @@ void AceptarMemoria()
 			puts("Se ha conectado a una memoria");
 			pthread_t RecibirMensajesMemoria;
 			pthread_create(&RecibirMensajesMemoria,NULL, (void*)escucharMemoria, NULL);
+			pthread_detach(&RecibirMensajesMemoria);
 		}
 }
 void escucharMemoria(int* memoria){
@@ -49,12 +50,12 @@ void escucharMemoria(int* memoria){
 
 				if(primeraLectura)
 				{
-					strcpy(buffer, memoria->numero_memoria);
+					strcpy(buffer, string_itoa(memoria->numero_memoria));
 					primeraLectura = false;
 				}
 				else
 				{
-					strcat(buffer, memoria->numero_memoria);
+					strcat(buffer, string_itoa(memoria->numero_memoria));
 				}
 
 				strcat(buffer, ",");

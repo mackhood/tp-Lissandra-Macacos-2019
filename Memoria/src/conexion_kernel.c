@@ -6,8 +6,8 @@ void AceptarKernel(){
 	struct sockaddr_in direccion_cliente;
 	unsigned int tamanio_direccion = sizeof(direccion_cliente);
 
-	socket_kernel = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion);
-	printf("Se ha conectado el kernel\n");
+//	socket_kernel = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion);
+//	printf("Se ha conectado el kernel\n");
 
 	//Creo hilos para atender solicitudes del Kernel
 	while(  (socket_kernel = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion)) > 0)
