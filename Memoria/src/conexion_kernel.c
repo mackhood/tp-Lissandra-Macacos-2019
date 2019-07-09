@@ -15,6 +15,7 @@ void AceptarKernel(){
 			puts("Se ha conectado el kernel");
 			pthread_t RecibirMensajesKernel;
 			pthread_create(&RecibirMensajesKernel,NULL, (void*)escucharYatenderKernel, NULL);
+			pthread_detach(&RecibirMensajesKernel);
 		}
 
 }

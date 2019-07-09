@@ -782,7 +782,15 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 	if(!list_is_empty(keysettersDeClave))
 	{
 		list_sort(keysettersDeClave, (void*)chequearTimeKey);
-		claveMasActualizada = list_get(keysettersDeClave, 0);
+		claveMasActualizada = list_remove(keysettersDeClave, 0);
+		bool esEstaKey(t_keysetter* keyABorrar)
+		{
+			if(keyABorrar->key == claveMasActualizada->key && keyABorrar->timestamp == claveMasActualizada->timestamp)
+				return true;
+			else
+				return false;
+		}
+		list_remove_by_condition(clavesPostParseo, (void*)esEstaKey);
 		logInfo("[FileSystem]: Se ha obtenido el valor más reciente de la key %i.", keyRecibida);
 	}
 	else
@@ -791,7 +799,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 		logInfo("[FileSystem]: La key %i no fue impactada todavía en el File System.", keyRecibida);
 	}
 	list_destroy(keysettersDeClave);
-	list_destroy(clavesPostParseo);
+	list_destroy_and_destroy_elements(clavesPostParseo, (void*)&liberadorDeKeys);
 	list_destroy_and_destroy_elements(clavesDentroDeLosBloques, &free);
 	free(direccionTabla);
 	return claveMasActualizada;
