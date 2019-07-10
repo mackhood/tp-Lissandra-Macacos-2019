@@ -13,7 +13,7 @@ void handler_conexion_memoria(t_kernel* tKernel) {
 
 		int conexion=conectar_a_memoria_flexible(configuracion->ip,configuracion->puerto,"Memoria1");
 
-		if (conexion ==3 && tKernel->primerConexion){
+		if (conexion == -3 && tKernel->primerConexion){
 
 			logInfo("fallo conexion");
 
