@@ -10,22 +10,24 @@ void AceptarMemoria()
 	//printf("Se ha conectado una memoria\n");
 
 	//Creo hilos para atender solicitudes de memoria
-	while(  (socket_memoria = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion)) > 0)
+	while((socket_memoria = accept(socket_escuchaMemoria,(void*) &direccion_cliente, &tamanio_direccion)) > 0)
 		{
-			puts("Se ha conectado a una memoria");
+			printf("%d es el socket_memoria\n", socket_memoria);
+			int* memoria = (int*) malloc(sizeof(int));
+			*memoria = socket_memoria;
+			puts("Se ha conectado una memoria");
 			pthread_t RecibirMensajesMemoria;
-			pthread_create(&RecibirMensajesMemoria,NULL, (void*)escucharMemoria, NULL);
-			pthread_detach(&RecibirMensajesMemoria);
+			pthread_create(&RecibirMensajesMemoria,NULL, (void*)escucharMemoria, memoria);
+			pthread_detach(RecibirMensajesMemoria);
 		}
 }
 void escucharMemoria(int* memoria){
 
+	//Comienzo a recibir peticiones
 	int s_memoria = *memoria;
 	free(memoria);
-	bool connected = true;
 
-	while(connected){
-		t_prot_mensaje* mensaje_recibido = prot_recibir_mensaje(s_memoria);
+	t_prot_mensaje* mensaje_recibido = prot_recibir_mensaje(s_memoria);
 
 		switch(mensaje_recibido->head){
 
@@ -107,7 +109,6 @@ void escucharMemoria(int* memoria){
 		case DESCONEXION:
 		{
 			puts("Se ha desconectado una memoria");
-			connected = false;
 			break;
 		}
 
@@ -120,5 +121,5 @@ void escucharMemoria(int* memoria){
 
 
 	}
-	}
+
 }

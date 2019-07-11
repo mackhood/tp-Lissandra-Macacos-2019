@@ -73,7 +73,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 	//	socket_memoria = conectar_a_servidor(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Memoria");
 
-	while(dtb->quantum >0 && dtb->flag != 1  && dtb->total_sentencias > 0 )
+	while(dtb->quantum >= 0 && dtb->flag != 1  && dtb->total_sentencias > 0 )
 	{
 		//	SELECT
 		//	INSERT
@@ -981,7 +981,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 		}
 		close(socket_memoria);
-
+		quantum ++;
 
 
 	}

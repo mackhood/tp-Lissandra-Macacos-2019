@@ -5,5 +5,7 @@
 
 #include "conexion_memorias.h"
 
+void gossiping();
+
 
 #endif /* GOSSIPING_H_ */
