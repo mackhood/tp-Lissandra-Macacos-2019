@@ -7,7 +7,6 @@ int main() {
 	levantarConexion();
 	levantarEstrMemorias();
 	initThread();
-	//gossiping();
 	pthread_mutex_t stop;
 	pthread_mutex_init(&stop, NULL);
 	pthread_mutex_lock(&stop);
@@ -91,14 +90,13 @@ void initThread(){
 
 	pthread_create(&threadConsola, NULL, (void*)handleConsola, NULL);
 	pthread_create(&threadReqKernel, NULL, (void*)AceptarKernel, NULL);
-//	pthread_create(&threadMensajesMemoria,NULL, (void*)AceptarMemoria, NULL);
-//  pthread_create(&threadGossiping, NULL, (void*)Gossiping, NULL);
-
+	pthread_create(&threadMensajesMemoria,NULL, (void*)AceptarMemoria, NULL);
+	pthread_create(&threadGossiping, NULL, (void*)gossiping, NULL);
 
 	pthread_detach(threadReqKernel);
 	pthread_detach(threadConsola);
-//	pthread_detach(threadMensajesMemoria);
-//	pthread_detach(threadGossiping)
+	pthread_detach(threadMensajesMemoria);
+	pthread_detach(threadGossiping);
 }
 
 void setearValores(){
