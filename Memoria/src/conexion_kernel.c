@@ -5,8 +5,8 @@ void AceptarKernel(){
 	//Acepto al Kernel
 	struct sockaddr_in direccion_cliente;
 	unsigned int tamanio_direccion = sizeof(direccion_cliente);
-	pthread_mutex_t mutex_del_while;
-	pthread_mutex_init(&mutex_del_while, NULL);
+	//pthread_mutex_t mutex_del_while;
+	//pthread_mutex_init(&mutex_del_while, NULL);
 
 	//Creo hilos para atender solicitudes del Kernel
 	while(1)
