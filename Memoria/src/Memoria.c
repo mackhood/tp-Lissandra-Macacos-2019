@@ -43,16 +43,6 @@ void levantarConexion(){
 	//levanto servidor para Kernel y otras Memorias
 	socket_escucha = levantar_servidor(info_memoria.puerto);
 
-	//levanto servidor para otras memorias
-	//Se aceptan clientes cuando los haya
-	// accept es una funcion bloqueante, si no hay ningun cliente esperando ser atendido, se queda esperando a que venga uno.
-/*	while(  (socket_memoria = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion)) > 0)
-			{
-				puts("Se ha conectado una memoria");
-				logInfo( "[Memoria]: Se conecto con otra Memoria");
-		}
-*/
-
 }
 
 void levantarEstrMemorias(){
@@ -90,13 +80,13 @@ void initThread(){
 
 	pthread_create(&threadConsola, NULL, (void*)handleConsola, NULL);
 	pthread_create(&threadReqKernel, NULL, (void*)AceptarKernel, NULL);
-	pthread_create(&threadMensajesMemoria,NULL, (void*)AceptarMemoria, NULL);
-	pthread_create(&threadGossiping, NULL, (void*)gossiping, NULL);
+//	pthread_create(&threadMensajesMemoria,NULL, (void*)AceptarMemoria, NULL);
+//	pthread_create(&threadGossiping, NULL, (void*)gossiping, NULL);
 
 	pthread_detach(threadReqKernel);
 	pthread_detach(threadConsola);
-	pthread_detach(threadMensajesMemoria);
-	pthread_detach(threadGossiping);
+//	pthread_detach(threadMensajesMemoria);
+//	pthread_detach(threadGossiping);
 }
 
 void setearValores(){
