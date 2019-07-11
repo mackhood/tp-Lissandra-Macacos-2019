@@ -110,13 +110,16 @@ t_list* parsearKeys(t_list* clavesAParsear)
 	t_list* clavesPostParseo = list_create();
 	int parserListPointer = 0;
 	char* keyHandler;
+	char* key;
+	char* value;
+	char* timestamp;
 	while((keyHandler = list_get(clavesAParsear, parserListPointer)) != NULL)
 	{
 		int parserPointer = 0;
 		int handlerSize = strlen(keyHandler);
-		char* key = malloc(6);
-		char* value = malloc(tamanio_value + 1);
-		char* timestamp = malloc(16);
+		key = malloc(6);
+		value = malloc(tamanio_value + 1);
+		timestamp = malloc(16);
 		int status = 0;
 		int k = 1;
 		int v = 1;
@@ -138,9 +141,12 @@ t_list* parsearKeys(t_list* clavesAParsear)
 				parserPointer++;
 				status = 0;
 				free(key); free(value); free(timestamp);
-				key = malloc(6);
-				value = malloc(tamanio_value + 1);
-				timestamp = malloc(16);
+				if(parserPointer != handlerSize)
+				{
+					key = malloc(6);
+					value = malloc(tamanio_value + 1);
+					timestamp = malloc(16);
+				}
 				k = 1;
 				v = 1;
 				t = 1;
@@ -194,18 +200,18 @@ t_list* parsearKeys(t_list* clavesAParsear)
 			}
 		}
 
-//		char** keys = string_split(keyHandler, "\n");
-//		int a = 0;
-//		while(keys[a] != NULL)
-//		{
-//			char** key = string_split(keys[a], ";");
-//			key[2][strlen(key[2])] = '\0';
-//			t_keysetter* helpingHand = construirKeysetter(key[0], key[1], key[2]);
-//			list_add(clavesPostParseo, helpingHand);
-//			liberadorDeArrays(key);
-//			a++;
-//		}
-//		liberadorDeArrays(keys);
+		//		char** keys = string_split(keyHandler, "\n");
+		//		int a = 0;
+		//		while(keys[a] != NULL)
+		//		{
+		//			char** key = string_split(keys[a], ";");
+		//			key[2][strlen(key[2])] = '\0';
+		//			t_keysetter* helpingHand = construirKeysetter(key[0], key[1], key[2]);
+		//			list_add(clavesPostParseo, helpingHand);
+		//			liberadorDeArrays(key);
+		//			a++;
+		//		}
+		//		liberadorDeArrays(keys);
 		parserListPointer++;
 	}
 	free(keyHandler);

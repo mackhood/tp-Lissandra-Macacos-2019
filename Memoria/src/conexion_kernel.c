@@ -5,21 +5,23 @@ void AceptarKernel(){
 	//Acepto al Kernel
 	struct sockaddr_in direccion_cliente;
 	unsigned int tamanio_direccion = sizeof(direccion_cliente);
-
-//	socket_kernel = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion);
-//	printf("Se ha conectado el kernel\n");
+	pthread_mutex_t mutex_del_while;
+	pthread_mutex_init(&mutex_del_while, NULL);
 
 	//Creo hilos para atender solicitudes del Kernel
-	while(  (socket_kernel = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion)) > 0)
+	while(1)
 		{
+			//pthread_mutex_lock(&mutex_del_while);
+			socket_kernel = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion);
+			printf("%d es el socket_kernel\n", socket_kernel);
 			int* kernel = (int*) malloc (sizeof(int));
 			*kernel = socket_kernel;
 			puts("Se ha conectado el kernel");
 			pthread_t RecibirMensajesKernel;
 			pthread_create(&RecibirMensajesKernel,NULL, (void*)escucharYatenderKernel, kernel);
-			pthread_detach(RecibirMensajesKernel);
+			pthread_join(RecibirMensajesKernel, NULL);
+			//pthread_mutex_unlock(&mutex_del_while);
 		}
-
 }
 
 void escucharYatenderKernel(int* kernel){
@@ -309,6 +311,8 @@ void escucharYatenderKernel(int* kernel){
 		} break;
 
 	}
+
 	prot_destruir_mensaje(req_recibida);
 	close(socket_k);
+	printf("El Kernel se ha desconectado\n\n");
 }

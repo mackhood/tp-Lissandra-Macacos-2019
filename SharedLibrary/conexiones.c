@@ -131,24 +131,6 @@ int conectar_a_memoria_flexible(char* ip, int puerto, char* nombre_cliente){
 
 	printf("soy %s y me estoy conectando a mi servidor\n", nombre_cliente);
 
-/*	uint16_t key = 16;
-	double tiempo_pag = getCurrentTime();
-	int largo_value = strlen(nombre_cliente);
-
-	int tamanio_buffer = sizeof(uint16_t)+ sizeof(double)+ sizeof(int) + largo_value;
-	void* buffer = malloc(tamanio_buffer);
-
-	memcpy(buffer, &key, sizeof(uint16_t));
-	memcpy(buffer+sizeof(uint16_t), &tiempo_pag, sizeof(double));
-	memcpy(buffer+sizeof(uint16_t)+sizeof(double), &largo_value, sizeof(int));
-	memcpy(buffer+sizeof(uint16_t)+sizeof(double)+sizeof(int), nombre_cliente, largo_value);
-
-	prot_enviar_mensaje(socket_cliente, CONEXION, tamanio_buffer, buffer);
-
-	//free(nombre_cliente); ni idea porque no me permite hacer el free
-	free(buffer);
-*/
-
 	return socket_cliente;
 }
 
