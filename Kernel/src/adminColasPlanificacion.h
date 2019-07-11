@@ -61,6 +61,7 @@ sem_t semPCbNew ;
 sem_t semPcbReady;
 sem_t semPcbReadyPrioridad;
 
+sem_t semPcbRunning;
 
 
 

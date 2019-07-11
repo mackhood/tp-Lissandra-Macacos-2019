@@ -125,11 +125,6 @@ time_t randomNumbertime;
 t_kernel* tKernel;
 
 
-typedef struct {
-
-	int enteros [5];
-	char *arreglo[10];
-}params;
 
 
 
@@ -149,7 +144,6 @@ typedef struct{
 	double tiempo_repuesta;
 	time_t horacreacion;  //se usa para calcular el tiempo de repuesta
 	t_header instruccion_actual;
-	params * parametros;
 	t_header operacionActual;
 	t_queue * tablaSentenciasMejorada;
 	//char* tablaSentencias [7000];

@@ -20,8 +20,12 @@ void pasarArunnign() {
 
 
 
+
 		DTB_KERNEL* dtb=(DTB_KERNEL*)getDTBReady();
+		waitDTBRunning();
 		if(tKernel->config->multiprocesamiento > 0  ){
+
+
 			dtb->quantum = tKernel->config->quantum;
 			enviarAEjecutar(dtb);
 			tKernel->config->multiprocesamiento --;
@@ -73,7 +77,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 	//	socket_memoria = conectar_a_servidor(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Memoria");
 
-	while(dtb->quantum >= 0 && dtb->flag != 1  && dtb->total_sentencias > 0 )
+	while(quantum >= 0 && dtb->flag != 1  && dtb->total_sentencias > 0 )
 	{
 		//	SELECT
 		//	INSERT
@@ -360,7 +364,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 			memcpy(buffer+sizeof(int)+largo_nombre_tabla, &key, sizeof(u_int16_t));
 
 			prot_enviar_mensaje(socket_memoria, SELECT_REQ, tamanio_buffer, buffer);
-
+			free(buffer);
 			t_prot_mensaje* req_recibida = prot_recibir_mensaje(socket_memoria);
 			int largoValue;
 			char * prueba;
@@ -394,6 +398,8 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 			quantum--;
 			dtb->sentenciaActual++;
+			prot_destruir_mensaje(req_recibida);
+
 			break;
 		}
 		case INSERT_REQ :{
@@ -417,26 +423,31 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 			int d=3;
 			while(args[d] != NULL ){
 
+
+
 				if(args[d+1] !=NULL ){
-					string_append(&stringEnviar, strcat(args[d], " "));
-				}
+					string_append(&args[d], " ");
+					string_append(&stringEnviar,args[d]);
+				}else{
 
 				string_append(&stringEnviar,args[d]);
-
+				}
 				d++;
 
 			}
+			char *mensajeFinal = string_substring(stringEnviar,1,strlen(stringEnviar)-2);
 
 
-			int largoStringEnviar =strlen(stringEnviar);
 
-			size_t tamanio_buffer = sizeof(uint16_t) + sizeof(int) + largo_nombre_tabla + sizeof(int) + largoStringEnviar + 1;
+			int largoStringEnviar =strlen(mensajeFinal);
+
+			size_t tamanio_buffer = sizeof(uint16_t) + sizeof(int) + largo_nombre_tabla + sizeof(int) + largoStringEnviar ;
 			void* buffer = malloc(tamanio_buffer);
 			memcpy(buffer,&largo_nombre_tabla,sizeof(int));
 			memcpy(buffer + sizeof(int),args[1],largo_nombre_tabla);
 			memcpy(buffer+sizeof(int)+largo_nombre_tabla,&key,sizeof(u_int16_t));
 			memcpy(buffer+sizeof(int)+largo_nombre_tabla+sizeof(u_int16_t),&largoStringEnviar,sizeof(int));
-			memcpy(buffer+sizeof(int)+largo_nombre_tabla+sizeof(u_int16_t)+sizeof(int),stringEnviar,largoStringEnviar);
+			memcpy(buffer+sizeof(int)+largo_nombre_tabla+sizeof(u_int16_t)+sizeof(int),mensajeFinal,largoStringEnviar);
 
 			//		int i =3;
 			//		while(args[i] != NULL){
@@ -450,9 +461,9 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 			double cantSegundosInicial= getCurrentTime() ;
 			prot_enviar_mensaje(socket_memoria, INSERT_REQ, tamanio_buffer, buffer);
-
-
+			free(buffer);
 			t_prot_mensaje* mensaje_recibido = prot_recibir_mensaje(socket_memoria);
+
 //			switch(mensaje_recibido->head)
 //			{
 //			case INSERT_REALIZADO:
@@ -492,6 +503,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 //				break;
 //			}
 //			}
+			prot_destruir_mensaje(mensaje_recibido);
 			if(laTabla->criterio == "EC"){
 
 				queue_push(t_Criterios->eventualConsistency,leMemoria);
@@ -529,6 +541,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 
 			prot_enviar_mensaje(socket_memoria, CREATE_REQ, tamanio_buffer, buffer);
+			free(buffer);
 			t_prot_mensaje * mensaje_recibido = prot_recibir_mensaje(socket_memoria);
 
 			if(!strcmp(args[2], "EC"))
@@ -556,16 +569,21 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 					list_add(tMetadata->tablas,nuevaTabla);
 
 					printf("la tabla fue creada\n");
-
+					prot_destruir_mensaje(mensaje_recibido);
 				}
 			}break;
 			case TABLA_CREADA_YA_EXISTENTE:{
 				printf("la tabla ya se encuentra existente\n");
+				prot_destruir_mensaje(mensaje_recibido);
+
 			}break;
 			case TABLA_CREADA_FALLO:{
 				printf("hubo un error al crear la tabla\n");
+				prot_destruir_mensaje(mensaje_recibido);
+
 			}break;
-			default:{
+			default:{prot_destruir_mensaje(mensaje_recibido);
+
 				break;
 			} 		}
 
@@ -583,6 +601,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 			//mando solicitud de drop de tabla a Memoria
 			prot_enviar_mensaje(socket_memoria, DROP_REQ, tamanio_buffer, buffer);
+			free(buffer);
 			t_prot_mensaje* respuesta = prot_recibir_mensaje(socket_memoria);
 			if(laTabla->criterio == "EC"){
 				queue_push(t_Criterios->eventualConsistency,leMemoria);
@@ -601,15 +620,20 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 
 				list_remove_by_condition(tMetadata->tablas,(void*)estaEnMetadata);
+				prot_destruir_mensaje(respuesta);
+
 
 			}break;
 			case TABLE_DROP_NO_EXISTE:{
 				printf("La tabla no existe\n");
+				prot_destruir_mensaje(respuesta);
 			}break;
 			case TABLE_DROP_FALLO:{
 				printf("hubo un error\n");
+				prot_destruir_mensaje(respuesta);
 			}break;
 			default:{
+				prot_destruir_mensaje(respuesta);
 				break;
 			}
 			}
@@ -630,6 +654,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 				memcpy(buffer, &tamanio_tabla, sizeof(int));
 				memcpy(buffer + sizeof(int), tablename, tamanio_tabla);
 				prot_enviar_mensaje(socket_memoria, DESCRIBE_REQ, sizeOfBuffer, buffer);
+				free(buffer);
 			}
 			else
 			{
@@ -666,6 +691,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 				memcpy(metadataTabla, mensaje_memoria->payload + sizeof(int), tamanio_mensaje);
 				metadataTabla[tamanio_mensaje] = '\0';
 				printf(metadataTabla);
+				prot_destruir_mensaje(mensaje_memoria);
 				break;
 			}
 			case FULL_DESCRIBE:
@@ -708,6 +734,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 
 
+				prot_destruir_mensaje(mensaje_memoria);
 
 
 
@@ -716,12 +743,15 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 			case FAILED_DESCRIBE:
 			{
 				printf("No había tablas en el FS.\n");
+				prot_destruir_mensaje(mensaje_memoria);
+
 				break;
 			}
 			default:
 				break;
 			}
 			dtb->sentenciaActual++;
+
 			break;
 		}
 
@@ -981,10 +1011,12 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 		}
 		close(socket_memoria);
-		quantum ++;
+//		if(dtb->total_sentencias == 0){
+//		quantum ++;
+//		}
 
-
-	}
+	} signalDTBRunning();
+	tKernel->config->multiprocesamiento ++;
 
 	if(dtb->flag){
 		logInfo("Fallo , se suspende todo");
