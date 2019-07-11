@@ -171,29 +171,14 @@ void selectt(char** args){
 			uint16_t key = atoi(args[2]);
 			//char* key = string_duplicate(args[2]);
 
-			params* parametros = malloc( sizeof(params) );
-			inicializarParametros(parametros);
-			parametros->enteros[0]= key;
-			parametros->arreglo[0] = nombre_tabla;
 
 
 
-			DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,parametros);
+			DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum);
 			dtb_nuevo->total_sentencias =1;
 			dtb_nuevo->quantum= tKernel->config->quantum;
 			dtb_nuevo->total_sentencias=1;
 
-			//	if(estaEnMetadata(nombre_tabla)){
-			//
-			//		enviarANew(dtb_nuevo);
-			//		logInfo("Se envio a new el proceso");
-			//
-			//	} else{
-			//
-			//		enviarAEXIT(dtb_nuevo);
-			//		logInfo("La tabla no se encuentra en metadata");
-			//
-			//	}
 
 			int b=0;
 			char *unaPalabra = string_new();
@@ -206,30 +191,40 @@ void selectt(char** args){
 			queue_push(dtb_nuevo->tablaSentenciasMejorada,unaPalabra);
 			//dtb_nuevo->tablaSentencias[0]=unaPalabra;
 
-			enviarANew(dtb_nuevo);
-			logInfo("Se envio a new el proceso");
+
+			if(estaEnMetadata(nombre_tabla)){
+
+				enviarANew(dtb_nuevo);
+				logInfo("Se envio a new el proceso");
+
+			} else{
+
+				enviarAEXIT(dtb_nuevo);
+				logInfo("La tabla no se encuentra en metadata");
+
+			}
 
 			free(nombre_tabla);
 		}
 	}
 }
 
-void inicializarParametros(params* params){
-
-
-	params->enteros[0]=0;
-	params->enteros[1]=0;
-	params->enteros[2]=0;
-	params->enteros[3]=0;
-	params->enteros[4]=0;
-	int i;
-	for(i=0; i<10; i++){
-
-		params->arreglo[i] = string_new();
-	}
-
-
-}
+//void inicializarParametros(params* params){
+//
+//
+//	params->enteros[0]=0;
+//	params->enteros[1]=0;
+//	params->enteros[2]=0;
+//	params->enteros[3]=0;
+//	params->enteros[4]=0;
+//	int i;
+//	for(i=0; i<10; i++){
+//
+//		params->arreglo[i] = string_new();
+//	}
+//
+//
+//}
 
 void insert (char** args)
 {
@@ -288,12 +283,12 @@ void insert (char** args)
 
 				//char* key = string_duplicate(args[2]);
 
-				params* parametros = malloc( sizeof(params) );
-				inicializarParametros(parametros);
-
-				parametros->enteros[2]= key;
-				parametros->arreglo[1] = nombre_tabla;
-				parametros->arreglo[3] = value;
+//				params* parametros = malloc( sizeof(params) );
+//				inicializarParametros(parametros);
+//
+//				parametros->enteros[2]= key;
+//				parametros->arreglo[1] = nombre_tabla;
+//				parametros->arreglo[3] = value;
 
 
 				int b =0;
@@ -306,7 +301,7 @@ void insert (char** args)
 					b++;
 				}
 
-				DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,parametros);
+				DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum);
 				dtb_nuevo->total_sentencias=1;
 				queue_push(dtb_nuevo->tablaSentenciasMejorada,unaPalabra);
 
@@ -372,12 +367,12 @@ void create (char** args)
 			int tiempoCompactacion = atoi(args[4]);
 			//char* key = string_duplicate(args[2]);
 
-			params* parametros = malloc( sizeof(params) );
-			inicializarParametros(parametros);
-			parametros->enteros[0]= numeroParticiones;
-			parametros->enteros[1]=tiempoCompactacion;
-			parametros->arreglo[0] = nombre_tabla;
-			parametros->arreglo[1] = tipoConsistencia;
+//			params* parametros = malloc( sizeof(params) );
+//			inicializarParametros(parametros);
+//			parametros->enteros[0]= numeroParticiones;
+//			parametros->enteros[1]=tiempoCompactacion;
+//			parametros->arreglo[0] = nombre_tabla;
+//			parametros->arreglo[1] = tipoConsistencia;
 
 			int b =0;
 			char *unaPalabra = string_new();
@@ -388,7 +383,7 @@ void create (char** args)
 				b++;
 			}
 
-			DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,parametros);
+			DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum);
 			dtb_nuevo->total_sentencias=1;
 
 
@@ -439,7 +434,17 @@ void describe (char** args)
 //		dtb_nuevo->tablaSentencias[0]=unaPalabra;
 		queue_push(dtb_nuevo->tablaSentenciasMejorada,unaPalabra);
 
-		enviarANew(dtb_nuevo);
+
+		if(args[1] !=NULL && estaEnMetadata(args[1])){
+
+			enviarAEXIT(dtb_nuevo);
+			logInfo("La tabla ya se encuentra en metadata");
+
+		} else{
+			enviarANew(dtb_nuevo);
+			logInfo("Se envio a new el proceso");
+
+		}
 	}
 }
 
@@ -831,12 +836,12 @@ void run (char** args) {
 	{
 		char* path = string_duplicate(args[1]);
 
-		params* parametros = malloc( sizeof(params) );
-		inicializarParametros(parametros);
+//		params* parametros = malloc( sizeof(params) );
+//		inicializarParametros(parametros);
 
-		parametros->arreglo[0] = path;
+//		parametros->arreglo[0] = path;
 
-		DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,parametros);
+		DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum);
 
 
 

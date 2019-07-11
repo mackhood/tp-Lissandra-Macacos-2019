@@ -45,6 +45,7 @@ void initConfigAdminColas(){
 	sem_init(&semPCbNew,0,0);
 	sem_init(&semPcbReady,0,0);
 	sem_init(&semPcbReadyPrioridad,0,0);
+	sem_init(&semPcbRunning,0,tKernel->config->multiprocesamiento);
 
 }
 /**
@@ -353,6 +354,13 @@ void waitDTBReady(){
 	sem_wait(&semPcbReady);
 }
 
+void waitDTBRunning(){
+	sem_wait(&semPcbRunning);
+}
+
+void signalDTBRunning(){
+	sem_post(&semPcbRunning);
+}
 
 
 
@@ -407,7 +415,7 @@ void moverReadyToExec(DTB_KERNEL* dtb){
 }
 
 
-DTB_KERNEL* crearDTBKernel(int gdtId, char* path, int quantum, params * parametros){
+DTB_KERNEL* crearDTBKernel(int gdtId, char* path, int quantum){
 	DTB_KERNEL* dtb = malloc( sizeof(DTB_KERNEL) );
 	dtb->idGDT = gdtId;
 	dtb->flag = 0;
@@ -420,7 +428,6 @@ DTB_KERNEL* crearDTBKernel(int gdtId, char* path, int quantum, params * parametr
 //	strcpy(dtb->path, path);
 //	dtb->tablaDeArchivosAbiertos = list_create();
 //	dtb->prox_io = queue_create();
-	dtb->parametros = parametros;
 	//dtb->tablaSentencias;
 	dtb->tablaSentenciasMejorada = queue_create();
 	return dtb;
