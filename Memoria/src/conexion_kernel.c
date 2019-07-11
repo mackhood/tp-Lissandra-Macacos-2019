@@ -25,9 +25,9 @@ void AceptarKernel(){
 void escucharYatenderKernel(int* kernel){
 
 	//Comienzo a recibir peticiones
-	int socket_kernel = *kernel;
+	int socket_k = *kernel;
 	free(kernel);
-	t_prot_mensaje* req_recibida = prot_recibir_mensaje(socket_kernel);
+	t_prot_mensaje* req_recibida = prot_recibir_mensaje(socket_k);
 
 	switch(req_recibida->head){
 		case SELECT_REQ:
@@ -51,7 +51,7 @@ void escucharYatenderKernel(int* kernel){
 			memcpy(buffer,&largo_value,sizeof(int));
 			memcpy(buffer+sizeof(int),value_solicitado,largo_value);
 
-			prot_enviar_mensaje(socket_kernel, KEY_SOLICITADA_SELECT, tamanio_buffer, buffer);
+			prot_enviar_mensaje(socket_k, KEY_SOLICITADA_SELECT, tamanio_buffer, buffer);
 
 			usleep(info_memoria.retardo_mp*1000);
 
@@ -78,7 +78,7 @@ void escucharYatenderKernel(int* kernel){
 			value[largo_value] = '\0';
 
 			insertReq(nombre_tabla, key, value);
-			prot_enviar_mensaje(socket_kernel, INSERT_REALIZADO, 0, NULL);
+			prot_enviar_mensaje(socket_k, INSERT_REALIZADO, 0, NULL);
 
 			usleep(info_memoria.retardo_mp*1000);
 
@@ -111,13 +111,13 @@ void escucharYatenderKernel(int* kernel){
 
 			switch(mensaje_fs->head){
 						case TABLA_CREADA_OK:{
-							prot_enviar_mensaje(socket_kernel, TABLA_CREADA_OK, 0, NULL);
+							prot_enviar_mensaje(socket_k, TABLA_CREADA_OK, 0, NULL);
 						}break;
 						case TABLA_CREADA_YA_EXISTENTE:{
-							prot_enviar_mensaje(socket_kernel, TABLA_CREADA_YA_EXISTENTE, 0, NULL);
+							prot_enviar_mensaje(socket_k, TABLA_CREADA_YA_EXISTENTE, 0, NULL);
 						}break;
 						case TABLA_CREADA_FALLO:{
-							prot_enviar_mensaje(socket_kernel, TABLA_CREADA_FALLO, 0, NULL);
+							prot_enviar_mensaje(socket_k, TABLA_CREADA_FALLO, 0, NULL);
 						}break;
 						default:{
 							break;
@@ -148,13 +148,13 @@ void escucharYatenderKernel(int* kernel){
 
 			switch(respuesta_fs->head){
 				case TABLE_DROP_OK:{
-					prot_enviar_mensaje(socket_kernel, TABLE_DROP_OK, 0, NULL);
+					prot_enviar_mensaje(socket_k, TABLE_DROP_OK, 0, NULL);
 				}break;
 				case TABLE_DROP_NO_EXISTE:{
-					prot_enviar_mensaje(socket_kernel, TABLE_DROP_NO_EXISTE, 0, NULL);
+					prot_enviar_mensaje(socket_k, TABLE_DROP_NO_EXISTE, 0, NULL);
 				}break;
 				case TABLE_DROP_FALLO:{
-					prot_enviar_mensaje(socket_kernel, TABLE_DROP_FALLO, 0, NULL);;
+					prot_enviar_mensaje(socket_k, TABLE_DROP_FALLO, 0, NULL);;
 				}break;
 				default:{
 					break;
@@ -204,13 +204,13 @@ void escucharYatenderKernel(int* kernel){
 					memcpy(buffer_kernel, &largo_descripcion, sizeof(int));
 					memcpy(buffer_kernel+sizeof(int), descripcion_tabla, largo_descripcion);
 
-					prot_enviar_mensaje(socket_kernel, POINT_DESCRIBE, tamanio_buffer_kernel, buffer_kernel);
+					prot_enviar_mensaje(socket_k, POINT_DESCRIBE, tamanio_buffer_kernel, buffer_kernel);
 
 					free(buffer_kernel);
 					free(descripcion_tabla);
 				}
 				else if(data_del_fs->head == FAILED_DESCRIBE){
-					prot_enviar_mensaje(socket_kernel, FAILED_DESCRIBE, 0, NULL);
+					prot_enviar_mensaje(socket_k, FAILED_DESCRIBE, 0, NULL);
 				}
 
 				free(buffer);
@@ -235,14 +235,14 @@ void escucharYatenderKernel(int* kernel){
 					memcpy(buffer_kernel, &largo_descripcion, sizeof(int));
 					memcpy(buffer_kernel+sizeof(int), descripcion_tabla, largo_descripcion);
 
-					prot_enviar_mensaje(socket_kernel, FULL_DESCRIBE, tamanio_buffer_kernel, buffer_kernel);
+					prot_enviar_mensaje(socket_k, FULL_DESCRIBE, tamanio_buffer_kernel, buffer_kernel);
 
 					free(buffer_kernel);
 					free(descripcion_tabla);
 
 				}
 				else if(data_del_fs->head == FAILED_DESCRIBE){
-					prot_enviar_mensaje(socket_kernel, FAILED_DESCRIBE, 0, NULL);
+					prot_enviar_mensaje(socket_k, FAILED_DESCRIBE, 0, NULL);
 				}
 
 				prot_destruir_mensaje(data_del_fs);
@@ -299,7 +299,7 @@ void escucharYatenderKernel(int* kernel){
 
 			memcpy(buffer_kernel, &tamanio_buffer, sizeof(int));
 			memcpy(buffer_kernel+sizeof(int), buffer, tamanio_buffer);
-			prot_enviar_mensaje(socket_kernel, GOSSIPING, tamanio_buffer_kernel, buffer_kernel);
+			prot_enviar_mensaje(socket_k, GOSSIPING, tamanio_buffer_kernel, buffer_kernel);
 
 		}break;
 
@@ -310,5 +310,5 @@ void escucharYatenderKernel(int* kernel){
 
 	}
 	prot_destruir_mensaje(req_recibida);
-	close(socket_kernel);
+	close(socket_k);
 }
