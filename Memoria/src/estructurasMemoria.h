@@ -16,6 +16,7 @@
 #include "../../SharedLibrary/loggers.h"
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <pthread.h>
 #include <commons/log.h>
 #include <commons/collections/list.h>
 #include <commons/string.h>

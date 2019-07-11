@@ -2,11 +2,8 @@
 #define CONEXION_KERNEL_H_
 
 #include "Request.h"
-#include "stdlib.h"
-#include "stdio.h"
-#include "string.h"
 
 void AceptarKernel();
-void escucharYatenderKernel();
+void escucharYatenderKernel(int* kernel);
 
 #endif /* CONEXION_KERNEL_H_ */
