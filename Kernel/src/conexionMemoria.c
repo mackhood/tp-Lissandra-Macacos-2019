@@ -27,6 +27,7 @@ void handler_conexion_memoria(t_kernel* tKernel) {
 
 			pthread_mutex_lock(&memoriasCola);
 			memoria * loMemoria = queue_pop(tKernel->memoriasCola);
+			queue_push(tKernel->memoriasCola,loMemoria);
 			pthread_mutex_unlock(&memoriasCola);
 
 			if(loMemoria != NULL ){

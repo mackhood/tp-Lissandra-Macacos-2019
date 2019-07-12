@@ -50,7 +50,7 @@ void logDebug(const char* mensaje, ...){
 	va_list arg;
 	va_start(arg,mensaje);
 
-	char* mensajeLog = string_from_format(mensaje,arg);
+	char* mensajeLog = string_from_vformat(mensaje,arg);
 	log_debug(logger,mensajeLog);
 	free(mensajeLog);
 	va_end(arg);
@@ -62,7 +62,7 @@ void logTrace(const char* mensaje, ...){
 	va_list arg;
 	va_start(arg,mensaje);
 
-	char* mensajeLog = string_from_format(mensaje,arg);
+	char* mensajeLog = string_from_vformat(mensaje,arg);
 	log_trace(logger,mensajeLog);
 	free(mensajeLog);
 	va_end(arg);
@@ -74,7 +74,7 @@ void logWarning(const char* mensaje, ...){
 	va_list arg;
 	va_start(arg,mensaje);
 
-	char* mensajeLog = string_from_format(mensaje,arg);
+	char* mensajeLog = string_from_vformat(mensaje,arg);
 	log_warning(logger,mensajeLog);
 	free(mensajeLog);
 	va_end(arg);
@@ -86,7 +86,7 @@ void logError(const char* mensaje, ...){
 	va_list arg;
 	va_start(arg,mensaje);
 
-	char* mensajeLog = string_from_format(mensaje,arg);
+	char* mensajeLog = string_from_vformat(mensaje,arg);
 	log_error(logger,mensajeLog);
 	free(mensajeLog);
 	va_end(arg);

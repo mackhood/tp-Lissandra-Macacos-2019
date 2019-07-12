@@ -117,9 +117,9 @@ t_list* parsearKeys(t_list* clavesAParsear)
 	{
 		int parserPointer = 0;
 		int handlerSize = strlen(keyHandler);
-		key = malloc(6);
+		key = malloc(7);
 		value = malloc(tamanio_value + 1);
-		timestamp = malloc(16);
+		timestamp = malloc(17);
 		int status = 0;
 		int k = 1;
 		int v = 1;
@@ -140,12 +140,12 @@ t_list* parsearKeys(t_list* clavesAParsear)
 				list_add(clavesPostParseo, helpingHand);
 				parserPointer++;
 				status = 0;
-				free(key); free(value); free(timestamp);
 				if(parserPointer != handlerSize)
 				{
-					key = malloc(6);
+					free(key); free(value); free(timestamp);
+					key = malloc(7);
 					value = malloc(tamanio_value + 1);
-					timestamp = malloc(16);
+					timestamp = malloc(17);
 				}
 				k = 1;
 				v = 1;
@@ -213,6 +213,7 @@ t_list* parsearKeys(t_list* clavesAParsear)
 		//		}
 		//		liberadorDeArrays(keys);
 		parserListPointer++;
+		free(key); free(value); free(timestamp);
 	}
 	free(keyHandler);
 	return clavesPostParseo;
