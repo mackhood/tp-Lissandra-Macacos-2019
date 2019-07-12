@@ -107,7 +107,8 @@ int conectar_a_servidor(char* ip, int puerto, char* nombre_cliente){
 	return socket_cliente;
 }
 
-int conectar_a_memoria_flexible(char* ip, int puerto, char* nombre_cliente){
+int conectar_a_memoria_flexible(char* ip, int puerto, t_cliente cliente){
+	//creo socket
 	int socket_cliente;
 	crear_socket(&socket_cliente);
 
@@ -126,11 +127,11 @@ int conectar_a_memoria_flexible(char* ip, int puerto, char* nombre_cliente){
 		print_error(ERROR_CONECTAR_SERVIDOR);
 		return -3;
 	}
+	else{
+		//enviamos un mensaje de que se conecto
+		prot_enviar_mensaje(socket_cliente, CONEXION, sizeof(t_cliente), &cliente);
+		return socket_cliente;
+	}
 
-	//enviamos un mensaje de que se conecto
-
-	printf("soy %s y me estoy conectando a mi servidor\n", nombre_cliente);
-
-	return socket_cliente;
 }
 

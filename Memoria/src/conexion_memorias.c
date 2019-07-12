@@ -1,26 +1,5 @@
 #include "conexion_memorias.h"
 
-void AceptarMemoria()
-{
-	//Acepto a la memoria
-	struct sockaddr_in direccion_cliente;
-	unsigned int tamanio_direccion = sizeof(direccion_cliente);
-
-	//socket_memoria = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion);
-	//printf("Se ha conectado una memoria\n");
-
-	//Creo hilos para atender solicitudes de memoria
-	while((socket_memoria = accept(socket_escuchaMemoria,(void*) &direccion_cliente, &tamanio_direccion)) > 0)
-		{
-			printf("%d es el socket_memoria\n", socket_memoria);
-			int* memoria = (int*) malloc(sizeof(int));
-			*memoria = socket_memoria;
-			puts("Se ha conectado una memoria");
-			pthread_t RecibirMensajesMemoria;
-			pthread_create(&RecibirMensajesMemoria,NULL, (void*)escucharMemoria, memoria);
-			pthread_detach(RecibirMensajesMemoria);
-		}
-}
 void escucharMemoria(int* memoria){
 
 	//Comienzo a recibir peticiones
@@ -74,7 +53,7 @@ void escucharMemoria(int* memoria){
 
 			memcpy(buffer_memoria, &tamanio_buffer, sizeof(int));
 			memcpy(buffer_memoria+sizeof(int), buffer, tamanio_buffer);
-			prot_enviar_mensaje(socket_memoria, SOLICITUD_GOSSIP, tamanio_buffer_memoria, buffer_memoria);
+			prot_enviar_mensaje(s_memoria, SOLICITUD_GOSSIP, tamanio_buffer_memoria, buffer_memoria);
 
 
 //				logInfo("Llegó una solicitud de tabla gossip, procedo a enviar memoria por memoria");
@@ -116,10 +95,9 @@ void escucharMemoria(int* memoria){
 		{
 			break;
 		}
-
-
-
-
 	}
 
+	prot_destruir_mensaje(mensaje_recibido);
+	close(s_memoria);
+	printf("Se ha desconectado una memoria\n\n");
 }

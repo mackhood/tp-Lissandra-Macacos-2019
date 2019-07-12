@@ -79,14 +79,12 @@ void levantarEstrMemorias(){
 void initThread(){
 
 	pthread_create(&threadConsola, NULL, (void*)handleConsola, NULL);
-	pthread_create(&threadReqKernel, NULL, (void*)AceptarKernel, NULL);
-//	pthread_create(&threadMensajesMemoria,NULL, (void*)AceptarMemoria, NULL);
-//	pthread_create(&threadGossiping, NULL, (void*)gossiping, NULL);
+	pthread_create(&threadAceptacionAhre, NULL, (void*)aceptarClientes, NULL);
+	pthread_create(&threadGossiping, NULL, (void*)gossiping, NULL);
 
-	pthread_detach(threadReqKernel);
+	pthread_detach(threadAceptacionAhre);
 	pthread_detach(threadConsola);
-//	pthread_detach(threadMensajesMemoria);
-//	pthread_detach(threadGossiping);
+	pthread_detach(threadGossiping);
 }
 
 void setearValores(){

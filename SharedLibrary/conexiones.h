@@ -46,7 +46,7 @@
 int levantar_servidor(int puerto);
 void crear_socket(int *socket);
 int conectar_a_servidor(char* ip, int puerto, char* nombreCliente);
-int conectar_a_memoria_flexible(char* ip, int puerto, char* nombre_cliente);
+int conectar_a_memoria_flexible(char* ip, int puerto, t_cliente cliente);
 void print_error(char *mensaje);
 
 

@@ -67,15 +67,12 @@ bool se_inserta_segmento;
 
 //sockets
 int socket_escucha;
-int socket_escuchaMemoria;
-int socket_kernel;
 int socket_fs;
-int socket_memoria;
+int socket_cliente;
 
 //hilos
 pthread_t threadConsola;
-pthread_t threadReqKernel;
-pthread_t threadMensajesMemoria;
+pthread_t threadAceptacionAhre;
 pthread_t threadGossiping;
 
 //logs
