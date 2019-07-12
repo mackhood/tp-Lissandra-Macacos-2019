@@ -112,6 +112,7 @@ int conectar_a_memoria_flexible(char* ip, int puerto, t_cliente cliente){
 	int socket_cliente;
 	crear_socket(&socket_cliente);
 
+
 	//conectando el socket
 
 	//Burocracia inicial

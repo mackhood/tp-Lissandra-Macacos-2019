@@ -24,6 +24,7 @@ COMANDO comandos[] = {
 void handleConsola(){
 
 
+
 	puts("-_____________________________________________________");
 	puts("CONSOLA");
 	puts("------ Escriba un comando ------");
