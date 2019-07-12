@@ -154,6 +154,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 						pthread_mutex_lock(&ec);
 						leMemoria = queue_pop(t_Criterios->eventualConsistency);
+						queue_push(t_Criterios->eventualConsistency,leMemoria);
 						pthread_mutex_unlock(&ec);
 
 						if(leMemoria != NULL){
@@ -208,6 +209,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 			}else if(dtb->operacionActual == DESCRIBE_REQ) {
 				pthread_mutex_lock(&memoriasCola);
 				leMemoria  =queue_pop(tKernel->memoriasCola);
+				queue_push(tKernel->memoriasCola,leMemoria);
 				pthread_mutex_unlock(&memoriasCola);
 				if(leMemoria != NULL) {
 					socket_memoria = conectar_a_memoria_flexible(leMemoria->ip, leMemoria->puerto, KERNEL);
@@ -236,6 +238,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 					pthread_mutex_lock(&ec);
 					leMemoria = queue_pop(t_Criterios->eventualConsistency);
+					queue_push(t_Criterios->eventualConsistency,leMemoria);
 					pthread_mutex_unlock(&ec);
 
 					if( leMemoria != NULL){
@@ -294,6 +297,8 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 						pthread_mutex_lock(&ec);
 						leMemoria = queue_pop(t_Criterios->eventualConsistency);
+						queue_push(t_Criterios->eventualConsistency,leMemoria);
+
 						pthread_mutex_unlock(&ec);
 
 						if(leMemoria != NULL){
@@ -416,10 +421,10 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 						break;
 					}
 					}
-					if(!strcmp(laTabla->criterio, "EC"))
-					{
-						queue_push(t_Criterios->eventualConsistency,leMemoria);
-					}
+//					if(!strcmp(laTabla->criterio, "EC"))
+//					{
+//						queue_push(t_Criterios->eventualConsistency,leMemoria);
+//					}
 					quantum--;
 					dtb->sentenciaActual++;
 					prot_destruir_mensaje(req_recibida);
@@ -513,7 +518,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 					{
 						leMemoria->estadisticasMemoriaEC->Write_Latency += (cantSegundosFinal - cantSegundosInicial);
 						leMemoria->estadisticasMemoriaEC->Writes++;
-						queue_push(t_Criterios->eventualConsistency,leMemoria);
+//						queue_push(t_Criterios->eventualConsistency,leMemoria);
 					}
 					else
 					{
@@ -575,10 +580,10 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 				free(buffer);
 				t_prot_mensaje * mensaje_recibido = prot_recibir_mensaje(socket_memoria);
 
-				if(!strcmp(args[2], "EC"))
-				{
-					queue_push(t_Criterios->eventualConsistency,leMemoria);
-				}
+//				if(!strcmp(args[2], "EC"))
+//				{
+//					queue_push(t_Criterios->eventualConsistency,leMemoria);
+//				}
 
 				//printf("Insert realizado \n");
 				dtb->sentenciaActual++;
@@ -634,9 +639,9 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 				prot_enviar_mensaje(socket_memoria, DROP_REQ, tamanio_buffer, buffer);
 				free(buffer);
 				t_prot_mensaje* respuesta = prot_recibir_mensaje(socket_memoria);
-				if(laTabla->criterio == "EC"){
-					queue_push(t_Criterios->eventualConsistency,leMemoria);
-				}
+//				if(laTabla->criterio == "EC"){
+//					queue_push(t_Criterios->eventualConsistency,leMemoria);
+//				}
 				dtb->sentenciaActual++;
 
 				//posibles respuestas
@@ -693,17 +698,17 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 				t_prot_mensaje* mensaje_memoria = prot_recibir_mensaje(socket_memoria);
 
 
-				if(args[1]!= NULL)
-				{
-					if(!strcmp(laTabla->criterio, "EC"))
-					{
-						queue_push(t_Criterios->eventualConsistency,leMemoria);
-					}
-				}
-				else
-				{
-					queue_push(tKernel->memoriasCola,leMemoria);
-				}
+//				if(args[1]!= NULL)
+//				{
+////					if(!strcmp(laTabla->criterio, "EC"))
+////					{
+////						queue_push(t_Criterios->eventualConsistency,leMemoria);
+////					}
+//				}
+//				else
+//				{
+//					queue_push(tKernel->memoriasCola,leMemoria);
+//				}
 
 
 
@@ -936,9 +941,9 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 						{
 							memoriaAgregar = list_find(tKernel->memoriasConCriterio,(void*)estaEnLaLista);
 						}
-						pthread_mutex_lock(&ec);
-						queue_push(t_Criterios->eventualConsistency, memoriaAgregar);
-						pthread_mutex_unlock(&ec);
+//						pthread_mutex_lock(&ec);
+////						queue_push(t_Criterios->eventualConsistency, memoriaAgregar);
+//						pthread_mutex_unlock(&ec);
 					}
 				}
 				else
