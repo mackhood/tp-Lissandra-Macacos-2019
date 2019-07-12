@@ -231,7 +231,7 @@ void enviarAEXIT(DTB_KERNEL* dtb) {
 	pthread_mutex_lock(&mutexListFinalizado);
 	queue_push(tKernelEstados->exit, dtb);
 	pthread_mutex_unlock(&mutexListFinalizado);
-	logTrace("Ingreso a la cola de EXIT el DTB :%d", dtb->idGDT);
+	logTrace("Ingreso a la cola de EXIT el DTB :%i", dtb->idGDT);
 
 }
 

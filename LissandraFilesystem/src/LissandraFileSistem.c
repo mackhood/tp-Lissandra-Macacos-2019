@@ -4,7 +4,7 @@ int main(void)
 {
 	char* dateForLogger = timeForLogs();
 	char* lissandraFL_log_ruta = malloc(strlen(dateForLogger) + 130);
-	strcpy(lissandraFL_log_ruta, "/home/utnso/workspace/tp-2019-1c-Macacos/LissandraFilesystem/LissandraFileSystem");
+	strcpy(lissandraFL_log_ruta, "/home/utnso/workspace/tp-2019-1c-Macacos/LissandraFilesystem/LissandraFileSystem ");
 	strcat(lissandraFL_log_ruta, dateForLogger);
 	strcat(lissandraFL_log_ruta, ".log");
 	logger = crearLogger(lissandraFL_log_ruta, "LissandraFileSystem");
