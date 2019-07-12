@@ -126,7 +126,7 @@ void interPlanificador(){
 void reestablecerEstadisticas(){
 
 	t_estadisticas->Reads = 0;
-	t_estadisticas ->Read_Latency = 0;
+	t_estadisticas->Read_Latency = 0;
 	t_estadisticas->Write_Latency =0;
 	t_estadisticas->Writes = 0;
 
@@ -292,14 +292,24 @@ memoria* crearMemoria(int puerto,char* ip){
 	nuevaMemoria->numeroMemoria = getIdMemoria();
 	nuevaMemoria->estaEjecutando =0;
 	nuevaMemoria->ip = ip;
-	estadisticas * estructura = malloc(sizeof(estadisticas));
-	estructura->Read_Latency = 0;
-	estructura->Reads = 0;
-	estructura->Write_Latency = 0;
-	estructura->Writes = 0;
-	nuevaMemoria->estadisticasMemoriaSC = estructura;
-	nuevaMemoria->estadisticasMemoriaSHC = estructura;
-	nuevaMemoria->estadisticasMemoriaEC = estructura;
+	estadisticas * estructuraSC = malloc(sizeof(estadisticas));
+	estructuraSC->Read_Latency = 0;
+	estructuraSC->Reads = 0;
+	estructuraSC->Write_Latency = 0;
+	estructuraSC->Writes = 0;
+	estadisticas * estructuraSHC = malloc(sizeof(estadisticas));
+	estructuraSHC->Read_Latency = 0;
+	estructuraSHC->Reads = 0;
+	estructuraSHC->Write_Latency = 0;
+	estructuraSHC->Writes = 0;
+	estadisticas * estructuraEC = malloc(sizeof(estadisticas));
+	estructuraEC->Read_Latency = 0;
+	estructuraEC->Reads = 0;
+	estructuraEC->Write_Latency = 0;
+	estructuraEC->Writes = 0;
+	nuevaMemoria->estadisticasMemoriaSC = estructuraSC;
+	nuevaMemoria->estadisticasMemoriaSHC = estructuraSHC;
+	nuevaMemoria->estadisticasMemoriaEC = estructuraEC;
 	nuevaMemoria->insertsTotales=0;
 	nuevaMemoria->selectTotales=0;
 	return nuevaMemoria;

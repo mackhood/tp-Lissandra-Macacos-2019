@@ -533,7 +533,7 @@ void journal (char** args) {
 
 
 			memoria* laMemoria = list_get(tKernel->memoriasConCriterio,x);
-			int socket_memoria = conectar_a_memoria_flexible(laMemoria->ip,laMemoria->puerto,"Kernel");
+			int socket_memoria = conectar_a_memoria_flexible(laMemoria->ip,laMemoria->puerto,KERNEL);
 			if(socket_memoria == -3 ){
 
 				bool  estaEnLaLista(memoria* memoriaAux) {
@@ -554,7 +554,7 @@ void journal (char** args) {
 					memoria * loMemoria = queue_pop(tKernel->memoriasCola);
 					pthread_mutex_unlock(&memoriasCola);
 
-					while(conectar_a_memoria_flexible(loMemoria->ip,loMemoria->puerto,"Kernel") == -3){
+					while(conectar_a_memoria_flexible(loMemoria->ip,loMemoria->puerto,KERNEL) == -3){
 
 						pthread_mutex_lock(&memoriasCola);
 						memoria * loMemoria = queue_pop(tKernel->memoriasCola);
@@ -747,7 +747,7 @@ void add (char** args) {
 					while(list_get(t_Criterios->StrongHash,u) != NULL){
 
 						memoria* fruta =list_get(t_Criterios->StrongHash,u);
-						int otrolSocket = conectar_a_memoria_flexible(fruta->ip,fruta->puerto,"Kernel");
+						int otrolSocket = conectar_a_memoria_flexible(fruta->ip,fruta->puerto,KERNEL);
 						prot_enviar_mensaje(otrolSocket,JOURNAL_REQ,0,NULL);
 						close(otrolSocket);
 

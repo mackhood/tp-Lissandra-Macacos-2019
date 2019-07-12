@@ -11,7 +11,7 @@ void handler_conexion_memoria(t_kernel* tKernel) {
 
 	while(!destProtocol){
 
-		int conexion=conectar_a_memoria_flexible(configuracion->ip,configuracion->puerto,"Memoria1");
+		int conexion=conectar_a_memoria_flexible(configuracion->ip,configuracion->puerto, KERNEL);
 
 		if (conexion == -3 && tKernel->primerConexion){
 

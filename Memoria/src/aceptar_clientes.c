@@ -1,6 +1,6 @@
 #include "aceptar_clientes.h"
 
-void AceptarClientes(){
+void aceptarClientes(){
 
 	//Acepto al Kernel
 	struct sockaddr_in direccion_cliente;
@@ -17,8 +17,8 @@ void AceptarClientes(){
 			if(socket_cliente > 0){
 
 				t_prot_mensaje* mensaje_inicial_conexion = prot_recibir_mensaje(socket_cliente);
-				t_cliente cliente = *(t_cliente*)(mensaje_inicial_conexion->payload);
-
+				t_cliente cliente;/* = *(t_cliente*)(mensaje_inicial_conexion->payload);*/
+				memcpy(&cliente, mensaje_inicial_conexion->payload, sizeof(t_cliente));
 				if(cliente == KERNEL){
 					int* kernel = (int*) malloc (sizeof(int));
 					*kernel = socket_cliente;
