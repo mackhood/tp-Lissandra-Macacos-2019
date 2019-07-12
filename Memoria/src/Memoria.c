@@ -2,11 +2,13 @@
 
 int main() {
 
+	//logueo todos los datos de configuracion
+	initMutexlog(MEMORIA_LOG_PATH,PROGRAM_NAME,0,LOG_LEVEL_TRACE);
 	levantar_config();
-	levantarLogs();
 	levantarConexion();
 	levantarEstrMemorias();
 	initThread();
+
 	pthread_mutex_t stop;
 	pthread_mutex_init(&stop, NULL);
 	pthread_mutex_lock(&stop);
@@ -18,28 +20,18 @@ int main() {
 
 //________________________________FUNCIONES DE INICIALIZACION DE HILOS Y DEMAS________________________________________________//
 
-void levantarLogs(){
-
-	char* memoria_log_ruta = strdup("/home/utnso/workspace/tp-2019-1c-Macacos/Memoria/Memoria.log");
-	loggerMem = crearLogger(memoria_log_ruta, "Memoria");
-
-	log_info(loggerMem, "Se han levantado los logs");
-
-	//Logeo si se levantan correctamente las configs
-	char*memoria_config_ruta = strdup("/home/utnso/workspace/tp-2019-1c-Macacos/Memoria/memoria.config");
-	leerConfig(memoria_config_ruta, loggerMem);
-}
-
 void levantarConexion(){
 
+	logInfo("[Main]: Se procedera a conectar al fileSystem");
 	//me conecto al fs primero y me manda el tamanio_value
 	socket_fs = conectar_a_servidor(info_memoria.ip_fs, info_memoria.puerto_fs, "Memoria");
 	prot_enviar_mensaje(socket_fs, HANDSHAKE, 0, NULL);
 	t_prot_mensaje* handshake = prot_recibir_mensaje(socket_fs);
 	tamanio_value = *((int*)handshake->payload);
 	prot_destruir_mensaje(handshake);
-	log_info(loggerMem, "Se ha conectado la memoria con el File System");
+	logInfo("[Main]: Se ha conectado la memoria con el File System y nos ha mandado el TV %d", tamanio_value);
 
+	logInfo("[Main]: Se procedera a levantar el servidor");
 	//levanto servidor para Kernel y otras Memorias
 	socket_escucha = levantar_servidor(info_memoria.puerto);
 
@@ -52,9 +44,18 @@ void levantarEstrMemorias(){
 	//el time_t es en segundos (utilizado dentro de getCurrentTime)
 	//el double ocupa 8 bytes
 
+	logInfo("[Main]: Levantamos las estructuras principales");
+
 	//variables iniciales
 	tamanio_pag = sizeof(uint16_t) + tamanio_value + sizeof(double);
 	cant_paginas = info_memoria.tamanio_mem/tamanio_pag;
+
+	logInfo("[Main]: El tamanio de las paginas es %d", tamanio_pag);
+	logInfo("[Main]: La cantidad de paginas es %d", cant_paginas);
+
+	logInfo("[Main]: Se procede a levantar la memoria principal con un tamanio de %d", info_memoria.tamanio_mem);
+	logInfo("[Main]: Se procede a levantar el bitarray para identificar los frames libres");
+
 
 	//levanto memoria
 	memoria_principal = malloc(info_memoria.tamanio_mem);
@@ -65,6 +66,8 @@ void levantarEstrMemorias(){
 	for(int i=0; i<cant_paginas; i++){
 		estados_memoria[i] = LIBRE;
 	}
+
+	logInfo("[Main]: Levantamos las estructuras restantes (lista segmentos, mutex, variable global para journal");
 
 	//creo la lista de segmentos
 	lista_segmentos = list_create();
@@ -77,6 +80,8 @@ void levantarEstrMemorias(){
 }
 
 void initThread(){
+
+	logInfo("[Main]: Levantamos hilos de consola, aceptarClientes y gossiping");
 
 	pthread_create(&threadConsola, NULL, (void*)handleConsola, NULL);
 	pthread_create(&threadAceptacionAhre, NULL, (void*)aceptarClientes, NULL);

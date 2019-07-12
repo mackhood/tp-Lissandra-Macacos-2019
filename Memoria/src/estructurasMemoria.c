@@ -29,6 +29,7 @@ t_est_pag* buscarEstPagBuscada(uint16_t key, t_segmento* segmento_buscado){
 t_segmento* buscarEinsertarEnMem(t_segmento* segmento, uint16_t key, double time_a_insertar, char* value_con_barraCero){
 	char* nombre_tabla = strdup(segmento->nombre_tabla);
 
+	logInfo("[estructurasMemoria]: Comenzara la busqueda de un frame libre");
 	int marco_disponible = buscarPaginaLibre();
 
 	/*	Siempre marcamos el se_inserta_segmento en true, si se realiza journal este quedara en false hasta que haya una nueva peticion
@@ -48,20 +49,25 @@ t_segmento* buscarEinsertarEnMem(t_segmento* segmento, uint16_t key, double time
 		se_hizo_journal = false;
 	}
 
+	logInfo("[estructurasMemoria]: Creo nueva pagina con flag en 0 y le asigno el marco disponible");
+
 	t_est_pag* nueva_est_pagina = malloc(sizeof(t_est_pag));
 
 	nueva_est_pagina->offset = marco_disponible;
 	nueva_est_pagina->flag = 0;
 
+	logInfo("[estructurasMemoria]: copio en el marco %d los datos de la pagina en cuestion", marco_disponible);
 	//desplazo la memoria y copio en una posicion "libre" lo que tengo en time-key-value
 	memcpy(memoria_principal+(tamanio_pag*marco_disponible), &time_a_insertar, sizeof(double));
 	memcpy(memoria_principal+(tamanio_pag*marco_disponible)+sizeof(double), &key, sizeof(uint16_t));
 	//el tamanio_value es el maximo tamanio del value el cual nos lo va a enviar el fs desde un principio
 	memcpy(memoria_principal+(tamanio_pag*marco_disponible)+sizeof(double)+sizeof(uint16_t), value_con_barraCero, tamanio_value);
 
+	logInfo("[estructurasMemoria]: Marco el frame como ocupado");
 	//marco frame como ocupado
 	estados_memoria[marco_disponible] = OCUPADO;
 
+	logInfo("[estructurasMemoria]: agrego la pagina a la tabla de paginas del segmento");
 	//agrego la estructura a la tabla de paginas del segmento en cuestion
 	list_add(segmento->tabla_paginas.paginas, (t_est_pag*)nueva_est_pagina);
 
@@ -73,14 +79,12 @@ int buscarPaginaLibre(){
 	for(int marco_disponible=0; marco_disponible<cant_paginas; marco_disponible++){
 		if(estados_memoria[marco_disponible]==LIBRE)
 			{
-			printf("el marco a asignar es %d\n", marco_disponible);
-			log_info(loggerMem, "Se ha asignado un marco libre");
+			logInfo("[estructurasMemoria]: el marco a asignar es %d", marco_disponible);
 			return marco_disponible;
 			}
 	}
 	//sali del for por ende estan todos los marcos ocupados
-	log_info(loggerMem, "Se aplicará LRU debido a que todos los marcos están ocupados");
-	printf("aplico LRU debido a que estan todos los marcos ocupados\n");
+	logInfo("[estructurasMemoria]: Todos los marcos se encuentran ocupados por lo que se realizará el LRU");
 	int marco_disponible = aplicarLRU();
 	return marco_disponible;
 }
@@ -91,7 +95,6 @@ int aplicarLRU(){
 	//dentro va a estar el journaling
 
 	//declaro el time, la pag, el segmento y la pos de la pag en tp del seg debido a que los asignare a futuro para la operatoria
-	//t_est_pag* pag_mas_vieja;
 	double time_mas_viejo = getCurrentTime();
 	t_segmento* seg_con_pag_mas_vieja;
 	int pos_pag_en_tp_seg;
@@ -111,7 +114,6 @@ int aplicarLRU(){
 
 			if( (pagina_a_evaluar->flag == 0) && (time_pag_a_evaluar < time_mas_viejo) ){
 				time_mas_viejo = time_pag_a_evaluar;
-				//pag_mas_vieja = pagina_a_evaluar;
 				seg_con_pag_mas_vieja = segmento_a_evaluar;
 				pos_pag_en_tp_seg = j;
 				hay_pag_a_liberar = true;
@@ -122,8 +124,10 @@ int aplicarLRU(){
 
 	//si salgo del for y no hay pagina a liberar significa que todas las paginas de todos los segmentos se encuentran modificados (FULL) o que algo raro pasó
 	if(!hay_pag_a_liberar){
-		log_info(loggerMem, "La memoria se encuentra FULL: se aplicará el Journal");
+
 		printf("Aplico Journal debido a que mi memoria se encuentra FULL\n");
+		logInfo("[estructurasMemoria]: se aplicara el Journal debido a que mi memoria se encuentra FULL");
+
 		journalReq();
 		se_hizo_journal = true;
 
@@ -136,8 +140,7 @@ int aplicarLRU(){
 		t_est_pag* pagina_a_remover = (t_est_pag*)list_remove(seg_con_pag_mas_vieja->tabla_paginas.paginas, pos_pag_en_tp_seg);
 		estados_memoria[pagina_a_remover->offset] = LIBRE;
 		int marco_libre = pagina_a_remover->offset;
-		log_info(loggerMem, "Se ha reemplazado la página con más tiempo sin ser utilizada");
-		printf("Encontre la pag mas vieja con flag en 0 y nos habilitara el marco %d\n", marco_libre);
+		logInfo("Se ha encontrado la página con más tiempo sin ser utilizada y su marco es %d", marco_libre);
 		free(pagina_a_remover);
 
 		return marco_libre;
@@ -146,23 +149,24 @@ int aplicarLRU(){
 
 void eliminar_segmentos(){
 
+	logInfo("[]: Se procede a eliminar los segmentos con sus respectivas paginas");
+
 	int cant_segmentos = list_size(lista_segmentos);
 
 	for(int i = 0; i<cant_segmentos; i++){
 
 		t_segmento* segmento = list_get(lista_segmentos, i);
 
-		//creo que usando free libero todas las posiciones
 		t_list* paginas_segmento = segmento->tabla_paginas.paginas;
 		list_destroy_and_destroy_elements(paginas_segmento, &free);
-		//list_destroy(paginas_segmento); //--> asi funcionaba
 	}
 
 	list_clean_and_destroy_elements(lista_segmentos, &free);
-	//list_clean(lista_segmentos); //asi funcionaba pero tengo que liquidar lo de adentro tambien
 }
 
 void liberar_marcos(){
+
+	logInfo("[estructurasMemoria]: Se procede a liberar los marcos en memoria principal");
 
 	for(int marco_ocupado=0; marco_ocupado<cant_paginas; marco_ocupado++){
 			if(estados_memoria[marco_ocupado]==OCUPADO)
@@ -185,31 +189,3 @@ int buscarPosSeg(char* nombre_segmento){
 	}
 	return posicion;
 }
-
-
-/*LRU
- *
- *  time mas viejo = tiempo actual
- *  for(cant segmentos){
- *  	obtengo segmento
- * 	 	for(cantidad paginas de segmento obtenido){
- *	 		if(pagina.flag == 0 && pagina.time < time_mas_viejo){
- *				time_mas_viejo = pagina.time
- *				t_est_pagina* pagina_mas_vieja = list_get(segmento->paginas, contador);
- *			}
- *		}
- *	}
- *
- *	si salgo del for y mi time sigue en 0 significa que todas las paginas de todos los segmentos se encuentran modificados o que algo raro pasó
- *	if(time_mas_viejo == 0){
- *		Aplicar JOURNALING --> devuelve 0 luego de realizar el journaling?
- *	}
- *	else{
- *		//quito la pagina de memoria principal
- *
- *		//devuelvo el marco de la pagina
- *		return pagina_mas_vieja.marco
- *	}
- *
- */
-

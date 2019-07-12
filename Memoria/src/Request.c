@@ -3,26 +3,35 @@
 
 char* selectReq (char* nombre_tabla, uint16_t key) {
 
+	logInfo("[SELECT/REQ]: se procede a realizar el select");
 	pthread_mutex_lock(&mutex_estructuras_memoria);
-	log_info(loggerMem, "Se ha recibido una solicitud de SELECT");
+
+	logInfo("[SELECT/REQ]: se busca el segmento %s", nombre_tabla);
 	t_segmento* segmento_buscado = buscarSegmento(nombre_tabla);
 
 	if(segmento_buscado /*!= NULL*/){
 		//si el segmento existe buscamos en la memoria el key solicitado
+		logInfo("[SELECT/REQ]: el segmento existe en la lista");
+		logInfo("[SELECT/REQ]: se busca la pagina %d", key);
+
 		t_est_pag* est_pagina_buscada = buscarEstPagBuscada(key, segmento_buscado);
 
 		if(est_pagina_buscada /*!= NULL*/){
+			logInfo("[SELECT/REQ]: la pagina se encuentra en memoria");
+
 			char* value_solicitado = malloc(tamanio_value);
 			memcpy(value_solicitado, memoria_principal+tamanio_pag*(est_pagina_buscada->offset)+sizeof(double)+sizeof(uint16_t), tamanio_value);
-			printf("el value solicitado es %s\n", value_solicitado);
+			logInfo("[SELECT/REQ]: el value solicitado es %s", value_solicitado);
 
 			pthread_mutex_unlock(&mutex_estructuras_memoria);
 			return value_solicitado;
 		}
 		//no se encuentra la pagina en memoria
 		else{
+			logInfo("[SELECT/REQ]: la pagina no se encuentra en memoria");
 			free(est_pagina_buscada);
 
+			logInfo("[SELECT/REQ]: se envia la solicitud al fs");
 			//se lo pido al fs porque no esta
 			int largo_nombre_tabla = strlen(nombre_tabla);
 			size_t tamanio_buffer = sizeof(uint16_t) + sizeof(int) + largo_nombre_tabla;
@@ -50,11 +59,12 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 
 			prot_destruir_mensaje(mensaje_con_tabla);
 
+			logInfo("[SELECT/REQ]: el file system nos ha mandado el time %lf, el tamanio %d y el value %s", tiempo_a_insertar, tamanio_value_mandado, value);
+			logInfo("[SELECT/REQ]: se procedera a crear e insertar la pagina en memoria");
+
 			segmento_buscado = buscarEinsertarEnMem(segmento_buscado, key, tiempo_a_insertar, value);
 
 			//verifico
-			printf("el nombre del segmento es: %s\n", segmento_buscado->nombre_tabla);
-
 			t_est_pag* pagina_buscada = buscarEstPagBuscada(key, segmento_buscado);
 
 			double time_buscado;
@@ -64,11 +74,12 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 			char* value_buscado = malloc(tamanio_value);
 			memcpy(value_buscado, memoria_principal+(pagina_buscada->offset*tamanio_pag)+sizeof(double)+sizeof(uint16_t), tamanio_value);
 
-			printf("el time de la pagina es %lf\n", time_buscado);
-			printf("la key de la pagina es %d\n", key_buscada);
-			printf("el value de la pagina es %s\n", value_buscado);
+			logInfo("[SELECT/REQ]: verifico que el segmento sea %s, y la nueva pagina posee el time %lf, el key %d y el value %s",
+					segmento_buscado->nombre_tabla,
+					time_buscado,
+					key_buscada,
+					value_buscado);
 
-			log_info(loggerMem, "Se ha creado la página en Memoria");
 			free(buffer);
 
 			pthread_mutex_unlock(&mutex_estructuras_memoria);
@@ -77,14 +88,16 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 	}
 	//no se encuentra el segmento
 	else{
+		logInfo("[SELECT/REQ]: El segmento solicitado no existe");
 		free(segmento_buscado);
-		printf("llegue hasta aca\n");
 
+		logInfo("[SELECT/REQ]: Se comenzara a crear el segmento");
 		//creo segmento
 		t_segmento* segmento_nuevo = malloc(sizeof(t_segmento));
 		segmento_nuevo->nombre_tabla = strdup(nombre_tabla);
 		segmento_nuevo->tabla_paginas.paginas = list_create();
 
+		logInfo("[SELECT/REQ]: se envia la solicitud al fs");
 		//se lo pido al fs porque no esta
 		int largo_nombre_tabla = strlen(nombre_tabla);
 		size_t tamanio_buffer = sizeof(uint16_t) + sizeof(int) + largo_nombre_tabla;
@@ -112,6 +125,9 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 
 		prot_destruir_mensaje(mensaje_con_tabla);
 
+		logInfo("[SELECT/REQ]: el file system nos ha mandado el time %lf, el tamanio %d y el value %s", tiempo_a_insertar, tamanio_value_mandado, value);
+		logInfo("[SELECT/REQ]: se procedera a crear e insertar la pagina en memoria");
+
 		segmento_nuevo = buscarEinsertarEnMem(segmento_nuevo, key, tiempo_a_insertar, value);
 
 		//Siempre se inserta el segmento nuevo a menos que se haya realizado el journal, en ese caso se agrega dentro de la funcion buscarEinsertar
@@ -122,8 +138,6 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 		se_inserta_segmento = true;
 
 		//verifico
-		printf("el nombre del segmento es: %s\n", segmento_nuevo->nombre_tabla);
-
 		t_est_pag* pagina_buscada = buscarEstPagBuscada(key, segmento_nuevo);
 
 		double time_buscado;
@@ -133,9 +147,11 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 		char* value_buscado = malloc(tamanio_value);
 		memcpy(value_buscado, memoria_principal+(pagina_buscada->offset*tamanio_pag)+sizeof(double)+sizeof(uint16_t), tamanio_value);
 
-		printf("el time de la pagina es %lf\n", time_buscado);
-		printf("la key de la pagina es %d\n", key_buscada);
-		printf("el value de la pagina es %s\n", value_buscado);
+		logInfo("[SELECT/REQ]: verifico que el segmento sea %s, y la nueva pagina posee el time %lf, el key %d y el value %s",
+				segmento_buscado->nombre_tabla,
+				time_buscado,
+				key_buscada,
+				value_buscado);
 
 		free(buffer);
 
@@ -146,30 +162,37 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 
 void insertReq (char* nombre_tabla, uint16_t key, char* value) {
 
+	logInfo("[INSERT/REQ]: se procedera a realizar el insert");
+	logInfo("[INSERT/REQ]: se procede a buscar el segmento solicitado");
+
 	pthread_mutex_lock(&mutex_estructuras_memoria);
 	t_segmento* segmento_buscado = buscarSegmento(nombre_tabla);
 
 	if(segmento_buscado){
+		logInfo("[INSERT/REQ]: el segmento existe en la lista de segmentos");
+		logInfo("[INSERT/REQ]: se procedera a buscar la pagina solicitada");
+
 		t_est_pag* est_pagina_buscada = buscarEstPagBuscada(key, segmento_buscado);
 
 		if(est_pagina_buscada){
+			logInfo("[INSERT/REQ]: la pagina se encuentra en memoria por lo que cambio el flag de modificado a 1");
+
 			double nuevo_time = getCurrentTime();
 			memcpy(memoria_principal+tamanio_pag*(est_pagina_buscada->offset), &nuevo_time, sizeof(double));
 			memcpy(memoria_principal+tamanio_pag*(est_pagina_buscada->offset)+sizeof(double)+sizeof(uint16_t), value, tamanio_value);
 			est_pagina_buscada->flag = 1;
 
-			//prueba
-			char* value_actualizado = malloc(tamanio_value);
-			memcpy(value_actualizado, memoria_principal+(est_pagina_buscada->offset*tamanio_pag)+sizeof(double)+sizeof(uint16_t), tamanio_value);
-			printf("el value actualizado es %s y su nuevo time es %lf\n", value_actualizado, nuevo_time);
+			logInfo("[INSERT/REQ]: se inserta el nuevo time %lf en la pagina", nuevo_time);
 
 			pthread_mutex_unlock(&mutex_estructuras_memoria);
 		}
 		else{
+			logInfo("[INSERT/REQ]: la pagina no se encuentra en memoria");
 			free(est_pagina_buscada);
 
 			double nuevo_time = getCurrentTime();
 
+			logInfo("[INSERT/REQ]: Se procedera a crear e insertar la pagina en memoria, pongo flag de modificado en 1");
 			segmento_buscado = buscarEinsertarEnMem(segmento_buscado, key, nuevo_time, value);
 
 			//verifico y ademas marco el flag en 1
@@ -183,16 +206,20 @@ void insertReq (char* nombre_tabla, uint16_t key, char* value) {
 			char* value_actualizado = malloc(tamanio_value);
 			memcpy(value_actualizado, memoria_principal+(pagina_buscada->offset*tamanio_pag)+sizeof(double)+sizeof(uint16_t), tamanio_value);
 
-			printf("el time de la pagina es %lf\n", time_buscado);
-			printf("la key de la pagina es %d\n", key_buscada);
-			printf("el value de la pagina es %s\n", value_actualizado);
+			logInfo("[INSERT/REQ]: verifico que el segmento sea %s, y la nueva pagina posee el time %lf, el key %d y el value %s",
+					segmento_buscado->nombre_tabla,
+					time_buscado,
+					key_buscada,
+					value_actualizado);
 
 			pthread_mutex_unlock(&mutex_estructuras_memoria);
 		}
 	}
 	else{
+		logInfo("[INSERT/REQ]: el segmento no existe en la lista de segmentos");
 		free(segmento_buscado);
-		printf("llegue hasta aca\n");
+
+		logInfo("[INSERT/REQ]: procedo a crear el segmento");
 
 		t_segmento* segmento_nuevo = malloc(sizeof(t_segmento));
 		segmento_nuevo->nombre_tabla = strdup(nombre_tabla);
@@ -203,6 +230,7 @@ void insertReq (char* nombre_tabla, uint16_t key, char* value) {
 
 		double nuevo_time = getCurrentTime();
 
+		logInfo("[INSERT/REQ]: se procedera a crear e insertar la pagina en memoria, marco flag de modificado en 1");
 		segmento_nuevo = buscarEinsertarEnMem(segmento_nuevo, key, nuevo_time, value);
 
 		//Siempre se insertara el segmento nuevo a menos que se haya realizado el journal, en ese caso el mismo se agregara dentro de la funcion buscarEinsertar
@@ -222,9 +250,11 @@ void insertReq (char* nombre_tabla, uint16_t key, char* value) {
 		char* value_asignado = malloc(tamanio_value);
 		memcpy(value_asignado, memoria_principal+(pagina_buscada->offset*tamanio_pag)+sizeof(double)+sizeof(uint16_t), tamanio_value);
 
-		printf("el time de la pagina es %lf\n", time_buscado);
-		printf("la key de la pagina es %d\n", key_buscada);
-		printf("el value de la pagina es %s\n", value_asignado);
+		logInfo("[INSERT/REQ]: verifico que el segmento sea %s, y la nueva pagina posee el time %lf, el key %d y el value %s",
+				segmento_buscado->nombre_tabla,
+				time_buscado,
+				key_buscada,
+				value_asignado);
 
 		pthread_mutex_unlock(&mutex_estructuras_memoria);
 	}
@@ -232,6 +262,8 @@ void insertReq (char* nombre_tabla, uint16_t key, char* value) {
 }
 
 t_prot_mensaje* createReq (char* nombre_tabla, int largo_nombre_tabla, char* tipo_consistencia, int largo_tipo_consistencia, int numero_particiones, int compaction_time){
+
+	logInfo("[CREATE/REQ]: Se envia solicitud de CREATE al Filesystem");
 
 	size_t tamanio_buffer = sizeof(int) + largo_nombre_tabla + sizeof(int) + largo_tipo_consistencia + sizeof(int) + sizeof(int);
 
@@ -253,16 +285,21 @@ t_prot_mensaje* createReq (char* nombre_tabla, int largo_nombre_tabla, char* tip
 
 t_prot_mensaje* dropReq (char* nombre_tabla) {
 
+	logInfo("[DROP/REQ]: Comenzara a realizarse el DROP de la tabla %s", nombre_tabla);
+
 	pthread_mutex_lock(&mutex_estructuras_memoria);
 	t_segmento* segmento_buscado = buscarSegmento(nombre_tabla);
 
 	if(segmento_buscado){
+
+		logInfo("[DROP/REQ]: La tabla/segmento se encuentra en memoria");
 
 		/* itero para saber la posicion del segmento en la lista de segmentos para luego realizar el list_remove
 		 * en base a la posicion del mismo
 		 */
 
 		int posicion_del_segmento_en_lista = buscarPosSeg(nombre_tabla);
+		logInfo("[DROP/REQ]: La posicion del segmento en la lista es %d", posicion_del_segmento_en_lista);
 
 		/*	Segmento a remover deberia dar el mismo segmento que segmento buscado pero lo necesito declarar de nuevo
 		 * 	por el list_remove.
@@ -271,23 +308,24 @@ t_prot_mensaje* dropReq (char* nombre_tabla) {
 
 		int cant_paginas_seg = list_size(segmento_a_remover->tabla_paginas.paginas);
 
-		printf("Libero los marcos asignados al segmento %s\n", segmento_a_remover->nombre_tabla);
+		logInfo("[DROP/REQ]: Comienzo a liberar los marcos asignados al segmento");
 		for(int i=0; i<cant_paginas_seg; i++){
 			//Marco como libre todos los marcos ocupados por las paginas del segmento a liberar
 			t_est_pag* pagina_a_remover = list_get(segmento_a_remover->tabla_paginas.paginas, i);
 			estados_memoria[pagina_a_remover->offset] = LIBRE;
-			printf("libero el marco %d asignado a la pagina %d\n", pagina_a_remover->offset, i);
+			logInfo("[DROP/REQ]: Libero el marco %d asignado a la pagina %d", pagina_a_remover->offset, i);
 		}
 
-
-		//destruyo la TP(t_list*) del segmento a remover y sus paginas. Luego libero la memoria asignada al segmento en cuestion
+		logInfo("[DROP/REQ]: destruyo la TP del segmento removido y sus paginas. Luego libero la memoria asignada al segmento en cuestion");
 		list_destroy_and_destroy_elements(segmento_a_remover->tabla_paginas.paginas, &free);
 		free(segmento_a_remover->nombre_tabla);
 		free(segmento_a_remover);
 	}
 	else{
-		printf("Que haces flaco no te das cuenta que no esta el segmento en memoria\n");
+		logError("[DROP/REQ]: El segmento solicitado no se encuentra en memoria");
 	}
+
+	logInfo("[DROP/REQ]: Le envío la solicitud al filesystem para que borre la tabla");
 
 	int largo_nombre_tabla = strlen(nombre_tabla);
 	int tamanio_buffer = sizeof(int) + largo_nombre_tabla;
@@ -305,8 +343,9 @@ t_prot_mensaje* dropReq (char* nombre_tabla) {
 
 void journalReq () {
 
-	//Encontrar paginas con el flag de modificado
+	logInfo("[JOURNAL/REQ]: Comienza a realizarse el journal");
 
+	//Encontrar paginas con el flag de modificado
 	//Si bien no necesito ninguna otra variable como en los casos anterior, al utilizar funciones de orden superior, la meto dentro del
 	//journaling para una mejor abstraccion
 	bool _esPaginaModificada(void* pagina){
@@ -320,9 +359,11 @@ void journalReq () {
 
 	if (cant_segmentos ==0)
 	{
-		log_info(loggerMem, "No existen segmentos para ejecutar el Journaling");
+		logInfo("[JOURNAL/REQ]: No existen segmentos para ejecutar el Journaling");
 	}
 	else {
+
+		logInfo("[JOURNAL/REQ]: Se realizara el chequeo de los %d segmentos existentes", cant_segmentos);
 		//itero segmentos
 		for (int i=0; i<cant_segmentos; i++)
 		{
@@ -341,7 +382,7 @@ void journalReq () {
 
 			if (cant_pag_modif == 0)
 			{
-				log_info(loggerMem, "No existen páginas modificadas para ejecutar el Journaling");
+				logInfo("[JOURNAL/REQ]: No existen páginas modificadas del segmento evaluado");
 			}
 			else
 			{
@@ -372,36 +413,30 @@ void journalReq () {
 						memcpy(buffer+sizeof(double)+sizeof(int)+tamanio_tabla+sizeof(uint16_t), &tamanio_value_enviar, sizeof(int));
 						memcpy(buffer+sizeof(double)+sizeof(int)+tamanio_tabla+sizeof(uint16_t)+sizeof(int), value_enviar, tamanio_value_enviar);
 
-						printf("la pagina del segmento %s posee: \n el timestamp %lf\n la key %d\n y el value %s\n", nombre_tabla, timestamp_enviar, key_enviar, value_enviar);
+						logInfo("[JOURNAL/REQ]: Envio pagina del segmento %s con timestamp %lf, la key %d, y el value %s", nombre_tabla, timestamp_enviar, key_enviar, value_enviar);
 
 						//enviar por c/u una petición de insert al FileSystem
 
 						prot_enviar_mensaje(socket_fs, JOURNALING_INSERT, tamanio_buffer, buffer);
 
-						log_info(loggerMem, "Se ha enviado la información actualizada al File System");
-
 						//posibles respuestas: INSERT_SUCCESSFUL, INSERT_FAILED_ON_MEMTABLE, INSERT_FAILURE
 
 						t_prot_mensaje* mensaje_fs = prot_recibir_mensaje(socket_fs);
 
+						logInfo("[JOURNAL/REQ]: recibimos la respuesta del filesystem");
 						switch(mensaje_fs->head){
 
 						case INSERT_SUCCESSFUL:{
-								printf("Los datos de la tabla fueron actualizados\n");
-								log_info(loggerMem, "Se han actualizado los datos de la tabla en el File System");
+								logInfo("[JOURNAL/REQ]: Se han actualizado los datos de la tabla en el filesystem");
 
 							}break;
 
 						case INSERT_FAILED_ON_MEMTABLE:{
-								printf("El insert falló en la memtable\n");
-								log_info(loggerMem, "No se actualizaron los datos de la tabla en el File System debido a un fallo en la Memtable");
-
+								logError("[JOURNAL/REQ]: hubo un error en la memtable del filesystem");
 							}break;
 
 						case INSERT_FAILURE:{
-								printf("Hubo un error al insertar la tabla\n");
-								log_info(loggerMem, "Hubo un error al insertar los tados de la tabla en el File System");
-
+								logInfo("[JOURNAL/REQ]: Hubo un error al insertar los datos en el fs");
 							}break;
 							default:{
 								break;
@@ -411,7 +446,6 @@ void journalReq () {
 						prot_destruir_mensaje(mensaje_fs);
 
 						free(buffer);
-						//free(pag_a_enviar);
 
 						usleep(info_memoria.retardo_fs);
 					}
@@ -423,16 +457,12 @@ void journalReq () {
 	}
 
 	int cant_seg_antes = list_size(lista_segmentos);
-	printf("Segmentos que habían: %d \n", cant_seg_antes);
+	logInfo("[JOURNAL/REQ]: segmentos que habia %d", cant_seg_antes);
 
 	//elimino segmentos y paginas actuales
 	eliminar_segmentos();
 
-	int cant_seg_ahora=list_size(lista_segmentos);
-	printf("Segmentos que quedaron: %d \n", cant_seg_ahora);
-
 	liberar_marcos();
-	log_info(loggerMem, "Se ha realizado el Journal. La Memoria quedó vacía.");
 }
 
 
