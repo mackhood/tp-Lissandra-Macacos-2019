@@ -8,10 +8,11 @@ void gossiping(){
 	{
 		usleep(info_memoria.tiempo_goss * 1000);
 
-		pthread_mutex_lock(&mutex_gossiping_memoria);
 
-		printf("---------- Comienza gossiping! ---------- \n");
 
+		printf("---------- Comienza gossiping! ---------- \n\n");
+
+		printf("Soy la memoria %d, de IP %s y puerto %d \n\n", info_memoria.numero_memoria, info_memoria.ip_memoria, info_memoria.puerto);
 
 		char** ip_seeds = info_memoria.ip_seeds;
 		char** puerto_seeds = info_memoria.puerto_seeds;
@@ -96,12 +97,13 @@ void gossiping(){
 					}
 
 					list_remove_and_destroy_by_condition(tabla_gossip, (void*)conteniaEnTabla, &free);
+					printf("Se eliminó la memoria de IP %s y puerto %d ya que fue desconectada\n", ip_a_conectar, puerto_a_conectar);
 					//Acá elimino la memoria de mi tabla gossip, falta saber cómo hacer que se enteren las demas que no se conectan directamente con ella.
 
 				}
 
 			}
-			else
+		else
 			{
 				/*	Si fue levantada -> intercambian su tabla gossip agregando nodos faltantes.
 					Una memoria conoce las que conoce la otra.
@@ -201,7 +203,7 @@ void gossiping(){
 			i++;
 		}
 
-		pthread_mutex_unlock(&mutex_gossiping_memoria);
+
 
 	}
 }
