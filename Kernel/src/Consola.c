@@ -50,6 +50,7 @@ void handleConsola(){
 
 	while (1)
 	{
+
 		linea = readline("\nIngrese el comando a ejecutar con los parámetros necesarios:\n ");
 		char* aux = malloc(strlen(linea) + 1);
 		strcpy(aux, linea);
