@@ -23,8 +23,6 @@ COMANDO comandos[] = {
 
 void handleConsola(){
 
-
-
 	puts("-_____________________________________________________");
 	puts("CONSOLA");
 	puts("------ Escriba un comando ------");
@@ -159,11 +157,11 @@ int ejecutar_linea (char * linea){
 
 void selectt(char** args)
 {
-	log_info(loggerMem, "[Consola]: Se ha recibido un pedido de select.");
+	logInfo("[Consola]: Se ha recibido un pedido de select.");
 	if(chequearParametros(args, 3) == 1)
 	{
 		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
-		log_error(loggerMem,"[Consola]: solicitud posee cantidad errónea de parámetros");
+		logError("[Consola]: Se ha recibido un pedido de select.");
 	}
 	else
 	{
@@ -192,25 +190,25 @@ void selectt(char** args)
 
 void insert(char** args)
 {
-	log_info(loggerMem, "[Consola]: Se ha recibido un pedido de insert.");
+	logInfo("[Consola]: Se ha recibido un pedido de Insert.");
 	int chequeo = 0;
 	chequeo = chequearParametros(args, 4);
 	if(chequeo == 1)
 	{
 		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
-		log_error(loggerMem, "[Consola]: solicitud posee cantidad errónea de parámetros");
+		logError("[Consola]: solicitud posee cantidad errónea de parámetros");
 	}
 	else
 	{
 		if(!itsANumber(args[2]))
 		{
 			puts("La key que ingresó posee caracteres inválidos.");
-			log_error(loggerMem, "[Consola]: la key a Insertar es inválida.");
+			logError("[Consola]: la key a Insertar es inválida.");
 		}
 		else if(strlen(args[2]) > 5)
 		{
 			puts("La key que ingresó es demasiado grande.");
-			log_error(loggerMem, "[Consola]: la key a Insertar es demasiado grande.");
+			logError("[Consola]: la key a Insertar es demasiado grande.");
 		}
 		else
 		{
@@ -221,7 +219,7 @@ void insert(char** args)
 			if(atoi(claveaux) > 65536)
 			{
 				puts("La key es demasiado grande, ingrese una más pequeña.");
-				log_error(loggerMem, "[Consola]: la key a Insertar es inválida.");
+				logError("[Consola]: la key a Insertar es inválida.");
 				free(tabla);
 				free(claveaux);
 				return;
@@ -230,7 +228,7 @@ void insert(char** args)
 			if(string_contains(args[3], ";"))
 			{
 				printf("Por favor, ingrese un value que no tenga ';' dentro.");
-				log_error(loggerMem,"[Consola]: se ingresó un value inválido");
+				logError("[Consola]: se ingresó un value inválido");
 			}
 			else
 			{
@@ -247,33 +245,33 @@ void insert(char** args)
 
 void create(char** args)
 {
-	log_info(loggerMem, "[Consola]: Se ha recibido un pedido de create.");
+	logInfo("[Consola]: Se ha recibido un pedido de create.");
 	if(chequearParametros(args, 5) == 1)
 	{
 		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
-		log_error(loggerMem, "[Consola]: solicitud posee cantidad errónea de parámetros");
+		logError("[Consola]: solicitud posee cantidad errónea de parámetros");
 	}
 	else
 	{
 		if(criterioInvalido(args[2]))
 		{
 			puts("El criterio es inválido.");
-			log_error(loggerMem, "[Consola]: el criterio de CREATE es inválido.");
+			logError("[Consola]: el criterio de CREATE es inválido.");
 		}
 		else if(!itsANumber(args[3]))
 		{
 			puts("La cantidad de particiones es inválida.");
-			log_error(loggerMem, "[Consola]: la cantidad de particiones para CREATE es inválida.");
+			logError("[Consola]: la cantidad de particiones para CREATE es inválida.");
 		}
 		else if(atoi(args[3]) < 1)
 		{
 			puts("La cantidad de particiones es inválida.");
-			log_error(loggerMem, "[Consola]: la cantidad de particiones para CREATE es inválida.");
+			logError("[Consola]: la cantidad de particiones para CREATE es inválida.");
 		}
 		else if(!itsANumber(args[4]))
 		{
 			puts("El tiempo entre cada compactación es inválido.");
-			log_error(loggerMem, "[Consola]: el tiempo entre cada compactación para CREATE es inválido.");
+			logError("[Consola]: el tiempo entre cada compactación para CREATE es inválido.");
 		}
 		else
 		{
@@ -317,11 +315,11 @@ void create(char** args)
 
 void drop(char** args)
 {
-	log_info(loggerMem, "[Consola]: Se ha solicitado realizar un DROP");
+	logInfo("[Consola]: Se ha solicitado realizar un DROP");
 	if(chequearParametros(args, 2) == 1)
 	{
 		printf("Por favor, especifique la cantidad de parámetros solicitada\n");
-		log_error(loggerMem, "[Consola]: solicitud posee cantidad errónea de parámetros");
+		logError("[Consola]: solicitud posee cantidad errónea de parámetros");
 	}
 	else
 	{
@@ -360,17 +358,16 @@ void drop(char** args)
 
 void journal(char** args)
 {
-	log_info(loggerMem, "[Consola]: Se ha recibido un pedido de describe.");
+	logInfo("[Consola]: Se ha recibido un pedido de describe.");
 	int chequeo = 0;
 	chequeo = chequearParametros(args, 1);
 	if(chequeo == 1)
 	{
 		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
-		log_error(loggerMem, "[Consola]: solicitud posee cantidad errónea de parámetros");
+		logError("[Consola]: solicitud posee cantidad errónea de parámetros");
 	}
 	else
 	{
-		printf("Se procedera a realizar el journal\n");
 		pthread_mutex_lock(&mutex_estructuras_memoria);
 		journalReq();
 		pthread_mutex_unlock(&mutex_estructuras_memoria);
@@ -382,7 +379,7 @@ void journal(char** args)
 void describe(char** args)
 {
 
-	log_info(loggerMem, "[Consola]: Se ha recibido un pedido de describe.");
+	logInfo("[Consola]: Se ha recibido un pedido de describe.");
 	int chequeo = 0;
 	if(args[1] == NULL )
 		chequeo = chequearParametros(args, 1);
@@ -391,7 +388,7 @@ void describe(char** args)
 	if(chequeo == 1)
 	{
 		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
-		log_error(loggerMem, "[Consola]: solicitud posee cantidad errónea de parámetros");
+		logError("[Consola]: solicitud posee cantidad errónea de parámetros");
 	}
 	else
 	{
@@ -409,6 +406,7 @@ void describe(char** args)
 			prot_enviar_mensaje(socket_fs, DESCRIBE, tamanio_buffer, buffer);
 			t_prot_mensaje* data_del_fs = prot_recibir_mensaje(socket_fs);
 
+			logInfo("[Consola]: Se realizara un Point Describe de la tabla %s", nombre_tabla);
 			if(data_del_fs->head == POINT_DESCRIBE)
 			{
 				int largo_descripcion;
@@ -427,12 +425,19 @@ void describe(char** args)
 				printf("Cantidad de particiones:%s\n", valores_separados[2]);
 				printf("Tiempo entre compactaciones:%s\n", valores_separados[3]);
 
+				logInfo("[Consola]: se recibio la tabla %s, con consistencia %s, con cant de particiones %s y tiempo de %s",
+						valores_separados[0],
+						valores_separados[1],
+						valores_separados[2],
+						valores_separados[3]);
+
 				free(descripcion_tabla);
 				free(info_tabla);
 				liberadorDeArrays(valores_separados);
 			}
 			else if(data_del_fs->head == FAILED_DESCRIBE){
 				printf("La tabla NO existe para realizar el describe\n");
+				logError("[Consola]: La tabla no existe en el FS");
 			}
 
 			free(buffer);
@@ -444,6 +449,7 @@ void describe(char** args)
 			prot_enviar_mensaje(socket_fs, DESCRIBE, 0, NULL);
 			t_prot_mensaje* data_del_fs = prot_recibir_mensaje(socket_fs);
 
+			logInfo("[Consola]: Se realizar un Describe Global");
 			if(data_del_fs->head == FULL_DESCRIBE)
 			{
 				int largo_descripcion;
@@ -465,6 +471,12 @@ void describe(char** args)
 					printf("Cantidad de particiones:%s\n", valores_separados[2]);
 					printf("Tiempo entre compactaciones:%s\n", valores_separados[3]);
 
+					logInfo("[Consola]: se recibio la tabla %s, con consistencia %s, con cant de particiones %s y tiempo de %s",
+							valores_separados[0],
+							valores_separados[1],
+							valores_separados[2],
+							valores_separados[3]);
+
 					liberadorDeArrays(valores_separados);
 					i++;
 				}
@@ -475,6 +487,7 @@ void describe(char** args)
 			else if(data_del_fs->head == FAILED_DESCRIBE)
 			{
 				printf("El fs NO tiene ninguna tabla\n");
+				logInfo("[Consola]: El fs NO contiene ninguna tabla");
 			}
 
 			prot_destruir_mensaje(data_del_fs);

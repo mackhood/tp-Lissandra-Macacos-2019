@@ -28,6 +28,9 @@
 #include "../../SharedLibrary/auxiliaryFunctions.h"
 #include "config_memoria.h"
 
+#define MEMORIA_LOG_PATH "memoria.log"
+#define PROGRAM_NAME "MEMORIA"
+
 typedef struct{
 	int nro_pag;
 	uint16_t offset;
@@ -87,7 +90,6 @@ void setearValores();
 void initThread();
 void levantarEstrMemorias();
 void levantarConexion();
-void levantarLogs();
 void gossiping();
 
 //funciones para la administracion de memoria
