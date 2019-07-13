@@ -45,7 +45,7 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 			t_prot_mensaje* mensaje_con_tabla = prot_recibir_mensaje(socket_fs);
 			usleep(info_memoria.retardo_fs*1000);
 
-			if(mensaje_con_tabla->head == SELECT_FAILURE){
+			if(mensaje_con_tabla->head == VALUE_FAILURE){
 				logInfo("[SELECT/REQ]: el filesystem no posee dicha key");
 				return NULL;
 			}

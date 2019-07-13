@@ -25,7 +25,7 @@ void aceptarClientes(){
 					printf("Se ha conectado el kernel\n");
 					pthread_t RecibirMensajesKernel;
 					pthread_create(&RecibirMensajesKernel,NULL, (void*)escucharYatenderKernel, kernel);
-					pthread_detach(RecibirMensajesKernel);
+					pthread_join(RecibirMensajesKernel, NULL);
 				}
 				else if(cliente == MEMORIA){
 					int* memoria = (int*) malloc (sizeof(int));
@@ -33,7 +33,7 @@ void aceptarClientes(){
 					printf("Se ha conectado una memoria\n");
 					pthread_t RecibirMensajesMemoria;
 					pthread_create(&RecibirMensajesMemoria, NULL, (void*)escucharMemoria, memoria);
-					pthread_detach(RecibirMensajesMemoria);
+					pthread_join(RecibirMensajesMemoria, NULL);
 				}
 			}
 			else
