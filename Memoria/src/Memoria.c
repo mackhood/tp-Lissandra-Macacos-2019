@@ -1,10 +1,10 @@
 #include "Memoria.h"
 
-int main() {
+int main(char* config_path) {
 
 	//logueo todos los datos de configuracion
 	initMutexlog(MEMORIA_LOG_PATH,PROGRAM_NAME,0,LOG_LEVEL_TRACE);
-	levantar_config();
+	levantar_config(config_path);
 	levantarConexion();
 	levantarEstrMemorias();
 	initThread();

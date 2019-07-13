@@ -1,6 +1,6 @@
 #include "config_memoria.h"
 
-void levantar_config(){
+void levantar_config(char* PATH_CONFIG){
 
 	conf_mapeada = config_create(PATH_CONFIG);
 
