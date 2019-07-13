@@ -27,12 +27,13 @@ const char* path_configs ="/home/utnso/workspace/tp-2019-1c-Macacos/Kernel/kerne
 
 #define ACTIVE_CONSOLE 1
 void crearPrimerMemoria();
-memoria *crearMemoria(int,char*);
 void initConfiguracion();
 void initThreadAPI ();
 void setearValores(t_config * archivoConfig);
 void interPlanificador();
 void handleEstadisticas();
+memoria* crearMemoria(char* ip,int puerto);
+void reestablecerEstadisticasMemoria(memoria * unaMemoria);
 
 
 pthread_t threadConexionMemoria;
