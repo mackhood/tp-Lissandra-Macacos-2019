@@ -79,6 +79,7 @@ pthread_t threadConsola;
 pthread_t threadAceptacionAhre;
 pthread_t threadGossiping;
 pthread_t threadNotify;
+pthread_t threadJournalInTime;
 
 //logs
 t_log* loggerMem;

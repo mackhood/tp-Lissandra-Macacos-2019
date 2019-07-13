@@ -87,11 +87,13 @@ void initThread(){
 	pthread_create(&threadAceptacionAhre, NULL, (void*)aceptarClientes, NULL);
 	pthread_create(&threadGossiping, NULL, (void*)gossiping, NULL);
 	pthread_create(&threadNotify, NULL, (void*)notify, NULL);
+	pthread_create(&threadJournalInTime, NULL, (void*)journalInTime, NULL);
 
 	pthread_detach(threadAceptacionAhre);
 	pthread_detach(threadConsola);
 	pthread_join(threadGossiping, NULL);
 	pthread_join(threadNotify, NULL);
+	pthread_join(threadJournalInTime, NULL);
 }
 
 void setearValores(){
