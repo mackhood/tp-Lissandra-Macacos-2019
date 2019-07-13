@@ -260,8 +260,8 @@ void escucharMemoria(int* socket_memoria)
 						prot_enviar_mensaje(socket, FULL_DESCRIBE, tamanioBuffer, messageBuffer);
 						logInfo( "[Lissandra]: Se ha enviado la metadata de todas las tablas a Memoria.");
 						free(messageBuffer);
+						free(buffer);
 					}
-					free(buffer);
 				}
 				break;
 			}

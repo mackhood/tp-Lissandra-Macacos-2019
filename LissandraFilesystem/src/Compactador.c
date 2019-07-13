@@ -182,11 +182,14 @@ void crearTemporal(char* tabla)
 	}
 	t_TablaEnEjecucion* tablaEjecutada = list_find(tablasEnEjecucion, (void*) estaTabla);
 	t_list* keysTableSpecific = list_filter(memtable, (void*)perteneceATabla);
-	size_t sizeOfContainer = list_size(keysTableSpecific)*(tamanio_value + 24 + 15 + 4);
+	size_t sizeOfContainer = list_size(keysTableSpecific)*(tamanio_value + 24 + 17 + 5 + 3);
 	char* container = malloc(sizeOfContainer + 1);
 	t_Memtablekeys* auxiliaryKey;
 	int a = 0;
 	FILE* tempPointer;
+	bool firstRun = true;
+	int usedSize = 0;
+	pthread_mutex_lock(&tablaEjecutada->renombreEnCurso);
 	char* auxTempDir = string_itoa(tablaEjecutada->cantTemps);
 	char* tempDirection = malloc(strlen(tabla) + strlen(punto_montaje) + 8 + strlen(auxTempDir) + 5);
 	strcpy(tempDirection, punto_montaje);
@@ -195,13 +198,10 @@ void crearTemporal(char* tabla)
 	strcat(tempDirection, "/");
 	strcat(tempDirection, auxTempDir);
 	strcat(tempDirection, ".tmp");
-	bool firstRun = true;
 	free(auxTempDir);
-	int usedSize = 0;
-	pthread_mutex_lock(&tablaEjecutada->renombreEnCurso);
+	logInfo("[Compactador]: se iniciar el proceso de crear un .tmp nuevo a la %s", tabla);
 	while(NULL != list_get(keysTableSpecific, a))
 	{
-		logInfo("[Compactador]: se iniciar el proceso de crear un .tmp nuevo a la %s", tabla);
 		if(firstRun)
 		{
 			tempPointer = fopen(tempDirection, "w+");

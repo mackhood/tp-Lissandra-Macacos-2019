@@ -30,7 +30,7 @@ t_list* mostrarTodosLosMetadatas(bool solicitadoPorMemoria);
 int contarTablasExistentes();
 t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida);
 char* escribirBloquesDeFs(char* todasLasClavesAImpactar, int tamanioUsado, char* tabla);
-char* obtenerBloqueLibre();
+char* obtenerBloqueLibre(int ultimoBloque);
 void escribirBloque(int* usedBlocks, int* seizedSize, int usedSize, char* block, char* clavesAImpactar);
 void limpiadorDeBloques(char* direccion, char* tablename);
 void limpiarBloque(char* direccionPart);

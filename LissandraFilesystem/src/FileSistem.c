@@ -295,7 +295,7 @@ int crearParticiones(char* direccionFinal, int particiones)
 				strcat(size, "\n");
 				fwrite(size, strlen(size), 1, particion);
 				char* blocks = malloc(18);
-				char* auxBlock = obtenerBloqueLibre();
+				char* auxBlock = obtenerBloqueLibre(0);
 				int blocksUsed = 0;
 				int seizedSize = 0;
 				escribirBloque(&blocksUsed, &seizedSize, 1, auxBlock, " ");
@@ -819,9 +819,10 @@ char* escribirBloquesDeFs(char* todasLasClavesAImpactar, int tamanioUsado, char*
 	bool firstBlock = true;
 	int tamanioOcupado = 0;
 	int bloquesCorridos = 0;
+	int ultimoBloque = 0;
 	while(tamanioOcupado != tamanioUsado)
 	{
-		char* bloque = obtenerBloqueLibre();
+		char* bloque = obtenerBloqueLibre(ultimoBloque);
 		if(firstBlock)
 		{
 			escribirBloque(&bloquesCorridos, &tamanioOcupado, tamanioUsado, bloque, todasLasClavesAImpactar);
@@ -834,6 +835,7 @@ char* escribirBloquesDeFs(char* todasLasClavesAImpactar, int tamanioUsado, char*
 			strcat(bloquesAsignados, ",");
 			strcat(bloquesAsignados, bloque);
 		}
+		ultimoBloque = atoi(bloque);
 		free(bloque);
 	}
 	strcat(bloquesAsignados, "]");
@@ -841,9 +843,9 @@ char* escribirBloquesDeFs(char* todasLasClavesAImpactar, int tamanioUsado, char*
 	return bloquesAsignados;
 }
 
-char* obtenerBloqueLibre()
+char* obtenerBloqueLibre(int ultimoBloque)
 {
-	int a = 0;
+	int a = ultimoBloque;
 	char* bloqueAEnviar = "";
 	while(!strcmp(bloqueAEnviar, ""))
 	{

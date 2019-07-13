@@ -556,7 +556,8 @@ void details(char** args)
 		puts("10. - EXIT");
 
 		printf("\033[1;31m");
-		puts("Detalle amistoso: Para los insert usar pipes o '|' no usar pipes en ninguna otra función ni nombre por consola, gracias.");
+		puts("\nAdvertencia: los pipes solo deben ser usados para separar los parámetros del Insert, en otras instrucciones"
+				" no son considerados.");
 	}
 }
 
@@ -585,6 +586,9 @@ void show_menu(char** args)
 		puts("8. - MODIFYDUMP <NewDumpTime>");
 		puts("9. - MODIFYDELAY <NewDelayTime>");
 		puts("10. - EXIT");
+		printf("\033[1;31m");
+		puts("\nAdvertencia: los pipes solo deben ser usados para separar los parámetros del Insert, en otras instrucciones"
+				" no son considerados.");
 	}
 }
 
