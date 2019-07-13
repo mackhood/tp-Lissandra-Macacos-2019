@@ -92,7 +92,7 @@ t_keysetter* construirKeysetter(char* timestamp, char* key, char* value)
 	t_keysetter* theReturn = (t_keysetter *)malloc(sizeof(t_keysetter));
 	theReturn->timestamp = (double)atoll(timestamp);
 	theReturn->key = atoi(key);
-	theReturn->clave = strdup(value);
+	theReturn->clave = string_duplicate(value);
 	return theReturn;
 }
 

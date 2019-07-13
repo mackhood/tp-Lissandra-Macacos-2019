@@ -9,7 +9,7 @@ int main(void)
 	strcat(lissandraFL_log_ruta, ".log");
 	logger = crearLogger(lissandraFL_log_ruta, "LissandraFileSystem");
 	logInfo("[Main]: Atra estherni ono thelduin, ai fricai.");
-	lissandraFL_config_ruta = strdup("/home/utnso/workspace/tp-2019-1c-Macacos/LissandraFilesystem/src/Lissandra.cfg");
+	lissandraFL_config_ruta = string_duplicate("/home/utnso/workspace/tp-2019-1c-Macacos/LissandraFilesystem/src/Lissandra.cfg");
 	leerConfig(lissandraFL_config_ruta,logger);
 	hilosLFL = list_create();
 	iniciar();

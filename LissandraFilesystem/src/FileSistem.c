@@ -138,7 +138,7 @@ void levantarBitmap(char* direccion)
 void setearValoresFileSistem(t_config * archivoConfig)
 {
 	fileSystemFull = false;
-	punto_montaje = strdup(config_get_string_value(archivoConfig, "PUNTO_MONTAJE"));
+	punto_montaje = string_duplicate(config_get_string_value(archivoConfig, "PUNTO_MONTAJE"));
 	char* direccionMetadataFileSystem = malloc(strlen(punto_montaje) + 23);
 	strcpy(direccionMetadataFileSystem, punto_montaje);
 	strcat(direccionMetadataFileSystem, "Metadata/Metadata.cfg");
@@ -511,7 +511,7 @@ char* mostrarMetadataEspecificada(char* tabla, bool solicitadoPorMemoria)
 		strcat(direccionDeTableMetadata, tabla);
 		strcat(direccionDeTableMetadata, "/Metadata.cfg");
 		t_config * temporalArchivoConfig = config_create(direccionDeTableMetadata);
-		char* consistencia = strdup(config_get_string_value(temporalArchivoConfig, "CONSISTENCIA"));
+		char* consistencia = string_duplicate(config_get_string_value(temporalArchivoConfig, "CONSISTENCIA"));
 		int	cantParticiones = config_get_int_value(temporalArchivoConfig, "PARTICIONES");
 		int tiempoEntreCompactaciones = config_get_int_value(temporalArchivoConfig, "TIEMPOENTRECOMPACTACIONES");
 		if(solicitadoPorMemoria)
@@ -995,7 +995,7 @@ char* leerBloque(char* bloque)
 char** obtenerBloques(char* direccion)
 {
 	t_config* archivo = config_create(direccion);
-	char* bloquesAsignados = strdup(config_get_string_value(archivo, "BLOCKS"));
+	char* bloquesAsignados = string_duplicate(config_get_string_value(archivo, "BLOCKS"));
 	char** bloques = string_get_string_as_array(bloquesAsignados);
 	free(bloquesAsignados);
 	config_destroy(archivo);
@@ -1085,7 +1085,7 @@ void fileSystemNotifier()
 			if(event->mask & IN_ISDIR){}
 			else
 			{
-				char* trueblockname = strdup(event->name);
+				char* trueblockname = string_duplicate(event->name);
 				char* blockname = strtok(event->name, ".");
 				int a = atoi(blockname);
 				if(bitarray_test_bit(bitarray, a))

@@ -23,7 +23,7 @@ void setearValoresLissandra(t_config * archivoConfig)
 {
 	retardo = config_get_int_value(archivoConfig, "RETARDO");
 	server_puerto = config_get_int_value(archivoConfig, "PUERTO_ESCUCHA");
-	server_ip = strdup(config_get_string_value(archivoConfig,"IP_FILE_SYSTEM"));
+	server_ip = string_duplicate(config_get_string_value(archivoConfig,"IP_FILE_SYSTEM"));
 	tamanio_value = config_get_int_value(archivoConfig, "TAMANIO_VALUE");
 }
 
@@ -107,7 +107,7 @@ void escucharMemoria(int* socket_memoria)
 				 if(helpinghand != NULL)
 				 {
 					double tiempo_pag = helpinghand->timestamp;
-					char* value = strdup(helpinghand->clave);
+					char* value = string_duplicate(helpinghand->clave);
 					int tamanio_value = strlen(value);
 					size_t tamanio_buffer = (sizeof(double)+tamanio_value+sizeof(int));
 					void* buffer = malloc(tamanio_buffer);
@@ -337,9 +337,9 @@ int insertKeysetter(char* tablaRecibida, uint16_t keyRecibida, char* valueRecibi
 	t_Memtablekeys* auxiliar = (t_Memtablekeys *)malloc(sizeof(t_Memtablekeys));
 	t_keysetter* auxiliarprima = (t_keysetter *)malloc(sizeof(t_keysetter));
 	auxiliarprima->key = keyRecibida;
-	auxiliarprima->clave = strdup(valueRecibido);
+	auxiliarprima->clave = string_duplicate(valueRecibido);
 	auxiliarprima->timestamp = timestampRecibido;
-	auxiliar->tabla = strdup(tablaRecibida);
+	auxiliar->tabla = string_duplicate(tablaRecibida);
 	auxiliar->data = auxiliarprima;
 
 	printf("\033[1;34m");
