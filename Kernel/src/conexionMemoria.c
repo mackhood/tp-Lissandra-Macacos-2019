@@ -89,7 +89,7 @@ void handler_conexion_memoria(t_kernel* tKernel) {
 
 			//PRIMERO DEBO PERDIR LA CANTIDAD DE MEMORIASCONECTADAS AL POOL DE MEMORIA
 
-			//	t_prot_mensaje* mensaje_recibido = prot_recibir_mensaje(conexion);
+			//			t_prot_mensaje* mensaje_recibido = prot_recibir_mensaje(conexion);
 
 
 			int tamanio ;
@@ -127,55 +127,55 @@ void handler_conexion_memoria(t_kernel* tKernel) {
 			}
 
 			close(conexion);
+			int conexion2=conectar_a_memoria_flexible(configuracion->ip,configuracion->puerto, KERNEL);
+			//
+			//
+			//
+			prot_enviar_mensaje(conexion2,GOSSIPING,0,NULL);
+
+			t_prot_mensaje* mensajeAltoque = prot_recibir_mensaje(conexion2);
+
+			char* tablaGossip;
+			int large ;
+			memcpy(&large,mensajeAltoque->payload,sizeof(int));
+			tablaGossip = malloc(large + 1);
+			memcpy(tablaGossip,mensajeAltoque->payload+sizeof(int),large);
+			tablaGossip[large]=	'\0';
+			close(conexion2);
+
+			char ** contenidoTabla = string_split(tablaGossip, ";");
+			int a;
+			for (a=0; contenidoTabla[a] != NULL ; a++ ){
 
 
-//
-//
-//
-//			prot_enviar_mensaje(conexion,GOSSIPING,0,NULL);
-//
-//			t_prot_mensaje* mensajeAltoque = prot_recibir_mensaje(conexion);
-//
-//			char * tablaGossip ;
-//			int large ;
-//			memcpy(&tamanio,mensajeAltoque->payload,sizeof(int));
-//			tablaGossip = malloc(large + 1);
-//			memcpy(tablaGossip,mensaje_recibido->payload+sizeof(int),large);
-//			tablaGossip[large]=	'\0';
-//			close(conexion);
-//
-//			char ** contenidoTabla = string_split(tablaGossip, ";");
-//			int a;
-//			for (a=0; contenidoTabla[a] != NULL ; a++ ){
-//
-//
-//				char ** infoMemoria = string_split(contenidoTabla[a],",");
-//				char * ip = string_duplicate(infoMemoria[0]);
-//				int puerto = atoi(string_duplicate(infoMemoria[1]));
-//
-//				bool  estaEnLista2(memoria* memoriaAux) {
-//				return  string_equals_ignore_case(ip, memoriaAux->ip) &&  (memoriaAux->puerto == puerto) ;
-//				}
-//
-//				if(!list_any_satisfy(tKernel->memoriasCola->elements,(void*)estaEnLista2)){
-//
-//				memoria * laNuevisima = crearMemoria(ip,puerto);
-//				pthread_mutex_lock(&memoriasSinCriterio);
-//				list_add(tKernel->memoriasSinCriterio,laNuevisima);
-//				pthread_mutex_unlock(&memoriasSinCriterio);
-//
-//				pthread_mutex_lock(&memoriasCola);
-//				queue_push(tKernel->memoriasCola,laNuevisima);
-//				pthread_mutex_unlock(&memoriasCola);
-//
-//
-//
-//
-//				}
-//
-//			}
+				char ** infoMemoria = string_split(contenidoTabla[a],",");
+				char * ip = string_duplicate(infoMemoria[0]);
+				int puerto = atoi(string_duplicate(infoMemoria[1]));
+
+				bool  estaEnLista2(memoria* memoriaAux) {
+					return  string_equals_ignore_case(ip, memoriaAux->ip) &&  (memoriaAux->puerto == puerto) ;
+				}
+
+				if(!list_any_satisfy(tKernel->memoriasCola->elements,(void*)estaEnLista2)){
+
+					memoria* laNuevisima = (memoria*)crearMemoria(ip,puerto);
+					pthread_mutex_lock(&memoriasSinCriterio);
+					list_add(tKernel->memoriasSinCriterio,laNuevisima);
+					pthread_mutex_unlock(&memoriasSinCriterio);
+
+					pthread_mutex_lock(&memoriasCola);
+					queue_push(tKernel->memoriasCola,laNuevisima);
+					pthread_mutex_unlock(&memoriasCola);
+					printf("La memoria de puerto %i e ip %s fue asignada el numero de memoria %i\n",
+							laNuevisima->puerto,
+							laNuevisima->ip,
+							laNuevisima->numeroMemoria);
 
 
+
+				}
+
+			}
 
 
 			usleep(tKernel->config->metadata_refresh*10000);
