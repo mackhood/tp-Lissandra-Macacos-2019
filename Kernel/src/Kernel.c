@@ -257,7 +257,7 @@ void crearPrimerMemoria(){
 
 	memoria* memoriaNueva = malloc(sizeof(memoria));
 
-	memoriaNueva = (memoria*)crearMemoria(tKernel->config->puerto_memoria,tKernel->config->ip_memoria);
+	memoriaNueva = (memoria*)crearMemoria(tKernel->config->ip_memoria, tKernel->config->puerto_memoria);
 
 
 
@@ -285,7 +285,7 @@ int getIdMemoria(){
 }
 
 
-memoria* crearMemoria(int puerto,char* ip){
+memoria* crearMemoria(char* ip,int puerto){
 
 	memoria* nuevaMemoria = malloc(sizeof(memoria));
 	nuevaMemoria->puerto = puerto;
