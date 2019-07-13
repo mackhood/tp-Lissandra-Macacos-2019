@@ -178,7 +178,12 @@ void selectt(char** args)
 			uint16_t key = atoi(claveaux);
 			char* value_buscado = selectReq(tabla, key);
 
-			printf("el value buscado es %s\n", value_buscado);
+			if(value_buscado){
+				printf("el value buscado es %s\n", value_buscado);
+			}
+			else{
+				printf("el filesystem no posee la key para dicha tabla");
+			}
 
 			usleep(info_memoria.retardo_mp*1000);
 
@@ -234,7 +239,14 @@ void insert(char** args)
 			{
 				char* value = malloc(strlen(args[3]) + 1);
 				strcpy(value, args[3]);
-				insertReq(tabla, key, value);
+				bool se_hizo_insert = insertReq(tabla, key, value);
+				if(se_hizo_insert){
+					printf("El insert se ha realizado correctamente");
+				}
+				else{
+					printf("El tamanio del value es muy grande");
+				}
+
 				free(tabla);
 				free(value);
 			}

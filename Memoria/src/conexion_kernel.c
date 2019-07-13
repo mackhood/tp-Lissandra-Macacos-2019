@@ -22,14 +22,22 @@ void escucharYatenderKernel(int* kernel){
 
 			char* value_solicitado = selectReq(nombre_tabla, key);
 
-			int largo_value = strlen(value_solicitado);
-			int tamanio_buffer = sizeof(int) + largo_value;
-			void* buffer = malloc(tamanio_buffer);
+			//Si es null significa que el filesystem no tiene la key para dicha tabla (esta explicado dentro de la request)
+			if(value_solicitado){
+				int largo_value = strlen(value_solicitado);
+				int tamanio_buffer = sizeof(int) + largo_value;
+				void* buffer = malloc(tamanio_buffer);
 
-			memcpy(buffer,&largo_value,sizeof(int));
-			memcpy(buffer+sizeof(int),value_solicitado,largo_value);
+				memcpy(buffer,&largo_value,sizeof(int));
+				memcpy(buffer+sizeof(int),value_solicitado,largo_value);
 
-			prot_enviar_mensaje(socket_k, KEY_SOLICITADA_SELECT, tamanio_buffer, buffer);
+				prot_enviar_mensaje(socket_k, KEY_SOLICITADA_SELECT, tamanio_buffer, buffer);
+				free(value_solicitado);
+				free(buffer);
+			}
+			else{
+				prot_enviar_mensaje(socket_k, VALUE_FAILURE, 0, NULL);
+			}
 
 			usleep(info_memoria.retardo_mp*1000);
 
@@ -55,8 +63,13 @@ void escucharYatenderKernel(int* kernel){
 			memcpy(value, req_recibida->payload+sizeof(int)+tamanio_nombre_tabla+sizeof(uint16_t)+sizeof(int), largo_value);
 			value[largo_value] = '\0';
 
-			insertReq(nombre_tabla, key, value);
-			prot_enviar_mensaje(socket_k, INSERT_REALIZADO, 0, NULL);
+			bool se_hizo_insert = insertReq(nombre_tabla, key, value);
+			if(se_hizo_insert){
+				prot_enviar_mensaje(socket_k, INSERT_REALIZADO, 0, NULL);
+			}
+			else{
+				prot_enviar_mensaje(socket_k, INSERT_FAILURE, 0, NULL);
+			}
 
 			usleep(info_memoria.retardo_mp*1000);
 
@@ -279,7 +292,19 @@ void escucharYatenderKernel(int* kernel){
 			memcpy(buffer_kernel+sizeof(int), buffer, tamanio_buffer);
 			prot_enviar_mensaje(socket_k, GOSSIPING, tamanio_buffer_kernel, buffer_kernel);
 
+			usleep(info_memoria.retardo_mp*1000);
+
 		}break;
+
+		case JOURNAL_REQ:
+		{
+			pthread_mutex_lock(&mutex_estructuras_memoria);
+			journalReq();
+			pthread_mutex_unlock(&mutex_estructuras_memoria);
+
+			usleep(info_memoria.retardo_mp*1000);
+
+		} break;
 
 		default:
 		{
