@@ -1,10 +1,9 @@
 #include "conexion_memorias.h"
 
-void escucharMemoria(int* memoria){
+void escucharMemoria(int memoria){
 
 	//Comienzo a recibir peticiones
-	int s_memoria = *memoria;
-	free(memoria);
+	int s_memoria = memoria;
 
 	t_prot_mensaje* mensaje_recibido = prot_recibir_mensaje(s_memoria);
 

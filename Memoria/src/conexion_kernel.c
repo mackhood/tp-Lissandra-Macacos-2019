@@ -1,10 +1,9 @@
 #include "conexion_kernel.h"
 
-void escucharYatenderKernel(int* kernel){
+void escucharYatenderKernel(int kernel){
 
 	//Comienzo a recibir peticiones
-	int socket_k = *kernel;
-	free(kernel);
+	int socket_k = kernel;
 	t_prot_mensaje* req_recibida = prot_recibir_mensaje(socket_k);
 
 	switch(req_recibida->head){

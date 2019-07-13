@@ -21,11 +21,11 @@ void aceptarClientes(){
 				memcpy(&cliente, mensaje_inicial_conexion->payload, sizeof(t_cliente));
 				if(cliente == KERNEL){
 					printf("Se ha conectado el kernel\n");
-					escucharYatenderKernel(&socket_cliente);
+					escucharYatenderKernel(socket_cliente);
 				}
 				else if(cliente == MEMORIA){
 					printf("Se ha conectado una memoria\n");
-					escucharMemoria(&socket_cliente);
+					escucharMemoria(socket_cliente);
 				}
 			}
 			else
