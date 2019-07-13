@@ -10,7 +10,8 @@
 
 #include "Kernel.h"
 
-
+#define EVENT_SIZE (sizeof(struct inotify_event))
+#define BUF_LEN (1024* (EVENT_SIZE + 16))
 
 
 
@@ -98,10 +99,11 @@ void initThread(){
 	pthread_create(&threadConsola, NULL, (void*)handleConsola,NULL);
 	pthread_create(&threadInterPlanificador,NULL,(void*)interPlanificador,NULL);
 	pthread_create(&threadEstadisticas, NULL, (void*)handleEstadisticas,NULL);
-
+	pthread_create(&threadNotifier, NULL, (void*)notifier, NULL)
 	pthread_create(&threadPlanificador, NULL, (void*)pasarArunnign(),NULL);
-	pthread_detach(threadPlanificador );
 
+	pthread_detach(threadPlanificador);
+	pthread_detach(threadNotifier);
 	pthread_detach(threadConsola );
 	pthread_detach(threadInterPlanificador);
 	pthread_detach(threadConexionMemoria);
@@ -345,6 +347,60 @@ void reestablecerEstadisticasMemoria(memoria * unaMemoria) {
 
 
 }
+
+void notifier()
+{
+	int length;
+	int i = 0;
+	char buffer[BUF_LEN];
+
+	int fileToWatch = inotify_init();
+	if( fileToWatch < 0)
+	{
+		logError("[Kernel]: Error al iniciar el notifier.");
+		return;
+	}
+
+	int watchDescriptor = inotify_add_watch(fileToWatch, path_configs, IN_CREATE | IN_MODIFY | IN_DELETE | IN_DELETE_SELF);
+	length = read(fileToWatch, buffer, BUF_LEN);
+
+	if(length < 0)
+	{
+		logError("[Kernel]: Error al tratar de acceder al archivo a vigilar.");
+		return;
+	}
+
+	while(i < length)
+	{
+		struct inotify_event* event = (struct inotify_event*) &buffer[i];
+		if(event->mask & IN_MODIFY)
+		{
+			sleep(2);
+			logInfo("[Lissandra]: se ha modificado el archivo de configuración, actualizando valores.");
+			t_config* ConfigMain = config_create(path_configs);
+			tKernel->config->quantum = config_get_int_value(ConfigMain,"QUANTUM");
+			tKernel->config->metadata_refresh = config_get_int_value(ConfigMain,"METADATA_REFRESH");
+			tKernel->config->sleep_ejecucion = config_get_int_value(ConfigMain,"SLEEP_EJECUCION");
+			config_destroy(ConfigMain);
+			logInfo("[Kernel]: valores actualizados.");
+
+		}
+		else if(event->mask & IN_DELETE_SELF)
+		{
+			logInfo("[Kernel]: Se ha detectado que el archivo de config ha sido eliminado. Terminando sistema.");
+			puts("El Kernel está siendo desconectado ya que el archivo de configuración fue destruido.");
+			break;
+		}
+		else if(event->mask & IN_CREATE)
+		{
+			logInfo("[Kernel]: Se ha detectado el archivo de configuración");
+		}
+		length = read(fileToWatch, buffer, BUF_LEN);
+	}
+	(void) inotify_rm_watch(fileToWatch, watchDescriptor);
+	(void) close(fileToWatch);
+}
+
 
 
 
