@@ -1,6 +1,6 @@
 #include "Notify.h"
 
-void notify()
+void notify(char* PATH_CONFIG)
 {
 	int length;
 	int i = 0;
