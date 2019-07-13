@@ -148,7 +148,7 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 		memcpy(value_buscado, memoria_principal+(pagina_buscada->offset*tamanio_pag)+sizeof(double)+sizeof(uint16_t), tamanio_value);
 
 		logInfo("[SELECT/REQ]: verifico que el segmento sea %s, y la nueva pagina posee el time %lf, el key %d y el value %s",
-				segmento_buscado->nombre_tabla,
+				segmento_nuevo->nombre_tabla,
 				time_buscado,
 				key_buscada,
 				value_buscado);
@@ -179,7 +179,7 @@ void insertReq (char* nombre_tabla, uint16_t key, char* value) {
 
 			double nuevo_time = getCurrentTime();
 			memcpy(memoria_principal+tamanio_pag*(est_pagina_buscada->offset), &nuevo_time, sizeof(double));
-			memcpy(memoria_principal+tamanio_pag*(est_pagina_buscada->offset)+sizeof(double)+sizeof(uint16_t), value, tamanio_value);
+			memcpy(memoria_principal+tamanio_pag*(est_pagina_buscada->offset)+sizeof(double)+sizeof(uint16_t), value, strlen(value) + 1);
 			est_pagina_buscada->flag = 1;
 
 			logInfo("[INSERT/REQ]: se inserta el nuevo time %lf en la pagina", nuevo_time);
@@ -251,7 +251,7 @@ void insertReq (char* nombre_tabla, uint16_t key, char* value) {
 		memcpy(value_asignado, memoria_principal+(pagina_buscada->offset*tamanio_pag)+sizeof(double)+sizeof(uint16_t), tamanio_value);
 
 		logInfo("[INSERT/REQ]: verifico que el segmento sea %s, y la nueva pagina posee el time %lf, el key %d y el value %s",
-				segmento_buscado->nombre_tabla,
+				segmento_nuevo->nombre_tabla,
 				time_buscado,
 				key_buscada,
 				value_asignado);

@@ -61,7 +61,7 @@ t_segmento* buscarEinsertarEnMem(t_segmento* segmento, uint16_t key, double time
 	memcpy(memoria_principal+(tamanio_pag*marco_disponible), &time_a_insertar, sizeof(double));
 	memcpy(memoria_principal+(tamanio_pag*marco_disponible)+sizeof(double), &key, sizeof(uint16_t));
 	//el tamanio_value es el maximo tamanio del value el cual nos lo va a enviar el fs desde un principio
-	memcpy(memoria_principal+(tamanio_pag*marco_disponible)+sizeof(double)+sizeof(uint16_t), value_con_barraCero, tamanio_value);
+	memcpy(memoria_principal+(tamanio_pag*marco_disponible)+sizeof(double)+sizeof(uint16_t), value_con_barraCero, strlen(value_con_barraCero) + 1);
 
 	logInfo("[estructurasMemoria]: Marco el frame como ocupado");
 	//marco frame como ocupado
