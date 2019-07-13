@@ -242,12 +242,12 @@ void escucharYatenderKernel(int* kernel){
 
 		case DESCONEXION:
 		{
-			printf("El Kernel Se ha desconectado\n");
+			printf("Llego el header desconexion\n");
 		} break;
 
 		case FALLO_AL_RECIBIR:
 		{
-			printf("Hubo un error re zarpado\n");
+			printf("Llgo el header fallo al recibir\n");
 		} break;
 
 

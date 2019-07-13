@@ -6,6 +6,10 @@
 #include "Gossiping.h"
 #include "Notify.h"
 #include "TimerJournal.h"
+#include "config_memoria.h"
+
+
+int main(char* config_path);
 
 #endif /* MEMORIA_H_ */
 

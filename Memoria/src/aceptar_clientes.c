@@ -20,20 +20,12 @@ void aceptarClientes(){
 				t_cliente cliente;/* = *(t_cliente*)(mensaje_inicial_conexion->payload);*/
 				memcpy(&cliente, mensaje_inicial_conexion->payload, sizeof(t_cliente));
 				if(cliente == KERNEL){
-					int* kernel = (int*) malloc (sizeof(int));
-					*kernel = socket_cliente;
 					printf("Se ha conectado el kernel\n");
-					pthread_t RecibirMensajesKernel;
-					pthread_create(&RecibirMensajesKernel,NULL, (void*)escucharYatenderKernel, kernel);
-					pthread_join(RecibirMensajesKernel, NULL);
+					escucharYatenderKernel(&cliente);
 				}
 				else if(cliente == MEMORIA){
-					int* memoria = (int*) malloc (sizeof(int));
-					*memoria = socket_cliente;
 					printf("Se ha conectado una memoria\n");
-					pthread_t RecibirMensajesMemoria;
-					pthread_create(&RecibirMensajesMemoria, NULL, (void*)escucharMemoria, memoria);
-					pthread_join(RecibirMensajesMemoria, NULL);
+					escucharMemoria(&cliente);
 				}
 			}
 			else
