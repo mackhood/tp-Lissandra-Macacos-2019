@@ -9,7 +9,7 @@
 #include "config_memoria.h"
 
 
-int main(char* config_path);
+int main(int argc, char** argv);
 
 #endif /* MEMORIA_H_ */
 
