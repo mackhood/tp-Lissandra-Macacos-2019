@@ -14,7 +14,7 @@ void aceptarClientes(){
 		{
 			//pthread_mutex_lock(&mutex_del_while);
 			socket_cliente = accept(socket_escucha, (void*) &direccion_cliente, &tamanio_direccion);
-			if(socket_cliente > 0){
+ 			if(socket_cliente > 0){
 
 				t_prot_mensaje* mensaje_inicial_conexion = prot_recibir_mensaje(socket_cliente);
 				t_cliente cliente;/* = *(t_cliente*)(mensaje_inicial_conexion->payload);*/

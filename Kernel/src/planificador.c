@@ -546,7 +546,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 				}
 				}
 				prot_destruir_mensaje(mensaje_recibido);
-				printf("Insert realizado \n");
+//				printf("Insert realizado \n");
 				quantum--;
 				dtb->sentenciaActual++;
 

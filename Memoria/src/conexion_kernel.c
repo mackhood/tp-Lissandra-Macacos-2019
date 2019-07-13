@@ -36,7 +36,7 @@ void escucharYatenderKernel(int* kernel){
 				free(buffer);
 			}
 			else{
-				prot_enviar_mensaje(socket_k, VALUE_FAILURE, 0, NULL);
+				prot_enviar_mensaje(socket_k, SELECT_FAILURE, 0, NULL);
 			}
 
 			usleep(info_memoria.retardo_mp*1000);
