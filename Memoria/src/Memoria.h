@@ -5,6 +5,7 @@
 #include "aceptar_clientes.h"
 #include "Gossiping.h"
 #include "Notify.h"
+#include "TimerJournal.h"
 
 #endif /* MEMORIA_H_ */
 
