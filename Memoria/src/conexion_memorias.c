@@ -11,7 +11,10 @@ void escucharMemoria(int* memoria){
 		switch(mensaje_recibido->head){
 
 		case SOLICITUD_GOSSIP:
+
 		{
+			logInfo("[ESCUCHAR/MEMORIA]: Se recibió solicitud de tabla gossip por parte de otra memoria");
+
 			int tamanio_tabla = list_size(tabla_gossip);
 			int tamanio_buffer = 0;
 
@@ -54,33 +57,7 @@ void escucharMemoria(int* memoria){
 			memcpy(buffer_memoria, &tamanio_buffer, sizeof(int));
 			memcpy(buffer_memoria+sizeof(int), buffer, tamanio_buffer);
 			prot_enviar_mensaje(s_memoria, SOLICITUD_GOSSIP, tamanio_buffer_memoria, buffer_memoria);
-
-
-//				logInfo("Llegó una solicitud de tabla gossip, procedo a enviar memoria por memoria");
-//
-//				int tamanio_gossip = list_size(tabla_gossip);
-//
-//				for (int i=0; i<tamanio_gossip; i++){
-//
-//					t_est_memoria* memoria_enviar = malloc(sizeof(t_est_memoria));
-//
-//					//envio numero, ip y puerto de cada memoria
-//					int numero_enviar = memoria_enviar->numero_memoria;
-//					char* ip_enviar = memoria_enviar->ip_memoria;
-//					int puerto_enviar = memoria_enviar->puerto_memoria;
-//
-//					int largo_ip = sizeof(ip_enviar);
-//
-//					size_t tamanio_buffer = sizeof(int) + largo_ip + sizeof(int);
-//					void* buffer = malloc(tamanio_buffer);
-//
-//					memcpy(buffer, &numero_enviar, sizeof(int));
-//					memcpy(buffer+sizeof(int), ip_enviar, IP_SIZE);
-//					memcpy(buffer+sizeof(int)+largo_ip, &puerto_enviar, sizeof(int));
-//
-//					prot_enviar_mensaje(s_memoria, MEMORIA_GOSSIP, tamanio_buffer, buffer);
-//
-//				}
+			logInfo("[ESCUCHAR/MEMORIA]: Se envió tabla gossip a otra memoria");
 
 			break;
 		}
@@ -88,6 +65,7 @@ void escucharMemoria(int* memoria){
 		case DESCONEXION:
 		{
 			puts("Se ha desconectado una memoria");
+			logInfo("[ESCUCHAR/MEMORIA]: Se desconectó una memoria");
 			break;
 		}
 
@@ -99,5 +77,6 @@ void escucharMemoria(int* memoria){
 
 	prot_destruir_mensaje(mensaje_recibido);
 	close(s_memoria);
+	logInfo("[ESCUCHAR/MEMORIA]: Se desconectó una memoria");
 	printf("Se ha desconectado una memoria\n\n");
 }

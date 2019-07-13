@@ -89,7 +89,7 @@ void initThread(){
 
 	pthread_detach(threadAceptacionAhre);
 	pthread_detach(threadConsola);
-	pthread_detach(threadGossiping);
+	pthread_join(threadGossiping, NULL);
 }
 
 void setearValores(){
