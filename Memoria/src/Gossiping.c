@@ -8,8 +8,6 @@ void gossiping(){
 	{
 		usleep(info_memoria.tiempo_goss * 1000);
 
-
-
 		printf("---------- Comienza gossiping! ---------- \n\n");
 
 		printf("Soy la memoria %d, de IP %s y puerto %d \n\n", info_memoria.numero_memoria, info_memoria.ip_memoria, info_memoria.puerto);
@@ -50,7 +48,7 @@ void gossiping(){
 
 			int puerto_a_conectar = atoi(puerto);
 
-			printf("Intento conectarme con la memoria de ip %s puerto %d \n", ip_a_conectar, puerto_a_conectar);
+			printf("---Intento conectarme con la memoria de ip %s puerto %d \n", ip_a_conectar, puerto_a_conectar);
 
 			int conexion = conectar_a_memoria_flexible(ip_a_conectar, puerto_a_conectar, MEMORIA);
 
@@ -219,10 +217,8 @@ void gossiping(){
 				}
 
 			}
+
 			i++;
 		}
-
-
-
 	}
 }
