@@ -2,7 +2,7 @@
 
 void levantar_config(){
 
-	conf_mapeada = config_create("/home/utnso/workspace/tp-2019-1c-Macacos/Memoria/memoria.config");
+	conf_mapeada = config_create(PATH_CONFIG);
 
 
 			info_memoria.ip_memoria = (char*)malloc(IP_SIZE);

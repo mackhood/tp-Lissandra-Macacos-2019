@@ -21,6 +21,7 @@
 #include <commons/collections/list.h>
 #include <commons/string.h>
 #include <commons/config.h>
+#include <sys/inotify.h>
 
 //Las unicas biblios nuestras que podemos tener en el include para no generar dependencia circular
 #include "../../SharedLibrary/protocolo.h"
@@ -77,6 +78,7 @@ int socket_cliente;
 pthread_t threadConsola;
 pthread_t threadAceptacionAhre;
 pthread_t threadGossiping;
+pthread_t threadNotify;
 
 //logs
 t_log* loggerMem;
