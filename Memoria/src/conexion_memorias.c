@@ -79,7 +79,8 @@ void escucharMemoria(int* memoria){
 			break;
 		}
 	}
-		close(s_memoria);
+
+	close(s_memoria);
 	prot_destruir_mensaje(mensaje_recibido);
 	logInfo("[ESCUCHAR/MEMORIA]: Se desconectó una memoria");
 	printf("Se ha desconectado una memoria\n\n");
