@@ -1043,6 +1043,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 			}
 			close(socket_memoria);
+			quantum --;
 			//		if(dtb->total_sentencias == 0){
 			//		quantum ++;
 			//		}
