@@ -356,6 +356,9 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 		if(dtb->flag){}
 		else
 		{
+
+
+
 			switch(dtb->operacionActual) {
 
 
@@ -404,6 +407,9 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 							leMemoria->estadisticasMemoriaSHC->Read_Latency += (finalTime - firstTime);
 							leMemoria->estadisticasMemoriaSHC->Reads++;
 						}
+
+						t_estadisticas->Read_Latency = (finalTime - firstTime);
+						t_estadisticas->Reads++;
 						break;
 					}
 					case SELECT_FAILURE:
@@ -513,6 +519,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 					{
 						configuracion->estadisticasMemoriaSC->Write_Latency += (cantSegundosFinal - cantSegundosInicial);
 						configuracion->estadisticasMemoriaSC->Writes++;
+
 					}
 					else if(!strcmp(laTabla->criterio, "EC"))
 					{
@@ -527,7 +534,8 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 					}
 
 					printf("Insert realizado \n");
-
+					t_estadisticas->Write_Latency += (cantSegundosFinal - cantSegundosInicial);
+					t_estadisticas->Writes++;
 					break;
 				}
 				case INSERT_FAILURE:

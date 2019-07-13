@@ -107,7 +107,7 @@ void initThread(){
 	pthread_detach(threadConsola );
 	pthread_detach(threadInterPlanificador);
 	pthread_detach(threadConexionMemoria);
-
+	pthread_detach(threadEstadisticas);
 }
 
 
@@ -143,10 +143,26 @@ void handleEstadisticas(){
 	while(!destProtocol){
 
 		logInfo("Estadisticas globales de todos los criterios");
-		logInfo(string_itoa(t_estadisticas->Reads));
-		logInfo(string_itoa(t_estadisticas ->Read_Latency));
-		logInfo(string_itoa(t_estadisticas->Write_Latency));
-		logInfo(string_itoa(t_estadisticas->Writes));
+		logInfo("Cantidad de lecturas: %i", string_itoa(t_estadisticas->Reads));
+		if(t_estadisticas->Reads > 0){
+			logInfo("Promedio de duracion de lecturas en milisegundos: %i",
+					string_itoa(t_estadisticas ->Read_Latency/t_estadisticas->Reads));
+		}
+		else
+		{
+			logInfo("Promedio de duracion de lecturas en milisegundos: 0");
+		}
+		logInfo("Cantidad de escrituras: %i", string_itoa(t_estadisticas->Writes));
+		if(t_estadisticas->Writes > 0)
+		{
+			logInfo("Promedio de duracion de lecturas en milisegundos: %i",
+					string_itoa(t_estadisticas->Write_Latency/t_estadisticas->Writes));
+		}
+		else
+		{
+			logInfo("Promedio de duracion de lecturas en milisegundos: 0");
+		}
+
 		int i;
 		for( i=0 ; i< list_size(tKernel->memorias);i++){
 
@@ -155,9 +171,9 @@ void handleEstadisticas(){
 
 			logInfo("Criterio SC:");
 
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Read_Latency));
+			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Read_Latency/unaMemoria->estadisticasMemoriaSC->Reads));
 			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Reads));
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Write_Latency));
+			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Write_Latency/unaMemoria->estadisticasMemoriaSC->Writes));
 			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Writes));
 
 			if(unaMemoria->selectTotales == 0){
@@ -179,9 +195,9 @@ void handleEstadisticas(){
 
 
 
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Read_Latency));
+			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Read_Latency/unaMemoria->estadisticasMemoriaSHC->Reads));
 			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Reads));
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Write_Latency));
+			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Write_Latency/unaMemoria->estadisticasMemoriaSHC->Writes));
 			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Writes));
 
 			if(unaMemoria->selectTotales == 0){
@@ -207,9 +223,9 @@ void handleEstadisticas(){
 
 
 
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Read_Latency));
+			logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Read_Latency/unaMemoria->estadisticasMemoriaEC->Reads));
 			logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Reads));
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Write_Latency));
+			logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Write_Latency/unaMemoria->estadisticasMemoriaEC->Writes));
 			logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Writes));
 
 			if(unaMemoria->selectTotales == 0){
