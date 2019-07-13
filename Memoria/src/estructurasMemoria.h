@@ -59,6 +59,7 @@ typedef struct{
 	int puerto_memoria;
 }t_est_memoria;
 
+
 t_list* lista_segmentos;
 t_list* tabla_gossip;
 size_t tamanio_pag;

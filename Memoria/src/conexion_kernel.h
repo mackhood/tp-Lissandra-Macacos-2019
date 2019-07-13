@@ -3,6 +3,6 @@
 
 #include "Request.h"
 
-void escucharYatenderKernel(int* kernel);
+void escucharYatenderKernel(int kernel);
 
 #endif /* CONEXION_KERNEL_H_ */

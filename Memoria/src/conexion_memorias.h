@@ -3,6 +3,6 @@
 
 #include "estructurasMemoria.h"
 
-void escucharMemoria();
+void escucharMemoria(int memoria);
 
 #endif /* CONEXION_MEMORIAS_H_ */
