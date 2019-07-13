@@ -99,7 +99,7 @@ void initThread(){
 	pthread_create(&threadConsola, NULL, (void*)handleConsola,NULL);
 	pthread_create(&threadInterPlanificador,NULL,(void*)interPlanificador,NULL);
 	pthread_create(&threadEstadisticas, NULL, (void*)handleEstadisticas,NULL);
-	pthread_create(&threadNotifier, NULL, (void*)notifier, NULL)
+	pthread_create(&threadNotifier, NULL, (void*)notifier, NULL);
 	pthread_create(&threadPlanificador, NULL, (void*)pasarArunnign(),NULL);
 
 	pthread_detach(threadPlanificador);
