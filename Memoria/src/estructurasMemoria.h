@@ -83,7 +83,7 @@ t_log* loggerMem;
 
 //mutex
 pthread_mutex_t mutex_estructuras_memoria;
-pthread_mutex_t mutex_gossiping_memoria;
+pthread_mutex_t mutex_tabla_gossiping;
 
 //funciones iniciales
 void setearValores();

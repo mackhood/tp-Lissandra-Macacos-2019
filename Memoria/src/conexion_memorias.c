@@ -20,7 +20,10 @@ void escucharMemoria(int* memoria){
 
 			for (int i=0; i<tamanio_tabla; i++)
 			{
+				pthread_mutex_lock(&mutex_tabla_gossiping);
 				t_est_memoria* memoria = list_get(tabla_gossip, i);
+				pthread_mutex_unlock(&mutex_tabla_gossiping);
+
 				int tamanio_memoria = sizeof(memoria->numero_memoria) + strlen(memoria->ip_memoria)+sizeof(memoria->puerto_memoria)+3;
 				tamanio_buffer += tamanio_memoria;
 			}
@@ -30,7 +33,9 @@ void escucharMemoria(int* memoria){
 
 			for (int i=0; i<tamanio_tabla; i++)
 			{
+				pthread_mutex_lock(&mutex_tabla_gossiping);
 				t_est_memoria* memoria= list_get(tabla_gossip, i);
+				pthread_mutex_unlock(&mutex_tabla_gossiping);
 
 				if(primeraLectura)
 				{
@@ -58,7 +63,7 @@ void escucharMemoria(int* memoria){
 			memcpy(buffer_memoria+sizeof(int), buffer, tamanio_buffer);
 			prot_enviar_mensaje(s_memoria, SOLICITUD_GOSSIP, tamanio_buffer_memoria, buffer_memoria);
 			logInfo("[ESCUCHAR/MEMORIA]: Se envió tabla gossip a otra memoria");
-
+			free(buffer_memoria);
 			break;
 		}
 

@@ -31,7 +31,10 @@ void gossiping(){
 				nuevaMemoriaSola->ip_memoria = info_memoria.ip_memoria;
 				nuevaMemoriaSola->puerto_memoria = info_memoria.puerto;
 				nuevaMemoriaSola->numero_memoria = info_memoria.numero_memoria;
+
+				pthread_mutex_lock(&mutex_tabla_gossiping);
 				list_add(tabla_gossip, nuevaMemoriaSola);
+				pthread_mutex_unlock(&mutex_tabla_gossiping);
 
 				printf("Se agregó la memoria número %d, de ip %s y puerto %d a mi tabla gossip \n\n", nuevaMemoriaSola->numero_memoria, nuevaMemoriaSola->ip_memoria, nuevaMemoriaSola->puerto_memoria);
 				logInfo("[GOSSIPING]: esta memoria se ha agregado a sí misma a la taba gossip");
@@ -76,7 +79,9 @@ void gossiping(){
 					nuevaMemoria->puerto_memoria = info_memoria.puerto;
 					nuevaMemoria->numero_memoria = info_memoria.numero_memoria;
 
+					pthread_mutex_lock(&mutex_tabla_gossiping);
 					list_add(tabla_gossip, nuevaMemoria);
+					pthread_mutex_unlock(&mutex_tabla_gossiping);
 
 					printf("Se agregó la memoria número %d a la tabla gossip (me agrego a mi misma) \n\n", nuevaMemoria->numero_memoria);
 					logInfo("[GOSSIPING]: esta memoria se ha agregado a sí misma a la taba gossip");
@@ -102,7 +107,9 @@ void gossiping(){
 					}
 
 					//Acá elimino la memoria de mi tabla gossip, falta saber cómo hacer que se enteren las demas que no se conectan directamente con ella.
+					pthread_mutex_lock(&mutex_tabla_gossiping);
 					list_remove_and_destroy_by_condition(tabla_gossip, (void*)conteniaEnTabla, &free);
+					pthread_mutex_unlock(&mutex_tabla_gossiping);
 
 					if (contenia)
 					{
@@ -131,7 +138,9 @@ void gossiping(){
 					nuevaMemoria->puerto_memoria = info_memoria.puerto;
 					nuevaMemoria->numero_memoria = info_memoria.numero_memoria;
 
+					pthread_mutex_lock(&mutex_tabla_gossiping);
 					list_add(tabla_gossip, nuevaMemoria);
+					pthread_mutex_unlock(&mutex_tabla_gossiping);
 
 					printf("Se agregó la memoria número %d a la tabla gossip (me agrego a mi misma) \n", nuevaMemoria->numero_memoria);
 					logInfo("[GOSSIPING]: esta memoria se ha agregado a sí misma a la tabla gossip");
@@ -184,7 +193,9 @@ void gossiping(){
 					nuevaMemoria->ip_memoria = ip_memoria;
 					nuevaMemoria->puerto_memoria = nuevo_puerto;
 
+
 					list_add(tablaDeOtraMemoria, nuevaMemoria);
+
 					printf("La otra memoria conoce a la memoria %d \n", nuevaMemoria->numero_memoria);
 
 					logInfo("[GOSSIPING]: se agregó la memoria %d a la tabla gossip", nuevaMemoria->numero_memoria);
@@ -192,15 +203,6 @@ void gossiping(){
 					q++;
 				}
 
-				//La otra memoria me manda su tabla gossip (memoria por memoria) (numero + ip + puerto)
-				//			int numero_mandado;
-				//			char* ip_mandado;
-				//			int puerto_mandado;
-				//
-				//			memcpy(&numero_mandado, mensaje_con_memoria->payload, sizeof(int));
-				//			memcpy(&ip_mandado, mensaje_con_memoria->payload+sizeof(int), IP_SIZE);
-				//			memcpy(&puerto_mandado, mensaje_con_memoria->payload+sizeof(int)+IP_SIZE, sizeof(int));
-				//
 				prot_destruir_mensaje(mensaje_con_memorias);
 
 				int tam = list_size(tablaDeOtraMemoria);
@@ -217,17 +219,16 @@ void gossiping(){
 					}
 
 					//verifico si contengo la memoria. Si no está, la agrego a mi tabla gossip.
+					pthread_mutex_lock(&mutex_tabla_gossiping);
 					bool laContiene = list_any_satisfy(tabla_gossip, contieneMemoria);
+					pthread_mutex_unlock(&mutex_tabla_gossiping);
 
 					if(!laContiene)
 					{
-						//t_est_memoria* memoriaAgregar = malloc(sizeof(t_est_memoria));
-						//
-						//memoriaAgregar->numero_memoria = memoria_tabla->numero_memoria;
-						//strcpy(memoriaAgregar->ip_memoria, memoria_tabla->ip_memoria);
-						//memoriaAgregar->puerto_memoria = memoria_tabla->puerto_memoria;
-
+						pthread_mutex_lock(&mutex_tabla_gossiping);
 						list_add(tabla_gossip, memoria_tabla);
+						pthread_mutex_unlock(&mutex_tabla_gossiping);
+
 						printf("Se agregó la memoria número %d a mi tabla gossip \n", memoria_tabla->numero_memoria);
 						logInfo("[GOSSIPING]: se agregó la memoria %d a la tabla gossip", memoria_tabla->numero_memoria);
 					}
