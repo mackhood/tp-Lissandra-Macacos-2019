@@ -18,6 +18,7 @@
 
 //Tamaño de la ip
 #define IP_SIZE (sizeof(char) * (strlen("123.000.000.001") + 1))
+#define PATH_CONFIG "/home/utnso/workspace/tp-2019-1c-Macacos/Memoria/memoria.config"
 
 typedef struct{
 
