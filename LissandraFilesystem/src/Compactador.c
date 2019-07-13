@@ -222,7 +222,7 @@ void crearTemporal(char* tabla)
 		char* auxTimestamp = string_from_format("%lf", auxiliaryKey->data->timestamp);
 		char* auxc = string_itoa(auxiliaryKey->data->key);
 		int sizeOfKey = strlen(auxc) + strlen(auxiliaryKey->data->clave)
-						+ strlen(auxTimestamp) + 3;
+								+ strlen(auxTimestamp) + 3;
 		char* claveParaTemp = malloc(sizeOfKey + 1);
 		char* auxb = string_substring_until(auxTimestamp, strlen(auxTimestamp) - 7);
 		strcpy(claveParaTemp, auxb);
@@ -352,10 +352,6 @@ void ejecutarCompactacion(char* tabla)
 				}
 				free(keysToParse);
 				liberadorDeArrays(keyHandlerBeta);
-				pthread_mutex_lock(&tablaEspecifica->compactacionActiva);
-				limpiarBloque(direccionTempC);
-				remove(direccionTempC);
-				pthread_mutex_unlock(&tablaEspecifica->compactacionActiva);
 				free(direccionTempC);
 			}
 			else
@@ -437,6 +433,25 @@ void ejecutarCompactacion(char* tabla)
 		}
 		free(keysDeParticion);
 	}
+	struct dirent* tdp2;
+	rewinddir(tableDirectory);
+	pthread_mutex_lock(&tablaEspecifica->compactacionActiva);
+	while(NULL != (tdp2 = readdir(tableDirectory)))
+	{
+		if(!strcmp(tdp2->d_name, ".") || !strcmp(tdp2->d_name, "..") || string_ends_with(tdp2->d_name, ".cfg")){}
+		else
+		{
+			if(string_ends_with(tdp2->d_name, ".tmpc"))
+			{
+				char* direccionTempC = malloc(strlen(direccionTabla) + strlen(tdp2->d_name) + 1);
+				strcpy(direccionTempC, direccionTabla);
+				strcat(direccionTempC, tdp2->d_name);
+				limpiarBloque(direccionTempC);
+				remove(direccionTempC);
+			}
+		}
+	}
+	pthread_mutex_unlock(&tablaEspecifica->compactacionActiva);
 	logInfo("[Compactador]: la %s ha sido compactada.", tabla);
 	free(direccionMetadata);
 	list_destroy_and_destroy_elements(keysPostParsing,(void*) &liberadorDeKeys);
