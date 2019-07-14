@@ -430,7 +430,7 @@ void describe (char** args)
 			string_append(&unaPalabra, args[b]);
 			b++;
 		}
-		DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,NULL);
+		DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum);
 		dtb_nuevo->total_sentencias=1;
 //		dtb_nuevo->tablaSentencias[0]=unaPalabra;
 		queue_push(dtb_nuevo->tablaSentenciasMejorada,unaPalabra);
@@ -475,7 +475,7 @@ void drop (char** args)
 			string_append(&unaPalabra, args[b]);
 			b++;
 		}
-		DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum,NULL);
+		DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum);
 		dtb_nuevo->total_sentencias = 1;
 //		dtb_nuevo->tablaSentencias[0]=unaPalabra;
 		queue_push(dtb_nuevo->tablaSentenciasMejorada,unaPalabra);
