@@ -8,7 +8,6 @@
 #include "TimerJournal.h"
 #include "config_memoria.h"
 
-
 int main(int argc, char** argv);
 
 #endif /* MEMORIA_H_ */
