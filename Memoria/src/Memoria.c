@@ -1,6 +1,7 @@
 #include "Memoria.h"
 
 int main(int argc, char** argv) {
+
 	char* config_path = argv[1];
 	//logueo todos los datos de configuracion
 	initMutexlog(MEMORIA_LOG_PATH,PROGRAM_NAME,0,LOG_LEVEL_TRACE);
@@ -72,8 +73,9 @@ void levantarEstrMemorias(){
 	//creo la lista de segmentos
 	lista_segmentos = list_create();
 
-	//creo el mutex
+	//creo el mutex para las estructuras y para el gossiping
 	pthread_mutex_init(&mutex_estructuras_memoria, NULL);
+	pthread_mutex_init(&mutex_tabla_gossiping, NULL);
 
 	//inicializo la variable global se_hizo_journal en false por las dudas (aunque por defecto deberia ser false)
 	se_hizo_journal = false;
