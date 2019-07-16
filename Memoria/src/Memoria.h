@@ -10,7 +10,6 @@
 
 int main(int argc, char** argv);
 
-pthread_mutex_t mutex_conexion_memorias;
 
 #endif /* MEMORIA_H_ */
 
