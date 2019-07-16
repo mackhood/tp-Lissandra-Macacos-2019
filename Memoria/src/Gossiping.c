@@ -3,42 +3,53 @@
 void gossiping(){
 
 	tabla_gossip = list_create();
+	int numero_gossiping = 1;
 
 	while(1)
 	{
 		usleep(info_memoria.tiempo_goss * 1000);
 
-		printf("---------- Comienza gossiping! ---------- \n\n");
+		printf("---------- Comienza gossiping! N° %d ---------- \n\n", numero_gossiping);
 		printf("Soy la memoria %d, de IP %s y puerto %d \n\n", info_memoria.numero_memoria, info_memoria.ip_memoria, info_memoria.puerto);
 
 		logInfo("[GOSSIPING]: comienza el proceso de gossiping");
 
+		//Primero verifico si me tengo en mi tabla gossip.
+		//Si no me tengo, me agrego a mi misma.
+
+		bool yaMeContengo (void* memoria)
+		{
+			t_est_memoria* memoria_a_comparar = (void*)memoria;
+
+			return memoria_a_comparar->numero_memoria == info_memoria.numero_memoria;
+		}
+
+		if (!list_any_satisfy(tabla_gossip, yaMeContengo))
+		{
+			t_est_memoria* nuevaMemoria = malloc(sizeof(t_est_memoria));
+
+			nuevaMemoria->ip_memoria = info_memoria.ip_memoria;
+			nuevaMemoria->puerto_memoria = info_memoria.puerto;
+			nuevaMemoria->numero_memoria = info_memoria.numero_memoria;
+
+			pthread_mutex_lock(&mutex_tabla_gossiping);
+			list_add(tabla_gossip, nuevaMemoria);
+			pthread_mutex_unlock(&mutex_tabla_gossiping);
+
+			printf("Se agregó la memoria número %d a la tabla gossip (me agrego a mi misma) \n", nuevaMemoria->numero_memoria);
+			logInfo("[GOSSIPING]: esta memoria se ha agregado a sí misma a la tabla gossip");
+
+		}
+
 		char** ip_seeds = info_memoria.ip_seeds;
 		char** puerto_seeds = info_memoria.puerto_seeds;
 		int i=0;
-
-
 		//Comienza gossip: Se descubren y conocen demás memorias
 
 		if (ip_seeds[0]==NULL)
 		{
-			if(list_size(tabla_gossip) == 0)
-			{
-				printf("No existen memorias seed: me agrego a mi misma a la tabla \n");
-				logInfo("[GOSSIPING]: No existen memorias seeds");
-				t_est_memoria* nuevaMemoriaSola = malloc(sizeof(t_est_memoria));
-
-				nuevaMemoriaSola->ip_memoria = info_memoria.ip_memoria;
-				nuevaMemoriaSola->puerto_memoria = info_memoria.puerto;
-				nuevaMemoriaSola->numero_memoria = info_memoria.numero_memoria;
-
-				pthread_mutex_lock(&mutex_tabla_gossiping);
-				list_add(tabla_gossip, nuevaMemoriaSola);
-				pthread_mutex_unlock(&mutex_tabla_gossiping);
-
-				printf("Se agregó la memoria número %d, de ip %s y puerto %d a mi tabla gossip \n\n", nuevaMemoriaSola->numero_memoria, nuevaMemoriaSola->ip_memoria, nuevaMemoriaSola->puerto_memoria);
-				logInfo("[GOSSIPING]: esta memoria se ha agregado a sí misma a la taba gossip");
-			}
+				printf("No existen memorias seed \n");
+				logInfo("[GOSSIPING]: No existen memorias seed");
 		}
 
 		while (ip_seeds[i]!= NULL)
@@ -60,35 +71,7 @@ void gossiping(){
 
 			if (conexion == -3)
 			{
-				//Aca entro si NO se pudo conectar. Esto significa que, o no fue levantada, o se desconectó
-				//Verifico si es la primera memoria a la que intento conectarme
-
-				printf("Llegué acá\n");
-				logInfo("[GOSSIPING]: Falló conexión con memoria seed");
-
-				if (list_is_empty(tabla_gossip))
-				{
-					//No fue levantada -> Indico en mi tabla Gossip que sólo yo existo.
-
-					printf("No se pudo conectar a la memoria porque no fue levantada\n");
-					logInfo("[GOSSIPING]: No se pudo conectar con memoria seed porque no fue levantada");
-
-					t_est_memoria* nuevaMemoria = malloc(sizeof(t_est_memoria));
-
-					nuevaMemoria->ip_memoria = info_memoria.ip_memoria;
-					nuevaMemoria->puerto_memoria = info_memoria.puerto;
-					nuevaMemoria->numero_memoria = info_memoria.numero_memoria;
-
-					pthread_mutex_lock(&mutex_tabla_gossiping);
-					list_add(tabla_gossip, nuevaMemoria);
-					pthread_mutex_unlock(&mutex_tabla_gossiping);
-
-					printf("Se agregó la memoria número %d a la tabla gossip (me agrego a mi misma) \n\n", nuevaMemoria->numero_memoria);
-					logInfo("[GOSSIPING]: esta memoria se ha agregado a sí misma a la taba gossip");
-				}
-				else
-				{
-					/* Si entro acá, la tabla gossip NO está vacía.
+					/* Si entro acá, no me pude conectar con la memoria
 					 * Verifico si contengo la memoria en la tabla gossip.
 					 * Si está, significa que fue desconectada en algún momento, por ende tengo que borrarla de mi tabla
 					 */
@@ -120,7 +103,7 @@ void gossiping(){
 					{
 						logInfo("[GOSSIPING]: No se pudo conectar con memoria seed");
 					}
-				}
+
 
 			}
 			else
@@ -129,30 +112,63 @@ void gossiping(){
 					Una memoria conoce las que conoce la otra.
 				 */
 
-				//Si la tabla gossip está vacía, debo agregarme a mí misma
-				if (list_size(tabla_gossip)==0)
-				{
-					t_est_memoria* nuevaMemoria = malloc(sizeof(t_est_memoria));
-
-					nuevaMemoria->ip_memoria = info_memoria.ip_memoria;
-					nuevaMemoria->puerto_memoria = info_memoria.puerto;
-					nuevaMemoria->numero_memoria = info_memoria.numero_memoria;
-
-					pthread_mutex_lock(&mutex_tabla_gossiping);
-					list_add(tabla_gossip, nuevaMemoria);
-					pthread_mutex_unlock(&mutex_tabla_gossiping);
-
-					printf("Se agregó la memoria número %d a la tabla gossip (me agrego a mi misma) \n", nuevaMemoria->numero_memoria);
-					logInfo("[GOSSIPING]: esta memoria se ha agregado a sí misma a la tabla gossip");
-
-				}
-
 				printf("Se conectó con otra memoria\n");
 				logInfo("[GOSSIPING]: se ha conectado con memoria seed");
 
-				//Solicito tabla de gossip a la otra memoria.
+				//Solicito tabla de gossip a la memoria seed y le envío la mía.
 
-				prot_enviar_mensaje(conexion, SOLICITUD_GOSSIP, 0, NULL);
+				//Envío tabla gossip a memoria seed.
+
+				int tamanio_tabla = list_size(tabla_gossip);
+				int tamanio_buffer = 0;
+
+				for (int i=0; i<tamanio_tabla; i++)
+				{
+					pthread_mutex_lock(&mutex_tabla_gossiping);
+					t_est_memoria* memoria = list_get(tabla_gossip, i);
+					pthread_mutex_unlock(&mutex_tabla_gossiping);
+
+					int tamanio_memoria = sizeof(memoria->numero_memoria) + strlen(memoria->ip_memoria)+sizeof(memoria->puerto_memoria)+3;
+					tamanio_buffer += tamanio_memoria;
+				}
+
+				char* buffer = malloc(tamanio_buffer+1);
+				bool primeraLectura = true;
+
+				for (int i=0; i<tamanio_tabla; i++)
+				{
+					pthread_mutex_lock(&mutex_tabla_gossiping);
+					t_est_memoria* memoria= list_get(tabla_gossip, i);
+					pthread_mutex_unlock(&mutex_tabla_gossiping);
+
+					if(primeraLectura)
+					{
+						strcpy(buffer, string_itoa(memoria->numero_memoria));
+						primeraLectura = false;
+					}
+					else
+					{
+						strcat(buffer, string_itoa(memoria->numero_memoria));
+					}
+
+					strcat(buffer, ",");
+					strcat(buffer, memoria->ip_memoria);
+					strcat(buffer, ",");
+					char* puerto = string_itoa(memoria->puerto_memoria);
+					strcat(buffer, puerto);
+					strcat(buffer, ";");
+				}
+
+				int tamanio_buffer_memoria = sizeof(int) + tamanio_buffer;
+
+				void* buffer_memoria = malloc(tamanio_buffer_memoria);
+
+				memcpy(buffer_memoria, &tamanio_buffer, sizeof(int));
+				memcpy(buffer_memoria+sizeof(int), buffer, tamanio_buffer);
+
+				prot_enviar_mensaje(conexion, SOLICITUD_GOSSIP, tamanio_buffer_memoria, buffer_memoria);
+
+				free(buffer_memoria);
 
 				t_prot_mensaje* mensaje_con_memorias = prot_recibir_mensaje(conexion);
 
@@ -238,5 +254,17 @@ void gossiping(){
 
 			i++;
 		}
+
+	printf("\n Actualmente contengo en tabla gossip a: \n");
+	int memorias_totales = list_size(tabla_gossip);
+	for (int m=0; m<memorias_totales; m++)
+	{
+		pthread_mutex_lock(&mutex_tabla_gossiping);
+		t_est_memoria* memoria_actual = list_get(tabla_gossip, m);
+		pthread_mutex_unlock(&mutex_tabla_gossiping);
+
+		printf("Memoria %d \n", memoria_actual->numero_memoria);
+	}
+	numero_gossiping++;
 	}
 }

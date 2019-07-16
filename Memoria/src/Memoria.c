@@ -76,6 +76,7 @@ void levantarEstrMemorias(){
 	//creo el mutex para las estructuras y para el gossiping
 	pthread_mutex_init(&mutex_estructuras_memoria, NULL);
 	pthread_mutex_init(&mutex_tabla_gossiping, NULL);
+	pthread_mutex_init(&mutex_conexion_memorias, NULL);
 
 	//inicializo la variable global se_hizo_journal en false por las dudas (aunque por defecto deberia ser false)
 	se_hizo_journal = false;
