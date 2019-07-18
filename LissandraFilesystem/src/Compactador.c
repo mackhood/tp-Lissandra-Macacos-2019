@@ -411,13 +411,13 @@ void ejecutarCompactacion(char* tabla)
 	config_destroy(MetadataTabla);
 	int g = 0;
 	char* keysDeParticion;
-	pthread_mutex_lock(&tablaEspecifica->compactacionActiva);
+//	pthread_mutex_lock(&tablaEspecifica->compactacionActiva);
 	for(g = 0; g < particiones; g++)
 	{
 		keysDeParticion = obtenerKeysAPlasmar(keysPostParsing, g, particiones);
 		if(NULL != keysDeParticion)
 		{
-//			pthread_mutex_lock(&tablaEspecifica->compactacionActiva);
+			pthread_mutex_lock(&tablaEspecifica->compactacionActiva);
 			char* auxg = string_itoa(g);
 			char* direccionParticion = malloc(strlen(direccionTabla) + strlen(auxg) + 6);
 			strcpy(direccionParticion, direccionTabla);
@@ -430,7 +430,7 @@ void ejecutarCompactacion(char* tabla)
 			char* bloquesAsignados = escribirBloquesDeFs(keysDeParticion, strlen(keysDeParticion), tabla);
 			config_set_value(particion, "BLOCKS", bloquesAsignados);
 			config_save(particion);
-//			pthread_mutex_unlock(&tablaEspecifica->compactacionActiva);
+			pthread_mutex_unlock(&tablaEspecifica->compactacionActiva);
 			free(auxg);
 			free(sizedUse);
 			free(bloquesAsignados);
@@ -439,7 +439,7 @@ void ejecutarCompactacion(char* tabla)
 		}
 		free(keysDeParticion);
 	}
-	pthread_mutex_unlock(&tablaEspecifica->compactacionActiva);
+//	pthread_mutex_unlock(&tablaEspecifica->compactacionActiva);
 	struct dirent* tdp2;
 	rewinddir(tableDirectory);
 	pthread_mutex_lock(&tablaEspecifica->compactacionActiva);
