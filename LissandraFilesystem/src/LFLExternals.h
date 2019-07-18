@@ -74,6 +74,7 @@ t_list* tablasEnEjecucion;
 pthread_mutex_t deathProtocol;
 pthread_mutex_t dumpEnCurso;
 pthread_mutex_t modifierBitArray;
+pthread_mutex_t modifierTablasEnCurso;
 
 /* FUNCIONES GLOBALES */
 int cantidadDeBloquesLibres();
@@ -89,6 +90,7 @@ t_list* inversaParsearKeys(t_list* clavesADesparsear);
 int cantBloquesFS(char* direccion);
 void liberadorDeKeys(t_keysetter* keysetter);
 void liberadorDeMemtableKeys(t_Memtablekeys* memtableKey);
+void liberadorDeListasDeKeys(t_list* listaDeKeys);
 
 
 #endif /* LFLEXTERNALS_H_ */

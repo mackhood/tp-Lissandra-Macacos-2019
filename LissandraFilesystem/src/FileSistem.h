@@ -12,6 +12,7 @@ int tableWatchDescriptor;
 int tableDirectoryToWatch;
 int blockDirectoryToWatch;
 int blockWatchDescriptor;
+pthread_mutex_t lectura_escritura;
 
 /* FUNCIONES */
 
