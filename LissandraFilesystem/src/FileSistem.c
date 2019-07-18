@@ -990,7 +990,7 @@ char* leerBloque(char* bloque)
 		fread(contenidoBloque, partlength, 1, partpointer);
 		fclose(partpointer);
 		free(direccionBloque);
-		logTrace("[FileSystem]: Se ha leído el contenido del bloque %s.bin.", bloque);
+		logInfo("[FileSystem]: Se ha leído el contenido del bloque %s.bin.", bloque);
 		pthread_mutex_unlock(&lectura_escritura);
 		return contenidoBloque;
 	}
