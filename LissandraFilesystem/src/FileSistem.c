@@ -467,9 +467,9 @@ int limpiadorDeArchivos(char* direccion, char* tabla)
 int existeTabla(char* tabla)
 {
 	DIR* checkdir;
-	char* checkaux = malloc(strlen(tabla) + strlen(punto_montaje) + 9);
+	char* checkaux = malloc(strlen(tabla) + strlen(punto_montaje) + 10);
 	char* tablename = malloc(strlen(tabla) + 3);
-	char* puntodemontaje = malloc(strlen(tabla) + strlen(punto_montaje) + 9);
+	char* puntodemontaje = malloc(strlen(tabla) + strlen(punto_montaje) + 10);
 	strcpy(puntodemontaje, punto_montaje);
 	strcpy(tablename, tabla);
 	string_append(&puntodemontaje, "Tables/");
@@ -800,7 +800,7 @@ t_keysetter* selectKeyFS(char* tabla, uint16_t keyRecibida)
 		logInfo("[FileSystem]: La key %i no fue impactada todavía en el File System.", keyRecibida);
 	}
 	list_destroy(keysettersDeClave);
-	liberadorDeListasDeKeys(clavesPostParseo);
+	list_destroy_and_destroy_elements(clavesPostParseo,(void*) &liberadorDeKeys);
 	list_destroy_and_destroy_elements(clavesDentroDeLosBloques, &free);
 	free(direccionTabla);
 	return claveMasActualizada;
@@ -857,7 +857,6 @@ char* obtenerBloqueLibre(int ultimoBloque)
 			bloqueAEnviar = malloc(strlen(uaxb) + 1);
 			pthread_mutex_lock(&modifierBitArray);
 			bitarray_set_bit(bitarray, a);
-			msync(bitarraycontent, bitarrayfd, MS_SYNC);
 			pthread_mutex_unlock(&modifierBitArray);
 			strcpy(bloqueAEnviar, uaxb);
 			free(uaxb);
@@ -963,7 +962,6 @@ void limpiarBloque(char* direccionPart)
 		i++;
 	}
 	liberadorDeArrays(bloques);
-	msync(bitarraycontent, bitarrayfd, MS_SYNC);
 	pthread_mutex_unlock(&modifierBitArray);
 }
 
@@ -992,7 +990,7 @@ char* leerBloque(char* bloque)
 		fread(contenidoBloque, partlength, 1, partpointer);
 		fclose(partpointer);
 		free(direccionBloque);
-		logInfo("[FileSystem]: Se ha leído el contenido del bloque %s.bin.", bloque);
+		logTrace("[FileSystem]: Se ha leído el contenido del bloque %s.bin.", bloque);
 		pthread_mutex_unlock(&lectura_escritura);
 		return contenidoBloque;
 	}
@@ -1194,6 +1192,7 @@ void tablesNotifier()
 
 void killProtocolFileSystem()
 {
+	msync(bitarraycontent, bitarrayfd, MS_SYNC);
 	bitarray_destroy(bitarray);
 	munmap(bitarraycontent, strlen(bitarraycontent));
 	close(bitarrayfd);
