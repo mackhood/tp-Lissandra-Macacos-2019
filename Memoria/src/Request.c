@@ -47,6 +47,7 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 
 			if(mensaje_con_tabla->head == VALUE_FAILURE){
 				logInfo("[SELECT/REQ]: el filesystem no posee dicha key");
+				pthread_mutex_unlock(&mutex_estructuras_memoria);
 				return NULL;
 			}
 			else{
@@ -121,6 +122,7 @@ char* selectReq (char* nombre_tabla, uint16_t key) {
 
 		if(mensaje_con_tabla->head == VALUE_FAILURE){
 			logInfo("[SELECT/REQ]: el filesystem no posee dicha key");
+			pthread_mutex_unlock(&mutex_estructuras_memoria);
 			return NULL;
 		}
 		else{
