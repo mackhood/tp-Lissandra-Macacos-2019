@@ -260,7 +260,7 @@ void escucharYatenderKernel(int kernel){
 		for (int i=0; i<tamanio_tabla; i++)
 		{
 			t_est_memoria* memoria = list_get(tabla_gossip, i);
-			int tamanio_memoria = strlen(memoria->ip_memoria)+sizeof(memoria->puerto_memoria)+2;
+			int tamanio_memoria = strlen(memoria->ip_memoria)+sizeof(memoria->puerto_memoria)+sizeof(memoria->numero_memoria)+3;
 			tamanio_buffer += tamanio_memoria;
 		}
 
@@ -282,6 +282,9 @@ void escucharYatenderKernel(int kernel){
 			strcat(buffer, ",");
 			char* puerto = string_itoa(memoria->puerto_memoria);
 			strcat(buffer, puerto);
+			strcat(buffer, ",");
+			char* numero = string_itoa(memoria->numero_memoria);
+			strcat(buffer, numero);
 			strcat(buffer, ";");
 		}
 
