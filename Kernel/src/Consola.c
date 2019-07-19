@@ -530,7 +530,7 @@ void journal (char** args) {
 		int cantidadMemorias = list_size(tKernel->memoriasConCriterio);
 		int x =0;
 		bool hayMemorias = 1;
-		while(x<cantidadMemorias && hayMemorias){
+		while(NULL != list_get(tKernel->memoriasConCriterio,x)){
 
 
 			memoria* laMemoria = list_get(tKernel->memoriasConCriterio,x);
@@ -583,13 +583,13 @@ void journal (char** args) {
 				prot_enviar_mensaje(socket_memoria, JOURNAL_REQ, 0, NULL);
 
 
-
+				x++;
 
 			}
 
 
 
-			x++;
+
 		}
 
 	}

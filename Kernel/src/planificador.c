@@ -627,7 +627,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 				case TABLA_CREADA_YA_EXISTENTE:{
 					printf("la tabla ya se encuentra existente\n");
 					prot_destruir_mensaje(mensaje_recibido);
-
+					dtb->flag=1;
 				}break;
 				case TABLA_CREADA_FALLO:{
 					printf("hubo un error al crear la tabla\n");
@@ -1064,9 +1064,9 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 			//		quantum ++;
 			//		}
 		}
-	} signalDTBRunning();
+	}
 	tKernel->config->multiprocesamiento ++;
-
+	signalDTBRunning();
 	if(dtb->flag){
 		logInfo("Fallo , se suspende todo");
 		moverExecToExit(dtb);
