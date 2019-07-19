@@ -25,7 +25,6 @@ COMANDO comandos[] = {
 		{"ADD",add},
 		{"RUN",run},
 		{"METRICS",metrics},
-		{"MODIFYQUANTUM",modifyQuantum},
 		{(char *) NULL, (Funcion *) NULL}
 }; // para generalizar las funciones reciben un string.
 
@@ -967,30 +966,6 @@ void run (char** args) {
 
 	}
 }
-
-void modifyQuantum(char** args)
-{
-	logInfo("[Consola]: Ha llegado un pedido para modificar el quantum entre instrucciones.");
-	int chequeo = chequearParametros(args, 2);
-	if(chequeo)
-	{
-		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
-		logError("[Consola]: solicitud posee cantidad errónea de parámetros");
-	}
-	else if(!itsANumber(args[1]))
-	{
-		puts("El valor que ingresó tiene caracteres inválidos.");
-		logError( "[Consola]: el valor para modificar es inválido.");
-	}
-	else
-	{
-		int nuevoQuantum = atoi(args[1]);
-		tKernel->config->quantum = nuevoQuantum;
-		logInfo("[Consola]: se ha modificado el quantum");
-		puts("Se ha modificado el quantum");
-	}
-}
-
 
 void metrics (char ** args) {
 
