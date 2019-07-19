@@ -151,6 +151,7 @@ void handler_conexion_memoria(t_kernel* tKernel) {
 				char ** infoMemoria = string_split(contenidoTabla[a],",");
 				char * ip = string_duplicate(infoMemoria[0]);
 				int puerto = atoi(string_duplicate(infoMemoria[1]));
+				int numeroMemoriaGeneral = atoi(string_duplicate(infoMemoria[2]));
 
 				bool  estaEnLista2(memoria* memoriaAux) {
 					return  string_equals_ignore_case(ip, memoriaAux->ip) &&  (memoriaAux->puerto == puerto) ;
@@ -158,7 +159,7 @@ void handler_conexion_memoria(t_kernel* tKernel) {
 
 				if(!list_any_satisfy(tKernel->memoriasCola->elements,(void*)estaEnLista2)){
 
-					memoria* laNuevisima = (memoria*)crearMemoria(ip,puerto);
+					memoria* laNuevisima = (memoria*)crearMemoria(ip,puerto,numeroMemoriaGeneral);
 					pthread_mutex_lock(&memoriasSinCriterio);
 					list_add(tKernel->memoriasSinCriterio,laNuevisima);
 					pthread_mutex_unlock(&memoriasSinCriterio);

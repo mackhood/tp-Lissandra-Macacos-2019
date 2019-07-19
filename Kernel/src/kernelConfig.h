@@ -76,7 +76,6 @@ estadisticas * estadisticasMemoriaEC;
 int insertsTotales;
 int selectTotales;
 
-
 }memoria;
 
 

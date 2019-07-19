@@ -275,7 +275,14 @@ void crearPrimerMemoria(){
 
 	memoria* memoriaNueva = malloc(sizeof(memoria));
 
-	memoriaNueva = (memoria*)crearMemoria(tKernel->config->ip_memoria, tKernel->config->puerto_memoria);
+	int conexion  = conectar_a_memoria_flexible(tKernel->config->ip_memoria,tKernel->config->puerto_memoria,KERNEL);
+	prot_enviar_mensaje(conexion,HANDSHAKE,0,NULL);
+	t_prot_mensaje * recepcion = prot_recibir_mensaje(conexion);
+
+	int otroNumero = *(int*)(recepcion->payload);
+	close(conexion);
+
+	memoriaNueva = (memoria*)crearMemoria(tKernel->config->ip_memoria, tKernel->config->puerto_memoria,otroNumero);
 
 
 
@@ -293,21 +300,21 @@ void crearPrimerMemoria(){
 
 int actualIdMemoria = 0 ;
 
-int getIdMemoria(){
-	int id = 0;
-	pthread_mutex_lock(&mutexIdMemoria);
-	actualIdMemoria++;
-	id = actualIdMemoria;
-	pthread_mutex_unlock(&mutexIdMemoria);
-	return id;
-}
+//int getIdMemoria(){
+//	int id = 0;
+//	pthread_mutex_lock(&mutexIdMemoria);
+//	actualIdMemoria++;
+//	id = actualIdMemoria;
+//	pthread_mutex_unlock(&mutexIdMemoria);
+//	return id;
+//}
 
 
-memoria* crearMemoria(char* ip,int puerto){
+memoria* crearMemoria(char* ip,int puerto,int numeroMemoriaGeneral){
 
 	memoria* nuevaMemoria = malloc(sizeof(memoria));
 	nuevaMemoria->puerto = puerto;
-	nuevaMemoria->numeroMemoria = getIdMemoria();
+//	nuevaMemoria->numeroMemoria = getIdMemoria();
 	nuevaMemoria->estaEjecutando =0;
 	nuevaMemoria->ip = ip;
 	estadisticas * estructuraSC = malloc(sizeof(estadisticas));
@@ -330,6 +337,7 @@ memoria* crearMemoria(char* ip,int puerto){
 	nuevaMemoria->estadisticasMemoriaEC = estructuraEC;
 	nuevaMemoria->insertsTotales=0;
 	nuevaMemoria->selectTotales=0;
+	nuevaMemoria->numeroMemoria = numeroMemoriaGeneral;
 	return nuevaMemoria;
 }
 

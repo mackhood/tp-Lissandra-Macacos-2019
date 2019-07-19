@@ -33,7 +33,7 @@ void initThreadAPI ();
 void setearValores(t_config * archivoConfig);
 void interPlanificador();
 void handleEstadisticas();
-memoria* crearMemoria(char* ip,int puerto);
+memoria* crearMemoria(char* ,int ,int);
 void reestablecerEstadisticasMemoria(memoria * unaMemoria);
 void notifier();
 
