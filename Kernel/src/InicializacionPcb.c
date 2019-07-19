@@ -27,13 +27,13 @@
 
 
 
-//		void initNuevoGDT(char* pathScriptEscriptorio){
-//
-//			int idGdt = getIdGDT();
-//			agregarGDT( crearGdt(idGdt) );
-//			//enviarANew(crearDTBKERNEL(idGdt, pathScriptEscriptorio, tKernel->config->quantum));
-//
-//		}
+		void initNuevoGDT(char* pathScriptEscriptorio){
+
+			int idGdt = getIdGDT();
+			agregarGDT( crearGdt(idGdt) );
+			//enviarANew(crearDTBKERNEL(idGdt, pathScriptEscriptorio, tKernel->config->quantum));
+
+		}
 
 
 

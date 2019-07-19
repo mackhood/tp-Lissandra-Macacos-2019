@@ -26,7 +26,6 @@ pthread_mutex_t memoriasCriterio;
 pthread_mutex_t memoriasSinCriterio;
 pthread_mutex_t memoriasCola;
 pthread_mutex_t  memoriaConfig;
-#define  path_configs  "/home/utnso/workspace/tp-2019-1c-Macacos/Kernel/kernel.properties"
 
 typedef struct {
 
@@ -167,28 +166,28 @@ void agregarGDT(GDT* gdt);
 GDT* crearGdt(int idGdt);
 void destroyGdt(GDT* gdt);
 void removeGDT(GDT* gdt);
-//
-//typedef struct {
-//	int valor;
-//	char* recurso;
-//	t_queue* en_espera;
-//}t_recurso;
+
+typedef struct {
+	int valor;
+	char* recurso;
+	t_queue* en_espera;
+}t_recurso;
 
 
 
-//typedef struct {
-//	char* path;
-//	int posMemoria;
-//}t_archivoAbierto;
+typedef struct {
+	char* path;
+	int posMemoria;
+}t_archivoAbierto;
 
-//t_dictionary* tabla_recursos;
-//t_list* tablaGDT;
-//pthread_mutex_t mutextListGDT;
-//pthread_mutex_t mutextListRecurso;
-
-
+t_dictionary* tabla_recursos;
+t_list* tablaGDT;
+pthread_mutex_t mutextListGDT;
+pthread_mutex_t mutextListRecurso;
 
 
-//t_recurso* extraer_recurso(char* recurso);
+
+
+t_recurso* extraer_recurso(char* recurso);
 
 #endif /* KERNELCONFIG_H_ */

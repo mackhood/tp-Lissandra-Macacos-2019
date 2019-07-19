@@ -29,7 +29,7 @@ void initConfiguracion(){
 	srand((unsigned) time(&randomNumbertime));
 
 	destProtocol = 0;
-	t_config* config = config_create((char*)path_configs);
+	t_config* config = config_create("/home/utnso/workspace/tp-2019-1c-Macacos/Kernel/kernel.properties");
 	if(config  == NULL){
 		perror("Error al abrir el archivo de configuracion");
 		free(config);
@@ -100,7 +100,7 @@ void initThread(){
 	pthread_create(&threadInterPlanificador,NULL,(void*)interPlanificador,NULL);
 	pthread_create(&threadEstadisticas, NULL, (void*)handleEstadisticas,NULL);
 	pthread_create(&threadNotifier, NULL, (void*)notifier, NULL);
-	pthread_create(&threadPlanificador, NULL,(void*)pasarArunnign,NULL);
+	pthread_create(&threadPlanificador, NULL, (void*)pasarArunnign(),NULL);
 
 	pthread_detach(threadPlanificador);
 	pthread_detach(threadNotifier);
@@ -164,7 +164,7 @@ void handleEstadisticas(){
 		}
 
 		int i;
-		for( i=0 ; i< list_size(tKernel->memoriasConCriterio);i++){
+		for( i=0 ; i< list_size(tKernel->memorias);i++){
 
 			memoria* unaMemoria =	list_get(tKernel->memoriasConCriterio,i);
 			logInfo("Memoria Numero : %d ", unaMemoria->numeroMemoria);
@@ -374,9 +374,6 @@ void reestablecerEstadisticasMemoria(memoria * unaMemoria) {
 
 void notifier()
 {
-
-//	char* path_configs ="/home/utnso/workspace/tp-2019-1c-Macacos/Kernel/kernel.properties";
-
 	int length;
 	int i = 0;
 	char buffer[BUF_LEN];
@@ -404,7 +401,7 @@ void notifier()
 		{
 			sleep(2);
 			logInfo("[Lissandra]: se ha modificado el archivo de configuración, actualizando valores.");
-			t_config* ConfigMain = config_create((char*)path_configs);
+			t_config* ConfigMain = config_create(path_configs);
 			tKernel->config->quantum = config_get_int_value(ConfigMain,"QUANTUM");
 			tKernel->config->metadata_refresh = config_get_int_value(ConfigMain,"METADATA_REFRESH");
 			tKernel->config->sleep_ejecucion = config_get_int_value(ConfigMain,"SLEEP_EJECUCION");
