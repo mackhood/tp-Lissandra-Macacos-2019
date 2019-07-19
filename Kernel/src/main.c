@@ -12,7 +12,7 @@
 
 
 int main(void) {
-	puts("!!!Hello World!!!"); /* prints !!!Hello World!!! */
+//	puts("!!!Hello World!!!"); /* prints !!!Hello World!!! */
 
 	initConfiguracion();
 

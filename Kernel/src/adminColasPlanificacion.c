@@ -14,13 +14,11 @@ void initConfigAdminColas(){
 
 	tKernelEstados = malloc(sizeof(t_kernel_estado));
 	tKernelEstados->new = queue_create();
-//	tKernelEstados->pendReady = list_create();
 	tKernelEstados->ready = queue_create();
-//	tKernelEstados->colaPrioridad = queue_create();
 	tKernelEstados->exec = list_create();
 	tKernelEstados->exit = queue_create();
-	tablaGDT = list_create();
-	tabla_recursos = dictionary_create();
+//	tablaGDT = list_create();
+//	tabla_recursos = dictionary_create();
 //	tKernelEstados->ListaPrioridad=list_create();
 	//inicializacion de mutex para cada lista
 	pthread_mutex_init(&mutexListNuevo, NULL);
@@ -44,7 +42,6 @@ void initConfigAdminColas(){
 
 	sem_init(&semPCbNew,0,0);
 	sem_init(&semPcbReady,0,0);
-	sem_init(&semPcbReadyPrioridad,0,0);
 	sem_init(&semPcbRunning,0,tKernel->config->multiprocesamiento);
 
 }
@@ -62,24 +59,24 @@ void enviarANew(DTB_KERNEL* dtb){
 
 
 
-void enviarAColaPrioridad(DTB_KERNEL* dtb){
-	pthread_mutex_lock(&mutexListcolaPrioridad);
-	signalDTBReadyPrioridad();
-	queue_push(tKernelEstados->new, dtb);
-	pthread_mutex_unlock(&mutexListcolaPrioridad);
-	logInfo("El DTB id %d y path %s ingreso a la cola de Prioridad",dtb->idGDT, dtb->path);
-}
+//void enviarAColaPrioridad(DTB_KERNEL* dtb){
+//	pthread_mutex_lock(&mutexListcolaPrioridad);
+//	signalDTBReadyPrioridad();
+//	queue_push(tKernelEstados->new, dtb);
+//	pthread_mutex_unlock(&mutexListcolaPrioridad);
+//	logInfo("El DTB id %d y path %s ingreso a la cola de Prioridad",dtb->idGDT, dtb->path);
+//}
 
-DTB_KERNEL* getDTBColaPrioridad(){
-	DTB_KERNEL* dtb ;
-	waitDTBReadyPrioridad();
-	pthread_mutex_lock(&mutexListListo);
-	dtb = queue_pop(tKernelEstados->ready);
-	pthread_mutex_unlock(&mutexListListo);
-	logTrace("programa-dtb :%d seleccionado de la lista de ready ",dtb->idGDT) ;
-	return dtb;
-
-}
+//DTB_KERNEL* getDTBColaPrioridad(){
+//	DTB_KERNEL* dtb ;
+//	waitDTBReadyPrioridad();
+//	pthread_mutex_lock(&mutexListListo);
+//	dtb = queue_pop(tKernelEstados->ready);
+//	pthread_mutex_unlock(&mutexListListo);
+//	logTrace("programa-dtb :%d seleccionado de la lista de ready ",dtb->idGDT) ;
+//	return dtb;
+//
+//}
 
 
 
@@ -169,12 +166,12 @@ int getEstadoPlanficacion(DTB_KERNEL* dtb){
 	return ESTADO_NO_ENCONTRADO;
 }
 
-void enviarABLOCK(DTB_KERNEL* dtb) {
-	pthread_mutex_lock(&mutexListBloqueado);
-//	list_add(tKernelEstados->block, dtb);
-	pthread_mutex_unlock(&mutexListBloqueado);
-	logTrace(" Se envio a cola de BLoqueados el DTB :%d", dtb->idGDT);
-}
+//void enviarABLOCK(DTB_KERNEL* dtb) {
+//	pthread_mutex_lock(&mutexListBloqueado);
+////	list_add(tKernelEstados->block, dtb);
+//	pthread_mutex_unlock(&mutexListBloqueado);
+//	logTrace(" Se envio a cola de BLoqueados el DTB :%d", dtb->idGDT);
+//}
 
 //DTB_KERNEL* get_elem_block_by_id(int id){
 //	bool encontrar(void* element) {
@@ -239,13 +236,13 @@ void enviarAEXIT(DTB_KERNEL* dtb) {
  * Obtiene el DTB_DUMMY de la cola de bloqueados
  *
  */
-DTB_KERNEL* getDTB_DUMMYofBLOCK(){
-	bool condicionDTB_DUMMY(void* element) {
-		DTB_KERNEL* dtbTemp = element;
-		return dtbTemp->flag == 0;
-	}
+//DTB_KERNEL* getDTB_DUMMYofBLOCK(){
+//	bool condicionDTB_DUMMY(void* element) {
+//		DTB_KERNEL* dtbTemp = element;
+//		return dtbTemp->flag == 0;
+//	}
 
-	DTB_KERNEL* dtb ;
+//	DTB_KERNEL* dtb ;
 //	pthread_mutex_lock(&mutexListBloqueado);
 //	dtb = list_remove_by_condition(tKernelEstados->block, condicionDTB_DUMMY);
 //	pthread_mutex_unlock(&mutexListBloqueado);
@@ -255,9 +252,9 @@ DTB_KERNEL* getDTB_DUMMYofBLOCK(){
 //	}else{
 //		logInfo("Error al remover DTB_DUMMY de la cola de bloqueados");
 //	}
-
-	return dtb;
-}
+//
+//	return dtb;
+//}
 void moverExecToReady(DTB_KERNEL* dtb) {
 	removerDeExec(dtb);
 	enviarAReady(dtb);
@@ -272,14 +269,14 @@ void removerDeExec(DTB_KERNEL* dtb) {
 	logTrace("El dtb %d salio de la lista de EXEC", dtb->idGDT);
 }
 
-void removerDeBLOCK(DTB_KERNEL* dtb) {
-
-	bool condicionDTB(DTB_KERNEL* dtbTemp) {;
-		return dtbTemp->idGDT == dtb->idGDT;
-	}
-//	list_remove_by_condition(tKernelEstados->block, (void*)condicionDTB);
-	logTrace("El DTB:%d se removio de la cola de bloqueados", dtb->idGDT);
-}
+//void removerDeBLOCK(DTB_KERNEL* dtb) {
+//
+//	bool condicionDTB(DTB_KERNEL* dtbTemp) {;
+//		return dtbTemp->idGDT == dtb->idGDT;
+//	}
+////	list_remove_by_condition(tKernelEstados->block, (void*)condicionDTB);
+//	logTrace("El DTB:%d se removio de la cola de bloqueados", dtb->idGDT);
+//}
 
 //void removerDePenReady(DTB_KERNEL* dtb) {
 //
@@ -342,13 +339,13 @@ void signalDTBReady(){
 	sem_post(&semPcbReady);
 }
 
-void signalDTBReadyPrioridad(){
-	sem_post(&semPcbReadyPrioridad);
-}
-
-void waitDTBReadyPrioridad(){
-	sem_wait(&semPcbReadyPrioridad);
-}
+//void signalDTBReadyPrioridad(){
+//	sem_post(&semPcbReadyPrioridad);
+//}
+//
+//void waitDTBReadyPrioridad(){
+//	sem_wait(&semPcbReadyPrioridad);
+//}
 
 void waitDTBReady(){
 	sem_wait(&semPcbReady);
@@ -364,25 +361,25 @@ void signalDTBRunning(){
 
 
 
-void moverExecToBlock(DTB_KERNEL* dtb){
-	removerDeExec(dtb);
-	enviarABLOCK(dtb);
-}
+//void moverExecToBlock(DTB_KERNEL* dtb){
+//	removerDeExec(dtb);
+//	enviarABLOCK(dtb);
+//}
 
 void moverExecToExit(DTB_KERNEL* dtb){
 	removerDeExec(dtb);
 	enviarAEXIT(dtb);
 }
 
-void moverBlockToExit(DTB_KERNEL* dtb){
-	removerDeBLOCK(dtb);
-	enviarAEXIT(dtb);
-}
+//void moverBlockToExit(DTB_KERNEL* dtb){
+//	removerDeBLOCK(dtb);
+//	enviarAEXIT(dtb);
+//}
 
-void moverBlockToReady(DTB_KERNEL* dtb){
-	removerDeBLOCK(dtb);
-	enviarAReady(dtb);
-}
+//void moverBlockToReady(DTB_KERNEL* dtb){
+//	removerDeBLOCK(dtb);
+//	enviarAReady(dtb);
+//}
 
 //void moverPenReadyToExit(DTB_KERNEL* dtb){
 //	removerDePenReady(dtb);
@@ -419,9 +416,9 @@ DTB_KERNEL* crearDTBKernel(int gdtId, char* path, int quantum){
 	DTB_KERNEL* dtb = malloc( sizeof(DTB_KERNEL) );
 	dtb->idGDT = gdtId;
 	dtb->flag = 0;
-	dtb->pc = 0;
+//	dtb->pc = 0;
 //	dtb->cant_usaron_diego = 0;
-	dtb->se_ejecuto = false;
+//	dtb->se_ejecuto = false;
 	dtb->horacreacion = time(0);
 	dtb->quantum = quantum;
 //	dtb->path = malloc( (sizeof(char)* string_length(path)) + 1 );

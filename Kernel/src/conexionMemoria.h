@@ -11,6 +11,7 @@
 
 #include "../../SharedLibrary/conexiones.h"
 #include "kernelConfig.h"
+#include "Kernel.h"
 
 void handler_conexion_memoria(t_kernel*);
 

@@ -18,8 +18,8 @@
 #include "conexionMemoria.h"
 #include "../../SharedLibrary/loggers.h"
 #include <sys/inotify.h>
-
-const char* path_configs ="/home/utnso/workspace/tp-2019-1c-Macacos/Kernel/kernel.properties";
+#include "planificador.h"
+//const char* path_configs ="/home/utnso/workspace/tp-2019-1c-Macacos/Kernel/kernel.properties";
 #define KERNEL_LOG_PATH "./kernel.log"
 
 
@@ -36,7 +36,7 @@ void handleEstadisticas();
 memoria* crearMemoria(char* ,int ,int);
 void reestablecerEstadisticasMemoria(memoria * unaMemoria);
 void notifier();
-
+void reestablecerEstadisticas();
 pthread_t threadNotifier;
 pthread_t threadConexionMemoria;
 pthread_t threadConsola;

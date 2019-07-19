@@ -738,7 +738,9 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 					metadataTabla = malloc(tamanio_mensaje + 1);
 					memcpy(metadataTabla, mensaje_memoria->payload + sizeof(int), tamanio_mensaje);
 					metadataTabla[tamanio_mensaje] = '\0';
-					printf(metadataTabla);
+					string_append(&metadataTabla,"/n");
+
+					printf(metadataTabla,"%s");
 					prot_destruir_mensaje(mensaje_memoria);
 					break;
 				}
@@ -922,7 +924,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 						u=0;
 						while(list_get(t_Criterios->StrongHash,u) != NULL){
 
-							memoria* fruta =list_get(t_Criterios->StrongHash,u);
+//							memoria* fruta =list_get(t_Criterios->StrongHash,u);
 
 
 							u++;
