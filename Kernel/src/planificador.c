@@ -782,6 +782,25 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 					}
 
+					int numerador = 0;
+					while(tablaDescribe[numerador])
+					{
+						char** valores_separados = string_split(tablaDescribe[numerador], ",");
+						printf("Nombre de la tabla:%s\n", valores_separados[0]);
+						printf("Consistencia:%s\n", valores_separados[1]);
+						printf("Cantidad de particiones:%s\n", valores_separados[2]);
+						printf("Tiempo entre compactaciones:%s\n", valores_separados[3]);
+
+						logInfo("[Consola]: se recibio la tabla %s, con consistencia %s, con cant de particiones %s y tiempo de %s",
+								valores_separados[0],
+								valores_separados[1],
+								valores_separados[2],
+								valores_separados[3]);
+
+						liberadorDeArrays(valores_separados);
+						numerador++;
+					}
+
 
 
 					prot_destruir_mensaje(mensaje_memoria);
@@ -924,7 +943,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 						u=0;
 						while(list_get(t_Criterios->StrongHash,u) != NULL){
 
-//							memoria* fruta =list_get(t_Criterios->StrongHash,u);
+							//							memoria* fruta =list_get(t_Criterios->StrongHash,u);
 
 
 							u++;
