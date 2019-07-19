@@ -5,8 +5,8 @@ int main(void)
 	char* dateForLogger = timeForLogs();
 	char* lissandraFL_log_ruta = malloc(strlen(dateForLogger) + 130);
 	strcpy(lissandraFL_log_ruta, "/home/utnso/workspace/tp-2019-1c-Macacos/LissandraFilesystem/LissandraFileSystem ");
-	strcat(lissandraFL_log_ruta, dateForLogger);
-	strcat(lissandraFL_log_ruta, ".log");
+	string_append(&lissandraFL_log_ruta, dateForLogger);
+	string_append(&lissandraFL_log_ruta, ".log");
 	logger = crearLogger(lissandraFL_log_ruta, "LissandraFileSystem");
 	logInfo("[Main]: Atra estherni ono thelduin, ai fricai.");
 	lissandraFL_config_ruta = string_duplicate("/home/utnso/workspace/tp-2019-1c-Macacos/LissandraFilesystem/src/Lissandra.cfg");
@@ -30,6 +30,7 @@ void setearValores(t_config * archivoConfig)
 
 void iniciar()
 {
+	pthread_mutex_init(&modifierTablasEnCurso, NULL);
 	pthread_mutex_init(&dumpEnCurso, NULL);
 	pthread_mutex_init(&deathProtocol, NULL);
 	pthread_mutex_init(&modifierBitArray, NULL);

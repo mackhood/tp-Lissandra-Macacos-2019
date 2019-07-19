@@ -517,7 +517,9 @@ int llamarEliminarTabla(char* tablaPorEliminar)
 	{
 		t_TablaEnEjecucion * tabla = list_find(tablasEnEjecucion, (void*) estaTabla);
 		pthread_mutex_lock(&tabla->dropPendiente);
+		pthread_mutex_lock(&modifierTablasEnCurso);
 		list_remove_by_condition(tablasEnEjecucion, (void*) estaTabla);
+		pthread_mutex_unlock(&modifierTablasEnCurso);
 		logInfo("[Lissandra]: Se ha removido a la %s de la lista de tablas en ejecución", tablaPorEliminar);
 		pthread_mutex_unlock(&tabla->dropPendiente);
 		break;
@@ -575,7 +577,7 @@ char* describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria)
 					if(parserList == 0)
 						strcpy(buffer,table);
 					else
-						strcat(buffer, table);
+						string_append(&buffer, table);
 					parserList++;
 				}
 				list_destroy_and_destroy_elements(listedTables, &free);
@@ -590,7 +592,7 @@ char* describirTablas(char* tablaSolicitada, bool solicitadoPorMemoria)
 		if(solicitadoPorMemoria)
 		{
 			strcpy(auxbuffer, tablaSolicitada);
-			strcat(auxbuffer, ",");
+			string_append(&auxbuffer, ",");
 			auxbuffer = mostrarMetadataEspecificada(tablaSolicitada, solicitadoPorMemoria);
 			int sizebuffer = strlen(auxbuffer);
 			buffer = malloc(sizebuffer + 1);

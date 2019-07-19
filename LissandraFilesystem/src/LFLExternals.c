@@ -167,7 +167,7 @@ t_list* parsearKeys(t_list* clavesAParsear)
 						t = 0;
 					}
 					else
-						strcat(timestamp, aux);
+						string_append(&timestamp, aux);
 					break;
 				}
 				case 1:
@@ -178,7 +178,7 @@ t_list* parsearKeys(t_list* clavesAParsear)
 						k = 0;
 					}
 					else
-						strcat(key, aux);
+						string_append(&key, aux);
 					break;
 				}
 				case 2:
@@ -189,7 +189,7 @@ t_list* parsearKeys(t_list* clavesAParsear)
 						v = 0;
 					}
 					else
-						strcat(value, aux);
+						string_append(&value, aux);
 					break;
 				}
 				}
@@ -231,11 +231,11 @@ t_list* inversaParsearKeys(t_list* clavesADesparsear)
 		char* keyConvertida = malloc(strlen(auxk) + strlen(aux) + strlen(keyAuxiliar->clave) + 3);
 		char* auxb = string_substring_until(aux, strlen(aux) - 7);
 		strcpy(keyConvertida, auxb);
-		strcat(keyConvertida, ";");
-		strcat(keyConvertida, auxk);
-		strcat(keyConvertida, ";");
-		strcat(keyConvertida, keyAuxiliar->clave);
-		strcat(keyConvertida, "\n");
+		string_append(&keyConvertida, ";");
+		string_append(&keyConvertida, auxk);
+		string_append(&keyConvertida, ";");
+		string_append(&keyConvertida, keyAuxiliar->clave);
+		string_append(&keyConvertida, "\n");
 		free(aux);
 		free(auxb);
 		free(auxk);
@@ -274,4 +274,17 @@ void liberadorDeMemtableKeys(t_Memtablekeys* memtableKey)
 	liberadorDeKeys(memtableKey->data);
 	free(memtableKey);
 }
+
+void liberadorDeListasDeKeys(t_list* listaDeKeys)
+{
+	int a = 0;
+	while(NULL != list_get(listaDeKeys, a))
+	{
+		t_keysetter* auxiliarium = list_remove(listaDeKeys, a);
+		liberadorDeKeys(auxiliarium);
+		a++;
+	}
+	list_destroy(listaDeKeys);
+}
+
 
