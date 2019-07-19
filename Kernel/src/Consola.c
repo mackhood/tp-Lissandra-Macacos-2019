@@ -827,7 +827,6 @@ unsigned long obtenerTamanioArchivo(char* direccionArchivo)
 void run (char** args) {
 	logInfo( "[Consola]: Se ha recibido un pedido de Run.");
 	int chequeo = 0;
-	char* path_scripts = "/home/utnso/Escritorio/1C2019-Scripts-lql-entrega/scripts";
 	chequeo = chequearParametros(args, 2);
 	if(chequeo == 1)
 	{
@@ -837,7 +836,6 @@ void run (char** args) {
 	else
 	{
 		char* path = string_duplicate(args[1]);
-		string_append(&path_scripts,path);
 
 		//		params* parametros = malloc( sizeof(params) );
 		//		inicializarParametros(parametros);
@@ -876,7 +874,7 @@ void run (char** args) {
 		//printf("Enter name of a file you wish to see\n");
 
 
-		fp = fopen(path_scripts, "r"); // read mode
+		fp = fopen(path, "r"); // read mode
 
 		if (fp == NULL)
 		{
