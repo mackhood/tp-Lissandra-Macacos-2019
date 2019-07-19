@@ -127,37 +127,6 @@ void handler_conexion_memoria(t_kernel* tKernel) {
 			}
 
 			close(conexion);
-
-			if(mensaje_recibido->head == FULL_DESCRIBE){
-			int i = 0;
-			while(tablaDescribe[i])
-			{
-				char** valores_separados = string_split(tablaDescribe[i], ",");
-				printf("Nombre de la tabla:%s\n", valores_separados[0]);
-				printf("Consistencia:%s\n", valores_separados[1]);
-				printf("Cantidad de particiones:%s\n", valores_separados[2]);
-				printf("Tiempo entre compactaciones:%s\n", valores_separados[3]);
-
-				logInfo("[Consola]: se recibio la tabla %s, con consistencia %s, con cant de particiones %s y tiempo de %s",
-						valores_separados[0],
-						valores_separados[1],
-						valores_separados[2],
-						valores_separados[3]);
-
-				liberadorDeArrays(valores_separados);
-				i++;
-			}
-
-
-			}else {
-
-				printf("Fallo el describe global");
-
-
-
-
-			}
-
 			int conexion2=conectar_a_memoria_flexible(configuracion->ip,configuracion->puerto, KERNEL);
 			//
 			//

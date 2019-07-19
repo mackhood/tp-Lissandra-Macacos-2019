@@ -47,5 +47,5 @@ void reads (char** args);
 void writes (char** args);
 void memoryLoad (char** args);
 void metrics (char ** args);
-void modifyQuantum(char** args);
+
 #endif /* CONSOLA_H_ */
