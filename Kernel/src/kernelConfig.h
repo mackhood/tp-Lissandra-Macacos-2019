@@ -27,7 +27,7 @@ pthread_mutex_t memoriasSinCriterio;
 pthread_mutex_t memoriasCola;
 pthread_mutex_t  memoriaConfig;
 #define  path_configs  "/home/utnso/workspace/tp-2019-1c-Macacos/Kernel/kernel.properties"
-
+//#define path_scripts "/home/utnso/Escritorio/1C2019-Scripts-lql-entrega/scripts"
 typedef struct {
 
 
