@@ -9,6 +9,13 @@ void escucharYatenderKernel(int kernel){
 
 	switch(req_recibida->head){
 
+	case HANDSHAKE:
+	{
+		int numero_memoria = info_memoria.numero_memoria;
+		prot_enviar_mensaje(socket_k, HANDSHAKE, sizeof(int), &numero_memoria);
+
+	} break;
+
 	case SELECT_REQ:
 	{
 		int tamanio_nombre_tabla;
@@ -112,6 +119,7 @@ void escucharYatenderKernel(int kernel){
 			prot_enviar_mensaje(socket_k, TABLA_CREADA_FALLO, 0, NULL);
 		}break;
 		default:{
+			printf("ahre que paso en el create\n");
 			break;
 		}
 		}
