@@ -148,6 +148,7 @@ void gestionarMemtable()
 				}
 				list_clean_and_destroy_elements(memtable, (void*)&liberadorDeMemtableKeys);
 				pthread_mutex_unlock(&dumpEnCurso);
+				puts("DUMP realizado.");
 			}
 			else
 			{
