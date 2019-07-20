@@ -760,9 +760,8 @@ void run (char** args) {
 		fp = fopen(absolute_path, "r"); // read mode
 		if (fp == NULL)
 		{
-			perror("Error while opening the file.\n");
-			exit(EXIT_FAILURE);
-		}
+			printf("fallo al abrir el archivo");
+		}else{
 		int size = obtenerTamanioArchivo(absolute_path) ;
 		char* sentenciasParsear = (char *) mmap (0, size, PROT_READ, MAP_SHARED, fp->_fileno, 0);
 		char** argus = string_split(sentenciasParsear,"\n");
@@ -776,7 +775,7 @@ void run (char** args) {
 		dtb_nuevo->total_sentencias = x;
 		enviarANew(dtb_nuevo);
 		printf("se envio a new el proceso");
-	}
+	}}
 }
 
 void metrics (char ** args) {
