@@ -153,6 +153,7 @@ void enviarAEXIT(DTB_KERNEL* dtb) {
 void moverExecToReady(DTB_KERNEL* dtb)
 {
 	removerDeExec(dtb);
+	usleep(tKernel->config->sleep_ejecucion*1000);
 	enviarAReady(dtb);
 }
 

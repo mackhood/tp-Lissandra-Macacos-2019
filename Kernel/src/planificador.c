@@ -1024,6 +1024,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 		}else{
 
 			logInfo("Fin de quantum");
+
 			moverExecToReady(dtb);
 
 		}
