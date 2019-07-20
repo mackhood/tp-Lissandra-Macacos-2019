@@ -245,19 +245,12 @@ void handleEstadisticas(){
 		}
 
 
+		reestablecerEstadisticas();
 
 
-
-
+		sleep(30);
 
 	}
-
-
-	reestablecerEstadisticas();
-
-
-	sleep(30);
-
 
 
 
