@@ -136,118 +136,116 @@ void handleEstadisticas(){
 	while(!destProtocol)
 	{
 
-		logInfo("Estadisticas globales de todos los criterios");
-		logInfo("Cantidad de lecturas: %i", string_itoa(t_estadisticas->Reads));
-		if(t_estadisticas->Reads > 0){
-			logInfo("Promedio de duracion de lecturas en milisegundos: %i",
-					string_itoa(t_estadisticas ->Read_Latency/t_estadisticas->Reads));
-		}
-		else
-		{
-			logInfo("Promedio de duracion de lecturas en milisegundos: 0");
-		}
-		logInfo("Cantidad de escrituras: %i", string_itoa(t_estadisticas->Writes));
-		if(t_estadisticas->Writes > 0)
-		{
-			logInfo("Promedio de duracion de lecturas en milisegundos: %i",
-					string_itoa(t_estadisticas->Write_Latency/t_estadisticas->Writes));
-		}
-		else
-		{
-			logInfo("Promedio de duracion de lecturas en milisegundos: 0");
-		}
+
+
+
 
 		int i;
-		for( i=0 ; i< list_size(tKernel->memorias);i++){
-
+		int tiempoReadsTotalEC = 0;
+		int tiempoReadsTotalSC = 0;
+		int tiempoReadsTotalSHC = 0;
+		int tiempoWritesTotalEC = 0;
+		int tiempoWritesTotalSC = 0;
+		int tiempoWritesTotalSHC = 0;
+		int writesTotalEC = 0;
+		int writesTotalSC = 0;
+		int writesTotalSHC = 0;
+		int readsTotalEC = 0;
+		int readsTotalSC = 0;
+		int readsTotalSHC = 0;
+		for( i=0 ; i< list_size(tKernel->memoriasConCriterio);i++)
+		{
 			memoria* unaMemoria =	list_get(tKernel->memoriasConCriterio,i);
-			logInfo("Memoria Numero : %d ", unaMemoria->numeroMemoria);
-
-			logInfo("Criterio SC:");
-
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Read_Latency/unaMemoria->estadisticasMemoriaSC->Reads));
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Reads));
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Write_Latency/unaMemoria->estadisticasMemoriaSC->Writes));
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Writes));
-
-			if(unaMemoria->selectTotales == 0){
-
-
-				logInfo("Memory Load para SC de esta memoria es 0");
-
-			}else{
-
-
-				logInfo("Memory Load para SC de esta memoria es : %f", unaMemoria->insertsTotales / unaMemoria->selectTotales);
-
-
-
+			tiempoReadsTotalSC += unaMemoria->estadisticasMemoriaSC->Read_Latency;
+			readsTotalSC += unaMemoria->estadisticasMemoriaSC->Reads;
+			tiempoWritesTotalSC += unaMemoria->estadisticasMemoriaSC->Write_Latency;
+			writesTotalSC += unaMemoria->estadisticasMemoriaSC->Writes;
+			tiempoReadsTotalSHC += unaMemoria->estadisticasMemoriaSHC->Read_Latency;
+			readsTotalSHC += unaMemoria->estadisticasMemoriaSHC->Reads;
+			tiempoWritesTotalSHC += unaMemoria->estadisticasMemoriaSHC->Write_Latency;
+			writesTotalSHC += unaMemoria->estadisticasMemoriaSHC->Writes;
+			tiempoReadsTotalEC += unaMemoria->estadisticasMemoriaEC->Read_Latency;
+			readsTotalEC += unaMemoria->estadisticasMemoriaEC->Reads;
+			tiempoWritesTotalEC += unaMemoria->estadisticasMemoriaEC->Write_Latency;
+			writesTotalEC += unaMemoria->estadisticasMemoriaEC->Writes;
+		}
+		logInfo("Estadísticas de las memorias del criterio SC:");
+		logInfo("La cantidad de lecturas de SC fue: %s", string_itoa(readsTotalSC));
+		if(readsTotalSC > 0)
+		{
+			logInfo("El tiempo promedio de cada lectura de SC fue: %s", string_itoa(tiempoReadsTotalSC/readsTotalSC));
+		}
+		else
+		{
+			logInfo("No hubo lecturas de SC, por ende no hay tiempo que calcular");
+		}
+		logInfo("La cantidad de escrituras de SC fue: %s",string_itoa(writesTotalSC));
+		if(writesTotalSC > 0)
+		{
+			logInfo("El tiempo promedio de cada escritura de SC fue: %s", string_itoa(tiempoReadsTotalSC/writesTotalSC));
+		}
+		else
+		{
+			logInfo("No hubo escrituras de SC, por ende no hay tiempo que calcular");
+		}
+		logInfo("Estadísticas de las memorias del criterio SHC:");
+		logInfo("La cantidad de lecturas de SHC fue: %s", string_itoa(readsTotalSHC));
+		if(readsTotalSHC > 0)
+		{
+			logInfo("El tiempo promedio de cada lectura de SHC fue: %s", string_itoa(tiempoReadsTotalSHC/readsTotalSHC));
+		}
+		else
+		{
+			logInfo("No hubo lecturas de SHC, por ende no hay tiempo que calcular");
+		}
+		logInfo("La cantidad de escrituras de SHC fue: %s",string_itoa(writesTotalSHC));
+		if(writesTotalSHC > 0)
+		{
+			logInfo("El tiempo promedio de cada escritura de SHC fue: %s", string_itoa(tiempoWritesTotalSHC/writesTotalSHC));
+		}
+		else
+		{
+			logInfo("No hubo escrituras de SHC, por ende no hay tiempo que calcular");
+		}
+		logInfo("Estadísticas de las memorias del criterio EC:");
+		logInfo("La cantidad de lecturas de EC fue: %s", string_itoa(readsTotalEC));
+		if(readsTotalEC > 0)
+		{
+			logInfo("El tiempo promedio de cada lectura de EC fue: %s", string_itoa(tiempoReadsTotalEC/readsTotalEC));
+		}
+		else
+		{
+			logInfo("No hubo lecturas de EC, por ende no hay tiempo que calcular");
+		}
+		logInfo("La cantidad de escrituras de EC fue: %s",string_itoa(writesTotalEC));
+		if(writesTotalEC > 0)
+		{
+			logInfo("El tiempo promedio de cada escritura de EC fue: %s", string_itoa(tiempoWritesTotalEC/writesTotalEC));
+		}
+		else
+		{
+			logInfo("No hubo escrituras de EC, por ende no hay tiempo que calcular");
+		}
+		logInfo("A continuacion, el Memory Load de cada una de las memorias que se encuentran conectadas");
+		int r;
+		for( r = 0 ; r< list_size(tKernel->memoriasConCriterio);r++)
+		{
+			memoria* unaMemoria =	list_get(tKernel->memoriasConCriterio,r);
+			int totalRequestsRespondidas = unaMemoria->estadisticasMemoriaEC->Reads + unaMemoria->estadisticasMemoriaEC->Writes + unaMemoria->estadisticasMemoriaSC->Reads + unaMemoria->estadisticasMemoriaSC->Writes + unaMemoria->estadisticasMemoriaSHC->Reads + unaMemoria->estadisticasMemoriaSHC->Writes;
+			if(totalRequestsRespondidas > 0)
+			{
+				double porcentajeRespondido = (double)(totalRequestsRespondidas)/(double)(t_estadisticas->Reads + t_estadisticas->Writes);
+				logInfo("La memoria %d se encargó del %lf (porciento) de las requests\n", unaMemoria->numeroMemoria,porcentajeRespondido*100);
 			}
-
-
-			logInfo("Criterio SHC:");
-
-
-
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Read_Latency/unaMemoria->estadisticasMemoriaSHC->Reads));
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Reads));
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Write_Latency/unaMemoria->estadisticasMemoriaSHC->Writes));
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Writes));
-
-			if(unaMemoria->selectTotales == 0){
-
-
-				logInfo("Memory Load para SHC de esta memoria es 0");
-
-			}else{
-
-
-				logInfo("Memory Load para SHC de esta memoria es : %f", unaMemoria->insertsTotales / unaMemoria->selectTotales);
-
-
-
+			else
+			{
+				logInfo("La memoria %d no recibió ninguna request", unaMemoria->numeroMemoria);
 			}
-
-
-
-
-			logInfo("Criterio EC:");
-
-
-
-
-
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Read_Latency/unaMemoria->estadisticasMemoriaEC->Reads));
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Reads));
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Write_Latency/unaMemoria->estadisticasMemoriaEC->Writes));
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Writes));
-
-			if(unaMemoria->selectTotales == 0){
-
-
-				logInfo("Memory Load para EC de esta memoria es 0");
-
-			}else{
-
-
-				logInfo("Memory Load para EC de esta memoria es : %f", unaMemoria->insertsTotales / unaMemoria->selectTotales);
-
-
-
-			}
-
-
-
 			reestablecerEstadisticasMemoria(unaMemoria);
-
-
 		}
 
 
-		reestablecerEstadisticas();
 
-
-		sleep(30);
 
 
 
@@ -255,11 +253,18 @@ void handleEstadisticas(){
 	}
 
 
+	reestablecerEstadisticas();
+
+
+	sleep(30);
 
 
 
 
 }
+
+
+
 
 
 
