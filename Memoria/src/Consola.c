@@ -15,6 +15,8 @@ COMANDO comandos[] = {
 		{"DESCRIBE",describe},
 		{"DROP",drop},
 		{"JOURNAL",journal},
+		{"MODIFYDELAYMEM", modifyRetardoMem},
+		{"MODIFYDELAYFS", modifyRetardoFS},
 		{(char *) NULL, (Funcion *) NULL}
 }; // para generalizar las funciones reciben un string.
 
@@ -32,6 +34,8 @@ void handleConsola(){
 	puts("4. - DROP <tabla>");
 	puts("5. - DESCRIBE <tabla> (puede dejarse vacia)");
 	puts("6. - JOURNAL");
+	puts("7. - MODIFYDELAYMEM <delay>");
+	puts("8. - MODIFYDELAYFS <delay>");
 	puts("\nAdvertencia: los pipes solo deben ser usados para separar los parámetros del Insert, en otras instrucciones"
 			" no son considerados.");
 	char* linea;
@@ -506,3 +510,64 @@ void describe(char** args)
 		}
 	}
 }
+
+void modifyRetardoFS(char** args)
+{
+	logInfo("[Consola]: Ha llegado un pedido para modificar el retardo entre instrucciones.");
+	int chequeo = chequearParametros(args, 2);
+	if(chequeo)
+	{
+		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
+		logError("[Consola]: solicitud posee cantidad errónea de parámetros");
+	}
+	else if(!itsANumber(args[1]))
+	{
+		puts("El valor que ingresó tiene caracteres inválidos.");
+		logError( "[Consola]: el valor para modificar es inválido.");
+	}
+	else
+	{
+		t_config* ConfigMain = config_create(config_path);
+		char* delay = malloc(strlen(args[1]) + 1);
+		strcpy(delay, args[1]);
+		config_set_value(ConfigMain, "RETARDO_FS", delay);
+		config_save(ConfigMain);
+		config_destroy(ConfigMain);
+		free(delay);
+		logInfo("[Consola]: se ha modificado el tiempo de delay.");
+		puts("Se ha modificado el delay entre instrucciones");
+	}
+}
+
+void modifyRetardoMem(char** args)
+{
+	logInfo("[Consola]: Ha llegado un pedido para modificar el retardo entre instrucciones.");
+	int chequeo = chequearParametros(args, 2);
+	if(chequeo)
+	{
+		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
+		logError("[Consola]: solicitud posee cantidad errónea de parámetros");
+	}
+	else if(!itsANumber(args[1]))
+	{
+		puts("El valor que ingresó tiene caracteres inválidos.");
+		logError( "[Consola]: el valor para modificar es inválido.");
+	}
+	else
+	{
+		t_config* ConfigMain = config_create(config_path);
+		char* delay = malloc(strlen(args[1]) + 1);
+		strcpy(delay, args[1]);
+		config_set_value(ConfigMain, "RETARDO_MEM", delay);
+		config_save(ConfigMain);
+		config_destroy(ConfigMain);
+		free(delay);
+		logInfo("[Consola]: se ha modificado el tiempo de delay.");
+		puts("Se ha modificado el delay entre instrucciones");
+	}
+}
+
+
+
+
+

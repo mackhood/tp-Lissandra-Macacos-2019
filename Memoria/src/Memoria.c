@@ -2,10 +2,13 @@
 
 int main(int argc, char** argv) {
 
-	char* config_path = argv[1];
+	config_path = argv[1];
 	//logueo todos los datos de configuracion
-	initMutexlog(MEMORIA_LOG_PATH,PROGRAM_NAME,0,LOG_LEVEL_TRACE);
 	levantar_config(config_path);
+	char* log_path = string_duplicate(MEMORIA_LOG_PATH);
+	string_append(&log_path, string_itoa(info_memoria.numero_memoria));
+	string_append(&log_path, ".log");
+	initMutexlog(log_path,PROGRAM_NAME,0,LOG_LEVEL_INFO);
 	levantarConexion();
 	levantarEstrMemorias();
 	initThread();

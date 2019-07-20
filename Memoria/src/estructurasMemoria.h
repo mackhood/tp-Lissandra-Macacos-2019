@@ -29,7 +29,7 @@
 #include "../../SharedLibrary/auxiliaryFunctions.h"
 #include "config_memoria.h"
 
-#define MEMORIA_LOG_PATH "memoria.log"
+#define MEMORIA_LOG_PATH "/home/utnso/workspace/tp-2019-1c-Macacos/Memoria/memoria"
 #define PROGRAM_NAME "MEMORIA"
 
 typedef struct{
@@ -70,6 +70,7 @@ t_estado* estados_memoria;
 bool se_hizo_journal;
 bool se_inserta_segmento;
 
+
 //sockets
 int socket_escucha;
 int socket_fs;
@@ -84,6 +85,9 @@ pthread_t threadJournalInTime;
 
 //logs
 t_log* loggerMem;
+
+//config
+char* config_path;
 
 //mutex
 pthread_mutex_t mutex_estructuras_memoria;

@@ -20,6 +20,8 @@ void create(char** args);
 void drop(char** args);
 void journal(char** args);
 void describe(char** args);
+void modifyRetardoMem(char** args);
+void modifyRetardoFS(char** args);
 
 #endif /* CONSOLA_H_ */
 
