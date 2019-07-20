@@ -29,6 +29,7 @@
 #include "../../SharedLibrary/auxiliaryFunctions.h"
 #include "config_memoria.h"
 
+#define MEMORIA_CONFIG_PATH "/home/utnso/workspace/tp-2019-1c-Macacos/Memoria/ArchivosConfigPrueba"
 #define MEMORIA_LOG_PATH "/home/utnso/workspace/tp-2019-1c-Macacos/Memoria/memoria"
 #define PROGRAM_NAME "MEMORIA"
 

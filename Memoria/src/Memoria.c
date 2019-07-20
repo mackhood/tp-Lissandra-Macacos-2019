@@ -2,7 +2,9 @@
 
 int main(int argc, char** argv) {
 
-	config_path = argv[1];
+	config_path = string_duplicate(MEMORIA_CONFIG_PATH);
+	string_append(&config_path, argv[1]);
+
 	//logueo todos los datos de configuracion
 	levantar_config(config_path);
 	char* log_path = string_duplicate(MEMORIA_LOG_PATH);
