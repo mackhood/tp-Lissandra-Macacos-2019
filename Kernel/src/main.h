@@ -9,6 +9,7 @@
 #define MAIN_H_
 #include <stdio.h>
 #include <stdlib.h>
+#include <pthread.h>
 
 
 void initConfiguracion();

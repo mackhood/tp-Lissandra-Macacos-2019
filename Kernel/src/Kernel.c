@@ -13,14 +13,7 @@
 #define EVENT_SIZE (sizeof(struct inotify_event))
 #define BUF_LEN (1024* (EVENT_SIZE + 16))
 
-
-
-
-
-void setearValores(t_config * archivoConfig) {
-
-
-}
+void setearValores(t_config * archivoConfig) {}
 
 
 
@@ -100,7 +93,7 @@ void initThread(){
 	pthread_create(&threadInterPlanificador,NULL,(void*)interPlanificador,NULL);
 	pthread_create(&threadEstadisticas, NULL, (void*)handleEstadisticas,NULL);
 	pthread_create(&threadNotifier, NULL, (void*)notifier, NULL);
-	pthread_create(&threadPlanificador, NULL, (void*)pasarArunnign(),NULL);
+	pthread_create(&threadPlanificador, NULL, (void*)pasarArunnign, NULL);
 
 	pthread_detach(threadPlanificador);
 	pthread_detach(threadNotifier);
@@ -298,48 +291,6 @@ void crearPrimerMemoria(){
 
 
 
-int actualIdMemoria = 0 ;
-
-//int getIdMemoria(){
-//	int id = 0;
-//	pthread_mutex_lock(&mutexIdMemoria);
-//	actualIdMemoria++;
-//	id = actualIdMemoria;
-//	pthread_mutex_unlock(&mutexIdMemoria);
-//	return id;
-//}
-
-
-memoria* crearMemoria(char* ip,int puerto,int numeroMemoriaGeneral){
-
-	memoria* nuevaMemoria = malloc(sizeof(memoria));
-	nuevaMemoria->puerto = puerto;
-//	nuevaMemoria->numeroMemoria = getIdMemoria();
-	nuevaMemoria->estaEjecutando =0;
-	nuevaMemoria->ip = ip;
-	estadisticas * estructuraSC = malloc(sizeof(estadisticas));
-	estructuraSC->Read_Latency = 0;
-	estructuraSC->Reads = 0;
-	estructuraSC->Write_Latency = 0;
-	estructuraSC->Writes = 0;
-	estadisticas * estructuraSHC = malloc(sizeof(estadisticas));
-	estructuraSHC->Read_Latency = 0;
-	estructuraSHC->Reads = 0;
-	estructuraSHC->Write_Latency = 0;
-	estructuraSHC->Writes = 0;
-	estadisticas * estructuraEC = malloc(sizeof(estadisticas));
-	estructuraEC->Read_Latency = 0;
-	estructuraEC->Reads = 0;
-	estructuraEC->Write_Latency = 0;
-	estructuraEC->Writes = 0;
-	nuevaMemoria->estadisticasMemoriaSC = estructuraSC;
-	nuevaMemoria->estadisticasMemoriaSHC = estructuraSHC;
-	nuevaMemoria->estadisticasMemoriaEC = estructuraEC;
-	nuevaMemoria->insertsTotales=0;
-	nuevaMemoria->selectTotales=0;
-	nuevaMemoria->numeroMemoria = numeroMemoriaGeneral;
-	return nuevaMemoria;
-}
 
 
 void reestablecerEstadisticasMemoria(memoria * unaMemoria) {

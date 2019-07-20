@@ -7,37 +7,29 @@
 
 #include "conexionMemoria.h"
 
-void handler_conexion_memoria(t_kernel* tKernel) {
-
-	while(!destProtocol){
-
+void handler_conexion_memoria(t_kernel* tKernel)
+{
+	while(!destProtocol)
+	{
 		int conexion=conectar_a_memoria_flexible(configuracion->ip,configuracion->puerto, KERNEL);
-
-		if (conexion == -3 && tKernel->primerConexion){
-
+		if (conexion == -3 && tKernel->primerConexion)
+		{
 			logInfo("fallo conexion");
-
 			destProtocol = 1;
-
-
-
-
-
-		}else if(conexion == -3 && tKernel->primerConexion !=1 ){
-
+		}
+		else if(conexion == -3 && tKernel->primerConexion !=1 )
+		{
 			pthread_mutex_lock(&memoriasCola);
 			memoria * loMemoria = queue_pop(tKernel->memoriasCola);
 			queue_push(tKernel->memoriasCola,loMemoria);
 			pthread_mutex_unlock(&memoriasCola);
-
-			if(loMemoria != NULL ){
-
-				if(t_Criterios->strongConsistency->numeroMemoria == configuracion->numeroMemoria){
+			if(loMemoria != NULL )
+			{
+				if(t_Criterios->strongConsistency->numeroMemoria == configuracion->numeroMemoria)
+				{
 					pthread_mutex_lock(&sc);
 					t_Criterios->strongConsistency = loMemoria;
 				}
-
-
 				bool  estaEnLista(memoria* memoriaAux) {
 					return  configuracion->numeroMemoria == memoriaAux->numeroMemoria;
 				}
@@ -48,30 +40,25 @@ void handler_conexion_memoria(t_kernel* tKernel) {
 					pthread_mutex_unlock(&shc);
 
 				}
-
-
-
-				if(list_any_satisfy(t_Criterios->eventualConsistency->elements,(void*) estaEnLista) ){
+				if(list_any_satisfy(t_Criterios->eventualConsistency->elements,(void*) estaEnLista) )
+				{
 					pthread_mutex_lock(&ec);
 					list_remove_by_condition(t_Criterios->eventualConsistency->elements,(void*)estaEnLista);
 					pthread_mutex_unlock(&ec);
 
 				}
-
 				pthread_mutex_lock(&memoriaConfig);
-
 				configuracion = loMemoria;
 				pthread_mutex_unlock(&memoriaConfig);
 
-			}else {
-
-
-				destProtocol = 1;
-
-
-
 			}
-		}else {
+			else
+			{
+				destProtocol = 1;
+			}
+		}
+		else
+		{
 
 
 			tKernel->primerConexion =0;
@@ -115,18 +102,20 @@ void handler_conexion_memoria(t_kernel* tKernel) {
 				bool  estaEnMetadataStruct(t_tabla* tablaAux) {
 					return  !strcmp(nuevaTabla->nombre, tablaAux->nombre);
 				}
-
-
 				if(!list_any_satisfy(tMetadata->tablas,(void*)estaEnMetadataStruct))
 					list_add(tMetadata->tablas, nuevaTabla);
-
-
-
-
-
 			}
-
 			close(conexion);
+
+			if(mensaje_recibido->head == FULL_DESCRIBE){}
+			else if(mensaje_recibido->head == FAILED_DESCRIBE)
+			{
+				printf("No había ninguna tabla en el FS\n");
+			}
+			else
+			{
+				puts("Falló el DESCRIBE global");
+			}
 			int conexion2=conectar_a_memoria_flexible(configuracion->ip,configuracion->puerto, KERNEL);
 			//
 			//
@@ -159,7 +148,7 @@ void handler_conexion_memoria(t_kernel* tKernel) {
 
 				if(!list_any_satisfy(tKernel->memoriasCola->elements,(void*)estaEnLista2)){
 
-					memoria* laNuevisima = (memoria*)crearMemoria(ip,puerto,numeroMemoriaGeneral);
+					memoria* laNuevisima = (memoria*)crearMemoria((char*)ip,puerto,numeroMemoriaGeneral);
 					pthread_mutex_lock(&memoriasSinCriterio);
 					list_add(tKernel->memoriasSinCriterio,laNuevisima);
 					pthread_mutex_unlock(&memoriasSinCriterio);
@@ -180,26 +169,43 @@ void handler_conexion_memoria(t_kernel* tKernel) {
 
 
 			usleep(tKernel->config->metadata_refresh*10000);
-
 		}
 
 	}
 
 }
 
+memoria* crearMemoria(char* ip,int puerto,int numeroMemoriaGeneral){
 
-void actualizarMetadata(){
-
-
-
-
+	memoria* nuevaMemoria = malloc(sizeof(memoria));
+	nuevaMemoria->puerto = puerto;
+	nuevaMemoria->estaEjecutando =0;
+	nuevaMemoria->ip = ip;
+	estadisticas * estructuraSC = malloc(sizeof(estadisticas));
+	estructuraSC->Read_Latency = 0;
+	estructuraSC->Reads = 0;
+	estructuraSC->Write_Latency = 0;
+	estructuraSC->Writes = 0;
+	estadisticas * estructuraSHC = malloc(sizeof(estadisticas));
+	estructuraSHC->Read_Latency = 0;
+	estructuraSHC->Reads = 0;
+	estructuraSHC->Write_Latency = 0;
+	estructuraSHC->Writes = 0;
+	estadisticas * estructuraEC = malloc(sizeof(estadisticas));
+	estructuraEC->Read_Latency = 0;
+	estructuraEC->Reads = 0;
+	estructuraEC->Write_Latency = 0;
+	estructuraEC->Writes = 0;
+	nuevaMemoria->estadisticasMemoriaSC = estructuraSC;
+	nuevaMemoria->estadisticasMemoriaSHC = estructuraSHC;
+	nuevaMemoria->estadisticasMemoriaEC = estructuraEC;
+	nuevaMemoria->insertsTotales=0;
+	nuevaMemoria->selectTotales=0;
+	nuevaMemoria->numeroMemoria = numeroMemoriaGeneral;
+	return nuevaMemoria;
 }
 
-
-int primerConexion() {
-
-
+int primerConexion()
+{
 	return 0;
-
-
 }

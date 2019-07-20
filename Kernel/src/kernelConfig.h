@@ -7,6 +7,7 @@
 
 #ifndef KERNELCONFIG_H_
 #define KERNELCONFIG_H_
+#define PATH_CONFIG "/home/utnso/workspace/tp-2019-1c-Macacos/Kernel/kernel.properties"
 
 #include <commons/collections/list.h>
 #include <commons/collections/queue.h>
@@ -131,21 +132,14 @@ typedef struct{
 
 	int idGDT;	 //Id dtb
 	int flag; //flag de inicializacion
-	char* path; // ruta del escriptorio
 	int quantum; //dato el ultimo algoritmo del hito presenciar, el quantum puede cambiar por DTB
-	int pc;
-	int posMemoria;
-
 	int total_sentencias;
 	char* sentencias;
-
-	bool se_ejecuto;
 	double tiempo_repuesta;
 	time_t horacreacion;  //se usa para calcular el tiempo de repuesta
 	t_header instruccion_actual;
 	t_header operacionActual;
 	t_queue * tablaSentenciasMejorada;
-	//char* tablaSentencias [7000];
 	int sentenciaActual;
 }DTB_KERNEL;
 
@@ -153,9 +147,7 @@ typedef struct{
 
 typedef struct {
 	int idGDT;
-	t_list* recursos;
 }GDT;
-
 
 
 bool  estaEnMetadata(char *);
@@ -167,27 +159,8 @@ GDT* crearGdt(int idGdt);
 void destroyGdt(GDT* gdt);
 void removeGDT(GDT* gdt);
 
-typedef struct {
-	int valor;
-	char* recurso;
-	t_queue* en_espera;
-}t_recurso;
 
-
-
-typedef struct {
-	char* path;
-	int posMemoria;
-}t_archivoAbierto;
-
-t_dictionary* tabla_recursos;
 t_list* tablaGDT;
 pthread_mutex_t mutextListGDT;
-pthread_mutex_t mutextListRecurso;
-
-
-
-
-t_recurso* extraer_recurso(char* recurso);
 
 #endif /* KERNELCONFIG_H_ */

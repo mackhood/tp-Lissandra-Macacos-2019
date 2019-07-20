@@ -29,7 +29,7 @@ typedef struct {
 	Funcion* funcion;
 } COMANDO;
 
-
+char* path_archivos_lql;
 void handleConsola();
 COMANDO * buscar_comando(char* linea);
 int ejecutar_linea (char * linea);
@@ -47,5 +47,6 @@ void reads (char** args);
 void writes (char** args);
 void memoryLoad (char** args);
 void metrics (char ** args);
+void modifyQuantum(char** args);
 
 #endif /* CONSOLA_H_ */

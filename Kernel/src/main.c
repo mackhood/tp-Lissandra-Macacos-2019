@@ -16,28 +16,12 @@ int main(void) {
 
 	initConfiguracion();
 
-
-
 	initThread();
 
-
+	pthread_mutex_t stop;
+	pthread_mutex_init(&stop, NULL);
+	pthread_mutex_lock(&stop);
+	pthread_mutex_lock(&stop);
 	return EXIT_SUCCESS;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

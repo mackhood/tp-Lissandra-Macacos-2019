@@ -16,6 +16,9 @@ cd
 
 export LD_LIBRARY_PATH=/home/utnso/workspace/tp-2019-1c-Macacos/SharedLibrary/Debug
 
+cd /home/utnso/workspace/tp-2019-1c-Macacos/Kernel/
+git clone https://github.com/sisoputnfrba/1C2019-Scripts-lql-entrega.git
+cd
 
 cd /home/utnso/workspace/tp-2019-1c-Macacos/LissandraFilesystem/src/
 ./compilar_fileSystem.sh

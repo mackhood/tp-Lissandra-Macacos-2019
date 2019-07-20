@@ -9,10 +9,12 @@
 #define INICIALIZACIONPCB_H_
 
 #include "kernelConfig.h"
-
 #include <pthread.h>
+
 int getIdGDT();
-void initConfigPLP();
+void destruir_dtb(DTB_KERNEL* pcb);
+void initNuevoGDT(char* pathScriptEscriptorio);
+void liberarDTB(DTB_KERNEL* dtb);
 
 
 /********** Definir variables globales **********/

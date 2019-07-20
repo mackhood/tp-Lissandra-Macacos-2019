@@ -8,13 +8,6 @@
 
 #include "Consola.h"
 
-
-
-
-
-
-
-
 COMANDO comandos[] = {
 		{"SELECT",selectt},
 		{"INSERT",insert},
@@ -25,6 +18,7 @@ COMANDO comandos[] = {
 		{"ADD",add},
 		{"RUN",run},
 		{"METRICS",metrics},
+		{"MODIFYQUANTUM", modifyQuantum},
 		{(char *) NULL, (Funcion *) NULL}
 }; // para generalizar las funciones reciben un string.
 
@@ -46,8 +40,9 @@ void handleConsola(){
 	puts("7. - ADD <Memoria> TO <Criterio>");
 	puts("8. - RUN <Script>");
 	puts("9. - METRICS");
+	puts("10. - MODIFYQUANTUM <value>");
 	char* linea;
-
+	path_archivos_lql = "/home/utnso/workspace/tp-2019-1c-Macacos/Kernel/1C2019-Scripts-lql-entrega/scripts/";
 	while (1)
 	{
 
@@ -169,11 +164,6 @@ void selectt(char** args){
 		else
 		{
 			char* nombre_tabla = string_duplicate(args[1]);
-			uint16_t key = atoi(args[2]);
-			//char* key = string_duplicate(args[2]);
-
-
-
 
 			DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum);
 			dtb_nuevo->total_sentencias =1;
@@ -279,18 +269,6 @@ void insert (char** args)
 			}
 			else
 			{
-				uint16_t key = atoi(args[1]);
-				char* value = string_duplicate(args[3]);
-
-				//char* key = string_duplicate(args[2]);
-
-//				params* parametros = malloc( sizeof(params) );
-//				inicializarParametros(parametros);
-//
-//				parametros->enteros[2]= key;
-//				parametros->arreglo[1] = nombre_tabla;
-//				parametros->arreglo[3] = value;
-
 
 				int b =0;
 
@@ -363,17 +341,6 @@ void create (char** args)
 		else
 		{
 			char* nombre_tabla = string_duplicate(args[1]);
-			int numeroParticiones = atoi(args[3]);
-			char* tipoConsistencia = string_duplicate(args[2]);
-			int tiempoCompactacion = atoi(args[4]);
-			//char* key = string_duplicate(args[2]);
-
-//			params* parametros = malloc( sizeof(params) );
-//			inicializarParametros(parametros);
-//			parametros->enteros[0]= numeroParticiones;
-//			parametros->enteros[1]=tiempoCompactacion;
-//			parametros->arreglo[0] = nombre_tabla;
-//			parametros->arreglo[1] = tipoConsistencia;
 
 			int b =0;
 			char *unaPalabra = string_new();
@@ -527,9 +494,7 @@ void journal (char** args) {
 
 
 
-		int cantidadMemorias = list_size(tKernel->memoriasConCriterio);
 		int x =0;
-		bool hayMemorias = 1;
 		while(NULL != list_get(tKernel->memoriasConCriterio,x)){
 
 
@@ -566,7 +531,6 @@ void journal (char** args) {
 
 						}else{
 							printf("no quedan memorias para asignar a SC");
-							hayMemorias = 0;
 							destProtocol = 1;
 							printf ("VOLO TODO");
 
@@ -759,17 +723,6 @@ void add (char** args) {
 					list_add(t_Criterios->StrongHash, memoriaAgregar);
 
 					u=0;
-					while(list_get(t_Criterios->StrongHash,u) != NULL){
-
-						memoria* fruta =list_get(t_Criterios->StrongHash,u);
-
-
-
-						u++;
-					}
-
-
-
 				}
 			}
 			else if(!strcmp(criterio,"EC"))
@@ -836,137 +789,34 @@ void run (char** args) {
 	else
 	{
 		char* path = string_duplicate(args[1]);
-
-//		params* parametros = malloc( sizeof(params) );
-//		inicializarParametros(parametros);
-
-//		parametros->arreglo[0] = path;
-
+		char* absolute_path = path_archivos_lql;
+		string_append(&absolute_path, path);
 		DTB_KERNEL*  dtb_nuevo =(DTB_KERNEL*) crearDTBKernel(getIdGDT(),NULL,tKernel->config->quantum);
-
-
-
-		//char linea[1024];
-		//    FILE *fich;
-		//
-		//    fich = fopen(path, "r");
-		//    while(fgets(linea, 1024, (FILE*) fich)) {
-		//        printf("LINEA: %s FIN_DE_LINEA\n", linea);
-		//    }
-		//    fclose(fich);
-		//}
-
-
-		char* tabla [100];
-		int i;
 		int x=0;
-		int a =0;
-		for(i=0; i<100; i++){
-
-			tabla[i] = string_new();
-
-
-		}
-
-		char * ch =string_new();
 		FILE *fp;
-
-		//printf("Enter name of a file you wish to see\n");
-
-
-		fp = fopen(path, "r"); // read mode
-
+		fp = fopen(absolute_path, "r"); // read mode
 		if (fp == NULL)
 		{
 			perror("Error while opening the file.\n");
 			exit(EXIT_FAILURE);
 		}
-
-		//printf("The contents of %s file are:\n", path);
-
-
-
-
-
-		//   char auxiliar [100];
-		//   int f =0;
-		//   char outs= fgetc(fp);
-		//   while(!feof(fp)){
-		//
-		//	   switch(outs){
-		//
-		//	   case '\n':{
-		//
-		//		   memcpy(tabla[x], auxiliar,f);
-		//		   x++;
-		//		   f=0;
-		//		   break;
-		//	   }
-		//	   default: {
-		//
-		//		   auxiliar[f]=outs;
-		//		   f++;
-		//
-		//		   break;
-		//	   }
-		//	   }
-		//
-		//	   outs= fgetc(fp);
-		//   }
-		//   	   auxiliar[f] = '\0';
-		//   	   f++;
-		//   	   memcpy(tabla[x], auxiliar,f);
-		//
-
-
-
 		int size = obtenerTamanioArchivo(path) ;
-
-
-
-
 		char* sentenciasParsear = (char *) mmap (0, size, PROT_READ, MAP_SHARED, fp->_fileno, 0);
-
-
 		char** argus = string_split(sentenciasParsear,"\n");
-
-
-
 		int b=0;
-
-		while( argus[b] !=NULL){
-
-
+		while( argus[b] !=NULL)
+		{
 			queue_push(dtb_nuevo->tablaSentenciasMejorada,argus[b]);
-
-//			dtb_nuevo->tablaSentencias[b]=argus[b];
-
 			b++;
 		}
-
 		x=b;
-		//   for(b=0;b<=x;b++){
-		//
-		//
-		//	 dtb_nuevo->tablaSentencias[b]=tabla[b];
-		//
-		//   }
 		dtb_nuevo->total_sentencias = x;
-		//  dtb_nuevo->sentenciaActual=a;
-
-
 		enviarANew(dtb_nuevo);
-		// logInfo("Se envio a new el proceso");
 		printf("se envio a new el proceso");
-
-
-
-
 	}
 }
 
 void metrics (char ** args) {
-
 	logInfo( "[Consola]: Se ha recibido un pedido de Metrics.");
 	int chequeo = 0;
 	chequeo = chequearParametros(args, 1);
@@ -977,127 +827,106 @@ void metrics (char ** args) {
 	}
 	else
 	{
-
-
 		logInfo("Estadisticas globales de todos los criterios");
 		logInfo(string_itoa(t_estadisticas->Reads));
 		logInfo(string_itoa(t_estadisticas ->Read_Latency/t_estadisticas->Reads));
 		logInfo(string_itoa(t_estadisticas->Write_Latency/t_estadisticas->Writes));
 		logInfo(string_itoa(t_estadisticas->Writes));
 		int i;
-		for( i=0 ; i< list_size(tKernel->memorias);i++){
-
-			memoria* unaMemoria =	list_get(tKernel->memoriasConCriterio,i);
-			logInfo("Memoria Numero : %d ", unaMemoria->numeroMemoria);
-
-			logInfo("Criterio SC:");
-
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Read_Latency/unaMemoria->estadisticasMemoriaSC->Reads ));
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Reads));
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Write_Latency/unaMemoria->estadisticasMemoriaSC->Writes));
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Writes));
-
-			if(unaMemoria->selectTotales == 0){
-
-
-				logInfo("Memory Load para SC de esta memoria es 0");
-
+		for( i=0 ; i< list_size(tKernel->memorias);i++)
+		{
+			logInfo("Estadisticas globales de todos los criterios");
+			logInfo("Cantidad de lecturas: %i", string_itoa(t_estadisticas->Reads));
+			if(t_estadisticas->Reads > 0){
+				logInfo("Promedio de duracion de lecturas en milisegundos: %i",
+						string_itoa(t_estadisticas ->Read_Latency/t_estadisticas->Reads));
 			}
 			else
 			{
-				logInfo("Memory Load para SC de esta memoria es : %f", unaMemoria->insertsTotales / unaMemoria->selectTotales);
+				logInfo("Promedio de duracion de lecturas en milisegundos: 0");
 			}
-
-
-			logInfo("Criterio SHC:");
-
-
-
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Read_Latency/unaMemoria->estadisticasMemoriaSHC->Reads));
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Reads));
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Write_Latency/unaMemoria->estadisticasMemoriaSHC->Writes));
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Writes));
-
-			if(unaMemoria->selectTotales == 0)
+			logInfo("Cantidad de escrituras: %i", string_itoa(t_estadisticas->Writes));
+			if(t_estadisticas->Writes > 0)
 			{
-				logInfo("Memory Load para SHC de esta memoria es 0");
+				logInfo("Promedio de duracion de lecturas en milisegundos: %i",
+						string_itoa(t_estadisticas->Write_Latency/t_estadisticas->Writes));
 			}
 			else
 			{
-				logInfo("Memory Load para SHC de esta memoria es : %f", unaMemoria->insertsTotales / unaMemoria->selectTotales);
+				logInfo("Promedio de duracion de lecturas en milisegundos: 0");
 			}
-
-			logInfo("Criterio EC:");
-
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Read_Latency/unaMemoria->estadisticasMemoriaEC->Reads));
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Reads));
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Write_Latency/unaMemoria->estadisticasMemoriaEC->Writes));
-			logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Writes));
-
-			if(unaMemoria->selectTotales == 0)
+			int i;
+			for( i=0 ; i< list_size(tKernel->memoriasConCriterio);i++)
 			{
-				logInfo("Memory Load para EC de esta memoria es 0");
-			}
-			else
-			{
-				logInfo("Memory Load para EC de esta memoria es : %f", unaMemoria->insertsTotales / unaMemoria->selectTotales);
+				memoria* unaMemoria =	list_get(tKernel->memoriasConCriterio,i);
+				logInfo("Memoria Numero : %d ", unaMemoria->numeroMemoria);
+				logInfo("Criterio SC:");
+				logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Read_Latency/unaMemoria->estadisticasMemoriaSC->Reads));
+				logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Reads));
+				logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Write_Latency/unaMemoria->estadisticasMemoriaSC->Writes));
+				logInfo(string_itoa(unaMemoria->estadisticasMemoriaSC->Writes));
+				if(unaMemoria->selectTotales == 0)
+				{
+					logInfo("Memory Load para SC de esta memoria es 0");
+				}
+				else
+				{
+					logInfo("Memory Load para SC de esta memoria es : %f", unaMemoria->insertsTotales / unaMemoria->selectTotales);
+				}
+				logInfo("Criterio SHC:");
+				logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Read_Latency/unaMemoria->estadisticasMemoriaSHC->Reads));
+				logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Reads));
+				logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Write_Latency/unaMemoria->estadisticasMemoriaSHC->Writes));
+				logInfo(string_itoa(unaMemoria->estadisticasMemoriaSHC->Writes));
 
+				if(unaMemoria->selectTotales == 0)
+				{
+					logInfo("Memory Load para SHC de esta memoria es 0");
+				}
+				else
+				{
+					logInfo("Memory Load para SHC de esta memoria es : %f", unaMemoria->insertsTotales / unaMemoria->selectTotales);
+				}
+				logInfo("Criterio EC:");
+				logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Read_Latency/unaMemoria->estadisticasMemoriaEC->Reads));
+				logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Reads));
+				logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Write_Latency/unaMemoria->estadisticasMemoriaEC->Writes));
+				logInfo(string_itoa(unaMemoria->estadisticasMemoriaEC->Writes));
+				if(unaMemoria->selectTotales == 0)
+				{
+					logInfo("Memory Load para EC de esta memoria es 0");
+				}
+				else
+				{
+					logInfo("Memory Load para EC de esta memoria es : %f", unaMemoria->insertsTotales / unaMemoria->selectTotales);
+				}
 			}
-
 		}
 	}
 }
 
-//void ejecutarScript(char** args){
-//
-//	if(args[1] !=NULL){
-//		char* parametro = malloc( (sizeof(char)*string_length(args[1])) + 1);
-//		memcpy(parametro, args[1], string_length(args[1]) + 1);
-//		logInfo("Operacion ejecutar %s", parametro);
-//		//char* arg = string_duplicate(parametro);
-//		initNuevoGDT(parametro);
-//		free(parametro);
-//	} else {
-//		puts("Debe ingresar un parametro para la funcion Ejecutar");
-//	}
-//}
-//
-//void statusColas(char** arg){
-//	char * parametro = arg[1];
-//	if(parametro==NULL) {
-//		mostrarStatusTodo();
-//	} else {
-//		mostrarStatus(atoi(parametro));
-//	}
-//	logInfo("Operacion status %s", parametro);
-//}
-//
-//void finalizarDTB(char** arg){
-//	int pid = atoi(arg[1]);
-//	logInfo("Operacion finalizar %d", pid);
-//	finalizarById(pid);
-//}
-//
-//void metricaDTB(char** arg){
-//	logInfo("Operacion opcional metrica %s", arg[1]);
-//
-//	char* parametro = arg[1];
-//	if(parametro==NULL)
-//		mostrarMetricaTodo();
-//	else
-//		mostrarMetrica( atoi(parametro) );
-//}
-
-
-
-
-
-
-
-
-
-
-
-
-
+void modifyQuantum(char** args)
+{
+	logInfo("[Consola]: Ha llegado un pedido para modificar el quantum entre instrucciones.");
+	int chequeo = chequearParametros(args, 2);
+	if(chequeo)
+	{
+		printf("Por favor, especifique la cantidad de parámetros solicitada.\n");
+		logError("[Consola]: solicitud posee cantidad errónea de parámetros");
+	}
+	else if(!itsANumber(args[1]))
+	{
+		puts("El valor que ingresó tiene caracteres inválidos.");
+		logError( "[Consola]: el valor para modificar es inválido.");
+	}
+	else
+	{
+		t_config* ConfigMain = config_create(PATH_CONFIG);
+		config_set_value(ConfigMain, "QUANTUM", args[1]);
+		config_save(ConfigMain);
+		config_destroy(ConfigMain);
+		logInfo("[Consola]: se ha modificado el quantum");
+		puts("Se ha modificado el quantum");
+	}
+}
 

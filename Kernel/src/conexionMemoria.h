@@ -13,6 +13,6 @@
 #include "kernelConfig.h"
 
 void handler_conexion_memoria(t_kernel*);
-
+memoria* crearMemoria(char* ip,int puerto,int numeroMemoriaGeneral);
 
 #endif /* CONEXIONMEMORIA_H_ */

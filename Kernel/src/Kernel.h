@@ -16,10 +16,11 @@
 #include "kernelConfig.h"
 #include "Consola.h"
 #include "conexionMemoria.h"
+#include "planificador.h"
 #include "../../SharedLibrary/loggers.h"
 #include <sys/inotify.h>
 
-const char* path_configs ="/home/utnso/workspace/tp-2019-1c-Macacos/Kernel/kernel.properties";
+#define path_configs "/home/utnso/workspace/tp-2019-1c-Macacos/Kernel/kernel.properties"
 #define KERNEL_LOG_PATH "./kernel.log"
 
 
@@ -33,7 +34,7 @@ void initThreadAPI ();
 void setearValores(t_config * archivoConfig);
 void interPlanificador();
 void handleEstadisticas();
-memoria* crearMemoria(char* ,int ,int);
+void reestablecerEstadisticas();
 void reestablecerEstadisticasMemoria(memoria * unaMemoria);
 void notifier();
 

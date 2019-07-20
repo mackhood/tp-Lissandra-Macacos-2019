@@ -13,14 +13,6 @@
 void pasarArunnign() {
 
 	while(!destProtocol){
-
-
-
-
-
-
-
-
 		DTB_KERNEL* dtb=(DTB_KERNEL*)getDTBReady();
 		waitDTBRunning();
 		if(tKernel->config->multiprocesamiento > 0  ){
@@ -36,12 +28,6 @@ void pasarArunnign() {
 
 
 		}
-
-
-
-
-
-
 	}
 
 
@@ -70,13 +56,6 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 	dtb->sentenciaActual=0;
 	int socket_memoria = 0;
 
-
-
-
-
-
-	//	socket_memoria = conectar_a_servidor(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, "Memoria");
-
 	while(quantum >= 0 && dtb->flag != 1  && dtb->total_sentencias > 0 )
 	{
 		//	SELECT
@@ -84,17 +63,6 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 		//	CREATE
 		//	DESCRIBE
 		//	DROP
-
-		//	params* parametros = malloc( sizeof(params) );
-		//	inicializarParametros(parametros);
-		//
-		//
-		//		inicializarParametros(parametros);
-
-
-
-		//		char** args = string_split(dtb->tablaSentencias[dtb->sentenciaActual], " ");
-
 		char** args = string_split(queue_pop(dtb->tablaSentenciasMejorada), " ");
 
 
@@ -435,10 +403,6 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 						break;
 					}
 					}
-					//					if(!strcmp(laTabla->criterio, "EC"))
-					//					{
-					//						queue_push(t_Criterios->eventualConsistency,leMemoria);
-					//					}
 					quantum--;
 					dtb->sentenciaActual++;
 					prot_destruir_mensaje(req_recibida);
@@ -501,16 +465,6 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 				memcpy(buffer+sizeof(int)+largo_nombre_tabla,&key,sizeof(u_int16_t));
 				memcpy(buffer+sizeof(int)+largo_nombre_tabla+sizeof(u_int16_t),&largoStringEnviar,sizeof(int));
 				memcpy(buffer+sizeof(int)+largo_nombre_tabla+sizeof(u_int16_t)+sizeof(int),mensajeFinal,largoStringEnviar);
-
-				//		int i =3;
-				//		while(args[i] != NULL){
-				//			int largo_value=0;
-				//			largo_value = strlen(args[i]) +1;
-				//			memcpy(buffer+sizeof(int)+largo_nombre_tabla+sizeof(u_int16_t),&largo_value,sizeof(int));
-				//
-				//			memcpy(buffer+sizeof(int)+largo_nombre_tabla+sizeof(u_int16_t)+sizeof(int),args[i],largo_value);
-				//			i++;
-				//		}
 
 				double cantSegundosInicial= getCurrentTime() ;
 				prot_enviar_mensaje(socket_memoria, INSERT_REQ, tamanio_buffer, buffer);
@@ -596,12 +550,6 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 				free(buffer);
 				t_prot_mensaje * mensaje_recibido = prot_recibir_mensaje(socket_memoria);
 
-				//				if(!strcmp(args[2], "EC"))
-				//				{
-				//					queue_push(t_Criterios->eventualConsistency,leMemoria);
-				//				}
-
-				//printf("Insert realizado \n");
 				dtb->sentenciaActual++;
 
 				switch(mensaje_recibido->head){
@@ -655,9 +603,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 				prot_enviar_mensaje(socket_memoria, DROP_REQ, tamanio_buffer, buffer);
 				free(buffer);
 				t_prot_mensaje* respuesta = prot_recibir_mensaje(socket_memoria);
-				//				if(laTabla->criterio == "EC"){
-				//					queue_push(t_Criterios->eventualConsistency,leMemoria);
-				//				}
+
 				dtb->sentenciaActual++;
 
 				//posibles respuestas
@@ -714,20 +660,6 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 				t_prot_mensaje* mensaje_memoria = prot_recibir_mensaje(socket_memoria);
 
 
-				//				if(args[1]!= NULL)
-				//				{
-				////					if(!strcmp(laTabla->criterio, "EC"))
-				////					{
-				////						queue_push(t_Criterios->eventualConsistency,leMemoria);
-				////					}
-				//				}
-				//				else
-				//				{
-				//					queue_push(tKernel->memoriasCola,leMemoria);
-				//				}
-
-
-
 				switch(mensaje_memoria->head)
 				{
 				case POINT_DESCRIBE:
@@ -738,7 +670,18 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 					metadataTabla = malloc(tamanio_mensaje + 1);
 					memcpy(metadataTabla, mensaje_memoria->payload + sizeof(int), tamanio_mensaje);
 					metadataTabla[tamanio_mensaje] = '\0';
-					printf(metadataTabla);
+					char** valores_separados = string_split(metadataTabla, ",");
+					printf("Nombre de la tabla:%s\n", valores_separados[0]);
+					printf("Consistencia:%s\n", valores_separados[1]);
+					printf("Cantidad de particiones:%s\n", valores_separados[2]);
+					printf("Tiempo entre compactaciones:%s\n", valores_separados[3]);
+					logInfo("[Consola]: se recibio la tabla %s, con consistencia %s, con cant de particiones %s y tiempo de %s",
+							valores_separados[0],
+							valores_separados[1],
+							valores_separados[2],
+							valores_separados[3]);
+					liberadorDeArrays(valores_separados);
+					printf("%s\n", metadataTabla);
 					prot_destruir_mensaje(mensaje_memoria);
 					break;
 				}
@@ -753,15 +696,26 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 
 					char ** tablaDescribe = string_split(metadataTablas, ";");
-
+					int i = 0;
+					while(tablaDescribe[i])
+					{
+						char** valores_separados = string_split(tablaDescribe[i], ",");
+						printf("Nombre de la tabla:%s\n", valores_separados[0]);
+						printf("Consistencia:%s\n", valores_separados[1]);
+						printf("Cantidad de particiones:%s\n", valores_separados[2]);
+						printf("Tiempo entre compactaciones:%s\n", valores_separados[3]);
+						logInfo("[Consola]: se recibio la tabla %s, con consistencia %s, con cant de particiones %s y tiempo de %s",
+								valores_separados[0],
+								valores_separados[1],
+								valores_separados[2],
+								valores_separados[3]);
+						liberadorDeArrays(valores_separados);
+						i++;
+					}
 					int a=0;
 					list_clean(tMetadata->tablas);
-					while(tablaDescribe[a] != NULL  ){
-
-
-
-
-
+					while(tablaDescribe[a] != NULL  )
+					{
 						char* tabla = strtok(tablaDescribe[a],",");
 						char* criterio = strtok(NULL, ",");
 						a++;
@@ -920,16 +874,6 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 						list_add(t_Criterios->StrongHash, memoriaAgregar);
 
 						u=0;
-						while(list_get(t_Criterios->StrongHash,u) != NULL){
-
-							memoria* fruta =list_get(t_Criterios->StrongHash,u);
-
-
-							u++;
-						}
-
-
-
 					}
 				}
 				else if(!strcmp(criterio,"EC"))
@@ -1060,9 +1004,6 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 			}
 			close(socket_memoria);
 			quantum --;
-			//		if(dtb->total_sentencias == 0){
-			//		quantum ++;
-			//		}
 		}
 	}
 	tKernel->config->multiprocesamiento ++;
