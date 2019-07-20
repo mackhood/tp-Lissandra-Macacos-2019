@@ -903,14 +903,15 @@ void metrics (char ** args) {
 			int totalRequestsRespondidas = unaMemoria->estadisticasMemoriaEC->Reads + unaMemoria->estadisticasMemoriaEC->Writes + unaMemoria->estadisticasMemoriaSC->Reads + unaMemoria->estadisticasMemoriaSC->Writes + unaMemoria->estadisticasMemoriaSHC->Reads + unaMemoria->estadisticasMemoriaSHC->Writes;
 			if(totalRequestsRespondidas > 0)
 			{
-				printf("La memoria %d se encargó del %d (porciento) de las requests\n", unaMemoria->numeroMemoria,
-						(totalRequestsRespondidas/(t_estadisticas->Reads + t_estadisticas->Writes))*100);
-				logInfo("La memoria %d se encargó del %d (porciento) de las requests\n", unaMemoria->numeroMemoria,
-						(totalRequestsRespondidas/(t_estadisticas->Reads + t_estadisticas->Writes))*100);
+				double porcentajeRespondido = (double)(totalRequestsRespondidas)/(double)(t_estadisticas->Reads + t_estadisticas->Writes);
+				printf("La memoria %d se encargó del %lf (porciento) de las requests\n", unaMemoria->numeroMemoria,
+						porcentajeRespondido *100);
+				logInfo("La memoria %d se encargó del %lf (porciento) de las requests\n", unaMemoria->numeroMemoria,
+						porcentajeRespondido*100);
 			}
 			else
 			{
-				printf("La memoria %d no recibió ninguna request", unaMemoria->numeroMemoria);
+				printf("La memoria %d no recibió ninguna request\n", unaMemoria->numeroMemoria);
 				logInfo("La memoria %d no recibió ninguna request", unaMemoria->numeroMemoria);
 			}
 		}

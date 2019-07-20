@@ -253,7 +253,7 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 					if(!strcmp(laTabla->criterio,"SC")){
 
 						socket_memoria = conectar_a_memoria_flexible(t_Criterios->strongConsistency->ip, t_Criterios->strongConsistency->puerto, KERNEL);
-
+						leMemoria = t_Criterios->strongConsistency;
 						if( socket_memoria == -3){
 
 
@@ -362,8 +362,8 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 						printf("el value solicitado es %s \n",prueba);
 						if(!strcmp(laTabla->criterio, "SC"))
 						{
-							configuracion->estadisticasMemoriaSC->Read_Latency += (finalTime - firstTime);
-							configuracion->estadisticasMemoriaSC->Reads++;
+							leMemoria->estadisticasMemoriaSC->Read_Latency += (finalTime - firstTime);
+							leMemoria->estadisticasMemoriaSC->Reads++;
 						}
 						else if(!strcmp(laTabla->criterio, "EC"))
 						{
@@ -479,8 +479,8 @@ void ejecutarProceso(DTB_KERNEL* dtb){
 
 					if(!strcmp(laTabla->criterio, "SC"))
 					{
-						configuracion->estadisticasMemoriaSC->Write_Latency += (cantSegundosFinal - cantSegundosInicial);
-						configuracion->estadisticasMemoriaSC->Writes++;
+						leMemoria->estadisticasMemoriaSC->Write_Latency += (cantSegundosFinal - cantSegundosInicial);
+						leMemoria->estadisticasMemoriaSC->Writes++;
 
 					}
 					else if(!strcmp(laTabla->criterio, "EC"))

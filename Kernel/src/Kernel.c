@@ -133,7 +133,8 @@ void reestablecerEstadisticas(){
 void handleEstadisticas(){
 
 
-	while(!destProtocol){
+	while(!destProtocol)
+	{
 
 		logInfo("Estadisticas globales de todos los criterios");
 		logInfo("Cantidad de lecturas: %i", string_itoa(t_estadisticas->Reads));
